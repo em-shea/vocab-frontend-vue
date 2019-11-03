@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3-node
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: npm install
+
+      - run:
+          name: Vue build
+          command: npm run build
+
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+
+      - run: 
+          name: Copy files to S3
+          command: aws s3 cp dist s3://mtg.emshea.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
