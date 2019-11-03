@@ -27,9 +27,9 @@
           <li class="nav-item">
             <a class="nav-link" href="#faq">FAQ</a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'quiz'}">Practice</router-link>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -76,7 +76,7 @@
             <h4>Which HSK level are you?</h4>
           </div>
           <div class="col-12">
-            <p>Click on each level to see sample words.</p>
+            <p>Click on each level below to see sample words, or check out <router-link :to="{ name: 'history'}">recent daily words</router-link>.</p>
           </div>
         </div>
       </div>
