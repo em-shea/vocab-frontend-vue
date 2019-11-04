@@ -1,7 +1,7 @@
 <template>
 
   <!-- Renders and conditionally formats wordHistory -->
-  <div class="card shadow-sm">
+  <div class="card border-secondary shadow-sm">
     <div class="card-header d-flex w-100 justify-content-between">
       <h5>
         Level {{ card.Word['HSK Level'] }}

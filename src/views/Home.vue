@@ -202,13 +202,7 @@
         </div>
       </div>
 
-    <footer class="footer">
-      <div class="container">
-        <span class="align-text-bottom">
-          Built serverless with  ❤. <a href="https://github.com/em-shea/vocab">Source code.</a>
-        </span>
-      </div>
-    </footer>
+    <custom-footer></custom-footer>
 
     </div>
   </div>
@@ -218,12 +212,14 @@
 // @ is an alias to /src
 import exampleWords from '@/components/exampleWords.vue'
 import wordHistory from '@/components/wordHistory.vue'
+import customFooter from '@/components/footer.vue'
 
 export default {
   name: 'home',
   components: {
     'example-words': exampleWords,
-    'word-history': wordHistory
+    'word-history': wordHistory,
+    'custom-footer': customFooter
   },
   data () {
     return {

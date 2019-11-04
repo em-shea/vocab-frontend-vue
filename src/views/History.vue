@@ -6,27 +6,47 @@
 
     <div class="container">
       <div class="row m-3">
-        <div class="col">
+        <div class="col-lg-3 col-md-3 col-sm-10 col-10 p-2">
           <h4>
             Daily words
           </h4>
         </div>
-        <div class="col-1">
-          <button class="btn btn-outline-secondary" type="button" v-on:click="exportCSV();">Export</button>
+        <!-- Export button above/to the left of dropdowns on sm. and smaller -->
+        <div class="d-block d-md-none col-2 p-2">
+          <button class="btn btn-outline-secondary" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="row justify-content-center m-3">
-        <div class="col-3 p-3">
+        <div class="col-lg-3 col-md-3 col-sm-6 p-2">
           <select class="custom-select" v-on:input="getWordHistory()" v-model="params.list">
             <option v-for="(name, key) in levelList" :value="key" v-bind:key="key">
               {{ name }}
             </option>
           </select>
         </div>
-        <div class="col-3 p-3">
+        <div class="col-lg-3 col-md-3 col-sm-6 p-2">
+          <select class="custom-select"  v-on:input="getWordHistory()" v-model="params.date_range">
+            <option v-for="(days, key) in dateRange" :value="key" v-bind:key="key">
+              {{ days }}
+            </option>
+          </select>
+        </div>
+        <!-- Export button below/to the right of dropdowns on med. and larger -->
+        <div class="col-lg-2 col-md-1 d-none d-md-block"></div>
+        <div class="col-lg-1 col-md-1 d-none d-md-block p-2">
+          <button class="btn btn-outline-secondary" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="container">
+      <div class="row justify-content-center m-1">
+        <div class="col-3">
+          <select class="custom-select" v-on:input="getWordHistory()" v-model="params.list">
+            <option v-for="(name, key) in levelList" :value="key" v-bind:key="key">
+              {{ name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
           <select class="custom-select"  v-on:input="getWordHistory()" v-model="params.date_range">
             <option v-for="(days, key) in dateRange" :value="key" v-bind:key="key">
               {{ days }}
@@ -34,19 +54,17 @@
           </select>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="container">
-      <div class="row m-3">
-        <div class="col card-columns">
-          <div class="lists" v-for="(list, id) in wordHistoryLists" :key="id">
-            <div class="card-holder" v-for="card in list.slice().reverse()" :key="card['ListId']+card['Date']">
-              <word-history-card :card="card"></word-history-card>
-            </div>
-          </div>
+      <div class="row card-deck m-3">
+        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryLists[params.list].slice().reverse()" :key="card['ListId']+card['Date']">
+          <word-history-card :card="card"></word-history-card>
         </div>
       </div>
     </div>
+
+    <custom-footer></custom-footer>
 
   </div>
 
@@ -57,12 +75,14 @@
 import smallNav from '@/components/smallNav.vue'
 import wordHistory from '@/components/wordHistory.vue'
 import * as XLSX from 'xlsx'
+import customFooter from '@/components/footer.vue'
 
 export default {
   name: 'history',
   components: {
     'small-nav': smallNav,
-    'word-history-card': wordHistory
+    'word-history-card': wordHistory,
+    'custom-footer': customFooter
   },
   data () {
     return {
@@ -126,7 +146,11 @@ export default {
 </script>
 
 <style lang="scss">
-  .card-columns {
+  .card {
+    min-height: 300px;
+    padding: 0;
+  }
+  .card-holder {
     padding: 0;
   }
 </style>
