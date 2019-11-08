@@ -40,7 +40,7 @@
         <div class="anchor-target" id="sub"></div>
         <div class="row m-3">
           <div class="col-md-4 col-xs-6 p-3">
-            <select class="custom-select" id="level">
+            <select v-model="params.level" class="custom-select" id="level">
               <option selected>Choose an HSK Level</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -52,9 +52,9 @@
           </div>
           <div class="col-md-8 col-xs-6 p-3">
             <div class="input-group">
-              <input type="email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
+              <input type="email" v-model="params.email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="return submitSub();">Subscribe</button>
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="submitSubscription();">Subscribe</button>
               </div>
             </div>
           </div>
@@ -84,8 +84,12 @@
       <div class="container mb-4">
         <div class="row m-3">
           <div class="col-3" id="v-pills-col">
-            <div class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <a class="nav-link active" id="v-pills-one-tab" data-toggle="pill" href="#v-pills-one" role="tab" aria-controls="v-pills-one" aria-selected="true">
+            <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
+              <a class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" :href="'#v-pills-'+level" role="tab">
+                <span class="d-none d-md-inline">Level {{ level }}</span>
+              </a>
+            <!-- <div class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <a class="nav-link active m-1" id="#v-pills-tab-1" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="#v-pills-1" aria-selected="true">
                 <span class="d-none d-md-inline">Level </span>1
               </a>
               <a class="nav-link" id="v-pills-two-tab" data-toggle="pill" href="#v-pills-two" role="tab" aria-controls="v-pills-two" aria-selected="false">
@@ -102,17 +106,24 @@
               </a>
               <a class="nav-link" id="v-pills-six-tab" data-toggle="pill" href="#v-pills-six" role="tab" aria-controls="v-pills-six" aria-selected="false">
                 <span class="d-none d-md-inline">Level </span>6
-              </a>
+              </a> -->
             </div>
           </div>
           <div class="col-9">
             <div class="tab-content" id="v-pills-tabContent">
-              <div class="tab-pane fade show active 1" id="v-pills-one" role="tabpanel" aria-labelledby="v-pills-one-tab"></div>
-              <div class="tab-pane fade 2" id="v-pills-two" role="tabpanel" aria-labelledby="v-pills-two-tab"></div>
+              <!-- <div class="tab-pane fade show active 1" id="v-pills-one" role="tabpanel" aria-labelledby="v-pills-one-tab"> -->
+                <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['Word']" class="card shadow-sm p-2">
+                  <div class="card-body">{{ word['Word'] }}</div>
+                  <div class="card-body">{{ word['Pronunciation'] }}</div>
+                  <div class="card-body">{{ word['Definition'] }}</div>
+                </div>
+              <!-- </div> -->
+
+              <!-- <div class="tab-pane fade 2" id="v-pills-two" role="tabpanel" aria-labelledby="v-pills-two-tab"></div>
               <div class="tab-pane fade 3" id="v-pills-three" role="tabpanel" aria-labelledby="v-pills-three-tab"></div>
               <div class="tab-pane fade 4" id="v-pills-four" role="tabpanel" aria-labelledby="v-pills-four-tab"></div>
               <div class="tab-pane fade 5" id="v-pills-five" role="tabpanel" aria-labelledby="v-pills-five-tab"></div>
-              <div class="tab-pane fade 6" id="v-pills-six" role="tabpanel" aria-labelledby="v-pills-six-tab"></div>
+              <div class="tab-pane fade 6" id="v-pills-six" role="tabpanel" aria-labelledby="v-pills-six-tab"></div> -->
             </div>
           </div>
         </div>
@@ -223,23 +234,17 @@ export default {
   },
   data () {
     return {
+      params: {
+        email: null,
+        level: null
+      },
+      email_validated: null,
       exampleWordList: [],
-      subEmail: null,
-      subLevel: null
+      exampleListSelected: "1",
     }
   },
   mounted () {
-    // On load, calls
-
-    // Magic example:
-    // this.pullSets().then(() => {
-    //   this.setInitialParams()
-    //   if (this.nameSelected) {
-    //     this.searchByName(this.$route.query.name)
-    //   } else {
-    //     this.pullCards(this.params.set.id, this.params.color.id)
-    //   }
-    // })
+    this.getSampleWords()
   },
   methods: {
     getSampleWords () {
@@ -248,21 +253,36 @@ export default {
         )
         .then((response) => {
           this.exampleWordList = response.data
+          console.log(this.exampleWordList)
         }
-          // On load, calls my sample words API that returns example words for given level
-          // Within HTML, pass sample words to exampleWords component to be rendered
-        )
+      )
     },
 
-    validateEmail () {
+    // selectTab () {
+    //   if
+    // }
 
+    validateEmail () {
+      if (this.params.email.indexOf('@') == -1) {
+        this.email_validated = false
+        return false
+      } else {
+        this.email_validated = true
+        return true
+      }
     },
 
     submitSubscription () {
-      this.subURL = 'https://api.haohaotiantian.com/sub?email=' + this.subEmail
-      return axios
-        .post(this.subURL, {}
-        )
+      if (this.email_validated === false) {
+        return
+      } else {
+        console.log("Parameters... ", this.params)
+      // this.subURL = 'https://api.haohaotiantian.com/sub?email=' + { params: this.params }
+      // return axios
+      //   .post(this.subURL, {}
+      //   )
+      }
+
     }
   }
 }
