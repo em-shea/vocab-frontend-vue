@@ -191,7 +191,7 @@
               I have a different question.
             </p>
             <p>
-              Contact me here: <a href="https://twitter.com/messages/compose?recipient_id=2409492241" class="twitter-dm-button" data-screen-name="@em__shea">Message @em__shea</a>
+              <a href="https://twitter.com/messages/compose?recipient_id=2409492241">Please contact me.</a>
             </p>
           </div>
         </div>
