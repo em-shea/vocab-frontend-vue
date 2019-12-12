@@ -66,13 +66,13 @@
             <div v-if="levelValidated === false">
               <p>Please select an HSK level.</p>
             </div>
-            <div v-if="emailInputted === false">
+            <div v-if="emailInputted === false || emailValidated === false">
               <p>Please enter a valid email.</p>
             </div>
-            <div v-if="emailValidated === false">
+            <div v-if="subscribeResponse === false">
               <p>Something went wrong. Try refreshing the page, or contact us (see bottom of FAQ).</p>
             </div>
-            <div v-if="emailValidated === true">
+            <div v-if="subscribeResponse">
               <p>成功！Success! You're subscribed and will receive a confirmation email.</p>
             </div>
           </div>
@@ -226,7 +226,8 @@ export default {
       emailInputted: null,
       levelValidated: null,
       exampleWordList: [],
-      exampleListSelected: '1'
+      exampleListSelected: '1',
+      subscribeResponse: null
     }
   },
   mounted () {
@@ -244,11 +245,11 @@ export default {
     },
 
     validateEmail () {
-      if (this.params.email.indexOf('@') === -1) {
-        this.emailValidated = false
-        return false
-      } if (this.params.email === null) {
+      if (this.params.email === null) {
         this.emailInputted = false
+        return false
+      } if (this.params.email.indexOf('@') === -1) {
+        this.emailValidated = false
         return false
       } else {
         this.emailValidated = true
@@ -257,6 +258,9 @@ export default {
     },
 
     submitSubscription () {
+      this.emailValidated = null
+      this.emailInputted = null
+      this.levelValidated = null
       if (this.params.level === 'default') {
         this.levelValidated = false
         return false
@@ -273,6 +277,7 @@ export default {
         level: this.params.level
       })
         .then((response) => {
+          this.subscribeResponse = response.data['success']
           console.log(response.data)
         })
     }
