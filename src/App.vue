@@ -1,10 +1,8 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
+
     <router-view/>
+
   </div>
 </template>
 
@@ -87,26 +85,26 @@
       margin-bottom: 0;
     }
 
-    a {
-      color: orangered;
-    }
+  a {
+    color: orangered;
+  }
 
-    a:hover {
-      color: hsla(16, 100%, 40%, 1);
-    }
+  a:hover {
+    color: hsla(16, 100%, 40%, 1);
+  }
 
-    .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-      color: #fff;
-      background-color: orangered;
-    }
+  .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: orangered;
+  }
 
-    .sub-response {
-      color: orangered;
-    }
+  .sub-response {
+    color: orangered;
+  }
 
-    img {
-      margin-bottom: 1rem;
-      width: 100%;
-      max-width: 500px;
-    }
+  img {
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 500px;
+  }
 </style>

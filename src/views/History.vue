@@ -145,11 +145,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-  .card {
-    min-height: 300px;
-    padding: 0;
-  }
+<style scoped lang="scss">
   .card-holder {
     padding: 0;
   }

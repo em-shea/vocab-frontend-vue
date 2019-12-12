@@ -9,7 +9,6 @@
           <div class="col title">
             <h1 class="display-6">Daily Chinese Vocab</h1>
             <p class="lead">Keep up on 中文 with daily HSK vocabulary in your inbox.</p>
-            <!-- <h5>Keep up on 中文 with daily HSK vocabulary in your inbox.</h5> -->
           </div>
         </div>
       </div>
@@ -41,7 +40,7 @@
         <div class="row m-3">
           <div class="col-md-4 col-xs-6 p-3">
             <select v-model="params.level" class="custom-select" id="level">
-              <option selected>Choose an HSK Level</option>
+              <option selected value="default">Choose an HSK Level</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -64,7 +63,18 @@
       <div class="container">
         <div class="row m-3">
           <div class="col text-center sub-response" id="sub-response">
-            <!-- <p>Success! You're subscribed and will receive a confirmation email.</p> -->
+            <div v-if="levelValidated === false">
+              <p>Please select an HSK level.</p>
+            </div>
+            <div v-if="emailInputted === false">
+              <p>Please enter a valid email.</p>
+            </div>
+            <div v-if="emailValidated === false">
+              <p>Something went wrong. Try refreshing the page, or contact us (see bottom of FAQ).</p>
+            </div>
+            <div v-if="emailValidated === true">
+              <p>成功！Success! You're subscribed and will receive a confirmation email.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -85,50 +95,24 @@
         <div class="row m-3">
           <div class="col-3" id="v-pills-col">
             <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
-              <a class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" :href="'#v-pills-'+level" role="tab">
+              <span class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" role="tab">
                 <span class="d-none d-md-inline">Level {{ level }}</span>
-              </a>
-            <!-- <div class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <a class="nav-link active m-1" id="#v-pills-tab-1" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="#v-pills-1" aria-selected="true">
-                <span class="d-none d-md-inline">Level </span>1
-              </a>
-              <a class="nav-link" id="v-pills-two-tab" data-toggle="pill" href="#v-pills-two" role="tab" aria-controls="v-pills-two" aria-selected="false">
-                <span class="d-none d-md-inline">Level </span>2
-              </a>
-              <a class="nav-link" id="v-pills-three-tab" data-toggle="pill" href="#v-pills-three" role="tab" aria-controls="v-pills-three" aria-selected="false">
-                <span class="d-none d-md-inline">Level </span>3
-              </a>
-              <a class="nav-link" id="v-pills-four-tab" data-toggle="pill" href="#v-pills-four" role="tab" aria-controls="v-pills-four" aria-selected="false">
-                <span class="d-none d-md-inline">Level </span>4
-              </a>
-              <a class="nav-link" id="v-pills-five-tab" data-toggle="pill" href="#v-pills-five" role="tab" aria-controls="v-pills-five" aria-selected="false">
-                <span class="d-none d-md-inline">Level </span>5
-              </a>
-              <a class="nav-link" id="v-pills-six-tab" data-toggle="pill" href="#v-pills-six" role="tab" aria-controls="v-pills-six" aria-selected="false">
-                <span class="d-none d-md-inline">Level </span>6
-              </a> -->
+              </span>
             </div>
           </div>
           <div class="col-9">
             <div class="tab-content" id="v-pills-tabContent">
-              <!-- <div class="tab-pane fade show active 1" id="v-pills-one" role="tabpanel" aria-labelledby="v-pills-one-tab"> -->
-                <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['Word']" class="card shadow-sm p-2">
-                  <div class="card-body">{{ word['Word'] }}</div>
-                  <div class="card-body">{{ word['Pronunciation'] }}</div>
-                  <div class="card-body">{{ word['Definition'] }}</div>
-                </div>
-              <!-- </div> -->
-
-              <!-- <div class="tab-pane fade 2" id="v-pills-two" role="tabpanel" aria-labelledby="v-pills-two-tab"></div>
-              <div class="tab-pane fade 3" id="v-pills-three" role="tabpanel" aria-labelledby="v-pills-three-tab"></div>
-              <div class="tab-pane fade 4" id="v-pills-four" role="tabpanel" aria-labelledby="v-pills-four-tab"></div>
-              <div class="tab-pane fade 5" id="v-pills-five" role="tabpanel" aria-labelledby="v-pills-five-tab"></div>
-              <div class="tab-pane fade 6" id="v-pills-six" role="tabpanel" aria-labelledby="v-pills-six-tab"></div> -->
+              <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['Word']" class="card shadow-sm p-2">
+                <div class="card-body">{{ word['Word'] }}</div>
+                <div class="card-body">{{ word['Pronunciation'] }}</div>
+                <div class="card-body">{{ word['Definition'] }}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- FAQ Content -->
       <div class="container bg-light">
         <div class="anchor-target" id="faq"></div>
         <div class="row m-3 py-3">
@@ -236,11 +220,13 @@ export default {
     return {
       params: {
         email: null,
-        level: null
+        level: 'default'
       },
-      email_validated: null,
+      emailValidated: null,
+      emailInputted: null,
+      levelValidated: null,
       exampleWordList: [],
-      exampleListSelected: "1",
+      exampleListSelected: '1'
     }
   },
   mounted () {
@@ -254,40 +240,58 @@ export default {
         .then((response) => {
           this.exampleWordList = response.data
           console.log(this.exampleWordList)
-        }
-      )
+        })
     },
 
-    // selectTab () {
-    //   if
-    // }
-
     validateEmail () {
-      if (this.params.email.indexOf('@') == -1) {
-        this.email_validated = false
+      if (this.params.email.indexOf('@') === -1) {
+        this.emailValidated = false
+        return false
+      } if (this.params.email === null) {
+        this.emailInputted = false
         return false
       } else {
-        this.email_validated = true
+        this.emailValidated = true
         return true
       }
     },
 
     submitSubscription () {
-      if (this.email_validated === false) {
+      if (this.params.level === 'default') {
+        this.levelValidated = false
+        return false
+      }
+      if (!this.validateEmail()) {
         return
-      } else {
-        console.log("Parameters... ", this.params)
-      // this.subURL = 'https://api.haohaotiantian.com/sub?email=' + { params: this.params }
-      // return axios
-      //   .post(this.subURL, {}
-      //   )
       }
 
+      console.log('Parameters... ', this.params)
+
+      this.subURL = 'https://api.haohaotiantian.com/sub'
+      return axios.post(this.subURL, {
+        email: this.params.email,
+        level: this.params.level
+      })
+        .then((response) => {
+          console.log(response.data)
+        })
     }
   }
 }
 </script>
 
 <style lang="scss">
+  .nav-link {
+    color: orangered;
+  }
 
+  .nav-link:hover {
+    color: hsla(16, 100%, 40%, 1);
+    cursor: pointer;
+  }
+
+  .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: orangered;
+  }
 </style>

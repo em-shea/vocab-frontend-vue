@@ -58,6 +58,8 @@ export default {
   .card {
     margin: 0.75rem;
     box-shadow: 0.5rem;
+    min-height: 300px;
+    padding: 0;
   }
 
   .card-body {
