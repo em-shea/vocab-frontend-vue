@@ -129,7 +129,7 @@
             <p>
               Daily emails look like this:
             </p>
-            <img src="https://s3.amazonaws.com/haohaotiantian.com/haohaotiantian-email-640.PNG">
+            <img src="https://s3.amazonaws.com/tsu-emshea.com-emshea-com-static/static/images/chinese-vocab-app/haohaotiantian-email-640.PNG">
             <p class="bold">
               How do I unsubscribe?
             </p>
