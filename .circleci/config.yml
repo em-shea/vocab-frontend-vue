@@ -23,8 +23,8 @@ jobs:
           name: Copy files to S3
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              aws s3 cp src s3://haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
+              aws s3 cp dist s3://haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
             fi
             if [ "${CIRCLE_BRANCH}" == "staging" ]; then
-              aws s3 cp src s3://staging.haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
+              aws s3 cp dist s3://staging.haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
             fi
