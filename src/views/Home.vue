@@ -93,14 +93,14 @@
 
       <div class="container mb-4">
         <div class="row m-3">
-          <div class="col-3" id="v-pills-col">
+          <div class="col-4 col-md-3" id="v-pills-col">
             <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
               <span class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" role="tab">
                 <span class="d-none d-md-inline">Level {{ level }}</span>
               </span>
             </div>
           </div>
-          <div class="col-9">
+          <div class="col-8 col-md-9">
             <div class="tab-content" id="v-pills-tabContent">
               <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['Word']" class="card shadow-sm p-2">
                 <div class="card-body">{{ word['Word'] }}</div>
@@ -205,15 +205,11 @@
 
 <script>
 // @ is an alias to /src
-import exampleWords from '@/components/exampleWords.vue'
-import wordHistory from '@/components/wordHistory.vue'
 import customFooter from '@/components/footer.vue'
 
 export default {
   name: 'home',
   components: {
-    'example-words': exampleWords,
-    'word-history': wordHistory,
     'custom-footer': customFooter
   },
   data () {
