@@ -96,7 +96,7 @@
           <div class="col-4 col-md-3" id="v-pills-col">
             <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
               <span class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" role="tab">
-                <span class="d-none d-md-inline">Level {{ level }}</span>
+                <span class="d-md-inline">Level {{ level }}</span>
               </span>
             </div>
           </div>

@@ -58,7 +58,7 @@
 
     <div class="container">
       <div class="row card-deck m-3">
-        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryLists[params.list].slice().reverse()" :key="card['ListId']+card['Date']">
+        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryList.slice().reverse()" :key="card['ListId']+card['Date']">
           <word-history-card :card="card"></word-history-card>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default {
   },
   data () {
     return {
-      wordHistoryLists: [],
+      wordHistoryList: [],
       page: 0,
       levelList: { HSKLevel1: 'HSK Level 1', HSKLevel2: 'HSK Level 2', HSKLevel3: 'HSK Level 3', HSKLevel4: 'HSK Level 4', HSKLevel5: 'HSK Level 5', HSKLevel6: 'HSK Level 6' },
       dateRange: { 30: 'Past 30 days', 60: 'Past 60 days', 90: 'Past 90 days' },
@@ -106,8 +106,8 @@ export default {
         .get('https://api.haohaotiantian.com/history?', { params: this.params }
         )
         .then((response) => {
-          this.wordHistoryLists = response.data
-          // console.log(this.wordHistoryLists)
+          this.wordHistoryList = response.data[this.params.list]
+          console.log(this.wordHistoryList)
         }
         )
     },
@@ -116,7 +116,7 @@ export default {
       let wordHistoryListExport = []
 
       // set wordHistoryWords to the array inside 'hsklevel6' etc
-      let wordHistoryWords = this.wordHistoryLists[this.params.list]
+      let wordHistoryWords = this.wordHistoryList
 
       // loop through items (dicts) in word list array
       for (var i = 0; i < wordHistoryWords.length; i++) {
