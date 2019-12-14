@@ -6,13 +6,13 @@
 
     <div class="container">
       <div class="row m-3">
-        <div class="col-lg-3 col-md-3 col-sm-10 col-10 p-2">
+        <div class="col-lg-3 col-md-3 col-sm-9 col-9 p-2">
           <h4>
             Daily words
           </h4>
         </div>
         <!-- Export button above/to the left of dropdowns on sm. and smaller -->
-        <div class="d-block d-md-none col-2 p-2">
+        <div class="d-block d-md-none col-3 p-2">
           <button class="btn btn-outline-secondary" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 p-2">

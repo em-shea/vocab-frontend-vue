@@ -62,6 +62,12 @@ export default {
     padding: 0;
   }
 
+  @media only screen and (min-width: 401px) and (max-width: 960px) {
+  .card {
+    min-height: 0;
+    }
+  }
+
   .card-body {
     padding: 1.5rem;
   }
