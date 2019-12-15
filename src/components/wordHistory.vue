@@ -58,11 +58,11 @@ export default {
   .card {
     margin: 0.75rem;
     box-shadow: 0.5rem;
-    min-height: 300px;
+    min-height: 270px;
     padding: 0;
   }
 
-  @media only screen and (min-width: 401px) and (max-width: 960px) {
+  @media only screen and (min-width: 0px) and (max-width: 800px) {
   .card {
     min-height: 0;
     }
