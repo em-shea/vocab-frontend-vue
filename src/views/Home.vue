@@ -96,7 +96,8 @@
           <div class="col-4 col-md-3" id="v-pills-col">
             <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
               <span class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" role="tab">
-                <span class="d-md-inline">Level {{ level }}</span>
+                <span class="pills-tab-desktop">Level {{ level }}</span>
+                <span class="pills-tab-mobile">{{ level }}</span>
               </span>
             </div>
           </div>
@@ -295,4 +296,23 @@ export default {
     color: #fff;
     background-color: orangered;
   }
+
+  @media only screen and (min-width: 500px) and (max-width: 2000px) {
+  .pills-tab-mobile {
+    display: none;
+  }
+  .pill-tab-desktop {
+    display: inline;
+  }
+  }
+
+  @media only screen and (min-width: 0px) and (max-width: 500px) {
+  .pills-tab-desktop {
+    display: none;
+  }
+  .pills-tab-mobile {
+    display: inline;
+  }
+  }
+
 </style>

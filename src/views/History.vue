@@ -58,7 +58,7 @@
 
     <div class="container">
       <div class="row card-deck m-3">
-        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryList.slice().reverse()" :key="card['ListId']+card['Date']">
+        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryList" :key="card['ListId']+card['Date']">
           <word-history-card :card="card"></word-history-card>
         </div>
       </div>
@@ -101,12 +101,12 @@ export default {
   },
   methods: {
     getWordHistory () {
-    // call wordHistory component based on dropdown inputs
+      // call wordHistory component based on dropdown inputs
       return axios
         .get('https://api.haohaotiantian.com/history?', { params: this.params }
         )
         .then((response) => {
-          this.wordHistoryList = response.data[this.params.list]
+          this.wordHistoryList = response.data[this.params.list].slice().reverse()
           console.log(this.wordHistoryList)
         }
         )
