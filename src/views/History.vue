@@ -102,10 +102,13 @@ export default {
   methods: {
     getWordHistory () {
       // call wordHistory component based on dropdown inputs
+      console.log("About to call ", this.params.list)
       return axios
         .get('https://api.haohaotiantian.com/history?', { params: this.params }
         )
         .then((response) => {
+          console.log(this.params.list)
+          console.log(response.data)
           this.wordHistoryList = response.data[this.params.list].slice().reverse()
           console.log(this.wordHistoryList)
         }
