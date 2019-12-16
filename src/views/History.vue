@@ -131,6 +131,7 @@ export default {
 
       // loop through items (dicts) in word list array
       for (var i = 0; i < wordHistoryWords.length; i++) {
+
         // create empty dict for flattened word dict
         let wordFlattened = {}
 
