@@ -16,14 +16,14 @@
           <button class="btn btn-outline-secondary" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 p-2">
-          <select class="custom-select" v-on:input="getWordHistory()" v-model="params.list">
+          <select class="custom-select" v-on:change="getWordHistory()" v-model="params.list">
             <option v-for="(name, key) in levelList" :value="key" v-bind:key="key">
               {{ name }}
             </option>
           </select>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 p-2">
-          <select class="custom-select"  v-on:input="getWordHistory()" v-model="params.date_range">
+          <select class="custom-select"  v-on:change="getWordHistory()" v-model="params.date_range">
             <option v-for="(days, key) in dateRange" :value="key" v-bind:key="key">
               {{ days }}
             </option>
