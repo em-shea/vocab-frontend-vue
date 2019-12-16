@@ -97,20 +97,28 @@ export default {
     }
   },
   mounted () {
+    this.checkInitialParams()
     this.getWordHistory()
   },
   methods: {
+    checkInitialParams () {
+      if (this.$route.query.list) {
+        this.params.list = this.$route.query.list
+      }
+      if (this.$route.query.dates) {
+        this.params.date_range = this.$route.query.dates
+      }
+    },
     getWordHistory () {
       // call wordHistory component based on dropdown inputs
-      console.log("About to call ", this.params.list)
+      if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range) {
+        this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range } })
+      }
       return axios
         .get('https://api.haohaotiantian.com/history?', { params: this.params }
         )
         .then((response) => {
-          console.log(this.params.list)
-          console.log(response.data)
           this.wordHistoryList = response.data[this.params.list].slice().reverse()
-          console.log(this.wordHistoryList)
         }
         )
     },
