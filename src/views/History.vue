@@ -102,10 +102,10 @@ export default {
   },
   methods: {
     checkInitialParams () {
-      if (this.$route.query.list) {
+      if (this.$route.query.list in this.levelList) {
         this.params.list = this.$route.query.list
       }
-      if (this.$route.query.dates) {
+      if (this.$route.query.dates in this.dateRange) {
         this.params.date_range = this.$route.query.dates
       }
     },
@@ -131,7 +131,6 @@ export default {
 
       // loop through items (dicts) in word list array
       for (var i = 0; i < wordHistoryWords.length; i++) {
-
         // create empty dict for flattened word dict
         let wordFlattened = {}
 
