@@ -22,9 +22,9 @@
           <!-- <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'quiz'}">Practice</router-link>
           </li> -->
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'history'}">Word History</router-link>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
