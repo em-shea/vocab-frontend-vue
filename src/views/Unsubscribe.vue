@@ -121,7 +121,7 @@ export default {
       }
 
       // Call unsubscribe function
-      this.subURL = 'https://api.staging.haohaotiantian.com/unsub'
+      this.subURL = 'https://api.haohaotiantian.com/unsub'
       return axios.post(this.subURL, {
         email: this.params.email,
         level: this.params.level
