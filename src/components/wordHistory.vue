@@ -2,7 +2,7 @@
 
   <!-- Renders and conditionally formats wordHistory -->
   <div class="card border-secondary shadow-sm">
-    <div class="card-header d-flex w-100 justify-content-between">
+    <div class="card-header main-card d-flex w-100 justify-content-between" v-on:click="clickDescription()">
       <h5>
         Level {{ card.Word['HSK Level'] }}
       </h5>
@@ -10,26 +10,28 @@
         {{ card.Date }}
       </small>
     </div>
-    <div class="card-body">
+    <div class="card-body main-card" v-on:click="clickDescription()">
       <p class="card-text">
         {{ card.Word.Word }}
       </p>
       <p class="card-text">
         {{ card.Word.Pronunciation }}
       </p>
-      <p class="card-text">
+      <p class="card-text" :class="{ 'truncate' : !clicked }">
         {{ card.Word.Definition }}
       </p>
-      <!-- <p class="card-text italicized" v-if="card.Word['HSK Level'] < 3">
-        <a href="https://www.yellowbridge.com/chinese/sentsearch.php?word=">
+    </div>
+    <div class="card-body link-card">
+      <p class="card-text link-text" v-if="card.Word['HSK Level'] <= 3">
+        <a :href="'https://www.yellowbridge.com/chinese/sentsearch.php?word=' + card.Word.Word">
           Example sentences
         </a>
       </p>
-      <p class="card-text italicized" v-if="card.Word['HSK Level'] > 3">
-        <a href="https://fanyi.baidu.com/#zh/en/" + card.Word.Word>
+      <p class="card-text link-text" v-if="card.Word['HSK Level'] > 3">
+        <a :href="'https://fanyi.baidu.com/#zh/en/' + card.Word.Word">
           Example sentences
         </a>
-      </p> -->
+      </p>
     </div>
   </div>
 
@@ -43,12 +45,18 @@ export default {
   },
   data () {
     return {
-      transformed: false,
       clicked: false
     }
   },
   methods: {
-    // Call my vocab history API that returns word history for given level
+    clickDescription () {
+      console.log('clicking description', this.clicked)
+      if (this.clicked === false) {
+        this.clicked = true
+      } else {
+        this.clicked = false
+      }
+    }
   }
 }
 </script>
@@ -58,23 +66,44 @@ export default {
   .card {
     margin: 0.75rem;
     box-shadow: 0.5rem;
-    min-height: 270px;
+    min-height: 250px;
     padding: 0;
   }
 
   @media only screen and (min-width: 0px) and (max-width: 800px) {
-  .card {
-    min-height: 0;
+    .card {
+      min-height: 0;
     }
+  }
+
+  @media only screen and (min-width: 575px) {
+    .truncate {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .main-card {
+      cursor: pointer;
+    }
+
+    .a.link-text {
+      cursor: pointer;
+    }
+  }
+
+  .link-text {
+    font-size: 0.75rem;
   }
 
   .card-body {
     padding: 1.5rem;
   }
 
-  .italicized {
-    font-style: italic;
-    font-size: 0.75rem;
+  .link-card {
+    padding-top: 0rem;
+    padding-bottom: 1.5rem;
   }
 
   /* .card-header {
