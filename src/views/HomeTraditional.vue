@@ -1,18 +1,9 @@
 <template>
 
   <!-- Main page for new users to subscribe, app information -->
-  <div id="home">
+  <div id="home-traditional">
 
-    <div class="jumbotron jumbotron-fluid bg-img">
-      <div class="container">
-        <div class="row">
-          <div class="col title">
-            <h1 class="display-6">Daily Chinese Vocab</h1>
-            <p class="lead">Keep up on 中文 with daily HSK vocabulary in your inbox.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <large-header :charSet.sync="characterSet"></large-header>
 
     <div class="container bg-white sticky-top p-2">
       <div class="row justify-content-center">
@@ -157,7 +148,7 @@
               What is HSK vocabulary?
             </p>
             <p>
-              HSK stands for 汉语水平考试 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Chinese language proficiency test. There are six levels of the HSK, with Level 1 testing for 150 basic words and Level 6 testing 5000 words. While just the vocabulary words alone are not enough to sufficiently prepare for the test, the vocabulary lists for each level provide a useful benchmark and learning tool to track a student's progress.
+              HSK stands for 漢語水平考試 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Chinese language proficiency test. There are six levels of the HSK, with Level 1 testing for 150 basic words and Level 6 testing 5000 words. While just the vocabulary words alone are not enough to sufficiently prepare for the test, the vocabulary lists for each level provide a useful benchmark and learning tool to track a student's progress.
             </p>
             <p class="bold">
               What should I do with my daily vocab word?
@@ -186,7 +177,7 @@
               What does Haohaotiantian mean?
             </p>
             <p>
-              好好学习，天天向上 - Study hard and make progress every day.
+              好好學習，天天向上 - Study hard and make progress every day.
             </p>
             <p class="bold">
               I have a different question.
@@ -207,14 +198,17 @@
 <script>
 // @ is an alias to /src
 import customFooter from '@/components/footer.vue'
+import largeHeader from '@/components/header.vue'
 
 export default {
-  name: 'home',
+  name: 'home-fanti',
   components: {
-    'custom-footer': customFooter
+    'custom-footer': customFooter,
+    'large-header': largeHeader
   },
   data () {
     return {
+      characterSet: 'simplified',
       params: {
         email: null,
         level: 'default'
@@ -229,7 +223,6 @@ export default {
   },
   mounted () {
     this.getSampleWords()
-    console.log('characterset...', this.characterSet)
   },
   methods: {
     getSampleWords () {
@@ -299,21 +292,21 @@ export default {
   }
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
-  .pills-tab-mobile {
-    display: none;
-  }
-  .pill-tab-desktop {
-    display: inline;
-  }
+    .pills-tab-mobile {
+      display: none;
+    }
+    .pill-tab-desktop {
+      display: inline;
+    }
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
-  .pills-tab-desktop {
-    display: none;
-  }
-  .pills-tab-mobile {
-    display: inline;
-  }
+    .pills-tab-desktop {
+      display: none;
+    }
+    .pills-tab-mobile {
+      display: inline;
+    }
   }
 
 </style>
