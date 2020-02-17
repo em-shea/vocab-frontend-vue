@@ -86,6 +86,7 @@ export default {
   },
   data () {
     return {
+      characterSet: 'simplified',
       wordHistoryList: [],
       page: 0,
       levelList: { HSKLevel1: 'HSK Level 1', HSKLevel2: 'HSK Level 2', HSKLevel3: 'HSK Level 3', HSKLevel4: 'HSK Level 4', HSKLevel5: 'HSK Level 5', HSKLevel6: 'HSK Level 6' },
@@ -102,18 +103,24 @@ export default {
   },
   methods: {
     checkInitialParams () {
+      // Check if acceptable parameters have been passed (HSK 1-6, 30-90 days, simplified/traditional)
       if (this.$route.query.list in this.levelList) {
         this.params.list = this.$route.query.list
       }
       if (this.$route.query.dates in this.dateRange) {
         this.params.date_range = this.$route.query.dates
       }
+      if (this.$route.query.char_set === 'simplified' || this.$route.query.char_set === 'traditional') {
+        this.characterSet = this.$route.query.char_set
+      }
+      console.log('character set...', this.characterSet)
     },
     getWordHistory () {
-      // call wordHistory component based on dropdown inputs
+      // If either the HSK level or the date range has changed, update the query string parameters
       if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range) {
         this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range } })
       }
+      // call wordHistory component based on dropdown inputs
       return axios
         .get('https://api.haohaotiantian.com/history?', { params: this.params }
         )

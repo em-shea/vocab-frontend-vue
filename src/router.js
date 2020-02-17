@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import HomeTraditional from './views/HomeTraditional.vue'
 import Quiz from './views/Quiz.vue'
 import History from './views/History.vue'
 import Unsubscribe from './views/Unsubscribe.vue'
@@ -31,11 +30,6 @@ export default new Router({
       path: '/unsub',
       name: 'unsub',
       component: Unsubscribe
-    },
-    {
-      path: '/trd',
-      name: 'home-traditional',
-      component: HomeTraditional
     }
   ]
 })

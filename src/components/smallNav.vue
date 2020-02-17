@@ -9,6 +9,11 @@
             <h1 class="display-6">Daily Chinese Vocab</h1>
             <!-- <p class="lead">Keep up on 中文 with daily HSK vocabulary in your inbox.</p> -->
           </div>
+          <div class="col">
+          
+            button
+
+          </div>
         </div>
       </div>
     </div>
