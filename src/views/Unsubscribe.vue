@@ -14,12 +14,12 @@
       </div>
 
       <div class="row m-3 bg-light">
-        <div class="col-md-4 col-xs-4 p-3">
+        <div class="col-xl-4 col-lg-6 col-12 p-3">
           <div class="input-group">
             <input type="email" v-model="params.email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
           </div>
         </div>
-        <div class="col-md-4 col-xs-3 p-3">
+        <div class="col-xl-4 col-lg-6 col-12 p-3">
           <select v-model="params.level" :disabled="unsubscribeAllInput" class="custom-select" id="level">
             <option selected value="default">Choose an HSK Level</option>
             <option value="1">HSK Level 1</option>
@@ -30,12 +30,12 @@
             <option value="6">HSK Level 6</option>
           </select>
         </div>
-        <div class="form-check pull-right form-check-inline col-md-2 col-xs-2 p-3">
+        <div class="form-check form-check-inline col-xl-2 col-6 p-3">
           <input type="checkbox" v-model="unsubscribeAllInput" class="form-check-input" id="exampleCheck1">
           <label class="form-check-label pl-1" for="exampleCheck1">Unsubscribe all</label>
         </div>
-        <div class="col-md-1 col-xs-2 p-3">
-          <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="submitUnsubscribe();">Unsubscribe</button>
+        <div class="col-xl-2 col-6 p-3">
+          <button class="btn btn-outline-secondary unsub-btn" type="button" id="button-addon2" v-on:click="submitUnsubscribe();">Unsubscribe</button>
         </div>
       </div>
       <div class="row m-3">
@@ -146,6 +146,16 @@ export default {
 
   .form-check {
     margin-right: 0;
+  }
+
+  .unsub-btn {
+    float: right;
+  }
+
+  @media(min-width:1200px) {
+    .unsub-btn {
+      float: left;
+    }
   }
 
 </style>

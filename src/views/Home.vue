@@ -225,21 +225,21 @@ export default {
   }
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
-  .pills-tab-mobile {
-    display: none;
-  }
-  .pill-tab-desktop {
-    display: inline;
-  }
+    .pills-tab-mobile {
+      display: none;
+    }
+    .pill-tab-desktop {
+      display: inline;
+    }
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
-  .pills-tab-desktop {
-    display: none;
-  }
-  .pills-tab-mobile {
-    display: inline;
-  }
+    .pills-tab-desktop {
+      display: none;
+    }
+    .pills-tab-mobile {
+      display: inline;
+    }
   }
 
 </style>
