@@ -117,7 +117,7 @@
       </div>
 
       <!-- FAQ Content -->
-      <faq-content></faq-content>
+      <faq-content :charSet.sync="characterSet"></faq-content>
 
     <custom-footer></custom-footer>
 

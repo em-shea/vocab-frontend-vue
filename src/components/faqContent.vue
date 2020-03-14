@@ -43,8 +43,11 @@
                 <p class="bold">
                 What is HSK vocabulary?
                 </p>
-                <p>
+                <p v-if="charSet === 'simplified'">
                 HSK stands for 汉语水平考试 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Chinese language proficiency test. There are six levels of the HSK, with Level 1 testing for 150 basic words and Level 6 testing 5000 words. While just the vocabulary words alone are not enough to sufficiently prepare for the test, the vocabulary lists for each level provide a useful benchmark and learning tool to track a student's progress.
+                </p>
+                <p v-if="charSet === 'traditional'">
+                HSK stands for 漢語水平考試 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Chinese language proficiency test. There are six levels of the HSK, with Level 1 testing for 150 basic words and Level 6 testing 5000 words. While just the vocabulary words alone are not enough to sufficiently prepare for the test, the vocabulary lists for each level provide a useful benchmark and learning tool to track a student's progress.
                 </p>
                 <p class="bold">
                 What should I do with my daily vocab word?
@@ -72,8 +75,11 @@
                 <p class="bold">
                 What does Haohaotiantian mean?
                 </p>
-                <p>
+                <p v-if="charSet === 'simplified'">
                 好好学习，天天向上 - Study hard and make progress every day.
+                </p>
+                <p v-if="charSet === 'traditional'">
+                好好學習，天天向上 - Study hard and make progress every day.
                 </p>
                 <p class="bold">
                 I have a different question.
@@ -91,9 +97,9 @@
 <script>
 export default {
   name: 'faqContent',
-  props: {
-    card: Object
-  },
+  props: [
+    'charSet'
+  ],
   // data () {
   // },
   methods: {
