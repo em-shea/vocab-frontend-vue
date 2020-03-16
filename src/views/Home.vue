@@ -212,7 +212,7 @@ export default {
       this.subURL = process.env.VUE_APP_API_URL + 'sub'
       return axios.post(this.subURL, {
         email: this.params.email,
-        list_id: this.params.level + '-' + this.characterSet
+        list: this.params.level + '-' + this.characterSet
       })
         .then((response) => {
           this.subscribeResponse = response.data['success']

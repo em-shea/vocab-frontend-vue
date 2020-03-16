@@ -138,10 +138,10 @@ export default {
       }
 
       // Call unsubscribe function
-      this.subURL = 'https://api.haohaotiantian.com/unsub'
+      this.subURL = process.env.VUE_APP_API_URL + 'unsub'
       return axios.post(this.subURL, {
         email: this.params.email,
-        list_id: this.params.level + '-' + this.characterSet
+        list: this.params.level + '-' + this.characterSet
       })
         .then((response) => {
           if (response.data['success'] === true) {
