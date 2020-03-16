@@ -2,15 +2,8 @@
 
   <div id="small-nav">
 
+    <char-set-toggle></char-set-toggle>
     <div class="jumbotron jumbotron-fluid bg-img">
-    <div class="container">
-          <div class="row">
-              <div class="col">
-                  <button class="btn btn-link float-right" title="Traditional Chinese" :class='{"active": characterSet === "traditional"}' @click="$root.$data.store.changeCharacterSet('traditional')">Traditional (繁体字)</button>
-                  <button class="btn btn-link float-right" title="Simplified Chinese" :class='{"active": characterSet === "simplified"}' @click="$root.$data.store.changeCharacterSet('simplified')">Simplified (简体字)</button>
-              </div>
-          </div>
-      </div>
       <div class="container">
         <div class="row">
           <div class="col title">
@@ -42,8 +35,13 @@
 </template>
 
 <script>
+import characterSetToggle from '@/components/characterSetToggle.vue'
+
 export default {
   name: 'smallNav',
+  components: {
+    'char-set-toggle': characterSetToggle
+  },
   // data () {
   // },
   computed: {
