@@ -86,7 +86,6 @@ export default {
   },
   data () {
     return {
-      characterSet: 'simplified',
       wordHistoryList: [],
       page: 0,
       levelList: { HSKLevel1: 'HSK Level 1', HSKLevel2: 'HSK Level 2', HSKLevel3: 'HSK Level 3', HSKLevel4: 'HSK Level 4', HSKLevel5: 'HSK Level 5', HSKLevel6: 'HSK Level 6' },
@@ -97,11 +96,27 @@ export default {
       }
     }
   },
+  computed: {
+    characterSet () {
+      return this.$root.$data.store.state.characterSet
+    }
+  },
+  watch: {
+    characterSet: function () {
+      this.pushToRouter()
+    }
+  },
   mounted () {
     this.checkInitialParams()
     this.getWordHistory()
   },
   methods: {
+    pushToRouter () {
+      if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range || this.$route.query.char !== this.characterSet) {
+        this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range, 'char': this.characterSet } })
+        console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
+      }
+    },
     checkInitialParams () {
       // Check if acceptable parameters have been passed (HSK 1-6, 30-90 days, simplified/traditional)
       if (this.$route.query.list in this.levelList) {
@@ -110,15 +125,21 @@ export default {
       if (this.$route.query.dates in this.dateRange) {
         this.params.date_range = this.$route.query.dates
       }
-      if (this.$route.query.char_set === 'simplified' || this.$route.query.char_set === 'traditional') {
-        this.characterSet = this.$route.query.char_set
+      // Because the word history API response contains both simplified and traditional characters always,
+      // the 'char' query param works differently than the list and dates ones.
+      // We update the characterSet var in the global state machine and push to the URL query string params,
+      // but we don't add it to the params list because we don't use it when calling the API.
+      if (this.$route.query.char === 'simplified' || this.$route.query.char === 'traditional') {
+        if (this.characterSet === this.$route.query.char) {
+        } else {
+          this.$root.$data.store.changeCharacterSet(this.$route.query.char)
+        }
       }
-      console.log('character set...', this.characterSet)
     },
     getWordHistory () {
       // If either the HSK level or the date range has changed, update the query string parameters
       if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range) {
-        this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range } })
+        this.pushToRouter()
       }
       // call wordHistory component based on dropdown inputs
       return axios
@@ -126,8 +147,7 @@ export default {
         )
         .then((response) => {
           this.wordHistoryList = response.data[this.params.list].slice().reverse()
-        }
-        )
+        })
     },
     exportCSV () {
       // Create final flattened list of words to export

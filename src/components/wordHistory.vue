@@ -11,10 +11,10 @@
       </small>
     </div>
     <div class="card-body main-card" v-on:click="clickDescription()">
-      <p v-if="charSet === 'simplified'" class="card-text">
+      <p v-if="characterSet === 'simplified'" class="card-text">
         {{ card.Word.Word }}
       </p>
-      <p v-if="charSet === 'traditional'" class="card-text">
+      <p v-if="characterSet === 'traditional'" class="card-text">
         {{ card.Word['Word-Traditional'] }}
       </p>
       <p class="card-text">
@@ -44,12 +44,16 @@
 export default {
   name: 'wordHistory',
   props: {
-    card: Object,
-    charSet: String
+    card: Object
   },
   data () {
     return {
       clicked: false
+    }
+  },
+  computed: {
+    characterSet () {
+      return this.$root.$data.store.state.characterSet
     }
   },
   methods: {

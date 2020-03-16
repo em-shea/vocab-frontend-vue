@@ -14,7 +14,7 @@
       </div>
     </div> -->
 
-    <large-header :charSet.sync="characterSet"></large-header>
+    <large-header></large-header>
 
     <div class="container bg-white sticky-top p-2">
       <div class="row justify-content-center">
@@ -40,15 +40,26 @@
       <div class="container bg-light p-1">
         <div class="anchor-target" id="sub"></div>
         <div class="row m-3">
-          <div class="col-md-4 col-xs-6 p-3">
+          <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'simplified'">
             <select v-model="params.level" class="custom-select" id="level">
               <option selected value="default">Choose an HSK Level</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
+              <option value="1">1 - Simplified</option>
+              <option value="2">2 - Simplified</option>
+              <option value="3">3 - Simplified</option>
+              <option value="4">4 - Simplified</option>
+              <option value="5">5 - Simplified</option>
+              <option value="6">6 - Simplified</option>
+            </select>
+          </div>
+          <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'traditional'">
+            <select v-model="params.level" class="custom-select" id="level">
+              <option selected value="default">Choose an HSK Level</option>
+              <option value="1">1 - Traditional</option>
+              <option value="2">2 - Traditional</option>
+              <option value="3">3 - Traditional</option>
+              <option value="4">4 - Traditional</option>
+              <option value="5">5 - Traditional</option>
+              <option value="6">6 - Traditional</option>
             </select>
           </div>
           <div class="col-md-8 col-xs-6 p-3">
@@ -117,7 +128,7 @@
       </div>
 
       <!-- FAQ Content -->
-      <faq-content :charSet.sync="characterSet"></faq-content>
+      <faq-content></faq-content>
 
     <custom-footer></custom-footer>
 
@@ -140,7 +151,6 @@ export default {
   },
   data () {
     return {
-      characterSet: 'simplified',
       params: {
         email: null,
         level: 'default'
@@ -153,9 +163,13 @@ export default {
       subscribeResponse: null
     }
   },
+  computed: {
+    characterSet () {
+      return this.$root.$data.store.state.characterSet
+    }
+  },
   mounted () {
     this.getSampleWords()
-    console.log('characterset...', this.characterSet)
   },
   methods: {
     getSampleWords () {
@@ -198,7 +212,7 @@ export default {
       this.subURL = 'https://api.haohaotiantian.com/sub'
       return axios.post(this.subURL, {
         email: this.params.email,
-        level: this.params.level
+        list_id: this.params.level + '-' + this.characterSet
       })
         .then((response) => {
           this.subscribeResponse = response.data['success']

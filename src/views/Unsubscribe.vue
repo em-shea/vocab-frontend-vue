@@ -19,15 +19,26 @@
             <input type="email" v-model="params.email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
           </div>
         </div>
-        <div class="col-xl-4 col-lg-6 col-12 p-3">
+        <div class="col-xl-4 col-lg-6 col-12 p-3" v-if="characterSet == 'simplified'">
           <select v-model="params.level" :disabled="unsubscribeAllInput" class="custom-select" id="level">
             <option selected value="default">Choose an HSK Level</option>
-            <option value="1">HSK Level 1</option>
-            <option value="2">HSK Level 2</option>
-            <option value="3">HSK Level 3</option>
-            <option value="4">HSK Level 4</option>
-            <option value="5">HSK Level 5</option>
-            <option value="6">HSK Level 6</option>
+            <option value="1">1 - Simplified</option>
+            <option value="2">2 - Simplified</option>
+            <option value="3">3 - Simplified</option>
+            <option value="4">4 - Simplified</option>
+            <option value="5">5 - Simplified</option>
+            <option value="6">6 - Simplified</option>
+          </select>
+        </div>
+        <div class="col-xl-4 col-lg-6 col-12 p-3" v-if="characterSet == 'traditional'">
+          <select v-model="params.level" :disabled="unsubscribeAllInput" class="custom-select" id="level">
+            <option selected value="default">Choose an HSK Level</option>
+            <option value="1">1 - Traditional</option>
+            <option value="2">2 - Traditional</option>
+            <option value="3">3 - Traditional</option>
+            <option value="4">4 - Traditional</option>
+            <option value="5">5 - Traditional</option>
+            <option value="6">6 - Traditional</option>
           </select>
         </div>
         <div class="form-check form-check-inline col-xl-2 col-6 p-3">
@@ -44,7 +55,8 @@
             <p>Something went wrong. Try refreshing the page, or let us know at contact@haohaotiantian.com.</p>
           </div>
           <div v-if="unsubscribeResponse === true">
-            <p>You are successfully unsubscribed! 希望我们后会有期!</p>
+            <p v-if="characterSet == 'simplified'">You are successfully unsubscribed! 希望我们后会有期!</p>
+            <p v-if="characterSet == 'traditional'">You are successfully unsubscribed! 希望我們後會有期!</p>
           </div>
         </div>
       </div>
@@ -74,6 +86,11 @@ export default {
       },
       unsubscribeAllInput: false,
       unsubscribeResponse: null
+    }
+  },
+  computed: {
+    characterSet () {
+      return this.$root.$data.store.state.characterSet
     }
   },
   mounted () {
@@ -124,7 +141,7 @@ export default {
       this.subURL = 'https://api.haohaotiantian.com/unsub'
       return axios.post(this.subURL, {
         email: this.params.email,
-        level: this.params.level
+        list_id: this.params.level + '-' + this.characterSet
       })
         .then((response) => {
           if (response.data['success'] === true) {

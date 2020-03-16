@@ -1,18 +1,15 @@
 <template>
     <div id="large-header">
-
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-link float-right" title="Traditional Chinese" :class='{"active": characterSet === "traditional"}' @click="$root.$data.store.changeCharacterSet('traditional')">Traditional (繁体字)</button>
+                    <button class="btn btn-link float-right" title="Simplified Chinese" :class='{"active": characterSet === "simplified"}' @click="$root.$data.store.changeCharacterSet('simplified')">Simplified (简体字)</button>
+                </div>
+            </div>
+        </div>
         <div class="jumbotron jumbotron-fluid bg-img">
             <div class="container">
-                <div class="row float-right">
-                    <div class="btn-group float-right btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-toggle-char" title="Simplified Chinese" :class='{"active": charSet === "simplified"}' @click="$emit('update:charSet', 'simplified')">
-                            <input class="char-toggle-text" type="radio" name="options" id="option1" autocomplete="off" checked> 简体字 <br> Simplified
-                        </label>
-                        <label class="btn btn-toggle-char" :class='{"active": charSet === "traditional"}' @click="$emit('update:charSet', 'traditional')">
-                            <input class="char-toggle-text" type="radio" title="Traditional Chinese" name="options" id="option2" autocomplete="off"> 繁體字 <br> Traditional
-                        </label>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col title">
                         <h1 class="display-6">Daily Chinese Vocab</h1>
@@ -35,6 +32,11 @@ export default {
   data () {
     return {}
   },
+  computed: {
+    characterSet () {
+      return this.$root.$data.store.state.characterSet
+    }
+  },
   methods: {
   }
 }
@@ -46,7 +48,8 @@ export default {
   .btn-toggle-char {
     background-color: transparent;
     border-color: white;
-    color: white;
+    color: orangered;
+    font-size: small;
   }
 
   .btn-toggle-char:hover {
