@@ -174,7 +174,7 @@ export default {
   methods: {
     getSampleWords () {
       return axios
-        .get('https://api.haohaotiantian.com/sample_vocab', {}
+        .get(process.env.VUE_APP_API_URL + 'sample_vocab', {}
         )
         .then((response) => {
           this.exampleWordList = response.data
@@ -209,7 +209,7 @@ export default {
 
       console.log('Parameters... ', this.params)
 
-      this.subURL = 'https://api.haohaotiantian.com/sub'
+      this.subURL = process.env.VUE_APP_API_URL + 'sub'
       return axios.post(this.subURL, {
         email: this.params.email,
         list_id: this.params.level + '-' + this.characterSet

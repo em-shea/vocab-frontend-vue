@@ -143,7 +143,7 @@ export default {
       }
       // call wordHistory component based on dropdown inputs
       return axios
-        .get('https://api.haohaotiantian.com/history?', { params: this.params }
+        .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
         )
         .then((response) => {
           this.wordHistoryList = response.data[this.params.list].slice().reverse()

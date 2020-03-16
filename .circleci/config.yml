@@ -13,7 +13,13 @@ jobs:
 
       - run:
           name: Vue build
-          command: npm run build
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "staging" ]; then
+              npm run build:staging
+            fi
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              npm run build:prod
+            fi
 
       - run:
           name: Install awscli
