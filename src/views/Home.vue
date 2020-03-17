@@ -207,9 +207,15 @@ export default {
         return
       }
 
-      console.log('Parameters... ', this.params)
+      console.log('Calling submitSub... ')
 
       this.subURL = process.env.VUE_APP_API_URL + 'sub'
+      console.log('sub url...', this.subURL)
+
+      console.log('query params...', {
+        email: this.params.email,
+        list: this.params.level + '-' + this.characterSet
+      })
       return axios.post(this.subURL, {
         email: this.params.email,
         list: this.params.level + '-' + this.characterSet
