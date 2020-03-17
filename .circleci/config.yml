@@ -34,5 +34,5 @@ jobs:
             fi
             if [ "${CIRCLE_BRANCH}" == "staging" ]; then
               aws s3 cp dist s3://staging.haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
-              aws cloudfront create-invalidation --distribution-id E14R2YU4CYXBZG --paths /index.html app.js
+              aws cloudfront create-invalidation --distribution-id E14R2YU4CYXBZG --paths /index.html /app.js
             fi
