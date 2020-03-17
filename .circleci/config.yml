@@ -30,9 +30,9 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               aws s3 cp dist s3://haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
-              aws cloudfront create-invalidation --distribution-id EZXGJW5MPGC3K --paths /index.html
+              aws cloudfront create-invalidation --distribution-id EZXGJW5MPGC3K --paths /*
             fi
             if [ "${CIRCLE_BRANCH}" == "staging" ]; then
               aws s3 cp dist s3://staging.haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
-              aws cloudfront create-invalidation --distribution-id E14R2YU4CYXBZG --paths /index.html
+              aws cloudfront create-invalidation --distribution-id E14R2YU4CYXBZG --paths /*
             fi
