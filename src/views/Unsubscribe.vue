@@ -54,6 +54,12 @@
           <div v-if="unsubscribeResponse === false">
             <p>Something went wrong. Try refreshing the page, or let us know at contact@haohaotiantian.com.</p>
           </div>
+          <div v-if="emailInputted === false || emailValidated === false">
+            <p>Please enter a valid email.</p>
+          </div>
+          <div v-if="levelValidated === false">
+            <p>Please select an HSK level or select 'Unsubscribe all.'</p>
+          </div>
           <div v-if="unsubscribeResponse === true">
             <p v-if="characterSet == 'simplified'">You are successfully unsubscribed! 希望我们后会有期!</p>
             <p v-if="characterSet == 'traditional'">You are successfully unsubscribed! 希望我們後會有期!</p>
@@ -84,8 +90,12 @@ export default {
         email: null,
         level: 'default'
       },
+      unsubscribeListParam: null,
       unsubscribeAllInput: false,
-      unsubscribeResponse: null
+      unsubscribeResponse: null,
+      emailValidated: null,
+      emailInputted: null,
+      levelValidated: null
     }
   },
   computed: {
@@ -109,7 +119,7 @@ export default {
       if (this.$route.query.char) {
         this.$root.$data.store.changeCharacterSet(this.$route.query.char)
       }
-      if (this.$route.query.email) {
+      if (this.$route.query.email || this.$route.query.level || this.$route.query.char) {
         // Once the input fields are populated, remove query parameters from URL
         let query = Object.assign({}, this.$route.query)
         delete query.level
@@ -123,29 +133,33 @@ export default {
     submitUnsubscribe () {
       // Reset the unsubscribe response
       this.unsubscribeResponse = null
+      this.emailValidated = null
+      this.emailInputted = null
+      this.levelValidated = null
 
-      // If nothing is entered in email input field, do nothing
-      if (this.params.email === null) {
-        console.log('Email is null')
+      // Ensure a valid email is inputted and a level is selected
+      if (this.params.level === 'default' && this.unsubscribeAllInput === false) {
+        this.levelValidated = false
+        return false
+      }
+      if (!this.validateEmail()) {
         return
       }
 
       // If 'unsubscribe all' is selected, set level parameter to 'all'
       if (this.unsubscribeAllInput === true) {
-        this.params.level = 'all'
-      }
-
-      // If nothing is entered in level input field, do nothing
-      if (this.params.level === 'default') {
-        console.log('Level is default')
-        return
+        this.unsubscribeListParam = 'all'
       }
 
       // Call unsubscribe function
+      // Unless 'unsub all' selected, append characterSet string to selected list #
+      if (this.unsubscribeAllInput === false) {
+        this.unsubscribeListParam = this.params.level + '-' + this.characterSet
+      }
       this.subURL = process.env.VUE_APP_API_URL + 'unsub'
       return axios.post(this.subURL, {
         email: this.params.email,
-        list: this.params.level + '-' + this.characterSet
+        list: this.unsubscribeListParam
       })
         .then((response) => {
           if (response.data['success'] === true) {
@@ -154,6 +168,19 @@ export default {
             this.unsubscribeResponse = false
           }
         })
+    },
+
+    validateEmail () {
+      if (this.params.email === null) {
+        this.emailInputted = false
+        return false
+      } if (this.params.email.indexOf('@') === -1) {
+        this.emailValidated = false
+        return false
+      } else {
+        this.emailValidated = true
+        return true
+      }
     }
   }
 }

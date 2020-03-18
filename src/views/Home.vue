@@ -196,6 +196,7 @@ export default {
     },
 
     submitSubscription () {
+      this.subscribeResponse = null
       this.emailValidated = null
       this.emailInputted = null
       this.levelValidated = null
