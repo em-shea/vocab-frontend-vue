@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     // Prepopulates the input fields with the email and level if the user came from their email unsubscribe link
-    // Example parameters - /unsub?level=1&email=me@testemail.com
+    // Example parameters - /unsub?level=1&email=me@testemail.com&char=simplified
     populateUserInfo () {
       if (this.$route.query.email) {
         this.params.email = this.$route.query.email
@@ -106,11 +106,15 @@ export default {
       if (this.$route.query.level) {
         this.params.level = this.$route.query.level
       }
+      if (this.$route.query.char) {
+        this.$root.$data.store.changeCharacterSet(this.$route.query.char)
+      }
       if (this.$route.query.email) {
         // Once the input fields are populated, remove query parameters from URL
         let query = Object.assign({}, this.$route.query)
         delete query.level
         delete query.email
+        delete query.char
         this.$router.replace({ query })
       }
     },
