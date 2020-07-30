@@ -4,7 +4,7 @@
 
     <char-set-toggle></char-set-toggle>
     <div class="jumbotron jumbotron-fluid bg-img">
-      <div class="container">
+      <div class="container header-nav-container">
         <div class="row">
           <div class="col title">
             <h1 class="display-6">
@@ -42,8 +42,14 @@ export default {
 </script>
 
 <style scoped>
-  .jumbotron {
-    padding: 0.8rem 2rem
+  @media only screen and (min-width: 500px) and (max-width: 2000px) {
+    
+  }
+
+  @media only screen and (min-width: 0px) and (max-width: 500px) {
+    .header-link {
+      text-align: center;
+    }
   }
 
   .btn-toggle-char {
@@ -67,6 +73,7 @@ export default {
 
   .header-link {
     color: white;
+    padding: 0;
   }
 
   .header-link:hover {

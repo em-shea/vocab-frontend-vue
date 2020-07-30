@@ -53,6 +53,8 @@
   body {
     /* Margin bottom by footer height */
     margin-bottom: 90px;
+    overflow-x: hidden;
+    // overflow-y: hidden;
   }
 
   .footer {
