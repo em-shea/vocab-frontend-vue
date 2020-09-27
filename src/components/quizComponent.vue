@@ -1,98 +1,23 @@
 <template>
-
   <div id="quiz-component">
     <div class="overlay" v-if="showMenu" @click="showMenu = !showMenu"></div>
-    <div class="container">
-      <div class="dropdown quiz-settings-dropdown mt-3">
-        <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Options
-        </button>
-      </div>
-      <div v-bind:class="{ 'dropdown-menu-visible' : showMenu }" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <div class="container pt-3">  
-          <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Vocab list</span>
-            </div>
-          </div>
-          <div class="row menu-options-row">
-            <div v-for="list in vocabLists" :key="list" class="col-6">
-              <label class="form-check dropdown-options-label">
-                <input class="form-check-input" type="radio" name="vocabListRadios" id="exampleRadios1" value="option1" checked>
-                {{ list }}
-              </label>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Review period</span>
-            </div>
-          </div>
-          <div class="row menu-options-row">
-            <div class="col">
-              <div v-for="timePeriod in reviewTimePeriods" :key="timePeriod" class="form-check">
-                <label class="dropdown-options-label">
-                  <input class="form-check-input" type="radio" name="reviewPeriodRadios" id="exampleRadios1" value="option1" checked>
-                  {{ timePeriod }}
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Number of questions</span>
-            </div>
-          </div>
-          <div class="row menu-options-row">
-            <div class="col-12 px-2 text-center">
-              <input type="range" class="range-input" id="rangeInput" v-model="questionRangeSelected" @change="setQuestionRange()" value="0" min="0" max="2" step="1">
-            </div>
-            <div class="col">
-              <div>{{ questionQuantity }} questions</div>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Character set</span>
-              <!-- <a class="dropdown-item" href="#">Something else here</a> -->
-            </div>
-          </div>
-          <div class="row menu-options-row">
-            <div class="col">
-              <div class="form-check">
-                <label class="dropdown-options-label">
-                  <input class="form-check-input" type="radio" name="charSetRadios" id="exampleRadios1" value="option1" checked>
-                  Simplified
-                </label>
-              </div>
-              <div class="form-check">
-                <label class="dropdown-options-label">
-                  <input class="form-check-input" type="radio" name="charSetRadios" id="exampleRadios1" value="option1" checked>
-                  Traditional
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="row justify-content-between mt-3 mx-4">
-            <div class="col">
-              <button class="close-options-btn btn btn-secondary float-right mr-4" @click="showMenu = !showMenu">Close</button>
-            </div>
-            <div class="col new-quiz-btn-col">
-              <button type="button" class="btn new-quiz-btn">New quiz</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="dropdown quiz-settings-dropdown mt-3">
+      <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
+      </button>
     </div>
+    <quiz-settings-menu
+      :showMenu="showMenu"
+      :vocabLists="vocabLists"
+      :reviewTimePeriods="reviewTimePeriods"
+      :questionRangeSelected="questionRangeSelected"
+      :questionQuantity="questionQuantity"
+    ></quiz-settings-menu>
     <div class="container main-container" v-if="!displayResults">
       <div class="row m-4">
         <div class="col">
           <p class="quiz-title">
-            HSK Level 1, past 14 days
+            {{ selectedVocabList }}, past {{ questionRangeSelected }} days
           </p>
           <p class="question-number">
             {{ questionNumber }} of {{ totalQuestions }}, {{ percentCompletion }}
@@ -105,19 +30,19 @@
       <div class="row mt-4 mb-2">
         <div class="col">
           <h3 class="quiz-question" v-bind:class="{ 'question-definition-small' : selectedTestSet['question'] === 'Definition' }">
-            {{ selectedQuizWords[0][selectedTestSet['question']] }}
+            {{ selectedQuizWords[0]['Word'][selectedTestSet['question']] }}
             <div class="question-pinyin mt-2" v-if="pinyinToggled && selectedTestSet['question'] == 'Word'">
-              {{ selectedQuizWords[0]['Pronunciation'] }}
+              {{ selectedQuizWords[0]['Word']['Pronunciation'] }}
             </div>
           </h3>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12 my-2" v-for="word in reshuffledQuizWords" :key="word['Word']+word['HSK Level']">
+      <div class="row mx-4">
+        <div class="col-12 my-2" v-for="word in reshuffledQuizWords" :key="word['Word']['Word']">
           <div class="btn-group btn-group-toggle btn-block question-answers-form my-1">
-            <label class="btn btn-light quiz-answers-button btn-block" :class="{ active : word === answerSelected }">
+            <label class="btn btn-light quiz-answers-button shadow-sm btn-block" :class="{ active : word === answerSelected }">
               <input v-model="answerSelected" type="radio" name="exampleRadios" id="exampleRadios1" :value="word" v-on:change="submitAnswer(word)">
-              {{ word[selectedTestSet['answers']] }}
+              {{ word['Word'][selectedTestSet['answers']] }}
               <!-- <label class="form-check-label pl-1" v-if="pinyinToggled && selectedTestSet['answers'] == 'Word'">
                 {{ word['Pronunciation'] }}
               </label> -->
@@ -125,20 +50,22 @@
           </div>
         </div>
       </div>
-      <div v-if="answerResults === null" class="row justify-content-between mt-2">
+      <!-- <div v-if="answerResults === null" class="row justify-content-between mt-2">
         <div class="col-3">
           <button type="button" class="btn btn-block btn-secondary" @click="displayHint()">Hint</button>
         </div>
         <div class="col-3">
           <button type="button" class="btn btn-block btn-secondary" @click="togglePinyin()">Pinyin</button>
         </div>
-      </div>
+      </div> -->
       <div v-if="answerResults != null" class="row my-3 mx-3">
         <div class="col-12 answer-results">
-          <p v-if="answerResults === true">对 👍</p>
+          <p v-if="answerResults === true && characterSet === 'simplified'">对 👍</p>
+          <p v-if="answerResults === true && characterSet === 'traditional'">對 👍</p>
         </div>
         <div class="col-12 answer-results">
-          <p v-if="answerResults === false">不对 👎</p>
+          <p v-if="answerResults === false && characterSet === 'simplified'">不对 👎</p>
+          <p v-if="answerResults === false && characterSet === 'traditional'">不對 👎</p>
         </div>
         <div class="col-12 text-center">
           <button type="button" class="btn btn-secondary" @click="nextQuestion()">Next</button>
@@ -156,12 +83,11 @@
       </div>
       <div class="row mt-3">
         <div class="col text-center">
-          <button type="button" class="btn btn-secondary" @click="nextQuestion()">New quiz</button>
+          <button type="button" class="btn btn-secondary" @click="newQuiz()">New quiz</button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -171,17 +97,19 @@
 // Show traditional characters
 // Save progress across questions
 
+import quizSettings from '@/components/quizSettings.vue'
+
 export default {
   name: 'quizComponent',
   props: {
     quizWords: Array
   },
   components: {
+    'quiz-settings-menu': quizSettings
   },
   data () {
     return {
-      showMenu: true,
-      shuffledQuizWords: null,
+      showMenu: false,
       selectedQuizWords: null,
       reshuffledQuizWords: null,
       pinyinToggled: false,
@@ -189,8 +117,6 @@ export default {
       hintsUsed: 0,
       answerSelected: null,
       answerResults: null,
-      questionQuantity: 10,
-      questionRangeSelected: 0,
       questionNumber: 1,
       totalQuestions: 3,
       correctAnswers: 0,
@@ -209,16 +135,20 @@ export default {
         { 'question': 'Pronunciation',
           'answers': 'Word' }
       ],
+      selectedTestSet: null,
+      questionRangeSelected: 7,
       reviewTimePeriods: [
         '1 week',
         '2 weeks',
         '1 month'
       ],
+      questionQuantity: 10,
       questionQuantityOptions: [
         10,
         20,
         30
       ],
+      selectedVocabList: 'HSK Level 1',
       vocabLists: [
         'HSK Level 1',
         'HSK Level 2',
@@ -229,11 +159,13 @@ export default {
         // 'Chengyu 1',
         // 'Chengyu 2',
         // 'Chengyu 3'
-      ],
-      selectedTestSet: null
+      ]
     }
   },
   computed: {
+    characterSet () {
+      return this.$root.$data.store.state.characterSet
+    },
     percentCompletion () {
       let decimalValue = this.questionNumber / this.totalQuestions
       let percentValue = (decimalValue * 100).toFixed(0) + '%'
@@ -248,20 +180,35 @@ export default {
   mounted () {
     this.setQuizWords()
     this.selectTestSet()
+    this.setCharacterSet()
   },
   methods: {
     setQuizWords () {
-      this.shuffledQuizWords = this.shuffle(this.quizWords)
-      this.selectedQuizWords = this.shuffledQuizWords.slice(0, 4)
+      // console.log('set quiz words, ', this.quizWords)
+      let dedupedQuizWords = this.dedupe(this.quizWords)
+      let shuffledQuizWords = this.shuffle(dedupedQuizWords)
+      this.selectedQuizWords = shuffledQuizWords.slice(0, 4)
+      // reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
     },
     selectTestSet () {
       var randomInt = Math.floor(Math.random() * Math.floor(this.testSet.length))
       this.selectedTestSet = this.testSet[randomInt]
-      console.log(this.selectedTestSet)
+    },
+    setCharacterSet () {
+      if (this.characterSet === 'traditional') {
+        for (let i = 0; i < this.testSet.length; i++) {
+          if (this.testSet[i]['question'] === 'Word') {
+            this.testSet[i]['question'] = 'Word-Traditional'
+          }
+          if (this.testSet[i]['answers'] === 'Word') {
+            this.testSet[i]['answers'] = 'Word-Traditional'
+          }
+        }
+      }
     },
     displayHint () {
-      // increment hint counter
+      // incement hint counter
       // show hint (can't be untoggled once pressed)
     },
     togglePinyin () {
@@ -277,25 +224,32 @@ export default {
       this.answerSelected = word
       if (this.selectedQuizWords[0] === this.answerSelected) {
         this.answerResults = true
-        // console.log('correct..', this.correctAnswers)
         this.correctAnswers = this.correctAnswers + 1
-        // console.log('correct plus 1..', this.correctAnswers)
       } else {
         this.answerResults = false
       }
     },
     nextQuestion () {
       if (this.questionNumber !== this.totalQuestions) {
-        this.setQuizWords()
-        this.selectTestSet()
-        this.pinyinToggled = false
-        this.hintOn = false
-        this.answerSelected = null
-        this.answerResults = null
+        this.resetQuestion()
         this.questionNumber = this.questionNumber + 1
       } else {
         this.displayResults = true
       }
+    },
+    newQuiz () {
+      this.resetQuestion()
+      this.displayResults = false
+      this.questionNumber = 1
+      this.correctAnswers = 0
+    },
+    resetQuestion () {
+      this.setQuizWords()
+      this.selectTestSet()
+      this.pinyinToggled = false
+      this.hintOn = false
+      this.answerSelected = null
+      this.answerResults = null
     },
     shuffle (inputArray) {
       // Make copy of inputArray since shuffle passes the input by reference
@@ -305,12 +259,25 @@ export default {
         [array[i], array[j]] = [array[j], array[i]]
       }
       return array
+    },
+    dedupe (inputArray) {
+      let dedupedArray = []
+      let uniqueObject = {}
+      for (let i in inputArray) {
+        let word = inputArray[i]['Word']['Word']
+        uniqueObject[word] = inputArray[i]
+      }
+      for (let i in uniqueObject) {
+        dedupedArray.push(uniqueObject[i])
+      }
+      return dedupedArray
     }
   }
 }
 </script>
 
 <style scoped>
+
   .overlay {
     position: absolute;
     right: 0;
@@ -327,7 +294,7 @@ export default {
   }
 
   .main-container {
-    padding-top: 2rem;
+    padding-top: 0.5em;
   }
 
   .progress-bar {
@@ -336,7 +303,7 @@ export default {
   }
 
   .question-definition-small {
-    font-size: 1.1rem;
+    font-size: 1.1em;
   }
 
   .new-quiz-btn, .quiz-answers-button:not(:disabled):not(.disabled).active {
@@ -349,17 +316,29 @@ export default {
     text-align: center;
   }
 
+  .quiz-question {
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
+    font-size: 2.5em;
+  }
+
+  .quiz-title {
+    font-size: 1.4em;
+    /* font-weight: bold; */
+  }
+
   .question-number {
-    font-size: 80%;
     margin-bottom: 0;
   }
 
   .question-pinyin {
-    font-size: 70%;
+    font-size: 0.7em;
   }
 
   .quiz-answers-button{
     cursor: pointer;
+    font-size: 1.6em;
+    border-radius: .5em;
   }
 
   .answer-results {
@@ -368,6 +347,10 @@ export default {
 
   .quiz-settings-dropdown {
     text-align: right;
+  }
+
+  .oi-icon {
+    font-size: 15px;
   }
 
   .dropdown-menu {
@@ -393,7 +376,7 @@ export default {
 
   .dropdown-toggle {
     position: absolute;
-    right: -5%;
+    right: 0.5%;
     min-height: 45px;
   }
 
@@ -406,13 +389,13 @@ export default {
   }
 
   .menu-options-row {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
   }
 
   .dropdown-title {
     /* font-weight: bold; */
-    font-size: 0.8rem;
+    font-size: 0.8em;
   }
 
   .range-input {

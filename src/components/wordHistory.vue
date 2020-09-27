@@ -1,6 +1,4 @@
 <template>
-
-  <!-- Renders and conditionally formats wordHistory -->
   <div class="card border-secondary shadow-sm">
     <div class="card-header main-card d-flex w-100 justify-content-between" v-on:click="clickDescription()">
       <h5>
@@ -37,7 +35,6 @@
       </p>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -58,7 +55,6 @@ export default {
   },
   methods: {
     clickDescription () {
-      console.log('clicking description', this.clicked)
       if (this.clicked === false) {
         this.clicked = true
       } else {

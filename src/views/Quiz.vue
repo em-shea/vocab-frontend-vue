@@ -1,9 +1,10 @@
 <template>
-
   <!-- Generates tests for a given timeframe of daily words for a given level -->
   <div id="quiz">
     <small-nav></small-nav>
-    <quiz-component :quizWords="quizWords"></quiz-component>
+    <!-- Reference quiz settings here? -->
+    <!-- Move javascript here so that data can be sent as props to quizcomponent and quizsettings -->
+    <quiz-component v-if="dataLoaded" :quizWords="quizWords"></quiz-component>
   </div>
 </template>
 
@@ -20,73 +21,14 @@ export default {
   },
   data () {
     return {
-      cards: [],
-      page: 0,
-      quizWords: [
-        {
-          'Word': '老师',
-          'Pronunciation': 'lǎo shī',
-          'Definition': 'teacher; CL:個|个[ge4],位[wei4]',
-          'HSK Level': '1',
-          'Word-Traditional': '老師'
-        },
-        {
-          'Word': '二',
-          'Pronunciation': 'èr',
-          'Definition': 'two; 2; stupid (Beijing dialect)',
-          'HSK Level': '1',
-          'Word-Traditional': '二'
-        },
-        {
-          'Word': '认识',
-          'Pronunciation': 'rèn shi',
-          'Definition': 'to know; to recognize; to be familiar with; acquainted with sth; knowledge; understanding; awareness; cognition',
-          'HSK Level': '1',
-          'Word-Traditional': '認識'
-        },
-        {
-          'Word': '是',
-          'Pronunciation': 'shì',
-          'Definition': 'is; are; am; yes; to be',
-          'HSK Level': '1',
-          'Word-Traditional': '是'
-        },
-        {
-          'Word': '菜',
-          'Pronunciation': 'cài',
-          'Definition': 'dish (type of food); vegetables; vegetable; cuisine; CL:盤|盘[pan2],道[dao4]',
-          'HSK Level': '1',
-          'Word-Traditional': '菜'
-        },
-        {
-          'Word': '字',
-          'Pronunciation': 'zì',
-          'Definition': 'letter; symbol; character; word; CL:個|个[ge4]; courtesy or style name traditionally given to males aged 20 in dynastic China',
-          'HSK Level': '1',
-          'Word-Traditional': '字'
-        },
-        {
-          'Word': '七',
-          'Pronunciation': 'qī',
-          'Definition': 'seven; 7',
-          'HSK Level': '1',
-          'Word-Traditional': '七'
-        },
-        {
-          'Word': '吃',
-          'Pronunciation': 'chī',
-          'Definition': "to eat; to have one's meal; to eradicate; to destroy; to absorb; to suffer; to exhaust",
-          'HSK Level': '1',
-          'Word-Traditional': '吃'
-        },
-        {
-          'Word': '了',
-          'Pronunciation': 'le',
-          'Definition': '(modal particle intensifying preceding clause); (completed action marker)',
-          'HSK Level': '1',
-          'Word-Traditional': '了'
-        }
-      ]
+      dataLoaded: false,
+      params: {
+        list: 'HSKLevel5',
+        date_range: 14
+      },
+      levelList: { HSKLevel1: 'HSK Level 1', HSKLevel2: 'HSK Level 2', HSKLevel3: 'HSK Level 3', HSKLevel4: 'HSK Level 4', HSKLevel5: 'HSK Level 5', HSKLevel6: 'HSK Level 6' },
+      dateRange: { 7: '1 week', 14: '2 weeks', 30: '1 month' },
+      quizWords: []
     }
   },
   computed: {
@@ -94,12 +36,51 @@ export default {
       return this.$root.$data.store.state.characterSet
     }
   },
-  mounted () {
+  watch: {
+    characterSet: function () {
+      this.pushToRouter()
+    }
+  },
+  mounted: function () {
+    this.checkInitialParams()
+    this.getWordHistory()
   },
   methods: {
-    // Call wordHistory component based on level query string parameters, set initial query string parameters to level 1 if none provided
-    // Generate multiple choice tests - Pull word data (pronunciation, definition) for ~4 other words to create other options.
-    // Keep running tally of score
+    pushToRouter () {
+      if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range || this.$route.query.char !== this.characterSet) {
+        this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range, 'char': this.characterSet } })
+        console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
+      }
+    },
+    checkInitialParams () {
+      // Check if acceptable parameters have been passed (HSK 1-6, (7,14,30) days, simplified/traditional)
+      if (this.$route.query.list in this.levelList) {
+        this.params.list = this.$route.query.list
+      }
+      if (this.$route.query.dates in this.dateRange) {
+        this.params.date_range = this.$route.query.dates
+      }
+      if (this.$route.query.char === 'simplified' || this.$route.query.char === 'traditional') {
+        if (this.characterSet === this.$route.query.char) {
+        } else {
+          this.$root.$data.store.changeCharacterSet(this.$route.query.char)
+        }
+      }
+    },
+    getWordHistory () {
+      // If either the HSK level or the date range has changed, update the query string parameters
+      // if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range) {
+      //   this.pushToRouter()
+      // }
+      // call wordHistory component based on dropdown inputs
+      return axios
+        .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
+        )
+        .then((response) => {
+          this.quizWords = response.data[this.params.list].slice().reverse()
+          this.dataLoaded = true
+        })
+    }
   }
 }
 </script>

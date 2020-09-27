@@ -97,8 +97,8 @@
 <script>
 export default {
   name: 'faqContent',
-  // data () {
-  // },
+  data () {
+  },
   computed: {
     characterSet () {
       return this.$root.$data.store.state.characterSet

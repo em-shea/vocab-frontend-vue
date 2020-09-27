@@ -2,6 +2,7 @@
 
   <div id="history">
   <!-- Shows daily word history for the past ~3 months for given HSK level -->
+    <char-set-toggle></char-set-toggle>
     <small-nav></small-nav>
 
     <div class="container">
@@ -76,13 +77,15 @@ import smallNav from '@/components/smallNav.vue'
 import wordHistory from '@/components/wordHistory.vue'
 import * as XLSX from 'xlsx'
 import customFooter from '@/components/footer.vue'
+import characterSetToggle from '@/components/characterSetToggle.vue'
 
 export default {
   name: 'history',
   components: {
     'small-nav': smallNav,
     'word-history-card': wordHistory,
-    'custom-footer': customFooter
+    'custom-footer': customFooter,
+    'char-set-toggle': characterSetToggle
   },
   data () {
     return {
