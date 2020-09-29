@@ -95,7 +95,7 @@ export default {
   name: 'quizSettings',
   props: {
     showMenu: Boolean,
-    vocabLists: Array,
+    vocabLists: Object,
     reviewTimePeriods: Array,
     questionRangeSelected: Number,
     questionQuantity: Number
@@ -109,3 +109,44 @@ export default {
   methods: {}
 }
 </script>
+
+<style scoped>
+  .dropdown-menu {
+    display: block;
+    width: 100%;
+    bottom: -550px;
+    left: unset;
+    right: 0;
+    top: unset;
+    transition: bottom, 1s;
+    border: none;
+    border-bottom-left-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+
+  .dropdown-menu-visible {
+    display: block;
+    bottom: 0px;
+    transition: bottom, 1s;
+  }
+
+  .dropdown-options-label {
+    margin-bottom: 0;
+  }
+
+  .menu-options-row {
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+  }
+
+  .dropdown-title {
+    /* font-weight: bold; */
+    font-size: 0.8em;
+  }
+
+  .range-input {
+    min-width: 80%;
+  }
+</style>

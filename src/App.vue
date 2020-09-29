@@ -24,6 +24,7 @@
 //     }
 //   }
 // }
+
   .sticky-top {
     position: -webkit-sticky;
     position: sticky;
@@ -108,5 +109,16 @@
     margin-bottom: 1rem;
     width: 100%;
     max-width: 500px;
+  }
+
+  // Desktop
+  @media only screen and (min-width: 500px) and (max-width: 2000px) {
+  }
+
+  // Mobile
+  @media only screen and (min-width: 0px) and (max-width: 500px) {
+    body {
+      margin-bottom: 52px;
+    }
   }
 </style>

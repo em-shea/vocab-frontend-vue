@@ -38,12 +38,13 @@ export default {
   @media only screen and (min-width: 0px) and (max-width: 500px) {
     .header-link {
       text-align: center;
+      font-size: 2.25rem;
     }
   }
 
   .jumbotron {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   .btn-toggle-char {
@@ -62,7 +63,7 @@ export default {
   }
 
   .char-toggle-text {
-      font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 
   .header-link {
