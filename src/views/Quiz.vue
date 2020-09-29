@@ -3,11 +3,6 @@
   <div id="quiz">
     <small-nav></small-nav>
     <div class="overlay" v-if="showMenu" @click="showMenu = !showMenu"></div>
-    <div class="dropdown quiz-settings-dropdown mt-3">
-      <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
-      </button>
-    </div>
     <div class="container">
       <div v-bind:class="{ 'dropdown-menu-visible' : showMenu }" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <div class="container pt-3">
@@ -103,17 +98,24 @@
         </div>
       </div>
     </div>
+    <div class="dropdown quiz-settings-dropdown">
+      <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
+      </button>
+    </div>
     <div class="container" v-if="!displayResults">
-      <div class="row m-4">
+      <div class="row">
         <div class="col">
           <p class="quiz-title">
             {{ selectedVocabList }}, past {{ questionRangeSelected }} days
           </p>
-          <p class="question-number">
+          <!-- <p class="question-number">
             {{ questionNumber }} of {{ totalQuestions }}, {{ percentCompletion }}
-          </p>
+          </p> -->
           <div class="progress">
-            <div class="progress-bar" role="progressbar" :style="{width: percentCompletion}"></div>
+            <div class="progress-bar" role="progressbar" :style="{width: percentCompletion}">
+              <span> {{ questionNumber }} / {{ totalQuestions }} </span>
+            </div>
           </div>
         </div>
       </div>
@@ -231,24 +233,24 @@ export default {
       // hintOn: false,
       // hintsUsed: 0,
       questionNumber: 1,
-      totalQuestions: 3,
+      totalQuestions: 6,
       answerSelected: null,
       answerResults: null,
       correctAnswers: 0,
       displayResults: false,
       testSet: [
+        // { 'question': 'Word',
+        //   'answers': 'Pronunciation' },
+        // { 'question': 'Pronunciation',
+        //   'answers': 'Word' },
         { 'question': 'Word',
-          'answers': 'Pronunciation' },
-        { 'question': 'Pronunciation',
-          'answers': 'Word' },
-        { 'question': 'Word',
-          'answers': 'Definition' },
-        { 'question': 'Definition',
-          'answers': 'Word' },
-        { 'question': 'Word',
-          'answers': 'Pronunciation' },
-        { 'question': 'Pronunciation',
-          'answers': 'Word' }
+          'answers': 'Definition' }
+        // { 'question': 'Definition',
+        //   'answers': 'Word' },
+        // { 'question': 'Word',
+        //   'answers': 'Pronunciation' },
+        // { 'question': 'Pronunciation',
+        //   'answers': 'Word' }
       ],
       selectedTestSet: null,
       questionQuantity: 10,
@@ -322,7 +324,10 @@ export default {
         .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
         )
         .then((response) => {
-          this.quizWords = response.data[this.params.list].slice().reverse()
+          let wordHistoryResponse = response.data[this.params.list].slice().reverse()
+          // this.quizWords = response.data[this.params.list].slice().reverse()
+          let dedupedQuizWords = this.dedupe(wordHistoryResponse)
+          this.quizWords = this.shortenDef(dedupedQuizWords)
         })
     },
     // setQuestionRange () {
@@ -342,8 +347,7 @@ export default {
     },
     setQuizWords () {
       // console.log('set quiz words, ', this.quizWords)
-      let dedupedQuizWords = this.dedupe(this.quizWords)
-      let shuffledQuizWords = this.shuffle(dedupedQuizWords)
+      let shuffledQuizWords = this.shuffle(this.quizWords)
       this.selectedQuizWords = shuffledQuizWords.slice(0, 4)
       // reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
@@ -407,8 +411,19 @@ export default {
       }
       return dedupedArray
     },
+    shortenDef (inputArray) {
+      let shortenedDefWords = []
+      for (let i in inputArray) {
+        let wordDefinition = inputArray[i]['Word']['Definition']
+        if (wordDefinition.length > 80) {
+          inputArray[i]['Word']['Definition'] = wordDefinition.substring(0, 80) + '...'
+        }
+        shortenedDefWords.push(inputArray[i])
+      }
+      return shortenedDefWords
+    },
     getTextClass (value) {
-      console.log('get class', value)
+      // console.log('get class', value)
       if (value === 'Definition') {
         return 'question-definition-small'
       }
@@ -418,13 +433,10 @@ export default {
       if (word === this.answerSelected) {
         classList.push('active')
       }
-      // if (this.answerSelected) {
-      //   classList.push('disabled')
-      // }
       if (this.answerSelected && word !== this.selectedQuizWords[0]) {
         classList.push('grayed')
       }
-      if (word !== this.answerSelected && word === this.selectedQuizWords) {
+      if (this.answerSelected !== null && word !== this.answerSelected && word === this.selectedQuizWords[0]) {
         classList.push('highlight-correct-answer')
       }
       return classList
@@ -443,6 +455,11 @@ export default {
     background-color: gray;
     opacity: 0.33;
     z-index: 20;
+  }
+
+  .progress {
+    max-width: 70%;
+    margin-left: 50px;
   }
 
   .progress-bar {
@@ -471,15 +488,13 @@ export default {
     color: white;
   }
 
-  .quiz-answers-button.disabled.grayed {
+  .quiz-answers-button.grayed {
     background-color: #e9ecef;
     border-color: #e9ecef;
   }
 
-  .quiz-answers-button.disabled.highlight-correct-answer {
-    background-color: #ff8f00;
-    border-color: #ff8f00;
-    color: white;
+  .quiz-answers-button.highlight-correct-answer {
+    border: orangered 3px solid;
   }
 
   .quiz-title, .quiz-question, .question-number {
