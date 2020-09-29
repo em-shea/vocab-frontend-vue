@@ -3,95 +3,72 @@
   <div id="quiz">
     <small-nav></small-nav>
     <div class="overlay" v-if="showMenu" @click="showMenu = !showMenu"></div>
-    <div class="container">
-      <div v-bind:class="{ 'dropdown-menu-visible' : showMenu }" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <div class="container pt-3">
-          <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Vocab list</span>
-            </div>
-          </div>
-          <div class="row menu-options-row">
+    <div class="container" v-if="showMenu">
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <div class="container dropdown-menu-container">
+          <!-- <div class="row menu-options-row">
             <div v-for="list in vocabLists" :key="list" class="col-6">
               <label class="form-check dropdown-options-label">
                 <input v-model="selectedVocabList" :value="list" class="form-check-input" type="radio" name="vocabListRadios" id="exampleRadios1" checked>
                 {{ list }}
               </label>
             </div>
-          </div>
-          <div class="dropdown-divider"></div>
+          </div> -->
           <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Review period</span>
+            <div class="col-12">
+              <label for="listSelect">Vocab list</label>
+            </div>
+            <div class="col-12 mb-3">
+              <select v-model="selectedVocabList" class="form-control" id="listSelect">
+                <option v-for="list in vocabLists" :key="list">{{ list }}</option>
+              </select>
             </div>
           </div>
-          <div class="row menu-options-row">
-            <div class="col">
-              <div v-for="timePeriod in dateRange" :key="timePeriod" class="form-check">
-                <label class="dropdown-options-label">
-                  <input v-model="questionRangeSelected" :value="timePeriod" class="form-check-input" type="radio" name="reviewPeriodRadios" id="exampleRadios1" checked>
-                  {{ timePeriod }}
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
           <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Number of questions</span>
+            <div class="col-12">
+              <label for="reviewPeriodSelect">Review period</label>
+              <!-- figure out how to vind to selected value -->
             </div>
-          </div>
-          <div class="row menu-options-row">
-            <div class="col">
-              <div v-for="quantity in questionQuantityOptions" :key="quantity" class="form-check">
-                <label class="dropdown-options-label">
-                  <input v-model="questionQuantity" :value="quantity" class="form-check-input" type="radio" name="questionQuantityRadios" id="exampleRadios1" checked>
-                  {{ quantity }}
-                </label>
+            <div class="col-12 mb-3 text-center">
+              <div :bind="questionRangeSelected" @input="questionRangeSelected = timePeriod" class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
+                <button v-for="timePeriod in dateRange" :key="timePeriod" type="button" class="btn btn-light btn-group-wide">{{ timePeriod }}</button>
               </div>
             </div>
-            <!-- <div class="col-12 px-2 text-center">
-              <input type="range" class="range-input" id="rangeInput" v-model="questionQuantity" @change="setQuestionRange()" value="0" min="0" max="2" step="1">
-            </div>
-            <div class="col">
-              <div>{{ questionQuantity }} questions</div>
-            </div> -->
           </div>
-          <div class="dropdown-divider"></div>
           <div class="row">
-            <div class="col">
-              <span class="dropdown-item dropdown-title">Character set</span>
-              <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+            <div class="col-12">
+              <!-- figure out how to vind to selected value -->
+              <label for="reviewPeriodSelect">Number of questions</label>
             </div>
-          </div>
-          <div class="row menu-options-row">
-            <div class="col">
-              <div class="form-check">
-                <label class="dropdown-options-label">
-                  <input class="form-check-input" type="radio" name="charSetRadios" id="exampleRadios1" value="option1" checked>
-                  Simplified
-                </label>
-              </div>
-              <div class="form-check">
-                <label class="dropdown-options-label">
-                  <input class="form-check-input" type="radio" name="charSetRadios" id="exampleRadios1" value="option1" checked>
-                  Traditional
-                </label>
+            <div class="col-12 mb-3 text-center">
+              <div :bind="questionQuantity" @input="questionQuantity = quantity" class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
+                <button v-for="quantity in questionQuantityOptions" :key="quantity" type="button" class="btn btn-light btn-group-wide">{{ quantity }}</button>
               </div>
             </div>
           </div>
-          <div class="dropdown-divider"></div>
-          <div class="row justify-content-between mt-3 mx-4">
+          <div class="row">
+            <div class="col-12">
+              <label for="reviewPeriodSelect">Character Set</label>
+            </div>
+            <div class="col-12 mb-2 text-center">
+              <!-- figure out how to vind to selected value -->
+              <div class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
+                <button type="button" class="btn btn-light btn-group-wide">Simplified</button>
+                <button type="button" class="btn btn-light btn-group-wide">Traditional</button>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-between mt-3">
             <div class="col">
-              <button class="close-options-btn btn btn-secondary float-right mr-4" @click="showMenu = !showMenu">
+              <button class="close-options-btn btn btn-light btn-shadow float-right mr-4" @click="showMenu = !showMenu">
                 Close
-                <span class="oi oi-x oi-icon" title="oi-x"></span>
+                <span class="oi oi-x oi-icon menu-icon" title="oi-x"></span>
               </button>
             </div>
             <div class="col new-quiz-btn-col">
-              <button type="button" class="btn new-quiz-btn" @click="newQuiz(); showMenu = !showMenu">
+              <button type="button" class="btn btn-shadow new-quiz-btn" @click="newQuiz(); showMenu = !showMenu">
                 New quiz
-                <span class="oi oi-reload oi-icon"></span>
+                <span class="oi oi-reload oi-icon menu-icon"></span>
               </button>
             </div>
           </div>
@@ -99,7 +76,7 @@
       </div>
     </div>
     <div class="dropdown quiz-settings-dropdown">
-      <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
       </button>
     </div>
@@ -127,7 +104,7 @@
         :questionQuantity="questionQuantity"
       ></quiz-settings-menu> -->
       <div class="container" v-if="!loadingQuiz">
-        <div class="row mt-4 mb-2">
+        <div class="row mx-4 mt-4 mb-2">
           <div class="col">
             <h3 class="quiz-question" v-bind:class="getTextClass(selectedTestSet['question'])">
               {{ selectedQuizWords[0]['Word'][selectedTestSet['question']] }}
@@ -167,7 +144,7 @@
           <p v-if="answerResults === false && characterSet === 'traditional'">不對 👎</p>
         </div>
         <div class="col-6 text-center">
-          <button type="button" class="btn btn-secondary" @click="nextQuestion()">Next</button>
+          <button type="button" class="btn btn-light next-button" @click="nextQuestion()">Next</button>
         </div>
       </div>
     </div>
@@ -182,7 +159,7 @@
       </div>
       <div class="row mt-3">
         <div class="col text-center">
-          <button type="button" class="btn btn-secondary" @click="newQuiz()">New quiz</button>
+          <button type="button" class="btn btn-secondary btn-shadow" @click="newQuiz()">New quiz</button>
         </div>
       </div>
     </div>
@@ -233,24 +210,24 @@ export default {
       // hintOn: false,
       // hintsUsed: 0,
       questionNumber: 1,
-      totalQuestions: 6,
+      totalQuestions: 30,
       answerSelected: null,
       answerResults: null,
       correctAnswers: 0,
       displayResults: false,
       testSet: [
-        // { 'question': 'Word',
-        //   'answers': 'Pronunciation' },
-        // { 'question': 'Pronunciation',
-        //   'answers': 'Word' },
         { 'question': 'Word',
-          'answers': 'Definition' }
-        // { 'question': 'Definition',
-        //   'answers': 'Word' },
-        // { 'question': 'Word',
-        //   'answers': 'Pronunciation' },
-        // { 'question': 'Pronunciation',
-        //   'answers': 'Word' }
+          'answers': 'Pronunciation' },
+        { 'question': 'Pronunciation',
+          'answers': 'Word' },
+        { 'question': 'Word',
+          'answers': 'Definition' },
+        { 'question': 'Definition',
+          'answers': 'Word' },
+        { 'question': 'Word',
+          'answers': 'Pronunciation' },
+        { 'question': 'Pronunciation',
+          'answers': 'Word' }
       ],
       selectedTestSet: null,
       questionQuantity: 10,
@@ -458,8 +435,8 @@ export default {
   }
 
   .progress {
-    max-width: 70%;
-    margin-left: 50px;
+    max-width: 50%;
+    margin-left: 87px;
   }
 
   .progress-bar {
@@ -468,7 +445,8 @@ export default {
   }
 
   .quiz-title {
-    font-size: 1.4em;
+    margin-top: 15px;
+    font-size: 1em;
     text-align: center;
     /* font-weight: bold; */
   }
@@ -478,8 +456,12 @@ export default {
     padding-top: 0.5em;
   }
 
-  .quiz-question.question-definition-small, .quiz-answers-button.question-definition-small {
-    font-size: 1.4em;
+  .quiz-question.question-definition-small {
+    font-size: 1.5em;
+  }
+
+  .quiz-answers-button.question-definition-small {
+    font-size: 1em;
   }
 
   .new-quiz-btn, .quiz-answers-button:not(:disabled):not(.disabled).active {
@@ -488,10 +470,10 @@ export default {
     color: white;
   }
 
-  .quiz-answers-button.grayed {
-    background-color: #e9ecef;
-    border-color: #e9ecef;
-  }
+  // .quiz-answers-button.grayed {
+  //   background-color: #e9ecef;
+  //   border-color: #e9ecef;
+  // }
 
   .quiz-answers-button.highlight-correct-answer {
     border: orangered 3px solid;
@@ -502,9 +484,9 @@ export default {
   }
 
   .quiz-question {
-    margin-bottom: 0.6em;
+    // margin-bottom: 0.6em;
     font-weight: 400;
-    font-size: 2.5em;
+    font-size: 2em;
   }
 
   .question-number {
@@ -517,9 +499,13 @@ export default {
 
   .quiz-answers-button{
     cursor: pointer;
-    font-size: 1.6em;
+    font-size: 1.2em;
     font-weight: 400;
     border-radius: .5em;
+  }
+
+  .btn-shadow {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
   }
 
   .answer-results {
@@ -531,33 +517,38 @@ export default {
   }
 
   .oi-icon {
-    font-size: 15px;
+    font-size: 13px;
   }
 
   .dropdown-toggle {
+    z-index: 5;
     position: absolute;
     right: 4%;
     min-height: 45px;
+    margin-top: 7px;
   }
 
   .dropdown-toggle::after {
     display: none;
   }
 
-  // dropdown menu
   .dropdown-menu {
     display: block;
-    width: 100%;
-    bottom: -550px;
-    left: unset;
-    right: 0;
+    left: 5%;
+    right: 5%;
     top: unset;
-    transition: bottom, 1s;
+    // bottom: -550px;
+    // transition: bottom, 1s;
     border: none;
-    border-bottom-left-radius: 0%;
-    border-bottom-right-radius: 0%;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    // border-bottom-left-radius: 15px;
+    // border-bottom-right-radius: 15px;
+    // border-top-left-radius: 15px;
+    // border-top-right-radius: 15px;
+  }
+
+  .dropdown-menu-container {
+    padding: 30px;
+    padding-top: 20px;
   }
 
   .dropdown-menu-visible {
@@ -566,13 +557,27 @@ export default {
     transition: bottom, 1s;
   }
 
-  .dropdown-options-label {
-    margin-bottom: 0;
-  }
-
   .menu-options-row {
     padding-left: 1.5em;
     padding-right: 1.5em;
+  }
+
+  .btn-group-wide {
+    min-width: 75px;
+  }
+
+  .menu-icon {
+    padding-left: 5px;
+  }
+
+  .new-quiz-btn {
+    min-width: 120px;
+    margin-right: 0;
+  }
+
+  .close-options-btn {
+    min-width: 100px;
+    margin-right: 0;
   }
 
   .dropdown-title {
