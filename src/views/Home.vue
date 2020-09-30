@@ -232,7 +232,7 @@ export default {
 
 <style lang="scss">
   .nav-link {
-    color: orangered;
+    color: #fe4c00;
   }
 
   .nav-link:hover {
@@ -242,7 +242,7 @@ export default {
 
   .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     color: #fff;
-    background-color: orangered;
+    background-color: #fe4c00;
   }
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {

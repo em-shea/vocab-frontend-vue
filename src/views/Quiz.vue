@@ -15,6 +15,11 @@
             </div>
           </div> -->
           <div class="row">
+            <div class="col">
+              <h5 class="quiz-settings-title pb-2 ">Quiz settings</h5>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-12">
               <label for="listSelect">Vocab list</label>
             </div>
@@ -24,40 +29,76 @@
               </select>
             </div>
           </div>
+          <div class="dropdown-divider"></div>
           <div class="row">
             <div class="col-12">
               <label for="reviewPeriodSelect">Review period</label>
               <!-- figure out how to vind to selected value -->
             </div>
             <div class="col-12 mb-3 text-center">
-              <div :bind="questionRangeSelected" @input="questionRangeSelected = timePeriod" class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
-                <button v-for="timePeriod in dateRange" :key="timePeriod" type="button" class="btn btn-light btn-group-wide">{{ timePeriod }}</button>
+              <div class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
+                <button
+                  v-for="days in dateRange"
+                  :key="days"
+                  @click="dateRangeSelected = days"
+                  :class="{ active : days === dateRangeSelected }"
+                  type="button"
+                  class="btn btn-light btn-group-wide"
+                  >
+                    {{ days }} days
+                </button>
               </div>
             </div>
           </div>
+          <div class="dropdown-divider"></div>
           <div class="row">
             <div class="col-12">
               <!-- figure out how to vind to selected value -->
-              <label for="reviewPeriodSelect">Number of questions</label>
+              <label for="questionQuantitySelect">Number of questions</label>
             </div>
             <div class="col-12 mb-3 text-center">
-              <div :bind="questionQuantity" @input="questionQuantity = quantity" class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
-                <button v-for="quantity in questionQuantityOptions" :key="quantity" type="button" class="btn btn-light btn-group-wide">{{ quantity }}</button>
+              <div class="btn-group" role="group" id="questionQuantitySelect" aria-label="Basic example">
+                <button
+                  v-for="quantity in questionQuantityOptions"
+                  :key="quantity"
+                  @click="questionQuantity = quantity"
+                  :class="{ active : quantity === questionQuantity }"
+                  type="button"
+                  class="btn btn-light btn-group-wide"
+                >
+                  {{ quantity }}
+                </button>
               </div>
             </div>
           </div>
+          <div class="dropdown-divider"></div>
           <div class="row">
             <div class="col-12">
-              <label for="reviewPeriodSelect">Character Set</label>
+              <label for="characterSetSelect">Character Set</label>
             </div>
             <div class="col-12 mb-2 text-center">
               <!-- figure out how to vind to selected value -->
-              <div class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
-                <button type="button" class="btn btn-light btn-group-wide">Simplified</button>
-                <button type="button" class="btn btn-light btn-group-wide">Traditional</button>
+              <div class="btn-group" role="group" id="characterSetSelect" aria-label="Basic example">
+                <button
+                  type="button"
+                  class="btn btn-light btn-group-wide"
+                  :class='{"active": characterSet === "simplified"}'
+                  @click="$root.$data.store.changeCharacterSet('simplified')"
+                >
+                  Simplified
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-light btn-group-wide"
+                  :class='{"active": characterSet === "traditional"}'
+                  @click="$root.$data.store.changeCharacterSet('traditional')"
+                >
+                  Traditional
+                </button>
               </div>
             </div>
           </div>
+          <div class="dropdown-divider"></div>
           <div class="row justify-content-between mt-3">
             <div class="col">
               <button class="close-options-btn btn btn-light btn-shadow float-right mr-4" @click="showMenu = !showMenu">
@@ -81,18 +122,17 @@
       </button>
     </div>
     <div class="container" v-if="!displayResults">
-      <div class="row">
+      <div class="row mt-2 mx-4">
         <div class="col">
           <p class="quiz-title">
-            {{ selectedVocabList }}, past {{ questionRangeSelected }} days
+            {{ selectedVocabList }}, past {{ dateRangeSelected }} days
           </p>
           <!-- <p class="question-number">
-            {{ questionNumber }} of {{ totalQuestions }}, {{ percentCompletion }}
+            {{ questionNumber }} of {{ questionQuantity }}, {{ percentCompletion }}
           </p> -->
           <div class="progress">
-            <div class="progress-bar" role="progressbar" :style="{width: percentCompletion}">
-              <span> {{ questionNumber }} / {{ totalQuestions }} </span>
-            </div>
+            <span class="progress-bar-text" :class="percentOver50()"> {{ questionNumber }} / {{ questionQuantity }} </span>
+            <div class="progress-bar" role="progressbar" :style="{width: percentCompletion}"></div>
           </div>
         </div>
       </div>
@@ -100,13 +140,13 @@
         :showMenu="showMenu"
         :vocabLists="vocabLists"
         :reviewTimePeriods="reviewTimePeriods"
-        :questionRangeSelected="questionRangeSelected"
+        :dateRangeSelected="dateRangeSelected"
         :questionQuantity="questionQuantity"
       ></quiz-settings-menu> -->
-      <div class="container" v-if="!loadingQuiz">
-        <div class="row mx-4 mt-4 mb-2">
+      <div v-if="!loadingQuiz">
+        <div class="row mx-4 mt-4 mb-3">
           <div class="col">
-            <h3 class="quiz-question" v-bind:class="getTextClass(selectedTestSet['question'])">
+            <h3 class="quiz-question m-0" v-bind:class="getTextClass(selectedTestSet['question'])">
               {{ selectedQuizWords[0]['Word'][selectedTestSet['question']] }}
               <!-- <div class="question-pinyin mt-2" v-if="pinyinToggled && selectedTestSet['question'] == 'Word'">
                 {{ selectedQuizWords[0]['Word']['Pronunciation'] }}
@@ -153,7 +193,7 @@
         <div class="col text-center">
           <h5>Your score:</h5>
           <p>
-            {{ percentCorrect }} ({{ correctAnswers }}/{{ totalQuestions }})
+            {{ percentCorrect }} ({{ correctAnswers }}/{{ questionQuantity }})
           </p>
         </div>
       </div>
@@ -181,9 +221,12 @@ export default {
     return {
       loadingQuiz: true,
       quizWords: [],
+      // need params to selected variable conversion at some point, or just use params everywhere for selected
+      // params need to be strings, variables need to be numbers
       params: {
         list: 'HSKLevel1',
-        date_range: 30
+        days: '7',
+        ques: '10'
       },
       selectedVocabList: 'HSK Level 1',
       vocabLists: {
@@ -196,13 +239,8 @@ export default {
         // Chengyu1: 'Chengyu 1',
         // Chengyu2: 'Chengyu 2',
       },
-      questionRangeSelected: 7,
-      dateRange: { 7: '1 week', 14: '2 weeks', 30: '1 month' },
-      reviewTimePeriods: [
-        '1 week',
-        '2 weeks',
-        '1 month'
-      ],
+      dateRangeSelected: 7,
+      dateRange: [7, 14, 30],
       showMenu: false,
       selectedQuizWords: null,
       reshuffledQuizWords: null,
@@ -210,7 +248,6 @@ export default {
       // hintOn: false,
       // hintsUsed: 0,
       questionNumber: 1,
-      totalQuestions: 30,
       answerSelected: null,
       answerResults: null,
       correctAnswers: 0,
@@ -231,11 +268,7 @@ export default {
       ],
       selectedTestSet: null,
       questionQuantity: 10,
-      questionQuantityOptions: [
-        10,
-        20,
-        30
-      ]
+      questionQuantityOptions: [10, 20, 30]
     }
   },
   computed: {
@@ -243,12 +276,12 @@ export default {
       return this.$root.$data.store.state.characterSet
     },
     percentCompletion () {
-      let decimalValue = this.questionNumber / this.totalQuestions
+      let decimalValue = this.questionNumber / this.questionQuantity
       let percentValue = (decimalValue * 100).toFixed(0) + '%'
       return percentValue
     },
     percentCorrect () {
-      let decimalValue = this.correctAnswers / this.totalQuestions
+      let decimalValue = this.correctAnswers / this.questionQuantity
       let percentValue = (decimalValue * 100).toFixed(0) + '%'
       return percentValue
     }
@@ -273,9 +306,15 @@ export default {
       // Check if acceptable parameters have been passed (HSK 1-6, (7,14,30) days, simplified/traditional)
       if (this.$route.query.list in this.vocabLists) {
         this.params.list = this.$route.query.list
+        this.selectedVocabList = this.vocabLists[this.params.list]
       }
-      if (this.$route.query.dates in this.dateRange) {
-        this.params.date_range = this.$route.query.dates
+      if (this.$route.query.days in this.dateRange) {
+        this.params.days = this.$route.query.days
+        this.dateRangeSelected = this.dateRange[this.params.days]
+      }
+      if (this.$route.query.ques in this.questionQuantityOptions) {
+        this.params.ques = this.$route.query.ques
+        this.questionQuantity = this.questionQuantityOptions[this.params.ques]
       }
       if (this.$route.query.char === 'simplified' || this.$route.query.char === 'traditional') {
         if (this.characterSet === this.$route.query.char) {
@@ -283,19 +322,20 @@ export default {
           this.$root.$data.store.changeCharacterSet(this.$route.query.char)
         }
       }
-      this.selectedVocabList = this.vocabLists[this.params.list]
     },
     pushToRouter () {
-      if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range || this.$route.query.char !== this.characterSet) {
-        this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range, 'char': this.characterSet } })
-        console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
+      if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
+        this.$router.push({ query: { 'list': this.params.list, 'days': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
+        console.log('pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
       }
     },
     getWordHistory () {
       // If either the HSK level or the date range has changed, update the query string parameters
-      // if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range) {
-      //   this.pushToRouter()
-      // }
+      if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques) {
+        console.log('get word history, params dont match', this.params)
+        console.log('route: ', this.$route.query)
+        this.pushToRouter()
+      }
       // call wordHistory component based on dropdown inputs
       return axios
         .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
@@ -308,7 +348,7 @@ export default {
         })
     },
     // setQuestionRange () {
-    //   this.questionQuantity = this.questionQuantityOptions[this.questionRangeSelected]
+    //   this.questionQuantity = this.questionQuantityOptions[this.dateRangeSelected]
     // },
     setCharacterSet () {
       if (this.characterSet === 'traditional') {
@@ -346,7 +386,7 @@ export default {
       }
     },
     nextQuestion () {
-      if (this.questionNumber !== this.totalQuestions) {
+      if (this.questionNumber !== this.questionQuantity) {
         this.resetQuestion()
         this.questionNumber = this.questionNumber + 1
       } else {
@@ -354,6 +394,11 @@ export default {
       }
     },
     newQuiz () {
+      if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques) {
+        console.log('new quiz, params dont match', this.params)
+        console.log('route: ', this.$route.query)
+        this.pushToRouter()
+      }
       this.resetQuestion()
       this.displayResults = false
       this.questionNumber = 1
@@ -417,6 +462,12 @@ export default {
         classList.push('highlight-correct-answer')
       }
       return classList
+    },
+    percentOver50 () {
+      let percentInt = parseFloat(this.percentCompletion) / 100.0
+      if (percentInt > 0.5) {
+        return 'progress-bar-text-white'
+      }
     }
   }
 }
@@ -434,14 +485,22 @@ export default {
     z-index: 20;
   }
 
-  .progress {
-    max-width: 50%;
-    margin-left: 87px;
-  }
-
   .progress-bar {
     background: rgb(255,76,0);
     background: linear-gradient(90deg, rgba(255,76,0,1) 0%, rgba(255,145,0,1) 100%);
+  }
+
+  .progress-bar-text {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+
+  .progress-bar-text-white {
+    color: white;
   }
 
   .quiz-title {
@@ -465,8 +524,8 @@ export default {
   }
 
   .new-quiz-btn, .quiz-answers-button:not(:disabled):not(.disabled).active {
-    background-color: orangered;
-    border-color: orangered;
+    background-color: #fe4c00;
+    border-color: #fe4c00;
     color: white;
   }
 
@@ -516,6 +575,10 @@ export default {
     text-align: right;
   }
 
+  .quiz-settings-title {
+    color: orange;
+  }
+
   .oi-icon {
     font-size: 13px;
   }
@@ -547,8 +610,9 @@ export default {
   }
 
   .dropdown-menu-container {
-    padding: 30px;
-    padding-top: 20px;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    padding-bottom: 0.5em;
   }
 
   .dropdown-menu-visible {

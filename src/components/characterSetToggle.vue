@@ -35,7 +35,7 @@ export default {
   }
 
   .charSet-btn.active {
-    color: orangered;
+    color: #fe4c00;
   }
 
   .charSet-btn:hover {
