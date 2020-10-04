@@ -2,7 +2,7 @@
   <!-- Generates tests for a given timeframe of daily words for a given level -->
   <div id="quiz">
     <small-nav></small-nav>
-    <div class="overlay" v-if="showMenu" @click="showMenu = !showMenu"></div>
+    <div class="overlay" v-if="showMenu" @click="hideMenu()"></div>
     <div class="container" v-if="showMenu">
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <div class="container dropdown-menu-container">
@@ -24,7 +24,7 @@
               <label for="listSelect">Vocab list</label>
             </div>
             <div class="col-12 mb-3">
-              <select v-model="selectedVocabList" class="form-control" id="listSelect">
+              <select v-model="settingsTemp.selectedVocabList" class="form-control" id="listSelect">
                 <option v-for="list in vocabLists" :key="list">{{ list }}</option>
               </select>
             </div>
@@ -40,8 +40,8 @@
                 <button
                   v-for="days in dateRange"
                   :key="days"
-                  @click="dateRangeSelected = days"
-                  :class="{ active : days === dateRangeSelected }"
+                  @click="settingsTemp.dateRangeSelected = days"
+                  :class="{ active : days === settingsTemp.dateRangeSelected }"
                   type="button"
                   class="btn btn-light btn-group-wide"
                   >
@@ -61,8 +61,8 @@
                 <button
                   v-for="quantity in questionQuantityOptions"
                   :key="quantity"
-                  @click="questionQuantity = quantity"
-                  :class="{ active : quantity === questionQuantity }"
+                  @click="settingsTemp.questionQuantity = quantity"
+                  :class="{ active : quantity === settingsTemp.questionQuantity }"
                   type="button"
                   class="btn btn-light btn-group-wide"
                 >
@@ -101,13 +101,13 @@
           <div class="dropdown-divider"></div>
           <div class="row justify-content-between mt-3">
             <div class="col">
-              <button class="close-options-btn btn btn-light btn-shadow float-right mr-4" @click="showMenu = !showMenu">
+              <button class="close-options-btn btn btn-light btn-shadow float-right mr-4" @click="hideMenu()">
                 Close
                 <span class="oi oi-x oi-icon menu-icon" title="oi-x"></span>
               </button>
             </div>
             <div class="col new-quiz-btn-col">
-              <button type="button" class="btn btn-shadow new-quiz-btn" @click="newQuiz(); showMenu = !showMenu">
+              <button type="button" class="btn btn-shadow new-quiz-btn" @click="newQuiz('newSettings'); showMenu = !showMenu">
                 New quiz
                 <span class="oi oi-reload oi-icon menu-icon"></span>
               </button>
@@ -125,13 +125,13 @@
       <div class="row mt-2 mx-4">
         <div class="col">
           <p class="quiz-title">
-            {{ selectedVocabList }}, past {{ dateRangeSelected }} days
+            {{ settingsActive.selectedVocabList }}, past {{ settingsActive.dateRangeSelected }} days
           </p>
           <!-- <p class="question-number">
             {{ questionNumber }} of {{ questionQuantity }}, {{ percentCompletion }}
           </p> -->
           <div class="progress">
-            <span class="progress-bar-text" :class="percentOver50()"> {{ questionNumber }} / {{ questionQuantity }} </span>
+            <span class="progress-bar-text" :class="percentOver50()"> {{ questionNumber }} / {{ settingsActive.questionQuantity }} </span>
             <div class="progress-bar" role="progressbar" :style="{width: percentCompletion}"></div>
           </div>
         </div>
@@ -193,13 +193,13 @@
         <div class="col text-center">
           <h5>Your score:</h5>
           <p>
-            {{ percentCorrect }} ({{ correctAnswers }}/{{ questionQuantity }})
+            {{ percentCorrect }} ({{ correctAnswers }}/{{ settingsActive.questionQuantity }})
           </p>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col text-center">
-          <button type="button" class="btn btn-secondary btn-shadow" @click="newQuiz()">New quiz</button>
+          <button type="button" class="btn btn-secondary btn-shadow" @click="newQuiz('sameSettings')">New quiz</button>
         </div>
       </div>
     </div>
@@ -207,20 +207,18 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import smallNav from '@/components/smallNav.vue'
-// import quizSettings from '@/components/quizSettings.vue'
 
 export default {
   name: 'quiz',
   components: {
     'small-nav': smallNav
-    // 'quiz-settings-menu': quizSettings
   },
   data () {
     return {
-      loadingQuiz: true,
       quizWords: [],
+      showMenu: false,
+      loadingQuiz: true,
       // need params to selected variable conversion at some point, or just use params everywhere for selected
       // params need to be strings, variables need to be numbers
       params: {
@@ -228,7 +226,17 @@ export default {
         days: '7',
         ques: '10'
       },
-      selectedVocabList: 'HSK Level 1',
+      settingsActive: {
+        selectedVocabList: 'HSK Level 1',
+        questionQuantity: 10,
+        dateRangeSelected: 7
+      },
+      settingsTemp: {
+        selectedVocabList: 'HSK Level 1',
+        questionQuantity: 10,
+        dateRangeSelected: 7
+      },
+      // selectedVocabList: 'HSK Level 1',
       vocabLists: {
         HSKLevel1: 'HSK Level 1',
         HSKLevel2: 'HSK Level 2',
@@ -239,19 +247,15 @@ export default {
         // Chengyu1: 'Chengyu 1',
         // Chengyu2: 'Chengyu 2',
       },
-      dateRangeSelected: 7,
+      // dateRangeSelected: 7,
       dateRange: [7, 14, 30],
-      showMenu: false,
+      questionQuantityOptions: [10, 20, 30],
       selectedQuizWords: null,
       reshuffledQuizWords: null,
       // pinyinToggled: false,
       // hintOn: false,
       // hintsUsed: 0,
-      questionNumber: 1,
-      answerSelected: null,
-      answerResults: null,
-      correctAnswers: 0,
-      displayResults: false,
+      selectedTestSet: null,
       testSet: [
         { 'question': 'Word',
           'answers': 'Pronunciation' },
@@ -266,9 +270,12 @@ export default {
         { 'question': 'Pronunciation',
           'answers': 'Word' }
       ],
-      selectedTestSet: null,
-      questionQuantity: 10,
-      questionQuantityOptions: [10, 20, 30]
+      questionNumber: 1,
+      answerSelected: null,
+      answerResults: null,
+      correctAnswers: 0,
+      displayResults: false
+      // questionQuantity: 10,
     }
   },
   computed: {
@@ -276,24 +283,25 @@ export default {
       return this.$root.$data.store.state.characterSet
     },
     percentCompletion () {
-      let decimalValue = this.questionNumber / this.questionQuantity
+      let decimalValue = this.questionNumber / this.settingsActive.questionQuantity
       let percentValue = (decimalValue * 100).toFixed(0) + '%'
       return percentValue
     },
     percentCorrect () {
-      let decimalValue = this.correctAnswers / this.questionQuantity
+      let decimalValue = this.correctAnswers / this.settingsActive.questionQuantity
       let percentValue = (decimalValue * 100).toFixed(0) + '%'
       return percentValue
     }
   },
   watch: {
-    characterSet: function () {
+    settingsActive: function () {
       this.pushToRouter()
     }
   },
   mounted: function () {
     this.loadingQuiz = true
     this.checkInitialParams()
+    this.pushToRouter()
     this.getWordHistory().then((response) => {
       this.setQuizWords()
       this.selectTestSet()
@@ -304,38 +312,47 @@ export default {
   methods: {
     checkInitialParams () {
       // Check if acceptable parameters have been passed (HSK 1-6, (7,14,30) days, simplified/traditional)
-      if (this.$route.query.list in this.vocabLists) {
+      if (this.$route.query.list && this.$route.query.list in this.vocabLists) {
+        console.log('update list')
         this.params.list = this.$route.query.list
-        this.selectedVocabList = this.vocabLists[this.params.list]
+        let convertedParams = this.convertSettingsOrParams(this.params)
+        this.settingsTemp.selectedVocabList = convertedParams.selectedVocabList
+        this.settingsActive.selectedVocabList = convertedParams.selectedVocabList
       }
-      if (this.$route.query.days in this.dateRange) {
+      if (this.$route.query.days && this.dateRange.indexOf(parseInt(this.$route.query.days)) !== -1) {
+        console.log('update days')
         this.params.days = this.$route.query.days
-        this.dateRangeSelected = this.dateRange[this.params.days]
+        let convertedParams = this.convertSettingsOrParams(this.params)
+        this.settingsTemp.dateRangeSelected = convertedParams.dateRangeSelected
+        this.settingsActive.dateRangeSelected = convertedParams.dateRangeSelected
       }
-      if (this.$route.query.ques in this.questionQuantityOptions) {
+      if (this.$route.query.ques && this.questionQuantityOptions.indexOf(parseInt(this.$route.query.ques)) !== -1) {
+        console.log('update ques')
         this.params.ques = this.$route.query.ques
-        this.questionQuantity = this.questionQuantityOptions[this.params.ques]
+        let convertedParams = this.convertSettingsOrParams(this.params)
+        this.settingsTemp.questionQuantity = convertedParams.questionQuantity
+        this.settingsActive.questionQuantity = convertedParams.questionQuantity
       }
       if (this.$route.query.char === 'simplified' || this.$route.query.char === 'traditional') {
-        if (this.characterSet === this.$route.query.char) {
-        } else {
+        if (this.characterSet !== this.$route.query.char) {
           this.$root.$data.store.changeCharacterSet(this.$route.query.char)
         }
       }
     },
     pushToRouter () {
+      console.log('pushToRouter...')
       if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
         this.$router.push({ query: { 'list': this.params.list, 'days': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
-        console.log('pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
+        console.log('if changed... pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
       }
     },
     getWordHistory () {
       // If either the HSK level or the date range has changed, update the query string parameters
-      if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques) {
-        console.log('get word history, params dont match', this.params)
-        console.log('route: ', this.$route.query)
-        this.pushToRouter()
-      }
+      // if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques) {
+      //   console.log('get word history, params dont match', this.params)
+      //   console.log('route: ', this.$route.query)
+      //   this.pushToRouter()
+      // }
       // call wordHistory component based on dropdown inputs
       return axios
         .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
@@ -373,6 +390,13 @@ export default {
       var randomInt = Math.floor(Math.random() * Math.floor(this.testSet.length))
       this.selectedTestSet = this.testSet[randomInt]
     },
+    hideMenu () {
+      this.showMenu = !this.showMenu
+      console.log(this.settingsTemp.selectedVocabList)
+      // object assign copies each element of settingsActive to settingsTemp
+      Object.assign(this.settingsTemp, this.settingsActive)
+      console.log(this.settingsTemp.selectedVocabList)
+    },
     submitAnswer (word) {
       if (this.answerResults != null) {
         return
@@ -386,18 +410,19 @@ export default {
       }
     },
     nextQuestion () {
-      if (this.questionNumber !== this.questionQuantity) {
+      if (this.questionNumber !== this.settingsActive.questionQuantity) {
         this.resetQuestion()
         this.questionNumber = this.questionNumber + 1
       } else {
         this.displayResults = true
       }
     },
-    newQuiz () {
-      if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques) {
-        console.log('new quiz, params dont match', this.params)
-        console.log('route: ', this.$route.query)
-        this.pushToRouter()
+    newQuiz (value) {
+      if (value === 'newSettings') {
+        // console.log('new quiz - temp settings', this.settingsTemp.selectedVocabList)
+        Object.assign(this.settingsActive, this.settingsTemp)
+        this.params = this.convertSettingsOrParams(this.settingsTemp)
+        // console.log('new quiz - active settings', this.settingsActive.selectedVocabList)
       }
       this.resetQuestion()
       this.displayResults = false
@@ -443,6 +468,22 @@ export default {
         shortenedDefWords.push(inputArray[i])
       }
       return shortenedDefWords
+    },
+    convertSettingsOrParams (value) {
+      if (value === this.settingsActive || value === this.settingsTemp) {
+        let convertedDict = {}
+        convertedDict.list = Object.keys(this.vocabLists).find(key => this.vocabLists[key] === value.selectedVocabList)
+        convertedDict.days = value.dateRangeSelected.toString()
+        convertedDict.ques = value.questionQuantity.toString()
+        return convertedDict
+      }
+      if (value === this.params) {
+        let convertedDict = {}
+        convertedDict.selectedVocabList = this.vocabLists[value.list]
+        convertedDict.dateRangeSelected = parseInt(value.days)
+        convertedDict.questionQuantity = parseInt(value.ques)
+        return convertedDict
+      }
     },
     getTextClass (value) {
       // console.log('get class', value)
