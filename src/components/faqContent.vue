@@ -52,24 +52,24 @@
         What should I do with my daily vocab word?
         </p>
         <ul>
-        <li>
-            Write your own example sentences.
-        </li>
-        <li>
-            Make a set of flash cards.
-        </li>
-        <li>
-            Draw illustrations of each word.
-        </li>
-        <li>
-            Get a tattoo of the word.
-        </li>
-        <li>
-            Practice writing out the characters.
-        </li>
-        <li>
-            Use the word in a journal entry.
-        </li>
+          <li>
+              <router-link :to="{ name: 'quiz'}">Take a practice quiz.</router-link>
+          </li>
+          <li>
+              Write your own example sentences.
+          </li>
+          <li>
+              Make a set of flash cards.
+          </li>
+          <li>
+              Draw illustrations of each word.
+          </li>
+          <li>
+              Practice writing out the characters.
+          </li>
+          <li>
+              Use the word in a journal entry.
+          </li>
         </ul>
         <p class="bold">
         What does Haohaotiantian mean?

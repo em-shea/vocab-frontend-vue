@@ -1,6 +1,6 @@
 <template>
   <!-- Generates tests for a given timeframe of daily words for a given level -->
-  <div id="quiz">
+  <div id="quiz" class="quiz">
     <small-nav></small-nav>
     <div class="overlay" v-if="showMenu" @click="hideMenu()"></div>
     <div class="container" v-if="showMenu">
@@ -196,16 +196,19 @@
         </div>
       </div>
     </div>
+    <custom-footer></custom-footer>
   </div>
 </template>
 
 <script>
 import smallNav from '@/components/smallNav.vue'
+import customFooter from '@/components/footer.vue'
 
 export default {
   name: 'quiz',
   components: {
-    'small-nav': smallNav
+    'small-nav': smallNav,
+    'custom-footer': customFooter
   },
   data () {
     return {
@@ -515,6 +518,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .quiz {
+    min-height: 100vh;
+  }
+
   .overlay {
     position: absolute;
     right: 0;

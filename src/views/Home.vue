@@ -20,22 +20,19 @@
       <div class="row justify-content-center">
         <ul class="nav" id="navbar">
           <li class="nav-item">
-            <a class="nav-link active" href="#sub">Subscribe</a>
+            <router-link class="nav-link" :to="{ name: 'home'}">Home</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#sample">Sample Words</a>
+            <router-link class="nav-link" :to="{ name: 'quiz'}">Quiz</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#faq">FAQ</a>
+            <router-link class="nav-link" :to="{ name: 'history'}">Review</router-link>
           </li>
-          <!-- <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'quiz'}">Practice</router-link>
-          </li> -->
         </ul>
       </div>
     </div>
 
-    <div data-spy="scroll" data-target="#navbar" data-offset="0">
+    <!-- <div data-spy="scroll" data-target="#navbar" data-offset="0"> -->
 
       <div class="container bg-light p-1">
         <div class="anchor-target" id="sub"></div>
@@ -73,7 +70,7 @@
         </div>
       </div>
 
-      <div class="container">
+      <div v-if="subSubmitted" class="container">
         <div class="row m-3">
           <div class="col text-center sub-response" id="sub-response">
             <div v-if="levelValidated === false">
@@ -132,7 +129,7 @@
 
     <custom-footer></custom-footer>
 
-    </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -160,7 +157,8 @@ export default {
       levelValidated: null,
       exampleWordList: [],
       exampleListSelected: '1',
-      subscribeResponse: null
+      subscribeResponse: null,
+      subSubmitted: false
     }
   },
   computed: {
@@ -196,6 +194,7 @@ export default {
     },
 
     submitSubscription () {
+      this.subSubmitted = true
       this.subscribeResponse = null
       this.emailValidated = null
       this.emailInputted = null
