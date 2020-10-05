@@ -82,16 +82,16 @@
                 <button
                   type="button"
                   class="btn btn-light btn-group-wide"
-                  :class='{"active": characterSet === "simplified"}'
-                  @click="$root.$data.store.changeCharacterSet('simplified')"
+                  :class='{"active": tempCharSet === "simplified"}'
+                  @click="tempCharSet = 'simplified'"
                 >
                   Simplified
                 </button>
                 <button
                   type="button"
                   class="btn btn-light btn-group-wide"
-                  :class='{"active": characterSet === "traditional"}'
-                  @click="$root.$data.store.changeCharacterSet('traditional')"
+                  :class='{"active": tempCharSet === "traditional"}'
+                  @click="tempCharSet = 'traditional'"
                 >
                   Traditional
                 </button>
@@ -101,7 +101,7 @@
           <div class="dropdown-divider"></div>
           <div class="row justify-content-between mt-3">
             <div class="col">
-              <button class="close-options-btn btn btn-light btn-shadow float-right mr-4" @click="hideMenu()">
+              <button class="close-options-btn btn btn-light btn-shadow mr-4" @click="hideMenu()">
                 Close
                 <span class="oi oi-x oi-icon menu-icon" title="oi-x"></span>
               </button>
@@ -121,7 +121,7 @@
         <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
       </button>
     </div>
-    <div class="container" v-if="!displayResults">
+    <div class="container quiz-main-container" v-if="!displayResults">
       <div class="row mt-2 mx-4">
         <div class="col">
           <p class="quiz-title">
@@ -136,13 +136,6 @@
           </div>
         </div>
       </div>
-      <!-- <quiz-settings-menu
-        :showMenu="showMenu"
-        :vocabLists="vocabLists"
-        :reviewTimePeriods="reviewTimePeriods"
-        :dateRangeSelected="dateRangeSelected"
-        :questionQuantity="questionQuantity"
-      ></quiz-settings-menu> -->
       <div v-if="!loadingQuiz">
         <div class="row mx-4 mt-4 mb-3">
           <div class="col">
@@ -176,20 +169,20 @@
           <button type="button" class="btn btn-block btn-secondary" @click="togglePinyin()">Pinyin</button>
         </div>
       </div> -->
-      <div v-if="answerResults != null" class="row my-3 mx-3">
+      <div v-if="answerResults != null" class="row my-3 mx-4">
         <div class="col-6 answer-results">
           <p v-if="answerResults === true && characterSet === 'simplified'">对 👍</p>
           <p v-if="answerResults === true && characterSet === 'traditional'">對 👍</p>
           <p v-if="answerResults === false && characterSet === 'simplified'">不对 👎</p>
           <p v-if="answerResults === false && characterSet === 'traditional'">不對 👎</p>
         </div>
-        <div class="col-6 text-center">
-          <button type="button" class="btn btn-light next-button" @click="nextQuestion()">Next</button>
+        <div class="col-6 text-right">
+          <button type="button" class="btn btn-light next-button btn-shadow" @click="nextQuestion()">Next</button>
         </div>
       </div>
     </div>
-    <div class="container main-container" v-if="displayResults">
-      <div class="row mt-5">
+    <div class="container results-main-container" v-if="displayResults">
+      <div class="row">
         <div class="col text-center">
           <h5>Your score:</h5>
           <p>
@@ -199,7 +192,7 @@
       </div>
       <div class="row mt-3">
         <div class="col text-center">
-          <button type="button" class="btn btn-secondary btn-shadow" @click="newQuiz('sameSettings')">New quiz</button>
+          <button type="button" class="btn btn-light btn-shadow" @click="newQuiz('sameSettings')">New quiz</button>
         </div>
       </div>
     </div>
@@ -219,8 +212,6 @@ export default {
       quizWords: [],
       showMenu: false,
       loadingQuiz: true,
-      // need params to selected variable conversion at some point, or just use params everywhere for selected
-      // params need to be strings, variables need to be numbers
       params: {
         list: 'HSKLevel1',
         days: '7',
@@ -236,7 +227,7 @@ export default {
         questionQuantity: 10,
         dateRangeSelected: 7
       },
-      // selectedVocabList: 'HSK Level 1',
+      tempCharSet: 'simplified',
       vocabLists: {
         HSKLevel1: 'HSK Level 1',
         HSKLevel2: 'HSK Level 2',
@@ -247,9 +238,8 @@ export default {
         // Chengyu1: 'Chengyu 1',
         // Chengyu2: 'Chengyu 2',
       },
-      // dateRangeSelected: 7,
       dateRange: [7, 14, 30],
-      questionQuantityOptions: [10, 20, 30],
+      questionQuantityOptions: [5, 10, 20, 30],
       selectedQuizWords: null,
       reshuffledQuizWords: null,
       // pinyinToggled: false,
@@ -275,7 +265,6 @@ export default {
       answerResults: null,
       correctAnswers: 0,
       displayResults: false
-      // questionQuantity: 10,
     }
   },
   computed: {
@@ -294,9 +283,12 @@ export default {
     }
   },
   watch: {
-    settingsActive: function () {
-      this.pushToRouter()
-    }
+    // settingsActive: function () {
+    //   this.pushToRouter()
+    // },
+    // characterSet: function () {
+    //   this.pushToRouter()
+    // }
   },
   mounted: function () {
     this.loadingQuiz = true
@@ -368,6 +360,7 @@ export default {
     //   this.questionQuantity = this.questionQuantityOptions[this.dateRangeSelected]
     // },
     setCharacterSet () {
+      console.log('setting char set...', this.characterSet)
       if (this.characterSet === 'traditional') {
         for (let i = 0; i < this.testSet.length; i++) {
           if (this.testSet[i]['question'] === 'Word') {
@@ -395,6 +388,8 @@ export default {
       console.log(this.settingsTemp.selectedVocabList)
       // object assign copies each element of settingsActive to settingsTemp
       Object.assign(this.settingsTemp, this.settingsActive)
+      // does this need to also use object assign or something similar?
+      this.tempCharSet = this.$root.$data.store.state.characterSet
       console.log(this.settingsTemp.selectedVocabList)
     },
     submitAnswer (word) {
@@ -421,7 +416,11 @@ export default {
       if (value === 'newSettings') {
         // console.log('new quiz - temp settings', this.settingsTemp.selectedVocabList)
         Object.assign(this.settingsActive, this.settingsTemp)
+        this.$root.$data.store.changeCharacterSet(this.tempCharSet)
         this.params = this.convertSettingsOrParams(this.settingsTemp)
+        this.pushToRouter()
+        this.setCharacterSet()
+        console.log('new quiz char set', this.$root.$data.store.state.characterSet)
         // console.log('new quiz - active settings', this.settingsActive.selectedVocabList)
       }
       this.resetQuestion()
@@ -430,6 +429,7 @@ export default {
       this.correctAnswers = 0
     },
     resetQuestion () {
+      console.log('reset ques', this.characterSet)
       this.setQuizWords()
       this.selectTestSet()
       // this.pinyinToggled = false
@@ -552,7 +552,6 @@ export default {
   }
 
   .container {
-    max-width: 514px;
     padding-top: 0.5em;
   }
 
@@ -564,10 +563,20 @@ export default {
     font-size: 1em;
   }
 
+  .next-button {
+    min-width: 100px;
+  }
+
   .new-quiz-btn, .quiz-answers-button:not(:disabled):not(.disabled).active {
     background-color: #fe4c00;
     border-color: #fe4c00;
     color: white;
+  }
+
+  .new-quiz-btn:hover {
+    color: white;
+    background-color: #cc3600;
+    border-color: #cc3600;
   }
 
   // .quiz-answers-button.grayed {
@@ -609,7 +618,8 @@ export default {
   }
 
   .answer-results {
-    text-align: center;
+    text-align: left;
+    padding-left: 4rem;
   }
 
   .quiz-settings-dropdown {
@@ -627,7 +637,6 @@ export default {
   .dropdown-toggle {
     z-index: 5;
     position: absolute;
-    right: 4%;
     min-height: 45px;
     margin-top: 7px;
   }
@@ -638,8 +647,6 @@ export default {
 
   .dropdown-menu {
     display: block;
-    left: 5%;
-    right: 5%;
     top: unset;
     // bottom: -550px;
     // transition: bottom, 1s;
@@ -678,11 +685,13 @@ export default {
   .new-quiz-btn {
     min-width: 120px;
     margin-right: 0;
+    float: right;
   }
 
   .close-options-btn {
     min-width: 100px;
     margin-right: 0;
+    float: left;
   }
 
   .dropdown-title {
@@ -694,12 +703,44 @@ export default {
     min-width: 80%;
   }
 
+  .results-main-container {
+    margin-top: 8rem;
+  }
+
   // Desktop
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
+    .container {
+      max-width: 960px;
+    }
+
+    .quiz-main-container {
+      max-width: 750px;
+    }
+
+    .dropdown-toggle {
+      right: 28%;
+    }
+
+    .dropdown-menu {
+      left: 35%;
+      right: 35%;
+      margin-top: 1rem;
+    }
   }
 
   // Mobile
   @media only screen and (min-width: 0px) and (max-width: 500px) {
+    .container {
+      max-width: 514px;
+    }
 
+    .dropdown-toggle {
+      right: 4%;
+    }
+
+    .dropdown-menu {
+      left: 5%;
+      right: 5%;
+    }
   }
 </style>
