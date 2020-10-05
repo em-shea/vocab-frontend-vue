@@ -180,6 +180,16 @@
           <button type="button" class="btn btn-light next-button btn-shadow" @click="nextQuestion()">Next</button>
         </div>
       </div>
+      <div v-if="answerResults != null" class="row">
+        <div class="col text-center">
+          <p class="review-cards-link" @click="showReviewCards = !showReviewCards">{{ reviewCardsMessage }}</p>
+        </div>
+      </div>
+      <div v-if="showReviewCards" class="row card-deck mx-3">
+        <div class="card-holder col-xl-6 col-md-6 col-sm-6" v-for="word in selectedQuizWords" :key="word['ListId']+word['Date']">
+          <review-card :card="word"></review-card>
+        </div>
+      </div>
     </div>
     <div class="container results-main-container" v-if="displayResults">
       <div class="row">
@@ -203,12 +213,14 @@
 <script>
 import smallNav from '@/components/smallNav.vue'
 import customFooter from '@/components/footer.vue'
+import wordHistory from '@/components/wordHistory.vue'
 
 export default {
   name: 'quiz',
   components: {
     'small-nav': smallNav,
-    'custom-footer': customFooter
+    'custom-footer': customFooter,
+    'review-card': wordHistory
   },
   data () {
     return {
@@ -267,7 +279,8 @@ export default {
       answerSelected: null,
       answerResults: null,
       correctAnswers: 0,
-      displayResults: false
+      displayResults: false,
+      showReviewCards: false
     }
   },
   computed: {
@@ -283,6 +296,14 @@ export default {
       let decimalValue = this.correctAnswers / this.settingsActive.questionQuantity
       let percentValue = (decimalValue * 100).toFixed(0) + '%'
       return percentValue
+    },
+    reviewCardsMessage () {
+      if (this.showReviewCards) {
+        return 'Hide word definitions'
+      }
+      if (!this.showReviewCards) {
+        return 'Show word definitions'
+      }
     }
   },
   watch: {
@@ -436,9 +457,10 @@ export default {
       this.setQuizWords()
       this.selectTestSet()
       // this.pinyinToggled = false
-      this.hintOn = false
+      // this.hintOn = false
       this.answerSelected = null
       this.answerResults = null
+      this.showReviewCards = false
     },
     shuffle (inputArray) {
       // Make copy of inputArray since shuffle passes the input by reference
@@ -520,6 +542,10 @@ export default {
 <style lang="scss">
   .quiz {
     min-height: 100vh;
+  }
+
+  .quiz-main-container {
+    padding-bottom: 1rem;
   }
 
   .overlay {
@@ -712,6 +738,20 @@ export default {
 
   .results-main-container {
     margin-top: 8rem;
+  }
+
+  .review-cards-link {
+    color: orangered;
+    font-size: 0.9rem;
+    padding-top: 1rem;
+  }
+
+  .review-cards-link:hover {
+    cursor: pointer;
+  }
+
+  .card-holder {
+    padding: 0;
   }
 
   // Desktop
