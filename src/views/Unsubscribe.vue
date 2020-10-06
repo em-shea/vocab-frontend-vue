@@ -3,7 +3,7 @@
   <!-- Page for users to unsubscribe to one or all lists -->
   <div id="unsub">
 
-    <small-nav></small-nav>
+    <small-header></small-header>
 
     <div class="container">
 
@@ -75,13 +75,13 @@
 
 <script>
 // @ is an alias to /src
-import smallNav from '@/components/smallNav.vue'
+import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 
 export default {
   name: 'unsub',
   components: {
-    'small-nav': smallNav,
+    'small-header': smallHeader,
     'custom-footer': customFooter
   },
   data () {

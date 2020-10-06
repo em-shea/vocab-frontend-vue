@@ -1,38 +1,8 @@
 <template>
-
-  <!-- Main page for new users to subscribe, app information -->
-  <div id="home">
-
-    <!-- <div class="jumbotron jumbotron-fluid bg-img">
-      <div class="container">
-        <div class="row">
-          <div class="col title">
-            <h1 class="display-6">Daily Chinese Vocab</h1>
-            <p class="lead">Keep up on 中文 with daily HSK vocabulary in your inbox.</p>
-          </div>
-        </div>
-      </div>
-    </div> -->
+  <div id="home" class="home">
 
     <large-header></large-header>
-
-    <div class="container bg-white sticky-top p-2">
-      <div class="row justify-content-center">
-        <ul class="nav" id="navbar">
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'home'}">Home</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'quiz'}">Quiz</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'history'}">Review</router-link>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- <div data-spy="scroll" data-target="#navbar" data-offset="0"> -->
+    <nav-bar class="sticky-top"></nav-bar>
 
       <div class="container bg-light p-1">
         <div class="anchor-target" id="sub"></div>
@@ -138,13 +108,15 @@
 import faqContent from '@/components/faqContent.vue'
 import largeHeader from '@/components/header.vue'
 import customFooter from '@/components/footer.vue'
+import navBar from '@/components/navBar.vue'
 
 export default {
   name: 'home',
   components: {
     'custom-footer': customFooter,
     'large-header': largeHeader,
-    'faq-content': faqContent
+    'faq-content': faqContent,
+    'nav-bar': navBar
   },
   data () {
     return {
@@ -229,7 +201,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped>
   .nav-link {
     color: #fe4c00;
   }
@@ -242,6 +214,13 @@ export default {
   .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     color: #fff;
     background-color: #fe4c00;
+  }
+
+  .sticky-top {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
   }
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {

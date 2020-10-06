@@ -1,6 +1,6 @@
 <template>
 
-  <div id="small-nav">
+  <div id="small-header">
     <div class="jumbotron jumbotron-fluid bg-img">
       <div class="container header-nav-container">
         <div class="row">
@@ -22,9 +22,10 @@
 <script>
 
 export default {
-  name: 'smallNav',
-  // data () {
-  // },
+  name: 'smallHeader',
+  data () {
+    return {}
+  },
   methods: {
   }
 }

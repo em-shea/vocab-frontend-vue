@@ -1,7 +1,8 @@
 <template>
   <!-- Generates tests for a given timeframe of daily words for a given level -->
   <div id="quiz" class="quiz">
-    <small-nav></small-nav>
+    <small-header></small-header>
+    <nav-bar></nav-bar>
     <div class="overlay" v-if="showMenu" @click="hideMenu()"></div>
     <div class="container" v-if="showMenu">
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -211,16 +212,18 @@
 </template>
 
 <script>
-import smallNav from '@/components/smallNav.vue'
+import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import wordHistory from '@/components/wordHistory.vue'
+import navBar from '@/components/navBar.vue'
 
 export default {
   name: 'quiz',
   components: {
-    'small-nav': smallNav,
+    'small-header': smallHeader,
     'custom-footer': customFooter,
-    'review-card': wordHistory
+    'review-card': wordHistory,
+    'nav-bar': navBar
   },
   data () {
     return {
@@ -307,12 +310,6 @@ export default {
     }
   },
   watch: {
-    // settingsActive: function () {
-    //   this.pushToRouter()
-    // },
-    // characterSet: function () {
-    //   this.pushToRouter()
-    // }
   },
   mounted: function () {
     this.loadingQuiz = true
@@ -329,21 +326,18 @@ export default {
     checkInitialParams () {
       // Check if acceptable parameters have been passed (HSK 1-6, (7,14,30) days, simplified/traditional)
       if (this.$route.query.list && this.$route.query.list in this.vocabLists) {
-        console.log('update list')
         this.params.list = this.$route.query.list
         let convertedParams = this.convertSettingsOrParams(this.params)
         this.settingsTemp.selectedVocabList = convertedParams.selectedVocabList
         this.settingsActive.selectedVocabList = convertedParams.selectedVocabList
       }
       if (this.$route.query.days && this.dateRange.indexOf(parseInt(this.$route.query.days)) !== -1) {
-        console.log('update days')
         this.params.days = this.$route.query.days
         let convertedParams = this.convertSettingsOrParams(this.params)
         this.settingsTemp.dateRangeSelected = convertedParams.dateRangeSelected
         this.settingsActive.dateRangeSelected = convertedParams.dateRangeSelected
       }
       if (this.$route.query.ques && this.questionQuantityOptions.indexOf(parseInt(this.$route.query.ques)) !== -1) {
-        console.log('update ques')
         this.params.ques = this.$route.query.ques
         let convertedParams = this.convertSettingsOrParams(this.params)
         this.settingsTemp.questionQuantity = convertedParams.questionQuantity
@@ -356,35 +350,22 @@ export default {
       }
     },
     pushToRouter () {
-      console.log('pushToRouter...')
       if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
         this.$router.push({ query: { 'list': this.params.list, 'days': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
-        console.log('if changed... pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
+        // console.log('if changed... pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
       }
     },
     getWordHistory () {
-      // If either the HSK level or the date range has changed, update the query string parameters
-      // if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques) {
-      //   console.log('get word history, params dont match', this.params)
-      //   console.log('route: ', this.$route.query)
-      //   this.pushToRouter()
-      // }
-      // call wordHistory component based on dropdown inputs
       return axios
-        .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
+        .get(process.env.VUE_APP_API_URL + 'history?', { params: { 'date_range': this.params.days, 'list': this.params.list } }
         )
         .then((response) => {
           let wordHistoryResponse = response.data[this.params.list].slice().reverse()
-          // this.quizWords = response.data[this.params.list].slice().reverse()
           let dedupedQuizWords = this.dedupe(wordHistoryResponse)
           this.quizWords = this.shortenDef(dedupedQuizWords)
         })
     },
-    // setQuestionRange () {
-    //   this.questionQuantity = this.questionQuantityOptions[this.dateRangeSelected]
-    // },
     setCharacterSet () {
-      console.log('setting char set...', this.characterSet)
       if (this.characterSet === 'traditional') {
         for (let i = 0; i < this.testSet.length; i++) {
           if (this.testSet[i]['question'] === 'Word') {
@@ -395,9 +376,18 @@ export default {
           }
         }
       }
+      if (this.characterSet === 'simplified') {
+        for (let i = 0; i < this.testSet.length; i++) {
+          if (this.testSet[i]['question'] === 'Word-Traditional') {
+            this.testSet[i]['question'] = 'Word'
+          }
+          if (this.testSet[i]['answers'] === 'Word-Traditional') {
+            this.testSet[i]['answers'] = 'Word'
+          }
+        }
+      }
     },
     setQuizWords () {
-      // console.log('set quiz words, ', this.quizWords)
       let shuffledQuizWords = this.shuffle(this.quizWords)
       this.selectedQuizWords = shuffledQuizWords.slice(0, 4)
       // reshuffle the quiz word list so that the first answer is not always the correct one
@@ -409,12 +399,9 @@ export default {
     },
     hideMenu () {
       this.showMenu = !this.showMenu
-      console.log(this.settingsTemp.selectedVocabList)
       // object assign copies each element of settingsActive to settingsTemp
       Object.assign(this.settingsTemp, this.settingsActive)
-      // does this need to also use object assign or something similar?
       this.tempCharSet = this.$root.$data.store.state.characterSet
-      console.log(this.settingsTemp.selectedVocabList)
     },
     submitAnswer (word) {
       if (this.answerResults != null) {
@@ -438,22 +425,22 @@ export default {
     },
     newQuiz (value) {
       if (value === 'newSettings') {
-        // console.log('new quiz - temp settings', this.settingsTemp.selectedVocabList)
         Object.assign(this.settingsActive, this.settingsTemp)
         this.$root.$data.store.changeCharacterSet(this.tempCharSet)
         this.params = this.convertSettingsOrParams(this.settingsTemp)
         this.pushToRouter()
         this.setCharacterSet()
-        console.log('new quiz char set', this.$root.$data.store.state.characterSet)
-        // console.log('new quiz - active settings', this.settingsActive.selectedVocabList)
+        this.getWordHistory().then((response) => {
+          this.resetQuestion()
+        })
+      } else {
+        this.resetQuestion()
       }
-      this.resetQuestion()
       this.displayResults = false
       this.questionNumber = 1
       this.correctAnswers = 0
     },
     resetQuestion () {
-      console.log('reset ques', this.characterSet)
       this.setQuizWords()
       this.selectTestSet()
       // this.pinyinToggled = false
@@ -511,7 +498,6 @@ export default {
       }
     },
     getTextClass (value) {
-      // console.log('get class', value)
       if (value === 'Definition') {
         return 'question-definition-small'
       }
