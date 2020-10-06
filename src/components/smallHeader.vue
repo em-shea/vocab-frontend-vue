@@ -1,10 +1,8 @@
 <template>
 
-  <div id="small-nav">
-
-    <char-set-toggle></char-set-toggle>
+  <div id="small-header">
     <div class="jumbotron jumbotron-fluid bg-img">
-      <div class="container">
+      <div class="container header-nav-container">
         <div class="row">
           <div class="col title">
             <h1 class="display-6">
@@ -22,29 +20,32 @@
 </template>
 
 <script>
-import characterSetToggle from '@/components/characterSetToggle.vue'
 
 export default {
-  name: 'smallNav',
-  components: {
-    'char-set-toggle': characterSetToggle
-  },
-  // data () {
-  // },
-  computed: {
-    characterSet () {
-      return this.$root.$data.store.state.characterSet
-    }
+  name: 'smallHeader',
+  data () {
+    return {}
   },
   methods: {
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  @media only screen and (min-width: 500px) and (max-width: 2000px) {
+
+  }
+
+  @media only screen and (min-width: 0px) and (max-width: 500px) {
+    .header-link {
+      text-align: center;
+      font-size: 2.25rem;
+    }
+  }
+
   .jumbotron {
-    padding: 0.8rem 2rem
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   .btn-toggle-char {
@@ -63,11 +64,12 @@ export default {
   }
 
   .char-toggle-text {
-      font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 
   .header-link {
     color: white;
+    padding: 0;
   }
 
   .header-link:hover {

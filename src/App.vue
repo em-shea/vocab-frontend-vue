@@ -24,12 +24,6 @@
 //     }
 //   }
 // }
-  .sticky-top {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 1020;
-  }
 
   .anchor-target {
     position: relative;
@@ -53,6 +47,8 @@
   body {
     /* Margin bottom by footer height */
     margin-bottom: 90px;
+    overflow-x: hidden;
+    // overflow-y: hidden;
   }
 
   .footer {
@@ -107,4 +103,16 @@
     width: 100%;
     max-width: 500px;
   }
+
+  // Desktop
+  @media only screen and (min-width: 500px) and (max-width: 2000px) {
+  }
+
+  // Mobile
+  @media only screen and (min-width: 0px) and (max-width: 500px) {
+    body {
+      margin-bottom: 52px;
+    }
+  }
+
 </style>

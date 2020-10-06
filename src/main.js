@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 
+import 'open-iconic/font/css/open-iconic-bootstrap.css'
+
 Vue.config.productionTip = false
 
 var store = {

@@ -28,15 +28,14 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
- .charSet-btn {
+  .charSet-btn {
     color: gray;
   }
 
   .charSet-btn.active {
-    color: orangered;
+    color: #fe4c00;
   }
 
   .charSet-btn:hover {
