@@ -7,23 +7,36 @@
 </template>
 
 <style lang="scss">
-// #app {
-//   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-//   text-align: center;
-//   color: #2c3e50;
-// }
-// #nav {
-//   padding: 30px;
-//   a {
-//     font-weight: bold;
-//     color: #2c3e50;
-//     &.router-link-exact-active {
-//       color: #42b983;
-//     }
-//   }
-// }
+  @import url('https://fonts.googleapis.com/css?family=Oswald');
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+  // @import url('https://fonts.googleapis.com/css?family=Noto+Sans+SC');
+  @import url('https://fonts.googleapis.com/css?family=Ma+Shan+Zheng');
+
+  #app {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  // .h1, h2, h3, h4 {
+  //   font-family: 'Oswald', sans-serif;
+  //   font-weight: 400;
+  // }
+
+  .logo-character {
+    font-family: 'Ma Shan Zheng', sans-serif;
+    font-weight: 900;
+  }
+  
+
+  .logo-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+  }
+
+  .logo-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+  }
 
   .anchor-target {
     position: relative;
