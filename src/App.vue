@@ -28,7 +28,7 @@
   }
   
 
-  .logo-title {
+  .logo-title, .logo-title-2 {
     font-family: 'Oswald', sans-serif;
     font-weight: 400;
   }

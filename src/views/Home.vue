@@ -5,8 +5,14 @@
     <nav-bar class="sticky-top"></nav-bar>
 
       <div class="container bg-light p-1">
-        <div class="anchor-target" id="sub"></div>
-        <div class="row m-3">
+        <div class="row mx-3 subscribe-text">
+          <div class="col">
+            <p class="mb-0">
+              Subscribe to receive daily vocab word emails.
+            </p>
+          </div>
+        </div>
+        <div class="row mx-3 mb-3">
           <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'simplified'">
             <select v-model="params.level" class="custom-select" id="level">
               <option selected value="default">Choose an HSK Level</option>
@@ -60,7 +66,6 @@
       </div>
 
       <div class="container mt-4">
-        <div class="anchor-target" id="sample"></div>
         <div class="row m-3">
           <div class="col-12">
             <h4>Which HSK level are you?</h4>
@@ -221,6 +226,11 @@ export default {
     position: sticky;
     top: 0;
     z-index: 1020;
+  }
+
+  .subscribe-text {
+    margin-top: 1.6rem;
+    margin-bottom: 0;
   }
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {

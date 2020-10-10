@@ -2,7 +2,7 @@
   <div id="large-header">
     <char-set-toggle></char-set-toggle>
     <div class="jumbotron jumbotron-fluid bg-img">
-      <div class="container logo-container">
+      <div class="container logo-container" v-if="mobileDevice === false">
         <div class="row logo-row">
           <div class="col logo-character">
             好
@@ -17,10 +17,26 @@
               </div>
             </div>
           </div>
-            <!-- <div class="col title">
-                <h1 class="display-6">Daily Chinese Vocab</h1>
-                <p class="lead">Keep up on 中文 with daily HSK vocabulary in your inbox.</p>
-            </div> -->
+        </div>
+      </div>
+      <div class="container mobile-logo-container" v-if="mobileDevice === true">
+        <div class="row logo-row">
+          <div class="col logo-character">
+            好
+          </div>
+          <div class="col logo-text-col">
+            <div class="row">
+              <div class="col-12 logo-title">
+                HAOHAO
+              </div>
+              <div class="col-12 logo-title-2">
+                TIANTIAN
+              </div>
+              <!-- <div class="col-12 logo-subtitle">
+                chinese language learning
+              </div> -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -38,6 +54,15 @@ export default {
   },
   data () {
     return {}
+  },
+  computed: {
+    mobileDevice () {
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
   methods: {
   }
@@ -82,15 +107,36 @@ export default {
     padding: 3rem;
   }
 
-
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
   
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
-    body {
-      margin-bottom: 52px;
+    .logo-title {
+      font-size: 2.3rem;
+      margin-bottom: -1.4rem;
     }
+
+    .logo-title-2 {
+      font-size: 2.3rem;
+      margin-bottom: -1rem;
+    }
+
+    .logo-text-col{
+      text-align: center;
+    }
+
+    .logo-character {
+      font-size: 5rem;
+      overflow: hidden;
+      min-width: 75px;
+      margin-right: 6px;
+    }
+
+    .jumbotron {
+      padding: 1rem 1rem;
+    }
+
   }
 
 </style>
