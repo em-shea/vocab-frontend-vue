@@ -2,7 +2,7 @@
   <!-- Generates tests for a given timeframe of daily words for a given level -->
   <div id="quiz" class="quiz">
     <small-header></small-header>
-    <nav-bar></nav-bar>
+    <!-- <nav-bar v-if="mobileDevice === false"></nav-bar> -->
     <div class="overlay" v-if="showMenu" @click="hideMenu()"></div>
     <div class="container" v-if="showMenu">
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -123,7 +123,7 @@
       </button>
     </div>
     <div class="container quiz-main-container" v-if="!displayResults">
-      <div class="row mt-2 mx-4">
+      <div class="row mt-2">
         <div class="col">
           <p class="quiz-title">
             {{ settingsActive.selectedVocabList }}, past {{ settingsActive.dateRangeSelected }} days
@@ -138,7 +138,7 @@
         </div>
       </div>
       <div v-if="!loadingQuiz">
-        <div class="row mx-4 mt-4 mb-3">
+        <div class="row mt-4 mb-3">
           <div class="col">
             <h3 class="quiz-question m-0" v-bind:class="getTextClass(selectedTestSet['question'])">
               {{ selectedQuizWords[0]['Word'][selectedTestSet['question']] }}
@@ -148,8 +148,8 @@
             </h3>
           </div>
         </div>
-        <div class="row mx-4">
-          <div class="col-12 my-2" v-for="word in reshuffledQuizWords" :key="word['Word']['Word']">
+        <div class="row">
+          <div class="col-md-12 col-lg-6 my-2" v-for="word in reshuffledQuizWords" :key="word['Word']['Word']">
             <div class="btn-group btn-group-toggle btn-block question-answers-form my-1">
               <label class="btn btn-light quiz-answers-button shadow-sm btn-block" :class="[ answerButtonClass(word), getTextClass(selectedTestSet['answers'])]">
                 <input v-on:click="submitAnswer(word)" :value="word" type="radio" name="exampleRadios" id="exampleRadios1">
@@ -289,6 +289,13 @@ export default {
   computed: {
     characterSet () {
       return this.$root.$data.store.state.characterSet
+    },
+    mobileDevice () {
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        return true
+      } else {
+        return false
+      }
     },
     percentCompletion () {
       let decimalValue = this.questionNumber / this.settingsActive.questionQuantity
@@ -525,7 +532,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped>
   .quiz {
     min-height: 100vh;
   }
@@ -598,10 +605,10 @@ export default {
     border-color: #cc3600;
   }
 
-  // .quiz-answers-button.grayed {
-  //   background-color: #e9ecef;
-  //   border-color: #e9ecef;
-  // }
+  /* .quiz-answers-button.grayed { */
+  /*   background-color: #e9ecef; */
+  /*   border-color: #e9ecef; */
+  /* } */
 
   .quiz-answers-button.highlight-correct-answer {
     border: orangered 3px solid;
@@ -612,7 +619,7 @@ export default {
   }
 
   .quiz-question {
-    // margin-bottom: 0.6em;
+    /* margin-bottom: 0.6em; */
     font-weight: 400;
     font-size: 2em;
   }
@@ -667,13 +674,13 @@ export default {
   .dropdown-menu {
     display: block;
     top: unset;
-    // bottom: -550px;
-    // transition: bottom, 1s;
+    /* bottom: -550px; */
+    /* transition: bottom, 1s; */
     border: none;
-    // border-bottom-left-radius: 15px;
-    // border-bottom-right-radius: 15px;
-    // border-top-left-radius: 15px;
-    // border-top-right-radius: 15px;
+    /* border-bottom-left-radius: 15px; */
+    /* border-bottom-right-radius: 15px; */
+    /* border-top-left-radius: 15px; */
+    /* border-top-right-radius: 15px; */
   }
 
   .dropdown-menu-container {
@@ -740,14 +747,13 @@ export default {
     padding: 0;
   }
 
-  // Desktop
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .container {
-      max-width: 960px;
+      max-width: 880px;
     }
 
     .quiz-main-container {
-      max-width: 750px;
+      max-width: 880px;
     }
 
     .dropdown-toggle {
@@ -761,7 +767,6 @@ export default {
     }
   }
 
-  // Mobile
   @media only screen and (min-width: 0px) and (max-width: 500px) {
     .container {
       max-width: 514px;

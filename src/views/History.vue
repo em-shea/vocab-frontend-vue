@@ -4,7 +4,7 @@
   <!-- Shows daily word history for the past ~3 months for given HSK level -->
     <char-set-toggle></char-set-toggle>
     <small-header></small-header>
-    <nav-bar></nav-bar>
+    <!-- <nav-bar v-if="mobileDevice === false"></nav-bar> -->
 
     <div class="container">
       <div class="row m-3">
@@ -32,9 +32,9 @@
           </select>
         </div>
         <!-- Export button below/to the right of dropdowns on med. and larger -->
-        <div class="col-lg-2 col-md-1 d-none d-md-block"></div>
-        <div class="col-lg-1 col-md-1 d-none d-md-block p-2">
-          <button class="btn btn-outline-secondary" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
+        <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
+        <div class="col-lg-2 col-md-2 d-none d-md-block p-2">
+          <button class="btn btn-outline-secondary float-right" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
       </div>
     </div>
@@ -105,6 +105,13 @@ export default {
   computed: {
     characterSet () {
       return this.$root.$data.store.state.characterSet
+    },
+    mobileDevice () {
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   watch: {
@@ -190,6 +197,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .container {
+    max-width: 880px;
+  }
+
   .card-holder {
     padding: 0;
   }

@@ -32,9 +32,6 @@
               <div class="col-12 logo-title-2">
                 TIANTIAN
               </div>
-              <!-- <div class="col-12 logo-subtitle">
-                chinese language learning
-              </div> -->
             </div>
           </div>
         </div>
@@ -113,12 +110,12 @@ export default {
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
     .logo-title {
-      font-size: 2.3rem;
-      margin-bottom: -1.4rem;
+      font-size: 2.8rem;
+      margin-bottom: -1.7rem;
     }
 
     .logo-title-2 {
-      font-size: 2.3rem;
+      font-size: 2.8rem;
       margin-bottom: -1rem;
     }
 
@@ -127,14 +124,23 @@ export default {
     }
 
     .logo-character {
-      font-size: 5rem;
+      font-size: 5.9rem;
       overflow: hidden;
-      min-width: 75px;
-      margin-right: 6px;
+      min-width: 85px;
+      margin-right: 4px;
     }
 
     .jumbotron {
       padding: 1rem 1rem;
+    }
+
+    .mobile-subtitle {
+      font-size: 1.5rem;
+      letter-spacing: 0.45rem;
+    }
+
+    .mobile-logo-container {
+      padding-top: 0;
     }
 
   }

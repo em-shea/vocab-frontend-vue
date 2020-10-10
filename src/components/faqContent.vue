@@ -33,9 +33,9 @@
         How do I pronounce the words?
         </p>
         <p>
-        The link to example sentences for levels 1-3 takes you to <a href="https://www.yellowbridge.com/chinese/sentsearch.php?word=%E5%A4%A7%E5%AE%B6">YellowBridge Chinese-English dictionary</a>. Here you can find example sentences, character stroke order, and pronunciation audio. Clicking on the speech bubble plays the pronunciation.
+        The link to example sentences for levels 1-3 takes you to <a href="https://www.yellowbridge.com/chinese/sentsearch.php?word=%E5%A4%A7%E5%AE%B6">YellowBridge Chinese-English dictionary</a>. Here you can find example sentences, character stroke order, and pronunciation audio.
         </p>
-        <img src="https://hsk-vocab.s3.amazonaws.com/yellowbridge-pronunciation.PNG" style="max-width:300px;">
+        <!-- <img src="https://hsk-vocab.s3.amazonaws.com/yellowbridge-pronunciation.PNG" style="max-width:300px;"> -->
         <p>
         A good first step to learning Chinese is to learn pinyin (<a href="https://chinese.yabla.com/chinese-pinyin-chart.php">pronunciation</a>, <a href="https://chinese.yabla.com/chinese-tones-learn-the-right-way-with-tone-pairs.php">tones</a>), which is included for each daily email and will help you pronounce and <a href="https://blog.fluent-forever.com/learning-pronunciation/">remember</a> characters more easily.
         </p>
