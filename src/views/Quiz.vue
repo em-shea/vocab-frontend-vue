@@ -117,7 +117,7 @@
         </div>
       </div>
     </div>
-    <div class="container quiz-main-container">
+    <div class="container quiz-title-container">
       <div class="row title-row">
         <div class="col-10 title-col">
           <h5 class="quiz-title">
@@ -133,7 +133,7 @@
         </div>
       </div>
     </div>
-    <div class="container" v-if="!displayResults">
+    <div class="container quiz-main-container" v-if="!displayResults">
       <div class="row">
         <div class="col">
           <div class="progress">
@@ -188,7 +188,7 @@
           <button type="button" class="btn btn-light next-button btn-shadow" @click="nextQuestion()">Next</button>
         </div>
       </div>
-      <div v-if="answerResults != null" class="row">
+      <div class="row" v-if="answerResults != null">
         <div class="col text-center">
           <p class="review-cards-link" @click="showReviewCards = !showReviewCards">{{ reviewCardsMessage }}</p>
         </div>
@@ -739,7 +739,7 @@ export default {
   }
 
   .btn-group-mid {
-    min-width: 50px;
+    min-width: 60px;
   }
 
   .menu-icon {
@@ -790,9 +790,9 @@ export default {
       max-width: 880px;
     }
 
-    .quiz-main-container {
+    .quiz-title-container {
       max-width: 880px;
-      padding: 1rem 2.5rem;
+      padding: .5rem 2.5rem;
     }
 
     /* .dropdown-toggle {
@@ -809,7 +809,11 @@ export default {
   @media only screen and (min-width: 0px) and (max-width: 500px) {
     .container {
       max-width: 514px;
-      padding: 1rem 2.5rem;
+      padding: .5rem 2.5rem;
+    }
+
+    .quiz-main-container {
+      padding-bottom: 4em;
     }
 
     /* .dropdown-toggle {

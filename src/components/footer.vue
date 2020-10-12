@@ -5,7 +5,7 @@
       <div class="container" :class="getFooterWidth()">
         <span class="align-text-bottom">
           Haohaotiantian
-          <a href="https://twitter.com/hhtt_app" class="fa fa-twitter social-icons pl-2"></a>
+          <a href="https://twitter.com/haohaotiantian_" class="fa fa-twitter social-icons pl-2"></a>
           <a href="https://github.com/em-shea/vocab" class="fa fa-github social-icons pl-2"></a>
           <!-- <span class="oi oi-heart oi-icon pl-2" title="oi-heart"></span> -->
         </span>
