@@ -12,6 +12,11 @@
   // @import url('https://fonts.googleapis.com/css?family=Noto+Sans+SC');
   @import url('https://fonts.googleapis.com/css?family=Ma+Shan+Zheng');
 
+  // Colors
+  // Orange red: #fe4c00
+  // Orange: #ff8500
+  // Gray: #6c757d
+
   #app {
     font-family: 'Open Sans', sans-serif;
     font-weight: 400;

@@ -65,7 +65,7 @@
                   @click="settingsTemp.questionQuantity = quantity"
                   :class="{ active : quantity === settingsTemp.questionQuantity }"
                   type="button"
-                  class="btn btn-light btn-group-wide"
+                  class="btn btn-light btn-group-mid"
                 >
                   {{ quantity }}
                 </button>
@@ -102,7 +102,7 @@
           <div class="dropdown-divider"></div>
           <div class="row justify-content-between mt-3">
             <div class="col">
-              <button class="close-options-btn btn btn-light btn-shadow mr-4" @click="hideMenu()">
+              <button class="close-options-btn btn btn-light btn-shadow" @click="hideMenu()">
                 Close
                 <span class="oi oi-x oi-icon menu-icon" title="oi-x"></span>
               </button>
@@ -117,7 +117,7 @@
         </div>
       </div>
     </div>
-    <div class="container quiz-main-container" v-if="!displayResults">
+    <div class="container quiz-main-container">
       <div class="row title-row">
         <div class="col-10 title-col">
           <h5 class="quiz-title">
@@ -132,9 +132,8 @@
           </div>
         </div>
       </div>
-          <!-- <p class="question-number">
-            {{ questionNumber }} of {{ questionQuantity }}, {{ percentCompletion }}
-          </p> -->
+    </div>
+    <div class="container" v-if="!displayResults">
       <div class="row">
         <div class="col">
           <div class="progress">
@@ -618,21 +617,21 @@ export default {
   }
 
   .quiz-answers-button.correct-answer-selected, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.correct-answer-selected {
-    background-color: #ff8500;
-    border-color: #ff8500;
-    color: white;
-  }
-
-    .quiz-answers-button.wrong-answer-selected, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.wrong-answer-selected {
     background-color: #fe4c00;
     border-color: #fe4c00;
     color: white;
   }
 
+    .quiz-answers-button.wrong-answer-selected, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.wrong-answer-selected {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }
+
   .quiz-answers-button.highlight-correct-answer, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.highlight-correct-answer {
     /* border: orangered 3px solid; */
-    background-color: #ff8500;
-    border-color: #ff8500;
+    background-color: #fe4c00;
+    border-color: #fe4c00;
     color: white;
   }
 
@@ -739,6 +738,10 @@ export default {
     min-width: 75px;
   }
 
+  .btn-group-mid {
+    min-width: 50px;
+  }
+
   .menu-icon {
     padding-left: 5px;
   }
@@ -765,7 +768,7 @@ export default {
   }
 
   .results-main-container {
-    margin-top: 8rem;
+    margin-top: 5rem;
   }
 
   .review-cards-link {

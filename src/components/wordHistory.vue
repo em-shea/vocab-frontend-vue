@@ -85,6 +85,7 @@ export default {
     color: white;
     padding: .5rem 1.25rem;
     border-radius: 1rem;
+    border-top: none;
   }
 
   .card-footer:last-child {
