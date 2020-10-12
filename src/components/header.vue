@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     mobileDevice () {
-      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         return true
       } else {
         return false
@@ -72,6 +72,7 @@ export default {
     line-height: 1.15;
     flex-grow: 0;
     padding: 0;
+    text-shadow: 1px 4px #00000026;
   }
 
   .logo-title {
@@ -83,6 +84,7 @@ export default {
     font-size: 1.5rem;
     letter-spacing: 0.45rem;
     padding-left: 1.1rem;
+    text-shadow: 1px 2px #00000026;
   }
 
   .logo-container {
@@ -105,18 +107,23 @@ export default {
   }
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
-  
+    .logo-title {
+      text-shadow: 1px 3px #00000026;
+    }
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
     .logo-title {
       font-size: 2.8rem;
       margin-bottom: -1.7rem;
+      text-shadow: 1px 2px #00000026;
     }
 
     .logo-title-2 {
       font-size: 2.8rem;
       margin-bottom: -1rem;
+      text-shadow: 1px 2px #00000026;
+      z-index: 6;
     }
 
     .logo-text-col{
@@ -128,6 +135,7 @@ export default {
       overflow: hidden;
       min-width: 85px;
       margin-right: 4px;
+      z-index: 5;
     }
 
     .jumbotron {

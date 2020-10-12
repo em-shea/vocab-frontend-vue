@@ -1,13 +1,5 @@
 <template>
   <div class="card border-secondary shadow-sm">
-    <div class="card-header main-card d-flex w-100 justify-content-between" v-on:click="clickDescription()">
-      <h5>
-        Level {{ card.Word['HSK Level'] }}
-      </h5>
-      <small class="text-muted">
-        {{ card.Date }}
-      </small>
-    </div>
     <div class="card-body main-card" v-on:click="clickDescription()">
       <p v-if="characterSet === 'simplified'" class="card-text">
         {{ card.Word.Word }}
@@ -33,6 +25,14 @@
           Example sentences
         </a>
       </p>
+    </div>
+    <div class="card-footer main-card d-flex w-100 justify-content-between" v-on:click="clickDescription()">
+      <small class="mb-0">
+        Level {{ card.Word['HSK Level'] }}
+      </small>
+      <small>
+        {{ getDateFormat(card.Date) }}
+      </small>
     </div>
   </div>
 </template>
@@ -60,6 +60,12 @@ export default {
       } else {
         this.clicked = false
       }
+    },
+    getDateFormat (cardDate) {
+      let day = cardDate.slice(-2)
+      let month = cardDate.slice(5, 7)
+      let formattedDate = month.concat('/', day)
+      return formattedDate
     }
   }
 }
@@ -69,11 +75,41 @@ export default {
   .card {
     margin: 0.75rem;
     box-shadow: 0.5rem;
-    min-height: 250px;
+    min-height: 200px;
     padding: 0;
+    border-radius: 1rem;
   }
 
-  @media only screen and (min-width: 0px) and (max-width: 800px) {
+  .card-footer {
+    background-color: #6c757d;
+    color: white;
+    padding: .5rem 1.25rem;
+    border-radius: 1rem;
+  }
+
+  .card-footer:last-child {
+    border-radius: 0 0 calc(1rem - 1px) calc(1rem - 1px);;
+  }
+
+  .link-text {
+    font-size: 0.75rem;
+  }
+
+  .card-body {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+
+  .link-card {
+    padding-top: 0rem;
+    padding-bottom: 1.5rem;
+  }
+
+  /* .card-header {
+    background-color: white;
+    color: orangered;
+  } */
+
+    @media only screen and (min-width: 0px) and (max-width: 800px) {
     .card {
       min-height: 0;
     }
@@ -95,23 +131,5 @@ export default {
       cursor: pointer;
     }
   }
-
-  .link-text {
-    font-size: 0.75rem;
-  }
-
-  .card-body {
-    padding: 1.5rem;
-  }
-
-  .link-card {
-    padding-top: 0rem;
-    padding-bottom: 1.5rem;
-  }
-
-  /* .card-header {
-    background-color: white;
-    color: orangered;
-  } */
 
 </style>

@@ -8,14 +8,14 @@
 
     <div class="container">
       <div class="row m-3">
-        <div class="col-lg-3 col-md-3 col-sm-9 col-9 p-2">
-          <h4>
-            Daily words
-          </h4>
+        <div class="col-lg-3 col-md-3 col-sm-9 col-9 p-2 title-col">
+          <h5 class="title">
+            Review daily words
+          </h5>
         </div>
         <!-- Export button above/to the left of dropdowns on sm. and smaller -->
         <div class="d-block d-md-none col-3 p-2">
-          <button class="btn btn-outline-secondary" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
+          <button class="btn btn-light btn-shadow" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 p-2">
           <select class="custom-select" v-on:change="getWordHistory()" v-model="params.list">
@@ -34,7 +34,7 @@
         <!-- Export button below/to the right of dropdowns on med. and larger -->
         <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
         <div class="col-lg-2 col-md-2 d-none d-md-block p-2">
-          <button class="btn btn-outline-secondary float-right" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
+          <button class="btn btn-light btn-shadow float-right" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
 
@@ -78,7 +78,6 @@ import smallHeader from '@/components/smallHeader.vue'
 import wordHistory from '@/components/wordHistory.vue'
 import * as XLSX from 'xlsx'
 import customFooter from '@/components/footer.vue'
-import navBar from '@/components/navBar.vue'
 import characterSetToggle from '@/components/characterSetToggle.vue'
 
 export default {
@@ -87,8 +86,7 @@ export default {
     'small-header': smallHeader,
     'word-history-card': wordHistory,
     'custom-footer': customFooter,
-    'char-set-toggle': characterSetToggle,
-    'nav-bar': navBar
+    'char-set-toggle': characterSetToggle
   },
   data () {
     return {
@@ -99,7 +97,8 @@ export default {
       params: {
         list: 'HSKLevel1',
         date_range: 30
-      }
+      },
+      footerWidth: 'narrow'
     }
   },
   computed: {
@@ -107,7 +106,7 @@ export default {
       return this.$root.$data.store.state.characterSet
     },
     mobileDevice () {
-      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         return true
       } else {
         return false
@@ -203,5 +202,18 @@ export default {
 
   .card-holder {
     padding: 0;
+  }
+
+  .btn-shadow {
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+  }
+
+  .title-col {
+    display: flex;
+    align-items: center;
+  }
+
+  .title {
+    margin-bottom: 0;
   }
 </style>

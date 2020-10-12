@@ -15,7 +15,7 @@
             <span class="oi oi-menu oi-icon toggle-icon" title="oi-menu" @click="showNav = !showNav"></span>
           </div>
         </div>
-        <div class="row mx-2 justify-content-center" v-if="showNav">
+        <div class="row mx-2 navbar-row justify-content-center" :class="{ 'visible': showNav }">
           <ul class="navbar" id="navbar">
             <li class="nav-item">
               <router-link class="nav-link" :class="{ active : this.$route.name === 'home' }" :to="{ name: 'home'}">Home</router-link>
@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     mobileDevice () {
-      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         return true
       } else {
         return false
@@ -67,7 +67,7 @@ export default {
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
-    
+
   }
 
   .header-link {
@@ -87,6 +87,11 @@ export default {
     color: #ff5700;
     padding: 0;
     line-height: 1em;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  }
+
+  .logo-character:hover {
+    text-decoration: none;
   }
 
   .logo-title {
@@ -107,8 +112,20 @@ export default {
     padding-top: 0;
   }
 
+  .navbar-row {
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+    max-height: 0;
+  }
+
+  .navbar-row.visible {
+    height: auto;
+    max-height: 50px;
+  }
+
   .nav-link {
     color: white;
+    padding: 0.2rem 1rem 0rem 1rem;
   }
 
   .nav-link:hover {

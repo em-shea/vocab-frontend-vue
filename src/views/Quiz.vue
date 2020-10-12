@@ -117,20 +117,26 @@
         </div>
       </div>
     </div>
-    <div class="dropdown quiz-settings-dropdown">
-      <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
-      </button>
-    </div>
     <div class="container quiz-main-container" v-if="!displayResults">
-      <div class="row mt-2">
-        <div class="col">
-          <p class="quiz-title">
+      <div class="row title-row">
+        <div class="col-10 title-col">
+          <h5 class="quiz-title">
             {{ settingsActive.selectedVocabList }}, past {{ settingsActive.dateRangeSelected }} days
-          </p>
+          </h5>
+        </div>
+        <div class="col-2">
+          <div class="dropdown quiz-settings-dropdown">
+            <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </div>
           <!-- <p class="question-number">
             {{ questionNumber }} of {{ questionQuantity }}, {{ percentCompletion }}
           </p> -->
+      <div class="row">
+        <div class="col">
           <div class="progress">
             <span class="progress-bar-text" :class="percentOver50()"> {{ questionNumber }} / {{ settingsActive.questionQuantity }} </span>
             <div class="progress-bar" role="progressbar" :style="{width: percentCompletion}"></div>
@@ -154,6 +160,8 @@
               <label class="btn btn-light quiz-answers-button shadow-sm btn-block" :class="[ answerButtonClass(word), getTextClass(selectedTestSet['answers'])]">
                 <input v-on:click="submitAnswer(word)" :value="word" type="radio" name="exampleRadios" id="exampleRadios1">
                 {{ word['Word'][selectedTestSet['answers']] }}
+                <i v-if="answerSelected && word === selectedQuizWords[0]" class="fa fa-check-circle pl-2"></i>
+                <i v-if="answerSelected && word === answerSelected && word !== selectedQuizWords[0]" class="fa fa-times-circle pl-2"></i>
                 <!-- <label class="form-check-label pl-1" v-if="pinyinToggled && selectedTestSet['answers'] == 'Word'">
                   {{ word['Pronunciation'] }}
                 </label> -->
@@ -170,14 +178,14 @@
           <button type="button" class="btn btn-block btn-secondary" @click="togglePinyin()">Pinyin</button>
         </div>
       </div> -->
-      <div v-if="answerResults != null" class="row my-3 mx-4">
-        <div class="col-6 answer-results">
-          <p v-if="answerResults === true && characterSet === 'simplified'">对 👍</p>
-          <p v-if="answerResults === true && characterSet === 'traditional'">對 👍</p>
-          <p v-if="answerResults === false && characterSet === 'simplified'">不对 👎</p>
-          <p v-if="answerResults === false && characterSet === 'traditional'">不對 👎</p>
-        </div>
-        <div class="col-6 text-right">
+      <div v-if="answerResults != null" class="row my-3">
+        <!-- <div class="col-6 answer-results">
+          <p v-if="answerResults === true && characterSet === 'simplified'">对 </p>
+          <p v-if="answerResults === true && characterSet === 'traditional'">對 <i class="fa fa-check-circle"></i></p>
+          <p v-if="answerResults === false && characterSet === 'simplified'">不对 <i class="fa fa-times-circle"></i></p>
+          <p v-if="answerResults === false && characterSet === 'traditional'">不對 <i class="fa fa-times-circle"></i></p>
+        </div> -->
+        <div class="col-12">
           <button type="button" class="btn btn-light next-button btn-shadow" @click="nextQuestion()">Next</button>
         </div>
       </div>
@@ -186,8 +194,8 @@
           <p class="review-cards-link" @click="showReviewCards = !showReviewCards">{{ reviewCardsMessage }}</p>
         </div>
       </div>
-      <div v-if="showReviewCards" class="row card-deck mx-3">
-        <div class="card-holder col-xl-6 col-md-6 col-sm-6" v-for="word in selectedQuizWords" :key="word['ListId']+word['Date']">
+      <div v-if="showReviewCards" class="row card-deck">
+        <div class="card-holder col-xl-6 col-md-6 col-sm-6" v-for="word in reshuffledQuizWords" :key="word['ListId']+word['Date']">
           <review-card :card="word"></review-card>
         </div>
       </div>
@@ -207,7 +215,7 @@
         </div>
       </div>
     </div>
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
   </div>
 </template>
 
@@ -215,15 +223,13 @@
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import wordHistory from '@/components/wordHistory.vue'
-import navBar from '@/components/navBar.vue'
 
 export default {
   name: 'quiz',
   components: {
     'small-header': smallHeader,
     'custom-footer': customFooter,
-    'review-card': wordHistory,
-    'nav-bar': navBar
+    'review-card': wordHistory
   },
   data () {
     return {
@@ -283,7 +289,8 @@ export default {
       answerResults: null,
       correctAnswers: 0,
       displayResults: false,
-      showReviewCards: false
+      showReviewCards: false,
+      footerWidth: 'narrow'
     }
   },
   computed: {
@@ -291,7 +298,7 @@ export default {
       return this.$root.$data.store.state.characterSet
     },
     mobileDevice () {
-      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         return true
       } else {
         return false
@@ -310,8 +317,7 @@ export default {
     reviewCardsMessage () {
       if (this.showReviewCards) {
         return 'Hide word definitions'
-      }
-      if (!this.showReviewCards) {
+      } else {
         return 'Show word definitions'
       }
     }
@@ -511,13 +517,16 @@ export default {
     },
     answerButtonClass (word) {
       let classList = []
-      if (word === this.answerSelected) {
-        classList.push('active')
+      if (word === this.answerSelected && word === this.selectedQuizWords[0]) {
+        console.log('pushing correct')
+        classList.push('correct-answer-selected')
       }
-      if (this.answerSelected && word !== this.selectedQuizWords[0]) {
-        classList.push('grayed')
+      if (word === this.answerSelected && word !== this.selectedQuizWords[0]) {
+        console.log('pushing wrong')
+        classList.push('wrong-answer-selected')
       }
       if (this.answerSelected !== null && word !== this.answerSelected && word === this.selectedQuizWords[0]) {
+        console.log('pushing highlight')
         classList.push('highlight-correct-answer')
       }
       return classList
@@ -535,10 +544,6 @@ export default {
 <style scoped>
   .quiz {
     min-height: 100vh;
-  }
-
-  .quiz-main-container {
-    padding-bottom: 1rem;
   }
 
   .overlay {
@@ -570,17 +575,6 @@ export default {
     color: white;
   }
 
-  .quiz-title {
-    margin-top: 15px;
-    font-size: 1em;
-    text-align: center;
-    /* font-weight: bold; */
-  }
-
-  .container {
-    padding-top: 0.5em;
-  }
-
   .quiz-question.question-definition-small {
     font-size: 1.5em;
   }
@@ -589,15 +583,29 @@ export default {
     font-size: 1em;
   }
 
-  .next-button {
-    min-width: 100px;
+  .quiz-answers-button {
+    align-items: center;
+    display: flex;
+    min-height: 60px;
+    justify-content: center;
   }
 
-  .new-quiz-btn, .quiz-answers-button:not(:disabled):not(.disabled).active {
+  .next-button {
+    min-width: 100px;
+    float: right;
+  }
+
+  .new-quiz-btn {
     background-color: #fe4c00;
     border-color: #fe4c00;
     color: white;
   }
+
+  /* .quiz-answers-button:not(:disabled):not(.disabled).active {
+    background-color: #fe4c00;
+    border-color: #fe4c00;
+    color: white;
+  } */
 
   .new-quiz-btn:hover {
     color: white;
@@ -605,16 +613,30 @@ export default {
     border-color: #cc3600;
   }
 
-  /* .quiz-answers-button.grayed { */
-  /*   background-color: #e9ecef; */
-  /*   border-color: #e9ecef; */
-  /* } */
-
-  .quiz-answers-button.highlight-correct-answer {
-    border: orangered 3px solid;
+  .quiz-answers-button {
+    transition: none;
   }
 
-  .quiz-title, .quiz-question, .question-number {
+  .quiz-answers-button.correct-answer-selected, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.correct-answer-selected {
+    background-color: #ff8500;
+    border-color: #ff8500;
+    color: white;
+  }
+
+    .quiz-answers-button.wrong-answer-selected, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.wrong-answer-selected {
+    background-color: #fe4c00;
+    border-color: #fe4c00;
+    color: white;
+  }
+
+  .quiz-answers-button.highlight-correct-answer, .btn-light:not(:disabled):not(.disabled):active.quiz-answers-button.highlight-correct-answer {
+    /* border: orangered 3px solid; */
+    background-color: #ff8500;
+    border-color: #ff8500;
+    color: white;
+  }
+
+  .quiz-question, .question-number {
     text-align: center;
   }
 
@@ -660,11 +682,24 @@ export default {
     font-size: 13px;
   }
 
-  .dropdown-toggle {
+  .title-row {
+    padding: 1em 0 0 0;
+  }
+
+  .title-col {
+    display: flex;
+    align-items: center;
+  }
+
+  /* .dropdown-toggle {
     z-index: 5;
     position: absolute;
     min-height: 45px;
     margin-top: 7px;
+  } */
+
+  .dropdown-toggle {
+    margin-bottom: 15px;
   }
 
   .dropdown-toggle::after {
@@ -754,11 +789,12 @@ export default {
 
     .quiz-main-container {
       max-width: 880px;
+      padding: 1rem 2.5rem;
     }
 
-    .dropdown-toggle {
-      right: 28%;
-    }
+    /* .dropdown-toggle {
+      right: 20.5rem;
+    } */
 
     .dropdown-menu {
       left: 35%;
@@ -770,11 +806,12 @@ export default {
   @media only screen and (min-width: 0px) and (max-width: 500px) {
     .container {
       max-width: 514px;
+      padding: 1rem 2.5rem;
     }
 
-    .dropdown-toggle {
-      right: 4%;
-    }
+    /* .dropdown-toggle {
+      right: 11%;
+    } */
 
     .dropdown-menu {
       left: 5%;

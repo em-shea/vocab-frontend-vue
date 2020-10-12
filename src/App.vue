@@ -26,7 +26,6 @@
     font-family: 'Ma Shan Zheng', sans-serif;
     font-weight: 900;
   }
-  
 
   .logo-title, .logo-title-2 {
     font-family: 'Oswald', sans-serif;
@@ -38,9 +37,8 @@
     font-weight: 400;
   }
 
-  .anchor-target {
-    position: relative;
-    top: -50px;
+  .narrow-footer {
+    max-width: 880px;
   }
 
   .tab-content {
@@ -62,17 +60,6 @@
     margin-bottom: 90px;
     overflow-x: hidden;
     // overflow-y: hidden;
-  }
-
-  .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    /* Set the fixed height of the footer here */
-    /* height: 50px; */
-    /* line-height: 50px; Vertically center the text there */
-    background-color: #e9ecef;
-    padding: 0.5rem;
   }
 
   .card-body {

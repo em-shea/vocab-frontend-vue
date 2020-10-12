@@ -12,7 +12,7 @@ var store = {
     // characterSet: 'traditional'
   },
   changeCharacterSet (newValue) {
-    console.log('changeCharacterSet triggered with', newValue)
+    // console.log('changeCharacterSet triggered with', newValue)
     this.state.characterSet = newValue
   }
 }

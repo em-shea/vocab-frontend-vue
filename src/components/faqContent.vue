@@ -16,7 +16,7 @@
         <p>
         Daily emails look like this:
         </p>
-        <img src="https://s3.amazonaws.com/tsu-emshea.com-emshea-com-static/static/images/chinese-vocab-app/haohaotiantian-email-640.PNG">
+        <img src="https://hhtt-static.s3.amazonaws.com/email-screenshot-wide.png">
         <p class="bold">
         How do I unsubscribe?
         </p>
@@ -84,7 +84,7 @@
         I have a different question.
         </p>
         <p>
-        <a href="https://twitter.com/messages/compose?recipient_id=2409492241">Please contact me.</a>
+        <a href="https://twitter.com/messages/compose?recipient_id=1315062296033411072">Please get in touch.</a>
         </p>
       </div>
       </div>

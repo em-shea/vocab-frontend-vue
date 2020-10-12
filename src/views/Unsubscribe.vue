@@ -13,8 +13,8 @@
         </div>
       </div>
 
-      <div class="row m-3 bg-light">
-        <div class="col-xl-4 col-lg-6 col-12 p-3">
+      <div class="row unsub-row m-3 bg-light">
+        <div class="col-xl-3 col-lg-6 col-12 p-3">
           <div class="input-group">
             <input type="email" v-model="params.email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
           </div>
@@ -41,7 +41,7 @@
             <option value="6">6 - Traditional</option>
           </select>
         </div>
-        <div class="form-check form-check-inline col-xl-2 col-6 p-3">
+        <div class="form-check form-check-inline col-xl-3 col-6 p-3">
           <input type="checkbox" v-model="unsubscribeAllInput" class="form-check-input" id="exampleCheck1">
           <label class="form-check-label pl-1" for="exampleCheck1">Unsubscribe all</label>
         </div>
@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
 </template>
@@ -95,7 +95,8 @@ export default {
       unsubscribeResponse: null,
       emailValidated: null,
       emailInputted: null,
-      levelValidated: null
+      levelValidated: null,
+      footerWidth: 'narrow'
     }
   },
   computed: {
@@ -186,8 +187,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
-
+<style scoped>
+  .container {
+    min-height: 100vh;
+  }
   .unsubscribe-header {
     margin-bottom: 0;
   }
@@ -204,6 +207,21 @@ export default {
     .unsub-btn {
       float: left;
     }
+  }
+
+  @media only screen and (min-width: 500px) and (max-width: 2000px) {
+    .container {
+      max-width: 880px;
+      padding: 1em 0em;
+    }
+
+    .unsub-row {
+      justify-content: between;
+    }
+  }
+
+  @media only screen and (min-width: 0px) and (max-width: 500px) {
+
   }
 
 </style>
