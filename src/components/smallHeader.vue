@@ -80,6 +80,7 @@ export default {
   }
 
   .logo-character {
+    text-align: center;
     font-size: 2.6rem;
     border: 3px solid rgba(255, 255, 255, 1);
     border-radius: 20%;
