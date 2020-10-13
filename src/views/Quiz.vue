@@ -2,19 +2,10 @@
   <!-- Generates tests for a given timeframe of daily words for a given level -->
   <div id="quiz" class="quiz">
     <small-header></small-header>
-    <!-- <nav-bar v-if="mobileDevice === false"></nav-bar> -->
     <div class="overlay" v-if="showMenu" @click="hideMenu()"></div>
     <div class="container" v-if="showMenu">
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <div class="container dropdown-menu-container">
-          <!-- <div class="row menu-options-row">
-            <div v-for="list in vocabLists" :key="list" class="col-6">
-              <label class="form-check dropdown-options-label">
-                <input v-model="selectedVocabList" :value="list" class="form-check-input" type="radio" name="vocabListRadios" id="exampleRadios1" checked>
-                {{ list }}
-              </label>
-            </div>
-          </div> -->
           <div class="row">
             <div class="col">
               <h5 class="quiz-settings-title pb-2 ">Quiz settings</h5>
@@ -34,7 +25,6 @@
           <div class="row">
             <div class="col-12">
               <label for="reviewPeriodSelect">Review period</label>
-              <!-- figure out how to vind to selected value -->
             </div>
             <div class="col-12 mb-3 text-center">
               <div class="btn-group" role="group" id="reviewPeriodSelect" aria-label="Basic example">
@@ -54,7 +44,6 @@
           <div class="dropdown-divider"></div>
           <div class="row">
             <div class="col-12">
-              <!-- figure out how to vind to selected value -->
               <label for="questionQuantitySelect">Number of questions</label>
             </div>
             <div class="col-12 mb-3 text-center">
@@ -78,7 +67,6 @@
               <label for="characterSetSelect">Character Set</label>
             </div>
             <div class="col-12 mb-2 text-center">
-              <!-- figure out how to vind to selected value -->
               <div class="btn-group" role="group" id="characterSetSelect" aria-label="Basic example">
                 <button
                   type="button"
@@ -178,12 +166,6 @@
         </div>
       </div> -->
       <div v-if="answerResults != null" class="row my-3">
-        <!-- <div class="col-6 answer-results">
-          <p v-if="answerResults === true && characterSet === 'simplified'">对 </p>
-          <p v-if="answerResults === true && characterSet === 'traditional'">對 <i class="fa fa-check-circle"></i></p>
-          <p v-if="answerResults === false && characterSet === 'simplified'">不对 <i class="fa fa-times-circle"></i></p>
-          <p v-if="answerResults === false && characterSet === 'traditional'">不對 <i class="fa fa-times-circle"></i></p>
-        </div> -->
         <div class="col-12">
           <button type="button" class="btn btn-light next-button btn-shadow" @click="nextQuestion()">Next</button>
         </div>
@@ -600,12 +582,6 @@ export default {
     color: white;
   }
 
-  /* .quiz-answers-button:not(:disabled):not(.disabled).active {
-    background-color: #fe4c00;
-    border-color: #fe4c00;
-    color: white;
-  } */
-
   .new-quiz-btn:hover {
     color: white;
     background-color: #cc3600;
@@ -690,13 +666,6 @@ export default {
     align-items: center;
   }
 
-  /* .dropdown-toggle {
-    z-index: 5;
-    position: absolute;
-    min-height: 45px;
-    margin-top: 7px;
-  } */
-
   .dropdown-toggle {
     margin-bottom: 15px;
   }
@@ -708,13 +677,7 @@ export default {
   .dropdown-menu {
     display: block;
     top: unset;
-    /* bottom: -550px; */
-    /* transition: bottom, 1s; */
     border: none;
-    /* border-bottom-left-radius: 15px; */
-    /* border-bottom-right-radius: 15px; */
-    /* border-top-left-radius: 15px; */
-    /* border-top-right-radius: 15px; */
   }
 
   .dropdown-menu-container {
@@ -759,7 +722,6 @@ export default {
   }
 
   .dropdown-title {
-    /* font-weight: bold; */
     font-size: 0.8em;
   }
 
@@ -788,16 +750,8 @@ export default {
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .container {
       max-width: 880px;
-    }
-
-    .quiz-title-container {
-      max-width: 880px;
       padding: .5rem 2.5rem;
     }
-
-    /* .dropdown-toggle {
-      right: 20.5rem;
-    } */
 
     .dropdown-menu {
       left: 35%;
@@ -815,10 +769,6 @@ export default {
     .quiz-main-container {
       padding-bottom: 4em;
     }
-
-    /* .dropdown-toggle {
-      right: 11%;
-    } */
 
     .dropdown-menu {
       left: 5%;
