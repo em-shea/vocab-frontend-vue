@@ -185,9 +185,9 @@
       <div class="row">
         <div class="col text-center">
           <h5>Your score:</h5>
-          <p>
+          <h5>
             {{ percentCorrect }} ({{ correctAnswers }}/{{ settingsActive.questionQuantity }})
-          </p>
+          </h5>
         </div>
       </div>
       <div class="row mt-3">
