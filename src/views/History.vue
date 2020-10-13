@@ -2,7 +2,7 @@
 
   <div id="history">
   <!-- Shows daily word history for the past ~3 months for given HSK level -->
-    <char-set-toggle></char-set-toggle>
+    <char-set-toggle :charSetWidth="charSetWidth"></char-set-toggle>
     <small-header></small-header>
     <!-- <nav-bar v-if="mobileDevice === false"></nav-bar> -->
 
@@ -98,7 +98,8 @@ export default {
         list: 'HSKLevel1',
         date_range: 30
       },
-      footerWidth: 'narrow'
+      footerWidth: 'narrow',
+      charSetWidth: 'narrow'
     }
   },
   computed: {

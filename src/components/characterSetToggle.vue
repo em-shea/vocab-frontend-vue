@@ -1,6 +1,6 @@
 <template>
     <div id="char-set-toggle">
-        <div class="container">
+        <div class="container" :class="getWidth()">
             <div class="row">
                 <div class="col">
                     <button class="btn btn-link charSet-btn float-right" title="Traditional Chinese" :class='{"active": characterSet === "traditional"}' @click="$root.$data.store.changeCharacterSet('traditional')">Traditional (繁体字)</button>
@@ -15,6 +15,9 @@
 
 export default {
   name: 'char-set-toggle',
+  props: {
+    charSetWidth: String
+  },
   data () {
     return {}
   },
@@ -24,6 +27,11 @@ export default {
     }
   },
   methods: {
+    getWidth () {
+      if (this.charSetWidth === 'narrow') {
+        return 'narrow'
+      }
+    }
   }
 }
 </script>
@@ -41,6 +49,10 @@ export default {
   .charSet-btn:hover {
     color: hsla(16, 100%, 40%, 1);
     cursor: pointer;
+  }
+
+  .container.narrow {
+    max-width: 880px;
   }
 
 </style>
