@@ -41,7 +41,7 @@
             <option value="6">6 - Traditional</option>
           </select>
         </div>
-        <div class="form-check form-check-inline col-xl-3 col-6 p-3">
+        <div class="form-check form-check-inline unsub-all col-xl-3 col-6">
           <input type="checkbox" v-model="unsubscribeAllInput" class="form-check-input" id="exampleCheck1">
           <label class="form-check-label pl-1" for="exampleCheck1">Unsubscribe all</label>
         </div>
@@ -201,6 +201,10 @@ export default {
 
   .unsub-btn {
     float: right;
+  }
+
+  .unsub-all {
+    padding: 16px 0px 16px 16px;
   }
 
   @media(min-width:1200px) {
