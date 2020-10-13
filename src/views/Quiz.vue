@@ -219,18 +219,18 @@ export default {
       loadingQuiz: true,
       params: {
         list: 'HSKLevel1',
-        days: '7',
+        days: '14',
         ques: '10'
       },
       settingsActive: {
         selectedVocabList: 'HSK Level 1',
         questionQuantity: 10,
-        dateRangeSelected: 7
+        dateRangeSelected: 14
       },
       settingsTemp: {
         selectedVocabList: 'HSK Level 1',
         questionQuantity: 10,
-        dateRangeSelected: 7
+        dateRangeSelected: 14
       },
       tempCharSet: 'simplified',
       vocabLists: {
