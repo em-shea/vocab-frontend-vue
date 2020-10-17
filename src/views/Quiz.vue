@@ -244,7 +244,7 @@ export default {
         // Chengyu2: 'Chengyu 2',
       },
       dateRange: [7, 14, 30],
-      questionQuantityOptions: [5, 10, 20, 30],
+      questionQuantityOptions: [5, 10, 20],
       selectedQuizWords: null,
       reshuffledQuizWords: null,
       // pinyinToggled: false,
