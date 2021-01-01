@@ -250,20 +250,18 @@ export default {
       // pinyinToggled: false,
       // hintOn: false,
       // hintsUsed: 0,
+      questionList: [],
       selectedTestSet: null,
-      testSet: [
-        { 'question': 'Word',
-          'answers': 'Pronunciation' },
-        { 'question': 'Pronunciation',
-          'answers': 'Word' },
+      activeTestSetList: [],
+      testSetList: [
         { 'question': 'Word',
           'answers': 'Definition' },
         { 'question': 'Definition',
           'answers': 'Word' },
-        { 'question': 'Word',
+        { 'question': 'Definition',
           'answers': 'Pronunciation' },
         { 'question': 'Pronunciation',
-          'answers': 'Word' }
+          'answers': 'Definition' }
       ],
       questionNumber: 1,
       answerSelected: null,
@@ -311,7 +309,6 @@ export default {
     this.pushToRouter()
     this.getWordHistory().then((response) => {
       this.setQuizWords()
-      this.selectTestSet()
       this.setCharacterSet()
       this.loadingQuiz = false
     })
@@ -361,35 +358,87 @@ export default {
     },
     setCharacterSet () {
       if (this.characterSet === 'traditional') {
-        for (let i = 0; i < this.testSet.length; i++) {
-          if (this.testSet[i]['question'] === 'Word') {
-            this.testSet[i]['question'] = 'Word-Traditional'
+        for (let i = 0; i < this.testSetList.length; i++) {
+          if (this.testSetList[i]['question'] === 'Word') {
+            this.testSetList[i]['question'] = 'Word-Traditional'
           }
-          if (this.testSet[i]['answers'] === 'Word') {
-            this.testSet[i]['answers'] = 'Word-Traditional'
+          if (this.testSetList[i]['answers'] === 'Word') {
+            this.testSetList[i]['answers'] = 'Word-Traditional'
           }
         }
       }
       if (this.characterSet === 'simplified') {
-        for (let i = 0; i < this.testSet.length; i++) {
-          if (this.testSet[i]['question'] === 'Word-Traditional') {
-            this.testSet[i]['question'] = 'Word'
+        for (let i = 0; i < this.testSetList.length; i++) {
+          if (this.testSetList[i]['question'] === 'Word-Traditional') {
+            this.testSetList[i]['question'] = 'Word'
           }
-          if (this.testSet[i]['answers'] === 'Word-Traditional') {
-            this.testSet[i]['answers'] = 'Word'
+          if (this.testSetList[i]['answers'] === 'Word-Traditional') {
+            this.testSetList[i]['answers'] = 'Word'
           }
         }
       }
     },
     setQuizWords () {
-      let shuffledQuizWords = this.shuffle(this.quizWords)
+      this.questionList = []
+
+      // sort quizWords into three lists: oneChar, twoChar, and all (just the quizWords list).
+      // randomly select from one of these 3 lists,
+      // with weights assigned to random selection based on how many words are in each of the oneChar and twoChar lists
+      // if quizWords is selected, adjust the testSetList array to not include word X pronunciation pairs
+      // https://stackoverflow.com/questions/8435183/generate-a-weighted-random-number
+      let oneCharWords = []
+      let twoCharWords = []
+      let quizWordsListsByCharLength = [
+        oneCharWords,
+        twoCharWords,
+        this.quizWords
+      ]
+      // quizWordsListsByCharLength.push(oneCharWords)
+      // quizWordsListsByCharLength.push(twoCharWords)
+      // quizWordsListsByCharLength.push(this.quizWords)
+
+      for (let i = 0; i < this.quizWords.length; i++) {
+        if (this.quizWords[i].Word.Word.length < 2) {
+          oneCharWords.push(this.quizWords[i])
+        }
+        if (this.quizWords[i].Word.Word.length === 2) {
+          twoCharWords.push(this.quizWords[i])
+        }
+      }
+      var randomInt = Math.floor(Math.random() * 3)
+      let selectedQuizWordsByCharLength = quizWordsListsByCharLength[randomInt]
+      console.log(quizWordsListsByCharLength)
+      console.log(randomInt)
+      // for (let i = 0; i < this.quizWords.length; i++) {
+      // }
+      // questionList
+
+      let shuffledQuizWords = this.shuffle(selectedQuizWordsByCharLength)
       this.selectedQuizWords = shuffledQuizWords.slice(0, 4)
       // reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
+
+      this.selectTestSet(randomInt)
     },
-    selectTestSet () {
-      var randomInt = Math.floor(Math.random() * Math.floor(this.testSet.length))
-      this.selectedTestSet = this.testSet[randomInt]
+    selectTestSet (wordsByCharLengthInt) {
+      // Question/answer pairs shouldn't include words and pinyin shown together
+      // Unless specific word length list is used (one char words or two char words)
+      this.activeTestSetList = null
+      if (wordsByCharLengthInt === 0 || wordsByCharLengthInt === 1) {
+        console.log('add additional word/pinyin test sets')
+        let wordPinyinTestSets = [
+          { 'question': 'Word',
+            'answers': 'Pronunciation' },
+          { 'question': 'Pronunciation',
+            'answers': 'Word' }
+        ]
+        this.activeTestSetList = [...this.testSetList, ...wordPinyinTestSets]
+      } else {
+        this.activeTestSetList = this.testSetList
+        console.log('no word/pinyin')
+      }
+      var randomInt = Math.floor(Math.random() * this.activeTestSetList.length)
+      this.selectedTestSet = this.activeTestSetList[randomInt]
     },
     hideMenu () {
       this.showMenu = !this.showMenu
@@ -436,7 +485,6 @@ export default {
     },
     resetQuestion () {
       this.setQuizWords()
-      this.selectTestSet()
       // this.pinyinToggled = false
       // this.hintOn = false
       this.answerSelected = null
