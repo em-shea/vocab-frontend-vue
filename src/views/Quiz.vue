@@ -436,15 +436,12 @@ export default {
 
       // If the first word (the correct answer) is the same as the last question, swap the first and second words
       if (this.lastQuestionWord !== null && this.selectedQuizWords[0] === this.lastQuestionWord) {
-        console.log('same word, ', this.selectedQuizWords[0].Word.Word)
         let tempWord = this.selectedQuizWords[0]
         this.selectedQuizWords[0] = this.selectedQuizWords[1]
         this.selectedQuizWords[1] = tempWord
-        console.log('updated word, ', this.selectedQuizWords[0].Word.Word)
       }
       // Update the last question word selected variable to the current question word selected (for the next time the above code is run)
       this.lastQuestionWord = this.selectedQuizWords[0]
-      console.log('last word: ', this.lastQuestionWord.Word.Word)
 
       // Reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
