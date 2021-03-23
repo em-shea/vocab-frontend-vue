@@ -8,7 +8,7 @@
         <div class="container dropdown-menu-container">
           <div class="row">
             <div class="col">
-              <h5 class="quiz-settings-title pb-2 ">Quiz settings</h5>
+              <h5 class="quiz-settings-title pb-2 ">Quiz settings {{ isOpen }}</h5>
             </div>
           </div>
           <div class="row">
@@ -114,7 +114,13 @@
         </div>
         <div class="col-2">
           <div class="dropdown quiz-settings-dropdown">
-            <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-light dropdown-toggle" @click="showMenu = !showMenu;" type="button" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
+              <!-- v-tooltip="{
+                content: tooltipContent,
+                show: isOpen,
+                trigger: 'manual',
+                placement: 'top',
+              }" -->
               <span class="oi oi-pencil oi-icon" title="oi-pencil" aria-hidden="true"></span>
             </button>
           </div>
@@ -216,6 +222,8 @@ export default {
     return {
       quizWords: [],
       showMenu: false,
+      // isOpen: true,
+      // tooltipContent: 'Tooltip',
       loadingQuiz: true,
       params: {
         list: 'HSKLevel1',
@@ -264,6 +272,7 @@ export default {
           'answers': 'Definition' }
       ],
       questionNumber: 1,
+      lastQuestionWord: null,
       answerSelected: null,
       answerResults: null,
       correctAnswers: 0,
@@ -381,11 +390,16 @@ export default {
     setQuizWords () {
       this.questionList = []
 
-      // sort quizWords into three lists: oneChar, twoChar, and all (just the quizWords list).
-      // randomly select from one of these 3 lists,
-      // with weights assigned to random selection based on how many words are in each of the oneChar and twoChar lists
-      // if quizWords is selected, adjust the testSetList array to not include word X pronunciation pairs
+      // Ensure there are no pinyin/character count mismatches (a one char answer for an obviously two char question):
+      // Sort quizWords into three lists: oneChar, twoChar, and all (just the quizWords list).
+      // If any list is less than 4 words long (not enough for 4 answer options), drop the list.
+      // Randomly select one of the remaining lists.
+      // If oneChar or twoChar lists are selected, add word & pronunciation pairs to the question/answer set array (testSetList).
+
+      // TODO: Make random selection weighted on how many words are in each of the oneChar and twoChar lists
       // https://stackoverflow.com/questions/8435183/generate-a-weighted-random-number
+
+      // Create word list data structure
       let oneCharWords = []
       let twoCharWords = []
       let quizWordsListsByCharLength = [
@@ -393,10 +407,8 @@ export default {
         twoCharWords,
         this.quizWords
       ]
-      // quizWordsListsByCharLength.push(oneCharWords)
-      // quizWordsListsByCharLength.push(twoCharWords)
-      // quizWordsListsByCharLength.push(this.quizWords)
 
+      // Sort words by length
       for (let i = 0; i < this.quizWords.length; i++) {
         if (this.quizWords[i].Word.Word.length < 2) {
           oneCharWords.push(this.quizWords[i])
@@ -405,27 +417,45 @@ export default {
           twoCharWords.push(this.quizWords[i])
         }
       }
-      var randomInt = Math.floor(Math.random() * 3)
-      let selectedQuizWordsByCharLength = quizWordsListsByCharLength[randomInt]
-      console.log(quizWordsListsByCharLength)
-      console.log(randomInt)
-      // for (let i = 0; i < this.quizWords.length; i++) {
-      // }
-      // questionList
 
+      // If one of the lists has less than 4 words, don't include it
+      for (let i = 0; i < quizWordsListsByCharLength.length; i++) {
+        // Why is this only printing list twice when there should be 3 lists?
+        if (quizWordsListsByCharLength[i].length < 4) {
+          quizWordsListsByCharLength.splice(i, 1)
+        }
+      }
+
+      // Select at random one of the word lists
+      var randomInt = Math.floor(Math.random() * (quizWordsListsByCharLength.length))
+      let selectedQuizWordsByCharLength = quizWordsListsByCharLength[randomInt]
+
+      // Shuffle the selected word list and choose the first four words
       let shuffledQuizWords = this.shuffle(selectedQuizWordsByCharLength)
       this.selectedQuizWords = shuffledQuizWords.slice(0, 4)
-      // reshuffle the quiz word list so that the first answer is not always the correct one
+
+      // If the first word (the correct answer) is the same as the last question, swap the first and second words
+      if (this.lastQuestionWord !== null && this.selectedQuizWords[0] === this.lastQuestionWord) {
+        console.log('same word, ', this.selectedQuizWords[0].Word.Word)
+        let tempWord = this.selectedQuizWords[0]
+        this.selectedQuizWords[0] = this.selectedQuizWords[1]
+        this.selectedQuizWords[1] = tempWord
+        console.log('updated word, ', this.selectedQuizWords[0].Word.Word)
+      }
+      // Update the last question word selected variable to the current question word selected (for the next time the above code is run)
+      this.lastQuestionWord = this.selectedQuizWords[0]
+      console.log('last word: ', this.lastQuestionWord.Word.Word)
+
+      // Reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
 
-      this.selectTestSet(randomInt)
+      this.selectTestSet(selectedQuizWordsByCharLength)
     },
-    selectTestSet (wordsByCharLengthInt) {
-      // Question/answer pairs shouldn't include words and pinyin shown together
-      // Unless specific word length list is used (one char words or two char words)
+    selectTestSet (selectedQuizWordsByCharLength) {
       this.activeTestSetList = null
-      if (wordsByCharLengthInt === 0 || wordsByCharLengthInt === 1) {
-        console.log('add additional word/pinyin test sets')
+
+      // If the word list with specific char limit was chosen, then add additional question/answer sets
+      if (selectedQuizWordsByCharLength !== this.quizWords) {
         let wordPinyinTestSets = [
           { 'question': 'Word',
             'answers': 'Pronunciation' },
@@ -434,15 +464,15 @@ export default {
         ]
         this.activeTestSetList = [...this.testSetList, ...wordPinyinTestSets]
       } else {
+        // If the word list was not a specific char limit one, then use the basic question/answer set (testSetList)
         this.activeTestSetList = this.testSetList
-        console.log('no word/pinyin')
       }
       var randomInt = Math.floor(Math.random() * this.activeTestSetList.length)
       this.selectedTestSet = this.activeTestSetList[randomInt]
     },
     hideMenu () {
       this.showMenu = !this.showMenu
-      // object assign copies each element of settingsActive to settingsTemp
+      // Object assign copies each element of settingsActive to settingsTemp
       Object.assign(this.settingsTemp, this.settingsActive)
       this.tempCharSet = this.$root.$data.store.state.characterSet
     },
@@ -547,15 +577,12 @@ export default {
     answerButtonClass (word) {
       let classList = []
       if (word === this.answerSelected && word === this.selectedQuizWords[0]) {
-        console.log('pushing correct')
         classList.push('correct-answer-selected')
       }
       if (word === this.answerSelected && word !== this.selectedQuizWords[0]) {
-        console.log('pushing wrong')
         classList.push('wrong-answer-selected')
       }
       if (this.answerSelected !== null && word !== this.answerSelected && word === this.selectedQuizWords[0]) {
-        console.log('pushing highlight')
         classList.push('highlight-correct-answer')
       }
       return classList
