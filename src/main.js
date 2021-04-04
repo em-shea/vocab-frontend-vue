@@ -11,8 +11,9 @@ Vue.config.productionTip = false
 
 var store = {
   state: {
-    characterSet: 'simplified'
-    // characterSet: 'traditional'
+    characterSet: 'simplified',
+    // characterSet: 'traditional',
+    signedIn: false
   },
   changeCharacterSet (newValue) {
     // console.log('changeCharacterSet triggered with', newValue)
