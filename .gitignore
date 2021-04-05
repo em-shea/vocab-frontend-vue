@@ -3,8 +3,11 @@ node_modules
 /dist
 vuecli
 vue-README.md
+.editorconfig
 
-# local env files
+# env files
+.env
+.env.production
 .env.local
 .env.*.local
 
