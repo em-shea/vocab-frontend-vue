@@ -10,6 +10,8 @@
     "lint-fix": "vue-cli-service lint --fix"
   },
   "dependencies": {
+    "amazon-cognito-identity-js": "^4.6.0",
+    "aws-amplify": "^3.3.26",
     "core-js": "^2.6.5",
     "open-iconic": "^1.1.1",
     "v-tooltip": "^2.1.3",

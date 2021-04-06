@@ -32,6 +32,8 @@
 <script>
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
+import { Auth } from 'aws-amplify'
+import { CognitoUser } from 'amazon-cognito-identity-js'
 
 export default {
   name: 'sign-in',
@@ -44,13 +46,16 @@ export default {
       email: null,
       emailValidated: null,
       emailInputted: null,
-      invalidEmail: false
+      invalidEmail: false,
+      cognitoUser: CognitoUser
     }
   },
   methods: {
-    sendCode () {
+    async sendCode () {
       if (this.validateEmail(this.email) === true) {
-        this.$router.push('/verification')
+        this.cognitoUser = await Auth.signIn(this.email)
+        console.log('email sent')
+        // this.$router.push('/verification')
       } else {
         this.invalidEmail = true
       }

@@ -6,8 +6,6 @@ vue-README.md
 .editorconfig
 
 # env files
-.env
-.env.production
 .env.local
 .env.*.local
 

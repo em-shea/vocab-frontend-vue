@@ -114,6 +114,7 @@ import faqContent from '@/components/faqContent.vue'
 import largeHeader from '@/components/header.vue'
 import customFooter from '@/components/footer.vue'
 import navBar from '@/components/navBar.vue'
+import { Auth } from 'aws-amplify'
 
 export default {
   name: 'home',
@@ -184,23 +185,41 @@ export default {
         return
       }
 
-      console.log('Calling submitSub... ')
+      try {
+        this.signUpCognitoUser()
+      } catch (error) {
+        console.error(error)
+      }
+
+      // console.log('Calling submitSub... ')
 
       this.subURL = process.env.VUE_APP_API_URL + 'sub'
-      console.log('sub url...', this.subURL)
+      // console.log('sub url...', this.subURL)
 
-      console.log('query params...', {
-        email: this.params.email,
-        list: this.params.level + '-' + this.characterSet
-      })
-      return axios.post(this.subURL, {
-        email: this.params.email,
-        list: this.params.level + '-' + this.characterSet
-      })
-        .then((response) => {
-          this.subscribeResponse = response.data['success']
-          console.log(response.data)
-        })
+      // console.log('query params...', {
+      //   email: this.params.email,
+      //   list: this.params.level + '-' + this.characterSet
+      // })
+
+      // return axios.post(this.subURL, {
+      //   email: this.params.email,
+      //   list: this.params.level + '-' + this.characterSet
+      // })
+      //   .then((response) => {
+      //     this.subscribeResponse = response.data['success']
+      //     // console.log(response.data)
+      //   })
+    },
+    async signUpCognitoUser () {
+      let cognitoParams = {
+        username: this.params.email,
+        password: this.getRandomString()
+      }
+      await Auth.signUp(cognitoParams)
+    },
+    getRandomString () {
+      let randomString = Date.now().toString(36) + Math.random().toString(36).substring(2)
+      return randomString
     }
   }
 }
