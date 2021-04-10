@@ -4,17 +4,24 @@
     <small-header></small-header>
 
     <div class="container">
-      <form>
-        <div class="form-group">
-          <label for="answerChallengeCode">Check your email for a six digit code and enter it below. This code will expire in 5 minutes.</label>
-          <input type="text" v-model="code" class="form-control" id="answerChallengeCode" placeholder="Enter one-time code">
-        </div>
-        <button type="button" class="btn btn-primary">Resend code</button>
-        <button type="button" @click="submitCode()" class="btn btn-primary">Submit</button>
-      </form>
-      <div class="row" v-if="invalidCode">
+      <div class="row">
         <div class="col">
-          <p>Please double check that you've entered the right six digit code. If you're still having trouble, click 'Resend code' to receive a new one-time code.</p>
+          <p>One-time sign-in link sent! Please check your email and click the button to sign in.</p>
+          <p>The sign-in link will expire in 3 minutes. If you did not receive an email, please double check that you entered your email correctly. Please <a href="mailto:help@haohaotiantian.com">reach out</a> if you are still having trouble logging in.</p>
+          <div class="form-group">
+            <!-- <label for="answerChallengeCode"></label> -->
+            <input type="text" v-model="code" class="form-control" id="answerChallengeCode" placeholder="One-time sign-in code">
+          </div>
+          <button type="button" class="btn btn-primary" @click="resendCode()">Resend code</button>
+          <button type="button" @click="submitCode()" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" v-if="invalidCode">
+          <p>This code is either incorrect or has expired. Please double check the code, or click the button above to resend a code.</p>
+        </div>
+        <div class="col" v-if="codeResent">
+          <p>Code resent! Please check your email.</p>
         </div>
       </div>
     </div>
@@ -28,6 +35,8 @@
 <script>
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
+import { Auth } from 'aws-amplify'
+import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js'
 
 export default {
   name: 'answer-challenge',
@@ -37,32 +46,104 @@ export default {
   },
   data () {
     return {
+      username: null,
+      session: null,
       code: null,
       codeInputted: null,
-      codeValidated: null,
-      invalidCode: false
+      cognitoUser: CognitoUser,
+      invalidCode: false,
+      errorMessage: null,
+      codeResent: false
     }
   },
+  computed: {
+  },
+  mounted () {
+    this.getLocalSessionData()
+    this.getCognitoUser()
+    this.getQueryStringParams()
+  },
   methods: {
-    submitCode () {
-      if (this.validateCode(this.code) === true) {
-        this.$router.push('/profile')
-      } else {
-        this.invalidCode = true
+    // https://stackoverflow.com/questions/52787498/cognito-paswordless-auth-via-link
+    // Get cognito user and session data from local storage
+    // Info needed from Auth.signIn in order to Auth.sendCustomChallengeAnswer
+    getLocalSessionData () {
+      let sessionData = this.$root.$data.store.retrieveSessionData()
+      console.log(sessionData)
+      this.username = sessionData.username
+      this.session = sessionData.session
+    },
+    getQueryStringParams () {
+      if (this.$route.query.code) {
+        this.code = this.$route.query.code
+        console.log('code in params')
+        this.submitCode()
       }
     },
-    validateCode () {
-      this.invalidCode = false
-      if (this.code === null) {
-        this.codeInputted = false
-        return false
-      } if (this.code.length !== 6) {
-        this.codeValidated = false
-        return false
-      } else {
-        this.codeValidated = true
-        return true
+    getCognitoUser () {
+      // console.log('username', this.username)
+      // console.log('session', this.session)
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
       }
+
+      try {
+        let userPool = new CognitoUserPool(userPoolData)
+
+        this.cognitoUser = new CognitoUser({
+          Username: this.username,
+          Pool: userPool,
+          Storage: localStorage
+        })
+      } catch (err) {
+        console.log(err)
+      }
+
+      this.cognitoUser.Session = this.session
+      // console.log('session2', this.cognitoUser.Session)
+    },
+    submitCode () {
+      this.answerChallenge()
+    },
+    async answerChallenge () {
+      try {
+        // console.log('answer challenge cognito user', this.cognitoUser)
+        await Auth.sendCustomChallengeAnswer(this.cognitoUser, this.code)
+      } catch (err) {
+        console.log('Error authenticating user', err)
+        if (err.message === 'Invalid session for the user.') {
+          this.invalidCode = true
+          this.errorMessage = 'This sign-in code is expired. Please click the button above to resend a new code.'
+          return
+        } else {
+          throw err
+        }
+      }
+      // Test if user was authenticated.
+      try {
+        await Auth.currentSession()
+      } catch (err) {
+        console.log('Error authenticating user', err)
+        throw err
+      }
+      console.log('signed in')
+      this.$root.$data.store.updateSignInStatus(true)
+      this.$router.push('/profile')
+    },
+    async resendCode () {
+      console.log('resending')
+      this.code = null
+      this.codeResent = false
+      this.invalidCode = false
+      this.errorMessage = null
+      try {
+        this.cognitoUser = await Auth.signIn(this.username)
+      } catch (err) {
+        console.log(err)
+      }
+      this.codeResent = true
     }
   }
 }

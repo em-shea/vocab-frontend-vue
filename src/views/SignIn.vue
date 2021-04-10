@@ -6,16 +6,17 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <p>To sign in, we'll send a one-time code to your email. No need to remember a password!</p>
+          <p>To sign in, we'll send a one-time sign-in link to your email. No need to remember a password!</p>
+          <p>Not signed up yet? Head to the <router-link :to="{ name: 'home'}">home page</router-link>, select your vocab list, and click subscribe.</p>
         </div>
       </div>
-      <form>
+      <div>
         <div class="form-group">
           <label for="exampleInputEmail1">Email address</label>
           <input type="email" v-model="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
         </div>
         <button type="button" @click="sendCode()" class="btn btn-primary">Send one-time code to my email</button>
-      </form>
+      </div>
       <div class="row" v-if="invalidEmail">
         <div class="col">
           <p>Please enter a valid email.</p>
@@ -43,19 +44,26 @@ export default {
   },
   data () {
     return {
+      cognitoUser: CognitoUser,
       email: null,
       emailValidated: null,
       emailInputted: null,
-      invalidEmail: false,
-      cognitoUser: CognitoUser
+      invalidEmail: false
     }
   },
   methods: {
     async sendCode () {
       if (this.validateEmail(this.email) === true) {
-        this.cognitoUser = await Auth.signIn(this.email)
+        try {
+          this.cognitoUser = await Auth.signIn(this.email)
+        } catch (err) {
+          console.log(err)
+        }
+        console.log('cognito user', this.cognitoUser)
         console.log('email sent')
-        // this.$router.push('/verification')
+        // this.$root.$data.store.storeSessionData(this.cognitoUser)
+        this.$root.$data.store.storeSessionData(this.cognitoUser.username, this.cognitoUser.Session)
+        this.$router.push('/verification')
       } else {
         this.invalidEmail = true
       }

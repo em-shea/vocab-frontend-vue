@@ -12,6 +12,15 @@
           <li class="nav-item">
             <router-link class="nav-link" :class="{ active : this.$route.name === 'history' }" :to="{ name: 'history'}">Review</router-link>
           </li>
+          <li class="nav-item" v-if="!this.signedIn && this.$route.name !== 'sign-in'">
+            <router-link class="nav-link" :to="{ name: 'sign-in'}">Sign in</router-link>
+          </li>
+          <li class="nav-item" v-if="this.signedIn">
+            <router-link class="nav-link" :class="{ active : this.$route.name === 'user-profile' }" :to="{ name: 'user-profile'}">Profile</router-link>
+          </li>
+          <li class="nav-item" v-if="this.signedIn">
+            <div class="nav-link" @click="signOut()">Sign out</div>
+          </li>
         </ul>
       </div>
     </div>
@@ -25,7 +34,24 @@ export default {
   data () {
     return {}
   },
+  computed: {
+    signedIn () {
+      return this.$root.$data.store.retrieveSignInStatus()
+    }
+  },
+  mounted () {
+    console.log(this.signedIn)
+  },
   methods: {
+    // TODO: The nav bar is not updating when a user clicks sign out while on the home page
+    signOut () {
+      console.log('sign out')
+      this.$root.$data.store.storeSessionData(null, null)
+      this.$root.$data.store.updateSignInStatus(false)
+      if (this.$route.name === 'user-profile') {
+        this.$router.push('/')
+      }
+    }
   }
 }
 </script>

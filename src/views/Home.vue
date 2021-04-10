@@ -58,9 +58,9 @@
             <div v-if="subscribeResponse === false">
               <p>Something went wrong. Try refreshing the page, or contact us (see bottom of FAQ).</p>
             </div>
-            <div v-if="subscribeResponse">
+            <!-- <div v-if="subscribeResponse">
               <p>成功！Success! You're subscribed and will receive a confirmation email.</p>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -201,14 +201,17 @@ export default {
       //   list: this.params.level + '-' + this.characterSet
       // })
 
-      // return axios.post(this.subURL, {
-      //   email: this.params.email,
-      //   list: this.params.level + '-' + this.characterSet
-      // })
-      //   .then((response) => {
-      //     this.subscribeResponse = response.data['success']
-      //     // console.log(response.data)
-      //   })
+      return axios.post(this.subURL, {
+        email: this.params.email,
+        list: this.params.level + '-' + this.characterSet
+      })
+        .then((response) => {
+          this.subscribeResponse = response.data['success']
+          // console.log(response.data)
+          if (this.subscribeResponse) {
+            this.$router.push('/subscribed')
+          }
+        })
     },
     async signUpCognitoUser () {
       let cognitoParams = {
