@@ -46,21 +46,24 @@
         </div>
       </div>
 
-      <div v-if="subSubmitted" class="container">
+      <div v-if="levelValidated === false" class="container">
         <div class="row m-3">
           <div class="col text-center sub-response" id="sub-response">
-            <div v-if="levelValidated === false">
-              <p>Please select an HSK level.</p>
-            </div>
-            <div v-if="emailInputted === false || emailValidated === false">
-              <p>Please enter a valid email.</p>
-            </div>
-            <div v-if="subscribeResponse === false">
-              <p>Something went wrong. Try refreshing the page, or contact us (see bottom of FAQ).</p>
-            </div>
-            <!-- <div v-if="subscribeResponse">
-              <p>成功！Success! You're subscribed and will receive a confirmation email.</p>
-            </div> -->
+            <p>Please select an HSK level.</p>
+          </div>
+        </div>
+      </div>
+      <div v-if="emailInputted === false || emailValidated === false" class="container">
+        <div class="row m-3">
+          <div class="col text-center sub-response" id="sub-response">
+            <p>Please enter a valid email.</p>
+          </div>
+        </div>
+      </div>
+      <div v-if="subscribeResponse === false" class="container">
+        <div class="row m-3">
+          <div class="col text-center sub-response" id="sub-response">
+            <p>Something went wrong. Try refreshing the page, or contact us at help@haohaotiantian.com.</p>
           </div>
         </div>
       </div>
@@ -174,7 +177,7 @@ export default {
     },
 
     submitSubscription () {
-      this.subSubmitted = true
+      // this.subSubmitted = true
       this.subscribeResponse = null
       this.emailValidated = null
       this.emailInputted = null
@@ -190,12 +193,13 @@ export default {
       try {
         this.signUpCognitoUser()
       } catch (error) {
+        this.subscribeResponse = false
         console.error(error)
       }
 
       this.sendCode()
 
-      this.$router.push('/subscribed')
+      // this.$router.push('/subscribed')
 
       // this.subURL = process.env.VUE_APP_API_URL + 'sub'
 
@@ -228,7 +232,7 @@ export default {
       console.log('email sent')
       // this.$root.$data.store.storeSessionData(this.cognitoUser)
       this.$root.$data.store.storeSessionData(this.cognitoUser.username, this.cognitoUser.Session)
-      // this.$router.push('/verification')
+      this.$router.push('/subscribed')
     },
     getRandomString () {
       let randomString = Date.now().toString(36) + Math.random().toString(36).substring(2)
