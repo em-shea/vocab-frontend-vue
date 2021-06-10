@@ -41,6 +41,16 @@
     font-weight: 400;
   }
 
+  .orange-button {
+    cursor: pointer;
+    border-radius: .5em;
+    background-color: #fe4c00;
+    border-color: #fe4c00;
+    color: white;
+    min-width: 200px;
+    margin: .5em;
+  }
+
   .tooltip {
   display: block !important;
   z-index: 10000;

@@ -191,27 +191,21 @@ export default {
         console.error(error)
       }
 
-      // console.log('Calling submitSub... ')
+      this.sendCode()
 
-      this.subURL = process.env.VUE_APP_API_URL + 'sub'
-      // console.log('sub url...', this.subURL)
+      // this.subURL = process.env.VUE_APP_API_URL + 'sub'
 
-      // console.log('query params...', {
+      // return axios.post(this.subURL, {
       //   email: this.params.email,
       //   list: this.params.level + '-' + this.characterSet
       // })
-
-      return axios.post(this.subURL, {
-        email: this.params.email,
-        list: this.params.level + '-' + this.characterSet
-      })
-        .then((response) => {
-          this.subscribeResponse = response.data['success']
-          // console.log(response.data)
-          if (this.subscribeResponse) {
-            this.$router.push('/subscribed')
-          }
-        })
+      //   .then((response) => {
+      //     this.subscribeResponse = response.data['success']
+      //     // console.log(response.data)
+      //     if (this.subscribeResponse) {
+      //       this.$router.push('/subscribed')
+      //     }
+      //   })
     },
     async signUpCognitoUser () {
       let cognitoParams = {
@@ -219,6 +213,18 @@ export default {
         password: this.getRandomString()
       }
       await Auth.signUp(cognitoParams)
+    },
+    async sendCode () {
+      try {
+        this.cognitoUser = await Auth.signIn(this.email)
+      } catch (err) {
+        console.log(err)
+      }
+      console.log('cognito user', this.cognitoUser)
+      console.log('email sent')
+      // this.$root.$data.store.storeSessionData(this.cognitoUser)
+      this.$root.$data.store.storeSessionData(this.cognitoUser.username, this.cognitoUser.Session)
+      // this.$router.push('/verification')
     },
     getRandomString () {
       let randomString = Date.now().toString(36) + Math.random().toString(36).substring(2)

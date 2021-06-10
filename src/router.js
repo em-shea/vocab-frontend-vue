@@ -4,9 +4,13 @@ import Home from './views/Home.vue'
 import Quiz from './views/Quiz.vue'
 import History from './views/History.vue'
 import Unsubscribe from './views/Unsubscribe.vue'
+
+import UserProfile from './views/UserProfile.vue'
+import UserQuiz from './views/UserQuiz.vue'
+import UserSentences from './views/UserSentences.vue'
+
 import SignUpConfirmation from './views/SignUpConfirmation.vue'
 import SignIn from './views/SignIn.vue'
-import UserProfile from './views/UserProfile.vue'
 import SignInAnswerChallenge from './views/SignInAnswerChallenge.vue'
 
 Vue.use(Router)
@@ -36,14 +40,24 @@ export default new Router({
       component: Unsubscribe
     },
     {
-      path: '/subscribed',
-      name: 'sign-up-confirmation',
-      component: SignUpConfirmation
-    },
-    {
       path: '/profile',
       name: 'user-profile',
       component: UserProfile
+    },
+    {
+      path: '/writing-practice',
+      name: 'user-sentences',
+      component: UserSentences
+    },
+    {
+      path: '/my-quizzes',
+      name: 'user-quiz',
+      component: UserQuiz
+    },
+    {
+      path: '/subscribed',
+      name: 'sign-up-confirmation',
+      component: SignUpConfirmation
     },
     {
       path: '/signin',

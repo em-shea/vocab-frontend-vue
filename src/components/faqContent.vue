@@ -75,10 +75,10 @@
         What does Haohaotiantian mean?
         </p>
         <p v-if="characterSet === 'simplified'">
-        好好学习，天天向上 - Study hard and make progress every day.
+        好好学习，天天向上 (Hǎo hào xuéxí, tiāntiān xiàngshàng) - Study hard and make progress every day.
         </p>
         <p v-if="characterSet === 'traditional'">
-        好好學習，天天向上 - Study hard and make progress every day.
+        好好學習，天天向上 (Hǎo hào xuéxí, tiāntiān xiàngshàng) - Study hard and make progress every day.
         </p>
         <p class="bold">
         I have a different question.

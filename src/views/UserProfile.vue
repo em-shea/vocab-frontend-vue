@@ -6,14 +6,56 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <div class="card mx-auto" style="width: 18rem;">
+          <h5>{{ displayName }}</h5>
+          <p class="mb-2 text-muted">{{ displayNamePinyin }}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          Daily tasks:
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-center">
+          <button type="button" class="btn orange-button" v-on:click="$router.push('/my-quizzes');">
+            Vocab quiz
+          </button>
+        </div>
+        <div class="col-12 text-center">
+          <!-- Issue getting routed to writing practice page -->
+          <button type="button" class="btn orange-button" v-on:click="$router.push('/writing-practice');">
+            Practice sentences
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          Subscribed lists:
+        </div>
+      </div>
+      <ul>
+        <li v-for="list in userLists" :key="list">
+          {{ list }}
+        </li>
+      </ul>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-light" v-on:click="$router.push('/my-quizzes');">
+            Account settings
+          </button>
+        </div>
+      </div>
+    </div>
+          <!-- <div class="card mx-auto">
             <div class="card-body">
-              <h4 class="card-title">Your profile</h4>
-              <h5 class="card-title">{{ displayName }}</h5>
-              <p class="card-text">This is your profile page!</p>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Daily tasks</li>
+
+                <li class="list-group-item">Your progress</li>
+                https://bootstrap-datepicker.readthedocs.io/en/latest/
+
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">Subscribed lists</li>
+
               <li class="list-group-item">Created lists</li>
               <li class="list-group-item">Quiz scores</li>
             </ul>
@@ -23,7 +65,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <custom-footer></custom-footer>
 
@@ -43,7 +85,12 @@ export default {
   },
   data () {
     return {
-      displayName: '小蔡 🐼'
+      displayName: '小蔡 🐼',
+      displayNamePinyin: 'Xiǎo cài',
+      userLists: [
+        'HSK Level 3',
+        'HSK Level 6'
+      ]
     }
   },
   computed: {
@@ -62,6 +109,15 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+  .orange-button {
+    cursor: pointer;
+    border-radius: .5em;
+    background-color: #fe4c00;
+    border-color: #fe4c00;
+    color: white;
+    min-width: 200px;
+    margin: .5em;
+  }
 
 </style>
