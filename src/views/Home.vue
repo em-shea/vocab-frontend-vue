@@ -115,6 +115,7 @@ import largeHeader from '@/components/header.vue'
 import customFooter from '@/components/footer.vue'
 import navBar from '@/components/navBar.vue'
 import { Auth } from 'aws-amplify'
+import { CognitoUser } from 'amazon-cognito-identity-js'
 
 export default {
   name: 'home',
@@ -130,6 +131,7 @@ export default {
         email: null,
         level: 'default'
       },
+      cognitoUser: CognitoUser,
       emailValidated: null,
       emailInputted: null,
       levelValidated: null,
@@ -192,6 +194,8 @@ export default {
       }
 
       this.sendCode()
+
+      this.$router.push('/subscribed')
 
       // this.subURL = process.env.VUE_APP_API_URL + 'sub'
 
