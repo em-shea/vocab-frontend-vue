@@ -84,7 +84,7 @@
         I have a different question.
         </p>
         <p>
-        <a href="mailto:help@haohaotiantian.com">Please get in touch.</a>
+        Please get in touch over <a href="https://twitter.com/messages/2409492241-1315062296033411072">Twitter</a> or email us at <a href="mailto:nihao@haohaotiantian.com">nihao@haohaotiantian.com</a>.
         </p>
       </div>
       </div>

@@ -5,7 +5,11 @@
 
     <div class="container">
       <div class="row">
-        <div class="col">
+        <div class="col" v-if="userData['user data']['User alias'] === 'Not set'">
+          <h5>{{ userData['user data']['Email address'] }}</h5>
+          <p class="mb-2 text-muted">Set a profile name</p>
+        </div>
+        <div class="col" v-if="userData['user data']['User alias'] !== 'Not set'">
           <h5>{{ displayName }}</h5>
           <p class="mb-2 text-muted">{{ displayNamePinyin }}</p>
         </div>
@@ -34,8 +38,8 @@
         </div>
       </div>
       <ul>
-        <li v-for="list in userLists" :key="list">
-          {{ list }}
+        <li v-for="list in userData.lists" :key="list['List id']">
+          {{ list['List name'] }}
         </li>
       </ul>
       <div class="row">
@@ -76,6 +80,7 @@
 <script>
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
+import * as AmazonCognitoIdentity from "amazon-cognito-identity-js";
 
 export default {
   name: 'user-profile',
@@ -85,6 +90,7 @@ export default {
   },
   data () {
     return {
+      userData: {},
       displayName: '小蔡 🐼',
       displayNamePinyin: 'Xiǎo cài',
       userLists: [
@@ -102,9 +108,44 @@ export default {
     if (!this.signedIn) {
       this.$root.$data.store.storeSessionData(null, null)
       this.$router.push('/signin')
+    } else {
+      this.getUserData()
     }
   },
   methods: {
+    getUserData () {
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let cognitoUser = userPool.getCurrentUser()
+        if (cognitoUser != null) {
+          cognitoUser.getSession((err, session) => {
+            if (err) {
+              console.log(err);
+            } else if (!session.isValid()) {
+              console.log("Invalid session.")
+            } else {
+              console.log("IdToken: " + session.getIdToken().getJwtToken())
+              return axios
+                .get(process.env.VUE_APP_API_URL + 'user_data', {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                }
+                )
+                .then((response) => {
+                  console.log(response.data)
+                  this.userData = response.data
+                })
+            }
+          })
+        } else {
+          console.log("User not found.");
+        }
+    }
   }
 }
 </script>

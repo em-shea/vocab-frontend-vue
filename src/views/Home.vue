@@ -14,25 +14,15 @@
         </div>
         <div class="row mx-3 mb-3">
           <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'simplified'">
-            <select v-model="params.level" class="custom-select" id="level">
+            <select v-model="params.list" class="custom-select" id="list">
               <option selected value="default">Choose an HSK Level</option>
-              <option value="1">1 - Simplified</option>
-              <option value="2">2 - Simplified</option>
-              <option value="3">3 - Simplified</option>
-              <option value="4">4 - Simplified</option>
-              <option value="5">5 - Simplified</option>
-              <option value="6">6 - Simplified</option>
+              <option v-for="list in hskLists" :key="list.listId" :value="list">{{ list.listLevel }} - Simplified</option>
             </select>
           </div>
           <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'traditional'">
-            <select v-model="params.level" class="custom-select" id="level">
+            <select v-model="params.list" class="custom-select" id="list">
               <option selected value="default">Choose an HSK Level</option>
-              <option value="1">1 - Traditional</option>
-              <option value="2">2 - Traditional</option>
-              <option value="3">3 - Traditional</option>
-              <option value="4">4 - Traditional</option>
-              <option value="5">5 - Traditional</option>
-              <option value="6">6 - Traditional</option>
+              <option v-for="list in hskLists" :key="list.listId" :value="list">{{ list.listLevel }} - Traditional</option>
             </select>
           </div>
           <div class="col-md-8 col-xs-6 p-3">
@@ -46,7 +36,7 @@
         </div>
       </div>
 
-      <div v-if="levelValidated === false" class="container">
+      <div v-if="listValidated === false" class="container">
         <div class="row m-3">
           <div class="col text-center sub-response" id="sub-response">
             <p>Please select an HSK level.</p>
@@ -64,6 +54,13 @@
         <div class="row m-3">
           <div class="col text-center sub-response" id="sub-response">
             <p>Something went wrong. Try refreshing the page, or contact us at help@haohaotiantian.com.</p>
+          </div>
+        </div>
+      </div>
+      <div v-if="userExists === true" class="container">
+        <div class="row m-3">
+          <div class="col text-center sub-response" id="sub-response">
+            <p>Something went wrong. If you are already subscribed, please <router-link :to="{ name: 'sign-in'}">sign in</router-link> to your account to manage your subscriptions.</p>
           </div>
         </div>
       </div>
@@ -132,16 +129,25 @@ export default {
     return {
       params: {
         email: null,
-        level: 'default'
+        list: 'default'
       },
       cognitoUser: CognitoUser,
       emailValidated: null,
       emailInputted: null,
-      levelValidated: null,
+      listValidated: null,
+      userExists: null,
       exampleWordList: [],
       exampleListSelected: '1',
       subscribeResponse: null,
-      subSubmitted: false
+      subSubmitted: false,
+      hskLists: [
+        { listLevel: '1', listName: 'HSK Level 1', listId: '1ebcad3f-5dfd-6bfe-bda4-acde48001122' },
+        { listLevel: '2', listName: 'HSK Level 2', listId: '1ebcad3f-adc0-6f42-b8b1-acde48001122' },
+        { listLevel: '3', listName: 'HSK Level 3', listId: '1ebcad3f-f815-6b92-b3e8-acde48001122' },
+        { listLevel: '4', listName: 'HSK Level 4', listId: '1ebcad40-414f-6bc8-859d-acde48001122' },
+        { listLevel: '5', listName: 'HSK Level 5', listId: '1ebcad40-bb9e-6ece-a366-acde48001122' },
+        { listLevel: '6', listName: 'HSK Level 6', listId: '1ebcad41-197a-6700-95a3-acde48001122' }
+      ]
     }
   },
   computed: {
@@ -162,7 +168,6 @@ export default {
           console.log(this.exampleWordList)
         })
     },
-
     validateEmail () {
       if (this.params.email === null) {
         this.emailInputted = false
@@ -175,64 +180,64 @@ export default {
         return true
       }
     },
-
-    submitSubscription () {
+    async submitSubscription () {
       // this.subSubmitted = true
       this.subscribeResponse = null
       this.emailValidated = null
       this.emailInputted = null
-      this.levelValidated = null
-      if (this.params.level === 'default') {
-        this.levelValidated = false
+      this.listValidated = null
+      if (this.params.list === 'default') {
+        this.listValidated = false
         return false
       }
       if (!this.validateEmail()) {
         return
       }
-
       try {
-        this.signUpCognitoUser()
+        let cognitoSignupResponse = await this.signUpCognitoUser()
+        console.log('cognito id...', cognitoSignupResponse)
+        let promises = [
+          this.sendCode(),
+          this.createNewUser(cognitoSignupResponse.userSub)
+        ]
+        let responses = await Promise.all(promises)
+        console.log(responses)
+        this.$router.push('/subscribed')
       } catch (error) {
-        this.subscribeResponse = false
         console.error(error)
+        if (error.code === 'UsernameExistsException') {
+          this.userExists = true
+        } else {
+          this.subscribeResponse = false
+        }
       }
-
-      this.sendCode()
-
-      // this.$router.push('/subscribed')
-
-      // this.subURL = process.env.VUE_APP_API_URL + 'sub'
-
-      // return axios.post(this.subURL, {
-      //   email: this.params.email,
-      //   list: this.params.level + '-' + this.characterSet
-      // })
-      //   .then((response) => {
-      //     this.subscribeResponse = response.data['success']
-      //     // console.log(response.data)
-      //     if (this.subscribeResponse) {
-      //       this.$router.push('/subscribed')
-      //     }
-      //   })
     },
     async signUpCognitoUser () {
       let cognitoParams = {
         username: this.params.email,
         password: this.getRandomString()
       }
-      await Auth.signUp(cognitoParams)
+      return Auth.signUp(cognitoParams)
+    },
+    async createNewUser (userCognitoId) {
+      this.subURL = process.env.VUE_APP_API_URL + 'sub'
+      let response = await axios.post(this.subURL, {
+        subType: 'newUser',
+        cognitoId: userCognitoId,
+        email: this.params.email,
+        listId: this.params.list.listId,
+        listName: this.params.list.listName,
+        charSet: this.characterSet
+      })
+      return response
     },
     async sendCode () {
       try {
-        this.cognitoUser = await Auth.signIn(this.email)
+        this.cognitoUser = await Auth.signIn(this.params.email)
       } catch (err) {
         console.log(err)
       }
-      console.log('cognito user', this.cognitoUser)
-      console.log('email sent')
-      // this.$root.$data.store.storeSessionData(this.cognitoUser)
       this.$root.$data.store.storeSessionData(this.cognitoUser.username, this.cognitoUser.Session)
-      this.$router.push('/subscribed')
     },
     getRandomString () {
       let randomString = Date.now().toString(36) + Math.random().toString(36).substring(2)
