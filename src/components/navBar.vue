@@ -48,9 +48,7 @@ export default {
       console.log('sign out')
       this.$root.$data.store.storeSessionData(null, null)
       this.$root.$data.store.updateSignInStatus(false)
-      if (this.$route.name === 'user-profile') {
-        this.$router.push('/')
-      }
+      this.$router.push('/')
     }
   }
 }

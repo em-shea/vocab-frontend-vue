@@ -8,6 +8,8 @@ import Unsubscribe from './views/Unsubscribe.vue'
 import UserProfile from './views/UserProfile.vue'
 import UserQuiz from './views/UserQuiz.vue'
 import UserSentences from './views/UserSentences.vue'
+import EditUserInfo from './views/EditUserInfo.vue'
+import ManageLists from './views/ManageLists.vue'
 
 import SignUpConfirmation from './views/SignUpConfirmation.vue'
 import SignIn from './views/SignIn.vue'
@@ -68,6 +70,16 @@ export default new Router({
       path: '/verification',
       name: 'answer-challenge',
       component: SignInAnswerChallenge
+    },
+    {
+      path: '/profile-settings',
+      name: 'edit-user-info',
+      component: EditUserInfo
+    },
+    {
+      path: '/manage-lists',
+      name: 'manage-lists',
+      component: ManageLists
     }
   ]
 })

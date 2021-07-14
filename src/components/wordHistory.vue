@@ -66,6 +66,7 @@ export default {
       let month = cardDate.slice(5, 7)
       let formattedDate = month.concat('/', day)
       return formattedDate
+      // https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date
     }
   }
 }

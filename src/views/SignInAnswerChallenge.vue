@@ -88,10 +88,8 @@ export default {
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
         Storage: localStorage
       }
-
       try {
         let userPool = new CognitoUserPool(userPoolData)
-
         this.cognitoUser = new CognitoUser({
           Username: this.username,
           Pool: userPool,
@@ -100,7 +98,6 @@ export default {
       } catch (err) {
         console.log(err)
       }
-
       this.cognitoUser.Session = this.session
       // console.log('session2', this.cognitoUser.Session)
     },

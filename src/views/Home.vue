@@ -219,8 +219,9 @@ export default {
       }
       return Auth.signUp(cognitoParams)
     },
+    // update api call
     async createNewUser (userCognitoId) {
-      this.subURL = process.env.VUE_APP_API_URL + 'sub'
+      this.subURL = process.env.VUE_APP_API_URL + 'set_subs'
       let response = await axios.post(this.subURL, {
         subType: 'newUser',
         cognitoId: userCognitoId,
