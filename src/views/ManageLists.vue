@@ -2,68 +2,73 @@
   <div id="manage-lists">
     <small-header></small-header>
     <div class="container">
-        <div class="row">
-            <div class="col-7">
-                <h5>
-                    My subscriptions
-                </h5>
-            </div>
-            <div class="col-5">
-                <button type="button" class="btn btn-secondary" v-if="!changesMade">Submit</button>
-            </div>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-light" @click="$router.push('/profile')">
+            <span class="oi oi-chevron-left oi-icon menu-icon" title="oi-chevron-left"></span>
+            Back
+          </button>
         </div>
-        <div class="row">
-            <div class="col-12" v-for="(value, key) in userData['lists']" :key=key>
-                <div class="card shadow-sm text-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <h6 class="card-text">{{ value['list_name'] }}</h6>
-                                <p class="card-text">{{ value['character_set'] }}</p>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-danger" :class="{ 'btn-outline-danger': unsubSelected, 'button-danger': !unsubSelected }" :click="toggleSelect(value['list_id'])">Unsubscribe</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row bg-light">
-            <div class="col">
-                <h5>
-                    Find new lists
-                </h5>
-            </div>
-            <div class="col">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Filter
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Simplified</a>
-                        <a class="dropdown-item" href="#">Traditional</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row bg-light">
-            <div class="col-12 list-display">
-                <div class="card shadow-sm text-center" v-for="(value, key) in allLists" :key=key>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <h6 class="card-text">{{ value['list_name'] }}</h6>
-                                <p class="card-text">{{ value['character_set'] }}</p>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-success">Subscribe</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div class="row">
+          <div class="col-7">
+              <h5>
+                  My subscriptions
+              </h5>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-12" v-for="(value, key) in userData['lists']" :key=key>
+              <div class="card shadow-sm text-center">
+                  <div class="card-body">
+                      <div class="row">
+                          <div class="col-6">
+                              <h6 class="card-text">{{ value['list_name'] }}</h6>
+                              <p class="card-text">{{ value['character_set'] }}</p>
+                          </div>
+                          <div class="col-6">
+                              <button type="button" class="btn btn-outline-danger" :class="{ 'btn-outline-danger': unsubSelected, 'button-danger': !unsubSelected }" :click="toggleSelect(value['list_id'])">Unsubscribe</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="row bg-light">
+          <div class="col">
+              <h5>
+                  Find new lists
+              </h5>
+          </div>
+          <div class="col">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" @click="showDropdown = !showDropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Filter
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="{'dropdown-open': showDropdown}">
+                      <a class="dropdown-item" href="#">Simplified</a>
+                      <a class="dropdown-item" href="#">Traditional</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="row bg-light">
+          <div class="col-12 list-display">
+              <div class="card shadow-sm text-center" v-for="(value, key) in allAvailableLists" :key=key>
+                  <div class="card-body">
+                      <div class="row">
+                          <div class="col-6">
+                              <h6 class="card-text">{{ value['list_name'] }}</h6>
+                              <p class="card-text">{{ value['character_set'] }}</p>
+                          </div>
+                          <div class="col-6">
+                              <button type="button" class="btn btn-outline-success">Subscribe</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
     <custom-footer></custom-footer>
   </div>
@@ -82,63 +87,91 @@ export default {
   },
   data () {
     return {
-      dropdownOpen: false,
+      showDropdown: false,
       unsubSelected: false,
       changesMade: false,
       userData: {},
       allLists: [
         {
           'list_name': 'HSK Level 1',
-          'list_id': '12345',
+          'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 2',
-          'list_id': '23456',
+          'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 3',
-          'list_id': '34567',
+          'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 4',
-          'list_id': '4567',
+          'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
+          'character_set': 'simplified',
+          'date_created': '2021-06-16T23:06:48.467526',
+          'created_by': 'admin'
+        },
+        {
+          'list_name': 'HSK Level 5',
+          'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
+          'character_set': 'simplified',
+          'date_created': '2021-06-16T23:06:48.467526',
+          'created_by': 'admin'
+        },
+        {
+          'list_name': 'HSK Level 6',
+          'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 1',
-          'list_id': '5678',
+          'list_id': 'd685b31a-e161-11eb-ba80-0242ac130004',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 2',
-          'list_id': '6789',
+          'list_id': 'dbe24166-e161-11eb-ba80-0242ac130004',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 3',
-          'list_id': '9876',
+          'list_id': 'e0333b8a-e161-11eb-ba80-0242ac130004',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 4',
-          'list_id': '8765',
+          'list_id': 'e51bad3a-e161-11eb-ba80-0242ac130004',
+          'character_set': 'traditional',
+          'date_created': '2021-06-16T23:06:48.467526',
+          'created_by': 'admin'
+        },
+        {
+          'list_name': 'HSK Level 5',
+          'list_id': 'e9681f72-e161-11eb-ba80-0242ac130004',
+          'character_set': 'traditional',
+          'date_created': '2021-06-16T23:06:48.467526',
+          'created_by': 'admin'
+        },
+        {
+          'list_name': 'HSK Level 6',
+          'list_id': 'edf5677a-e161-11eb-ba80-0242ac130004',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -147,16 +180,20 @@ export default {
     }
   },
   mounted () {
-    this.setListStatus()
     this.getUserData()
+    console.log('all lists', this.allAvailableLists)
   },
-  computed: {},
-  methods: {
-    setListStatus () {
-
+  computed: {
+    subscribedListIds () {
+      return this.userData['lists'].map(elem => elem['list_id'])
     },
+    allAvailableLists () {
+      // return this.allLists.filter(e => this.subscribedListIds.indexOf(e['list_id']) === -1)
+      return this.allLists.filter(elem => !this.subscribedListIds.includes(elem['list_id']))
+    }
+  },
+  methods: {
     toggleSelect (listId) {
-
     },
     getUserData () {
       let userPoolData = {
@@ -196,6 +233,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.dropdown-open {
+  display: block;
+}
 .list-display{
     height: 350px;
     overflow-y: scroll;
