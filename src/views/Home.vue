@@ -223,12 +223,15 @@ export default {
     async createNewUser (userCognitoId) {
       this.subURL = process.env.VUE_APP_API_URL + 'set_subs'
       let response = await axios.post(this.subURL, {
-        subType: 'newUser',
-        cognitoId: userCognitoId,
-        email: this.params.email,
-        listId: this.params.list.listId,
-        listName: this.params.list.listName,
-        charSet: this.characterSet
+        "cognito_id":userCognitoId,
+        "email":this.params.email,
+        "char_set_preference":this.characterSet,
+        "set_lists": [
+          {
+            "list_id":this.params.list.listId,
+            "list_name":this.params.list.listName,
+            "char_set":this.characterSet
+          }]
       })
       return response
     },
