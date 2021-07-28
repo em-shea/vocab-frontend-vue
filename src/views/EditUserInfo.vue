@@ -4,7 +4,7 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <button type="button" class="btn btn-light" @click="$router.push('/profile')">
+          <button type="button" class="btn btn-light my-3" @click="$router.push('/profile')">
             <span class="oi oi-chevron-left oi-icon menu-icon" title="oi-chevron-left"></span>
             Back
           </button>
@@ -16,6 +16,9 @@
                   Profile settings
               </h5>
           </div>
+          <div class="col">
+            <p v-if="userDataUpdated" class="updated-flag mb-0 float-right">Updated!</p>
+          </div>
       </div>
       <div class="row">
         <div class="col">
@@ -23,24 +26,24 @@
             <div class="form-group row">
               <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
               <div class="col-sm-10">
-                <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="userData['user_data']['email_address']">
+                <input type="text" readonly class="form-control-plaintext email-text" id="staticEmail" :value="userData['user_data']['email_address']">
               </div>
             </div>
             <div class="form-group row">
-              <label for="staticEmail" class="col-sm-2 col-form-label">Username</label>
+              <label for="staticEmail" class="col-sm-2 col-form-label">Profile name</label>
               <div class="col">
-                <select class="form-control" v-model="userAliasPlaceholder" @change="updateUserData()" id="exampleFormControlSelect1" >
+                <select class="form-control" v-model="userAliasPlaceholder" @change="updateUserAlias()" id="exampleFormControlSelect1" >
                   <option v-for="alias in userAliasOptions" :key="alias['character']" :value="alias">{{ alias['character'] }} {{ alias['pinyin'] }}</option>
                 </select>
               </div>
-              <div class="col-3">
+            </div>
+            <div class="form-group row">
+              <label for="staticEmail" class="col-sm-2 col-form-label">Emoji</label>
+              <div class="col">
                 <select class="form-control" v-model="userData['user_data']['user_alias_emoji']" @change="setUserData()" id="exampleFormControlSelect1">
                   <option v-for="emoji in emojiOptions" :key="emoji" :value="emoji">{{ emoji }}</option>
                 </select>
               </div>
-              <!-- <div class="col">
-                <button type="button" class="btn btn-light">Submit</button>
-              </div> -->
             </div>
             <div class="form-group row">
               <label for="inputPassword" class="col-sm-2 col-form-label">Character set preference</label>
@@ -53,6 +56,13 @@
               </div>
             </div>
           </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-light float-right" v-on:click="signOut()">
+            Sign out
+          </button>
         </div>
       </div>
     </div>
@@ -75,25 +85,14 @@ export default {
   },
   data () {
     return {
+      cognitoUser: null,
       userAliasPlaceholder: {},
       userData: {
         user_data: {}
       },
       userAliasOptions: userAliasOptions,
       emojiOptions: emojiOptions,
-      // userAliasOptions: [
-      //   { 'character': '小王', 'pinyin': 'xiǎo wáng' },
-      //   { 'character': '小陈', 'pinyin': 'xiǎo chén' },
-      //   { 'character': '小琳', 'pinyin': 'xiǎo lín' },
-      //   { 'character': '小蔡', 'pinyin': 'xiǎo cài' }
-      // ],
-      // emojiOptions: [
-      //   '🕺',
-      //   '📙',
-      //   '🌶',
-      //   '🌴',
-      //   '☀️'
-      // ]
+      userDataUpdated: false
     }
   },
   async mounted () {
@@ -103,16 +102,58 @@ export default {
   computed: {},
   methods: {
     setUserAliasPlaceholder () {
+      if (this.userData['user_data']['user_alias_pinyin'] === 'Not set') {
+        this.userData['user_data']['user_alias_pinyin'] = ''
+        console.log('set pinyin to blank', this.userData['user_data']['user_alias_pinyin'])
+      }
       this.userAliasPlaceholder = {
-        'user_alias': this.userData['user_data']['user_alias'],
-        'user_alias_pinyin': this.userData['user_data']['user_alias_pinyin']
+        'character': this.userData['user_data']['user_alias'],
+        'pinyin': this.userData['user_data']['user_alias_pinyin']
       }
       console.log('update user placeholder', this.userAliasPlaceholder)
     },
-    updateUserData () {
+    updateUserAlias () {
       console.log('update user data', this.userAliasPlaceholder)
-      this.userData['user_data']['user_alias'] = this.userAliasPlaceholder['user_alias']
-      this.userData['user_data']['user_alias_pinyin'] = this.userAliasPlaceholder['user_alias_pinyin']
+      this.userData['user_data']['user_alias'] = this.userAliasPlaceholder['character']
+      if (this.userAliasPlaceholder['pinyin'] === '') {
+        this.userData['user_data']['user_alias_pinyin'] = 'Not set'
+      } else {
+        this.userData['user_data']['user_alias_pinyin'] = this.userAliasPlaceholder['pinyin']
+      }
+      this.setUserData()
+    },
+    async getCognitoUser () {
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      this.cognitoUser = userPool.getCurrentUser()
+      return new Promise((resolve, reject) => {
+        if (this.cognitoUser != null) {
+          this.cognitoUser.getSession((err, session) => {
+            if (err) {
+              console.log(err)
+              reject(err)
+            } else if (!session.isValid()) {
+              console.log('Invalid session.')
+              reject(Error('Invalid session.'))
+            } else {
+              console.log('Success')
+                .then((response) => {
+                  console.log(response.data)
+                  console.log(session.getIdToken().getJwtToken())
+                  this.userData = response.data
+                  resolve(this.userData)
+                })
+            }
+          })
+        } else {
+          console.log('User not found.')
+          reject(Error('User not found'))
+        }
+      })
     },
     async getUserData () {
       let userPoolData = {
@@ -154,6 +195,7 @@ export default {
       })
     },
     setUserData () {
+      this.userDataUpdated = false
       let requestBody = {
         'user_alias': this.userData['user_data']['user_alias'],
         'user_alias_pinyin': this.userData['user_data']['user_alias_pinyin'],
@@ -186,16 +228,29 @@ export default {
                 })
               .then((response) => {
                 console.log(response.data)
+                this.userDataUpdated = true
               })
           }
         })
       } else {
         console.log('User not found.')
       }
+    },
+    signOut () {
+      console.log('sign out')
+      this.$root.$data.store.storeSessionData(null, null)
+      this.$root.$data.store.updateSignInStatus(false)
+      this.$router.push('/')
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+  .updated-flag {
+    color: orangered
+  }
+  .email-text {
+    color: #717375
+  }
 </style>

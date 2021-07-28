@@ -29,7 +29,10 @@
             <div class="input-group">
               <input type="email" v-model="params.email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="submitSubscription();">Subscribe</button>
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="submitSubscription();">
+                  <span v-if="submittingSub" class="spinner-border spinner-border-sm mb-1 mx-1" role="status" aria-hidden="true"></span>
+                  Subscribe
+                </button>
               </div>
             </div>
           </div>
@@ -132,6 +135,7 @@ export default {
         list: 'default'
       },
       cognitoUser: CognitoUser,
+      submittingSub: false,
       emailValidated: null,
       emailInputted: null,
       listValidated: null,
@@ -139,7 +143,6 @@ export default {
       exampleWordList: [],
       exampleListSelected: '1',
       subscribeResponse: null,
-      subSubmitted: false,
       hskLists: [
         { listLevel: '1', listName: 'HSK Level 1', listId: '1ebcad3f-5dfd-6bfe-bda4-acde48001122' },
         { listLevel: '2', listName: 'HSK Level 2', listId: '1ebcad3f-adc0-6f42-b8b1-acde48001122' },
@@ -181,7 +184,7 @@ export default {
       }
     },
     async submitSubscription () {
-      // this.subSubmitted = true
+      this.submittingSub = true
       this.subscribeResponse = null
       this.emailValidated = null
       this.emailInputted = null
@@ -211,6 +214,7 @@ export default {
           this.subscribeResponse = false
         }
       }
+      this.submittingSub = false
     },
     async signUpCognitoUser () {
       let cognitoParams = {
@@ -219,18 +223,17 @@ export default {
       }
       return Auth.signUp(cognitoParams)
     },
-    // update api call
     async createNewUser (userCognitoId) {
       this.subURL = process.env.VUE_APP_API_URL + 'set_subs'
       let response = await axios.post(this.subURL, {
-        "cognito_id":userCognitoId,
-        "email":this.params.email,
-        "char_set_preference":this.characterSet,
-        "set_lists": [
+        'cognito_id': userCognitoId,
+        'email': this.params.email,
+        'char_set_preference': this.characterSet,
+        'set_lists': [
           {
-            "list_id":this.params.list.listId,
-            "list_name":this.params.list.listName,
-            "char_set":this.characterSet
+            'list_id': this.params.list.listId,
+            'list_name': this.params.list.listName,
+            'char_set': this.characterSet
           }]
       })
       return response
@@ -264,6 +267,11 @@ export default {
   .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     color: #fff;
     background-color: #fe4c00;
+  }
+
+  .progress-bar {
+    background: rgb(255,76,0);
+    background: linear-gradient(90deg, rgba(255,76,0,1) 0%, rgba(255,145,0,1) 100%);
   }
 
   .sticky-top {

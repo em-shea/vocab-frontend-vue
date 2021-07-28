@@ -12,8 +12,8 @@
             <!-- <label for="answerChallengeCode"></label> -->
             <input type="text" v-model="code" class="form-control" id="answerChallengeCode" placeholder="One-time sign-in code">
           </div>
-          <button type="button" class="btn btn-primary" @click="resendCode()">Resend code</button>
-          <button type="button" @click="submitCode()" class="btn btn-primary">Submit</button>
+          <button type="button" class="btn btn-dark" @click="resendCode()">Resend code</button>
+          <button type="button" @click="submitCode()" class="btn btn-dark">Submit</button>
         </div>
       </div>
       <div class="row">

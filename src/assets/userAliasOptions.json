@@ -1,402 +1,406 @@
 [
-    {
-       "character":"小安",
-       "pinyin":"xiǎo ān"
-    },
-    {
-       "character":"小卞",
-       "pinyin":"xiǎo biàn"
-    },
-    {
-       "character":"小鲍",
-       "pinyin":"xiǎo bào"
-    },
-    {
-       "character":"小毕",
-       "pinyin":"xiǎo bì"
-    },
-    {
-       "character":"小柏",
-       "pinyin":"xiǎo bǎi"
-    },
-    {
-       "character":"小卜",
-       "pinyin":"xiǎo bǔ"
-    },
-    {
-       "character":"小常",
-       "pinyin":"xiǎo cháng"
-    },
-    {
-       "character":"小陈",
-       "pinyin":"xiǎo chén"
-    },
-    {
-       "character":"小昌",
-       "pinyin":"xiǎo chāng"
-    },
-    {
-       "character":"小褚",
-       "pinyin":"xiǎo chǔ"
-    },
-    {
-       "character":"小曹",
-       "pinyin":"xiǎo cáo"
-    },
-    {
-       "character":"小岑",
-       "pinyin":"xiǎo cén"
-    },
-    {
-       "character":"小窦",
-       "pinyin":"xiǎo dòu"
-    },
-    {
-       "character":"小范",
-       "pinyin":"xiǎo fàn"
-    },
-    {
-       "character":"小费",
-       "pinyin":"xiǎo fèi"
-    },
-    {
-       "character":"小凤",
-       "pinyin":"xiǎo fèng"
-    },
-    {
-       "character":"小冯",
-       "pinyin":"xiǎo féng"
-    },
-    {
-       "character":"小傅",
-       "pinyin":"xiǎo fù"
-    },
-    {
-       "character":"小方",
-       "pinyin":"xiǎo fāng"
-    },
-    {
-       "character":"小酆",
-       "pinyin":"xiǎo fēng"
-    },
-    {
-       "character":"小顾",
-       "pinyin":"xiǎo gù"
-    },
-    {
-       "character":"小葛",
-       "pinyin":"xiǎo gě"
-    },
-    {
-       "character":"小华",
-       "pinyin":"xiǎo huà"
-    },
-    {
-       "character":"小黄",
-       "pinyin":"xiǎo huáng"
-    },
-    {
-       "character":"小花",
-       "pinyin":"xiǎo huā"
-    },
-    {
-       "character":"小韩",
-       "pinyin":"xiǎo hán"
-    },
-    {
-       "character":"小贺",
-       "pinyin":"xiǎo hè"
-    },
-    {
-       "character":"小何",
-       "pinyin":"xiǎo hé"
-    },
-    {
-       "character":"小和",
-       "pinyin":"xiǎo hé"
-    },
-    {
-       "character":"小郝",
-       "pinyin":"xiǎo hǎo"
-    },
-    {
-       "character":"小姜",
-       "pinyin":"xiǎo jiāng"
-    },
-    {
-       "character":"小蒋",
-       "pinyin":"xiǎo jiǎng"
-    },
-    {
-       "character":"小金",
-       "pinyin":"xiǎo jīn"
-    },
-    {
-       "character":"小康",
-       "pinyin":"xiǎo kāng"
-    },
-    {
-       "character":"小孔",
-       "pinyin":"xiǎo kǒng"
-    },
-    {
-       "character":"小廉",
-       "pinyin":"xiǎo lián"
-    },
-    {
-       "character":"小柳",
-       "pinyin":"xiǎo liǔ"
-    },
-    {
-       "character":"小罗",
-       "pinyin":"xiǎo luó"
-    },
-    {
-       "character":"小郎",
-       "pinyin":"xiǎo láng"
-    },
-    {
-       "character":"小乐",
-       "pinyin":"xiǎo lè"
-    },
-    {
-       "character":"小雷",
-       "pinyin":"xiǎo léi"
-    },
-    {
-       "character":"小李",
-       "pinyin":"xiǎo lǐ"
-    },
-    {
-       "character":"小鲁",
-       "pinyin":"xiǎo lǔ"
-    },
-    {
-       "character":"小吕",
-       "pinyin":"xiǎo lǚ"
-    },
-    {
-       "character":"小苗",
-       "pinyin":"xiǎo miáo"
-    },
-    {
-       "character":"小孟",
-       "pinyin":"xiǎo mèng"
-    },
-    {
-       "character":"小穆",
-       "pinyin":"xiǎo mù"
-    },
-    {
-       "character":"小马",
-       "pinyin":"xiǎo mǎ"
-    },
-    {
-       "character":"小倪",
-       "pinyin":"xiǎo ní"
-    },
-    {
-       "character":"小彭",
-       "pinyin":"xiǎo péng"
-    },
-    {
-       "character":"小皮",
-       "pinyin":"xiǎo pí"
-    },
-    {
-       "character":"小平",
-       "pinyin":"xiǎo píng"
-    },
-    {
-       "character":"小潘",
-       "pinyin":"xiǎo pān"
-    },
-    {
-       "character":"小秦",
-       "pinyin":"xiǎo qin"
-    },
-    {
-       "character":"小钱",
-       "pinyin":"xiǎo qián"
-    },
-    {
-       "character":"小齐",
-       "pinyin":"xiǎo qí"
-    },
-    {
-       "character":"小戚",
-       "pinyin":"xiǎo qī"
-    },
-    {
-       "character":"小任",
-       "pinyin":"xiǎo rén"
-    },
-    {
-       "character":"小施",
-       "pinyin":"xiǎo shi"
-    },
-    {
-       "character":"小水",
-       "pinyin":"xiǎo shuǐ"
-    },
-    {
-       "character":"小时",
-       "pinyin":"xiǎo shí"
-    },
-    {
-       "character":"小沈",
-       "pinyin":"xiǎo shěn"
-    },
-    {
-       "character":"小史",
-       "pinyin":"xiǎo shǐ"
-    },
-    {
-       "character":"小苏",
-       "pinyin":"xiǎo sū"
-    },
-    {
-       "character":"小孙",
-       "pinyin":"xiǎo sūn"
-    },
-    {
-       "character":"小唐",
-       "pinyin":"xiǎo táng"
-    },
-    {
-       "character":"小陶",
-       "pinyin":"xiǎo táo"
-    },
-    {
-       "character":"小滕",
-       "pinyin":"xiǎo téng"
-    },
-    {
-       "character":"小汤",
-       "pinyin":"xiǎo tāng"
-    },
-    {
-       "character":"小王",
-       "pinyin":"xiǎo wáng"
-    },
-    {
-       "character":"小卫",
-       "pinyin":"xiǎo wèi"
-    },
-    {
-       "character":"小魏",
-       "pinyin":"xiǎo wèi"
-    },
-    {
-       "character":"小韦",
-       "pinyin":"xiǎo wéi"
-    },
-    {
-       "character":"小吴",
-       "pinyin":"xiǎo wú"
-    },
-    {
-       "character":"小邬",
-       "pinyin":"xiǎo wū"
-    },
-    {
-       "character":"小伍",
-       "pinyin":"xiǎo wǔ"
-    },
-    {
-       "character":"小谢",
-       "pinyin":"xiǎo xiè"
-    },
-    {
-       "character":"小萧",
-       "pinyin":"xiǎo xiāo"
-    },
-    {
-       "character":"小薛",
-       "pinyin":"xiǎo xuē"
-    },
-    {
-       "character":"小奚",
-       "pinyin":"xiǎo xī"
-    },
-    {
-       "character":"小许",
-       "pinyin":"xiǎo xǔ"
-    },
-    {
-       "character":"小尤",
-       "pinyin":"xiǎo yoú"
-    },
-    {
-       "character":"小袁",
-       "pinyin":"xiǎo yuán"
-    },
-    {
-       "character":"小元",
-       "pinyin":"xiǎo yuán"
-    },
-    {
-       "character":"小严",
-       "pinyin":"xiǎo yán"
-    },
-    {
-       "character":"小杨",
-       "pinyin":"xiǎo yáng"
-    },
-    {
-       "character":"小喻",
-       "pinyin":"xiǎo yù"
-    },
-    {
-       "character":"小俞",
-       "pinyin":"xiǎo yú"
-    },
-    {
-       "character":"小于",
-       "pinyin":"xiǎo yú"
-    },
-    {
-       "character":"小余",
-       "pinyin":"xiǎo yú"
-    },
-    {
-       "character":"小云",
-       "pinyin":"xiǎo yún"
-    },
-    {
-       "character":"小殷",
-       "pinyin":"xiǎo yīn"
-    },
-    {
-       "character":"小尹",
-       "pinyin":"xiǎo yǐn"
-    },
-    {
-       "character":"小赵",
-       "pinyin":"xiǎo zhào"
-    },
-    {
-       "character":"小郑",
-       "pinyin":"xiǎo zhèng"
-    },
-    {
-       "character":"小张",
-       "pinyin":"xiǎo zhāng"
-    },
-    {
-       "character":"小章",
-       "pinyin":"xiǎo zhāng"
-    },
-    {
-       "character":"小周",
-       "pinyin":"xiǎo zhōu"
-    },
-    {
-       "character":"小朱",
-       "pinyin":"xiǎo zhū"
-    },
-    {
-       "character":"小邹",
-       "pinyin":"xiǎo zōu"
-    }
+   {
+      "character":"Not set",
+      "pinyin":""
+   },
+   {
+      "character":"小安",
+      "pinyin":"xiǎo ān"
+   },
+   {
+      "character":"小卞",
+      "pinyin":"xiǎo biàn"
+   },
+   {
+      "character":"小鲍",
+      "pinyin":"xiǎo bào"
+   },
+   {
+      "character":"小毕",
+      "pinyin":"xiǎo bì"
+   },
+   {
+      "character":"小柏",
+      "pinyin":"xiǎo bǎi"
+   },
+   {
+      "character":"小卜",
+      "pinyin":"xiǎo bǔ"
+   },
+   {
+      "character":"小常",
+      "pinyin":"xiǎo cháng"
+   },
+   {
+      "character":"小陈",
+      "pinyin":"xiǎo chén"
+   },
+   {
+      "character":"小昌",
+      "pinyin":"xiǎo chāng"
+   },
+   {
+      "character":"小褚",
+      "pinyin":"xiǎo chǔ"
+   },
+   {
+      "character":"小曹",
+      "pinyin":"xiǎo cáo"
+   },
+   {
+      "character":"小岑",
+      "pinyin":"xiǎo cén"
+   },
+   {
+      "character":"小窦",
+      "pinyin":"xiǎo dòu"
+   },
+   {
+      "character":"小范",
+      "pinyin":"xiǎo fàn"
+   },
+   {
+      "character":"小费",
+      "pinyin":"xiǎo fèi"
+   },
+   {
+      "character":"小凤",
+      "pinyin":"xiǎo fèng"
+   },
+   {
+      "character":"小冯",
+      "pinyin":"xiǎo féng"
+   },
+   {
+      "character":"小傅",
+      "pinyin":"xiǎo fù"
+   },
+   {
+      "character":"小方",
+      "pinyin":"xiǎo fāng"
+   },
+   {
+      "character":"小酆",
+      "pinyin":"xiǎo fēng"
+   },
+   {
+      "character":"小顾",
+      "pinyin":"xiǎo gù"
+   },
+   {
+      "character":"小葛",
+      "pinyin":"xiǎo gě"
+   },
+   {
+      "character":"小华",
+      "pinyin":"xiǎo huà"
+   },
+   {
+      "character":"小黄",
+      "pinyin":"xiǎo huáng"
+   },
+   {
+      "character":"小花",
+      "pinyin":"xiǎo huā"
+   },
+   {
+      "character":"小韩",
+      "pinyin":"xiǎo hán"
+   },
+   {
+      "character":"小贺",
+      "pinyin":"xiǎo hè"
+   },
+   {
+      "character":"小何",
+      "pinyin":"xiǎo hé"
+   },
+   {
+      "character":"小和",
+      "pinyin":"xiǎo hé"
+   },
+   {
+      "character":"小郝",
+      "pinyin":"xiǎo hǎo"
+   },
+   {
+      "character":"小姜",
+      "pinyin":"xiǎo jiāng"
+   },
+   {
+      "character":"小蒋",
+      "pinyin":"xiǎo jiǎng"
+   },
+   {
+      "character":"小金",
+      "pinyin":"xiǎo jīn"
+   },
+   {
+      "character":"小康",
+      "pinyin":"xiǎo kāng"
+   },
+   {
+      "character":"小孔",
+      "pinyin":"xiǎo kǒng"
+   },
+   {
+      "character":"小廉",
+      "pinyin":"xiǎo lián"
+   },
+   {
+      "character":"小柳",
+      "pinyin":"xiǎo liǔ"
+   },
+   {
+      "character":"小罗",
+      "pinyin":"xiǎo luó"
+   },
+   {
+      "character":"小郎",
+      "pinyin":"xiǎo láng"
+   },
+   {
+      "character":"小乐",
+      "pinyin":"xiǎo lè"
+   },
+   {
+      "character":"小雷",
+      "pinyin":"xiǎo léi"
+   },
+   {
+      "character":"小李",
+      "pinyin":"xiǎo lǐ"
+   },
+   {
+      "character":"小鲁",
+      "pinyin":"xiǎo lǔ"
+   },
+   {
+      "character":"小吕",
+      "pinyin":"xiǎo lǚ"
+   },
+   {
+      "character":"小苗",
+      "pinyin":"xiǎo miáo"
+   },
+   {
+      "character":"小孟",
+      "pinyin":"xiǎo mèng"
+   },
+   {
+      "character":"小穆",
+      "pinyin":"xiǎo mù"
+   },
+   {
+      "character":"小马",
+      "pinyin":"xiǎo mǎ"
+   },
+   {
+      "character":"小倪",
+      "pinyin":"xiǎo ní"
+   },
+   {
+      "character":"小彭",
+      "pinyin":"xiǎo péng"
+   },
+   {
+      "character":"小皮",
+      "pinyin":"xiǎo pí"
+   },
+   {
+      "character":"小平",
+      "pinyin":"xiǎo píng"
+   },
+   {
+      "character":"小潘",
+      "pinyin":"xiǎo pān"
+   },
+   {
+      "character":"小秦",
+      "pinyin":"xiǎo qin"
+   },
+   {
+      "character":"小钱",
+      "pinyin":"xiǎo qián"
+   },
+   {
+      "character":"小齐",
+      "pinyin":"xiǎo qí"
+   },
+   {
+      "character":"小戚",
+      "pinyin":"xiǎo qī"
+   },
+   {
+      "character":"小任",
+      "pinyin":"xiǎo rén"
+   },
+   {
+      "character":"小施",
+      "pinyin":"xiǎo shi"
+   },
+   {
+      "character":"小水",
+      "pinyin":"xiǎo shuǐ"
+   },
+   {
+      "character":"小时",
+      "pinyin":"xiǎo shí"
+   },
+   {
+      "character":"小沈",
+      "pinyin":"xiǎo shěn"
+   },
+   {
+      "character":"小史",
+      "pinyin":"xiǎo shǐ"
+   },
+   {
+      "character":"小苏",
+      "pinyin":"xiǎo sū"
+   },
+   {
+      "character":"小孙",
+      "pinyin":"xiǎo sūn"
+   },
+   {
+      "character":"小唐",
+      "pinyin":"xiǎo táng"
+   },
+   {
+      "character":"小陶",
+      "pinyin":"xiǎo táo"
+   },
+   {
+      "character":"小滕",
+      "pinyin":"xiǎo téng"
+   },
+   {
+      "character":"小汤",
+      "pinyin":"xiǎo tāng"
+   },
+   {
+      "character":"小王",
+      "pinyin":"xiǎo wáng"
+   },
+   {
+      "character":"小卫",
+      "pinyin":"xiǎo wèi"
+   },
+   {
+      "character":"小魏",
+      "pinyin":"xiǎo wèi"
+   },
+   {
+      "character":"小韦",
+      "pinyin":"xiǎo wéi"
+   },
+   {
+      "character":"小吴",
+      "pinyin":"xiǎo wú"
+   },
+   {
+      "character":"小邬",
+      "pinyin":"xiǎo wū"
+   },
+   {
+      "character":"小伍",
+      "pinyin":"xiǎo wǔ"
+   },
+   {
+      "character":"小谢",
+      "pinyin":"xiǎo xiè"
+   },
+   {
+      "character":"小萧",
+      "pinyin":"xiǎo xiāo"
+   },
+   {
+      "character":"小薛",
+      "pinyin":"xiǎo xuē"
+   },
+   {
+      "character":"小奚",
+      "pinyin":"xiǎo xī"
+   },
+   {
+      "character":"小许",
+      "pinyin":"xiǎo xǔ"
+   },
+   {
+      "character":"小尤",
+      "pinyin":"xiǎo yoú"
+   },
+   {
+      "character":"小袁",
+      "pinyin":"xiǎo yuán"
+   },
+   {
+      "character":"小元",
+      "pinyin":"xiǎo yuán"
+   },
+   {
+      "character":"小严",
+      "pinyin":"xiǎo yán"
+   },
+   {
+      "character":"小杨",
+      "pinyin":"xiǎo yáng"
+   },
+   {
+      "character":"小喻",
+      "pinyin":"xiǎo yù"
+   },
+   {
+      "character":"小俞",
+      "pinyin":"xiǎo yú"
+   },
+   {
+      "character":"小于",
+      "pinyin":"xiǎo yú"
+   },
+   {
+      "character":"小余",
+      "pinyin":"xiǎo yú"
+   },
+   {
+      "character":"小云",
+      "pinyin":"xiǎo yún"
+   },
+   {
+      "character":"小殷",
+      "pinyin":"xiǎo yīn"
+   },
+   {
+      "character":"小尹",
+      "pinyin":"xiǎo yǐn"
+   },
+   {
+      "character":"小赵",
+      "pinyin":"xiǎo zhào"
+   },
+   {
+      "character":"小郑",
+      "pinyin":"xiǎo zhèng"
+   },
+   {
+      "character":"小张",
+      "pinyin":"xiǎo zhāng"
+   },
+   {
+      "character":"小章",
+      "pinyin":"xiǎo zhāng"
+   },
+   {
+      "character":"小周",
+      "pinyin":"xiǎo zhōu"
+   },
+   {
+      "character":"小朱",
+      "pinyin":"xiǎo zhū"
+   },
+   {
+      "character":"小邹",
+      "pinyin":"xiǎo zōu"
+   }
  ]

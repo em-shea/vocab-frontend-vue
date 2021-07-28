@@ -8,13 +8,13 @@
         <div class="col">
           <h5>成功！You're subscribed to daily vocab emails.</h5>
           <p>
-            You should receive a confirmation email which includes a sign-in link. This link will take you to your profile, where you can see the vocab lists that you're subscribed to and track how many quizzes you've taken.
+            You should receive a confirmation email which includes a sign-in link. This link will take you to your profile, where you can manage your vocab list subscriptions, review previous daily words, and take vocab quizzes.
           </p>
           <p>
             The sign-in link expires after 3 minutes, but you can always request a new one on the <router-link :to="{ name: 'sign-in'}">sign-in page</router-link>.
           </p>
           <p>
-            Thanks for subscribing! Follow<a href="https://twitter.com/haohaotiantian_"><p class="fa fa-twitter social-icons pl-2"></p> Haohaotiantian</a> to stay up to date.
+            Thanks for subscribing! Follow<a href="https://twitter.com/haohaotiantian_"><p class="fa fa-twitter social-icons pl-2"></p> Haohaotiantian</a> on Twitter to learn about new features we're building.
           </p>
         </div>
       </div>

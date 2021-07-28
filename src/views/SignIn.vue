@@ -7,15 +7,15 @@
       <div class="row">
         <div class="col">
           <p>To sign in, we'll send a one-time sign-in link to your email. No need to remember a password!</p>
-          <p>Not signed up yet? Head to the <router-link :to="{ name: 'home'}">home page</router-link>, select your vocab list, and click subscribe.</p>
+          <p>Not signed up yet? Head to the <router-link :to="{ name: 'home'}">home page</router-link>, select a vocab list, and click subscribe.</p>
         </div>
       </div>
       <div>
         <div class="form-group">
           <label for="exampleInputEmail1">Email address</label>
-          <input type="email" v-model="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+          <input type="email" v-model="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email address">
         </div>
-        <button type="button" @click="sendCode()" class="btn btn-primary">Send one-time code to my email</button>
+        <button type="button" @click="sendCode()" class="btn btn-dark">Send one-time code to my email</button>
       </div>
       <div class="row" v-if="invalidEmail">
         <div class="col">

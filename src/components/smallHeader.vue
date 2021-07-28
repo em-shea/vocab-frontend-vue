@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="row mx-2 navbar-row justify-content-center" :class="{ 'visible': showNav }">
-          <ul class="navbar" id="navbar">
+          <ul class="navbar p-0" id="navbar">
             <li class="nav-item">
               <router-link class="nav-link" :class="{ active : this.$route.name === 'home' }" :to="{ name: 'home'}">Home</router-link>
             </li>
@@ -84,13 +84,22 @@ export default {
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .header-nav-container {
       max-width: 880px;
+      padding-bottom: .5rem;
       /* padding-left: 2em;
       padding-right: 2em; */
+    }
+    .nav-link {
+      padding: 0rem 2rem;
     }
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
+    .header-nav-container {
 
+    }
+    .nav-link {
+      padding: 0.5rem 0.5rem;
+    }
   }
 
   .header-link {
@@ -149,7 +158,6 @@ export default {
 
   .nav-link {
     color: white;
-    padding: 0.2rem 1rem 0rem 1rem;
   }
 
   .nav-link:hover {

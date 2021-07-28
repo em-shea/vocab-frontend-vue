@@ -3,39 +3,53 @@
 
     <small-header></small-header>
 
-    <div class="container">
-      <div class="row" v-if="userData['user_data']['user_alias'] === 'Not set'">
-        <div class="col">
-          <h3 class="userAliasHeader">{{ userData['user_data']['email_address'] }}</h3>
-          <p class="mb-2 text-muted">Set a profile name</p>
+    <div v-if="loadingPage" class="container">
+      <div class="row mt-5">
+        <div class="col d-flex justify-content-center">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
         </div>
       </div>
-      <div class="row" v-if="userData['user_data']['user_alias'] !== 'Not set'">
+    </div>
+    <div v-if="!loadingPage" class="container main-container">
+      <div class="row header-row" v-if="userData['user_alias'] === 'Not set'">
         <div class="col">
-          <h3 class="userAliasHeader">{{ userData['user_data']['user_alias'] }}</h3>
-          <!-- <p class="mb-0 text-muted">{{ userData['user_data']['user_alias_pinyin'] }}</p> -->
-          <p class="mb-0 text-muted">xiǎo wáng</p>
-          <!-- <p class="mb-2 text-muted">Studying since {{ userData['user_data']['date_created'] }}</p> -->
-          <p class="mb-2 text-muted">Studying since July, 2018</p>
-          <!-- 新手， 大二， -->
+          <h5 class="userAliasHeader">{{ userData['email_address'] }}</h5>
+          <p class="mb-2 set-profile-text" v-on:click="$router.push('/profile-settings');">Set a profile name</p>
+        </div>
+      </div>
+      <div class="row header-row" v-if="userData['user_alias'] !== 'Not set'">
+        <div class="col">
+          <h3 class="userAliasHeader">{{ userData['user_alias'] }} {{ userData['user_alias_emoji']}}</h3>
+          <p class="mb-0 text-muted">{{ userData['user_alias_pinyin'] }}</p>
+          <p class="mb-2 text-muted">Studying since {{ userCreatedDate }}</p>
+          <!-- Level/Experience: 新手， 大二， -->
         </div>
       </div>
       <div class="row bg-light">
-        <div class="col-12">
-          Today's words
-        </div>
-        <div class="col-md-12 col-lg-6" v-for="(value, key) in recentWordsList" :key=key>
+        <div v-if="this.userLists.length === 1" class="col-12">Today's word</div>
+        <div v-else class="col-12">Today's words</div>
+        <div class="col-md-12 col-lg-6" v-for="word in recentWordsList" :key="word['UniqueListId']">
           <div class="card shadow-sm text-center">
             <div class="card-body">
-              <h5 class="card-text">{{ value['Word']['Word'] }}</h5>
-              <p class="card-text">{{ value['Word']['Pronunciation'] }}</p>
-              <p class="card-text">{{ value['Word']['Definition'] }}</p>
+              <h5 v-if="word['CharacterSet'] === 'simplified'" class="card-text">{{ word['Word']['Word'] }}</h5>
+              <h5 v-if="word['CharacterSet'] === 'traditional'" class="card-text">{{ word['Word']['Word-Traditional'] }}</h5>
+              <p class="card-text">{{ word['Word']['Pronunciation'] }}</p>
+              <p class="card-text">{{ word['Word']['Definition'] }}</p>
             </div>
           </div>
-          <p class="text-muted">{{ key }}
-            <router-link :to="{ name: 'quiz'}">Quiz</router-link>
-            <router-link :to="{ name: 'history'}">Review</router-link>
-          </p>
+          <div class="row justify-content-center">
+            <div class="col">
+              <p class="text-muted">HSK Level {{ word['Word']['HSK Level'] }}, {{ word['CharacterSet']}}</p>
+            </div>
+            <div class="col-3 px-0 d-flex justify-content-center">
+              <p class="daily-word-link" @click="$router.push({ path: 'quiz', query: {list: word['ListId'], days: 14, ques: 10, char: word['CharacterSet']}})">Quiz</p>
+            </div>
+            <div class="col-3 px-0 d-flex justify-content-center">
+              <p class="daily-word-link" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</p>
+            </div>
+          </div>
           <!-- <router-link :to="{path:'/election/1/voter', query: {voterId: 5}}">
             Quiz
           </router-link> -->
@@ -59,19 +73,37 @@
           </button>
         </div>
       </div> -->
-      <div class="row pt-3">
+      <div class="row justify-content-center pt-3">
         <div class="col-6">
           <button type="button" class="btn btn-light" v-on:click="$router.push('/manage-lists');">
             Manage lists
           </button>
         </div>
         <div class="col-6">
-          <button type="button" class="btn btn-light" v-on:click="$router.push('/profile-settings');">
+          <button type="button" class="btn btn-light float-right" v-on:click="$router.push('/profile-settings');">
             Profile settings
           </button>
         </div>
       </div>
+      <div class="row">
+        <div class="col">
+          Coming soon:
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col">
+          <button type="button" class="btn btn-dark" disabled>
+            My quizzes
+          </button>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-dark float-right" disabled>
+            My practice sentences
+          </button>
+        </div>
+      </div>
     </div>
+
           <!-- <div class="card mx-auto">
             <div class="card-body">
               <ul class="list-group list-group-flush">
@@ -112,57 +144,39 @@ export default {
   },
   data () {
     return {
+      loadingPage: true,
       userData: {},
-      userLists: [
-        'HSK Level 3',
-        'HSK Level 6'
-      ],
-      recentWordsList: {
-        'HSK Level 3': {
-          'Word': {
-            'Definition': 'how?; how about?; how was it?; how are things?',
-            'HSK Level': '1',
-            'Word': '怎么样',
-            'Word-Traditional': '怎麼樣',
-            'Pronunciation': 'zěn me yàng'
-          },
-          'Date': '2021-07-05',
-          'ListId': 'HSKLevel1'
-        },
-        'HSK Level 6': {
-          'Word': {
-            'Definition': 'dawn; daybreak',
-            'HSK Level': '6',
-            'Word': '黎明',
-            'Word-Traditional': '黎明',
-            'Pronunciation': 'lí míng'
-          },
-          'Date': '2021-07-04',
-          'ListId': 'HSKLevel6'
-        }
-      }
+      userLists: [],
+      recentWordsList: []
     }
   },
   computed: {
     signedIn () {
       return this.$root.$data.store.retrieveSignInStatus()
+    },
+    userCreatedDate () {
+      var d = new Date(this.userData['date_created'])
+      let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+      let mo = new Intl.DateTimeFormat('en', { month: 'long' }).format(d)
+      return `${mo}, ${ye}`
     }
   },
-  mounted () {
+  async mounted () {
     if (!this.signedIn) {
       this.$root.$data.store.storeSessionData(null, null)
       this.$router.push('/signin')
     } else {
       try {
-        this.getUserData()
-        // this.getRecentWords() // Need to fix word history API to return words by List name (with spaces) or Id
+        await this.getUserData()
+        await this.getRecentWords()
       } catch (error) {
         console.error(error)
       }
     }
+    this.loadingPage = false
   },
   methods: {
-    getUserData () {
+    async getUserData () {
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
@@ -170,45 +184,91 @@ export default {
       }
       let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
       let cognitoUser = userPool.getCurrentUser()
-      if (cognitoUser != null) {
-        cognitoUser.getSession((err, session) => {
-          if (err) {
-            console.log(err)
-          } else if (!session.isValid()) {
-            console.log('Invalid session.')
-          } else {
-            console.log('IdToken: ' + session.getIdToken().getJwtToken())
-            return axios
-              .get(process.env.VUE_APP_API_URL + 'user_data', {
-                headers: {
-                  'Authorization': session.getIdToken().getJwtToken()
+      return new Promise((resolve, reject) => {
+        if (cognitoUser != null) {
+          cognitoUser.getSession((err, session) => {
+            if (err) {
+              console.log(err)
+              reject(err)
+            } else if (!session.isValid()) {
+              console.log('Invalid session.')
+              reject(Error('Invalid session.'))
+            } else {
+              // console.log('IdToken: ' + session.getIdToken().getJwtToken())
+              return axios
+                .get(process.env.VUE_APP_API_URL + 'user_data', {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                }
+                )
+                .then((response) => {
+                  // console.log(response.data)
+                  this.userData = response.data['user_data']
+                  this.userLists = response.data['lists']
+                  resolve(this.userData, this.userLists)
+                })
+            }
+          })
+        } else {
+          console.log('User not found.')
+          reject(Error('User not found.'))
+        }
+      })
+    },
+    async getRecentWords () {
+      return new Promise((resolve, reject) => {
+        try {
+          return axios
+            .get(process.env.VUE_APP_API_URL + 'history'
+            )
+            .then((response) => {
+              // Create list with just the words from the most recent day
+              // Add unique id - HSKLevel1simplified (temp fix before switching everything to list ids)
+              let recentWordsListUnfiltered = []
+              for (let [key, value] of Object.entries(response.data)) {
+                // only copying value, not the entire dict
+                let simplifiedEntry = Object.assign({}, value.slice(-1)[0])
+                simplifiedEntry['UniqueListId'] = simplifiedEntry['ListId'].concat('simplified')
+                simplifiedEntry['CharacterSet'] = 'simplified'
+                let traditionalEntry = Object.assign({}, value.slice(-1)[0])
+                traditionalEntry['UniqueListId'] = traditionalEntry['ListId'].concat('traditional')
+                traditionalEntry['CharacterSet'] = 'traditional'
+                recentWordsListUnfiltered.push(simplifiedEntry)
+                recentWordsListUnfiltered.push(traditionalEntry)
+              }
+              // Remove spaces from user's list names (temp fix before switching everything to list ids)
+              // Create unique id - HSKLevel1simplified
+              let userListsUniqueIds = []
+              for (let i = 0; i < this.userLists.length; i++) {
+                if (this.userLists[i]['character_set'] === 'simplified') {
+                  userListsUniqueIds.push(this.userLists[i]['list_name'].concat('simplified').replaceAll(' ', ''))
+                }
+                if (this.userLists[i]['character_set'] === 'traditional') {
+                  userListsUniqueIds.push(this.userLists[i]['list_name'].concat('traditional').replaceAll(' ', ''))
                 }
               }
-              )
-              .then((response) => {
-                console.log(response.data)
-                this.userData = response.data
-              })
-          }
-        })
-      } else {
-        console.log('User not found.')
-      }
-    },
-    getRecentWords () {
-      return axios
-        .get(process.env.VUE_APP_API_URL + 'history'
-        )
-        .then((response) => {
-          this.recentWordsList = response.data
-          console.log(this.recentWordsList)
-        })
+              // Filter to just show words for the lists the user is subscribed to
+              this.recentWordsList = recentWordsListUnfiltered.filter(elem => userListsUniqueIds.includes(elem['UniqueListId']))
+              resolve(this.recentWordsList)
+            })
+        } catch (error) {
+          console.error(error)
+          reject(error)
+        }
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+  .row {
+    padding: .5rem,
+  }
+  .header-row {
+    padding-top: 1rem;
+  }
   .orange-button {
     cursor: pointer;
     border-radius: .5em;
@@ -218,13 +278,23 @@ export default {
     min-width: 200px;
     margin: .5em;
   }
-
-  .row {
-    padding: .5rem,
-  }
   .card {
     border-radius: 1rem;
     margin: 0.75rem;
     border: none;
+  }
+  .set-profile-text {
+    color: orangered;
+    text-decoration: underline;
+  }
+  .set-profile-text:hover {
+    cursor: pointer;
+  }
+  .daily-word-link {
+    color: orangered;
+    text-decoration: underline;
+  }
+  .daily-word-link:hover {
+    cursor: pointer;
   }
 </style>

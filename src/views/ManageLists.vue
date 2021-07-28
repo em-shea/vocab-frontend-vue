@@ -27,7 +27,7 @@
                               <p class="card-text">{{ value['character_set'] }}</p>
                           </div>
                           <div class="col-6">
-                              <button type="button" class="btn btn-outline-danger" :class="{ 'btn-outline-danger': unsubSelected, 'button-danger': !unsubSelected }" :click="toggleSelect(value['list_id'])">Unsubscribe</button>
+                              <button type="button" class="btn btn-outline-danger" :click="unsubscribe(value)">Unsubscribe</button>
                           </div>
                       </div>
                   </div>
@@ -62,7 +62,7 @@
                               <p class="card-text">{{ value['character_set'] }}</p>
                           </div>
                           <div class="col-6">
-                              <button type="button" class="btn btn-outline-success">Subscribe</button>
+                              <button type="button" class="btn btn-outline-success" :click="subscribe(value)">Subscribe</button>
                           </div>
                       </div>
                   </div>
@@ -227,6 +227,12 @@ export default {
       } else {
         console.log('User not found.')
       }
+    },
+    subscribe () {
+
+    },
+    unsubscribe () {
+
     }
   }
 }
