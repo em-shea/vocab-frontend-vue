@@ -12,22 +12,52 @@
         </div>
       </div>
     </div>
-    <div v-if="!loadingPage" class="container main-container">
-      <div class="row header-row" v-if="userData['user_alias'] === 'Not set'">
+    <div v-if="!loadingPage" class="container main-container bg-light">
+      <div class="row header-row">
         <div class="col">
-          <h5 class="userAliasHeader">{{ userData['email_address'] }}</h5>
-          <p class="mb-2 set-profile-text" v-on:click="$router.push('/profile-settings');">Set a profile name</p>
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div class="row vertical-align">
+                <div class="col-4 text-center">
+                  <div class="card emoji-card shadow">
+                    <div class="card-body">
+                      <h1 class="user-emoji">{{ userData['user_alias_emoji']}}</h1>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <h3 class="userAliasHeader" v-if="userData['user_alias'] !== 'Not set'">{{ userData['user_alias'] }}</h3>
+                  <p class="mb-0 text-muted">{{ userData['user_alias_pinyin'] }}</p>
+                  <p class="mb-2 text-muted user-date">Studying since {{ userCreatedDate }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <h5 class="userAliasHeader">{{ userData['email_address'] }}</h5>
+          <p class="mb-2 set-profile-text" v-on:click="$router.push('/profile-settings');">Set a profile name</p> -->
         </div>
       </div>
-      <div class="row header-row" v-if="userData['user_alias'] !== 'Not set'">
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
+            Manage lists
+          </button>
+        </div>
+        <div class="col-6">
+          <button type="button" class="btn btn-settings float-right" v-on:click="$router.push('/profile-settings');">
+            Profile settings
+          </button>
+        </div>
+      </div>
+      <!-- <div class="row header-row" v-if="userData['user_alias'] !== 'Not set'">
         <div class="col">
-          <h3 class="userAliasHeader">{{ userData['user_alias'] }} {{ userData['user_alias_emoji']}}</h3>
+          <h3 class="userAliasHeader">{{ userData['user_alias'] }}</h3>
           <p class="mb-0 text-muted">{{ userData['user_alias_pinyin'] }}</p>
           <p class="mb-2 text-muted">Studying since {{ userCreatedDate }}</p>
-          <!-- Level/Experience: 新手， 大二， -->
+          Level/Experience: 新手， 大二，
         </div>
-      </div>
-      <div class="row bg-light">
+      </div> -->
+      <div class="row">
         <div v-if="this.userLists.length === 1" class="col-12">Today's word</div>
         <div v-else class="col-12">Today's words</div>
         <div class="col-md-12 col-lg-6" v-for="word in recentWordsList" :key="word['UniqueListId']">
@@ -37,9 +67,22 @@
               <h5 v-if="word['CharacterSet'] === 'traditional'" class="card-text">{{ word['Word']['Word-Traditional'] }}</h5>
               <p class="card-text">{{ word['Word']['Pronunciation'] }}</p>
               <p class="card-text">{{ word['Word']['Definition'] }}</p>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item text-muted">HSK Level {{ word['Word']['HSK Level'] }}, {{ word['CharacterSet']}}</li>
+              </ul>
+              <div class="row justify-content-between">
+                <div class="col">
+                  <a class="card-link daily-word-link float-left" @click="$router.push({ path: 'quiz', query: {list: word['ListId'], days: 14, ques: 10, char: word['CharacterSet']}})">Quiz</a>
+                </div>
+                <div class="col"> 
+                  <a class="card-link daily-word-link float-right" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</a>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="row justify-content-center">
+        </div>
+      </div>
+          <!-- <div class="row justify-content-center">
             <div class="col">
               <p class="text-muted">HSK Level {{ word['Word']['HSK Level'] }}, {{ word['CharacterSet']}}</p>
             </div>
@@ -49,12 +92,10 @@
             <div class="col-3 px-0 d-flex justify-content-center">
               <p class="daily-word-link" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</p>
             </div>
-          </div>
+          </div> -->
           <!-- <router-link :to="{path:'/election/1/voter', query: {voterId: 5}}">
             Quiz
           </router-link> -->
-        </div>
-      </div>
       <!-- <div class="row">
         <div class="col">
           Daily tasks:
@@ -73,33 +114,27 @@
           </button>
         </div>
       </div> -->
-      <div class="row justify-content-center pt-3">
-        <div class="col-6">
-          <button type="button" class="btn btn-light" v-on:click="$router.push('/manage-lists');">
-            Manage lists
-          </button>
-        </div>
-        <div class="col-6">
-          <button type="button" class="btn btn-light float-right" v-on:click="$router.push('/profile-settings');">
-            Profile settings
-          </button>
-        </div>
-      </div>
       <div class="row">
         <div class="col">
-          Coming soon:
+          Coming soon
         </div>
       </div>
       <div class="row justify-content-center">
-        <div class="col">
-          <button type="button" class="btn btn-dark" disabled>
-            My quizzes
-          </button>
+        <div class="col-12">
+          <div class="card card-button shadow-sm">
+            <div class="card-body text-center">
+              My quizzes
+              <!-- <span class="oi oi-chevron-right float-right"></span> -->
+            </div>
+          </div>
         </div>
-        <div class="col">
-          <button type="button" class="btn btn-dark float-right" disabled>
-            My practice sentences
-          </button>
+        <div class="col-12">
+          <div class="card card-button shadow-sm">
+            <div class="card-body text-center">
+              My practice sentences
+              <!-- <span class="oi oi-chevron-right float-right"></span> -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -269,19 +304,30 @@ export default {
   .header-row {
     padding-top: 1rem;
   }
-  .orange-button {
+  .btn-settings {
     cursor: pointer;
-    border-radius: .5em;
-    background-color: #fe4c00;
-    border-color: #fe4c00;
+    background-color: #b7b7b7;
+    border-color: #b7b7b7;
     color: white;
-    min-width: 200px;
-    margin: .5em;
+    // border-radius: .5em;
+    // min-width: 200px;
+    // margin: .5em;
   }
   .card {
     border-radius: 1rem;
     margin: 0.75rem;
     border: none;
+  }
+  .user-date {
+    font-size: 0.9rem;
+  }
+  .card-button {
+    margin: .5rem;
+    background-color: #fe4c00;
+    border-color: #fe4c00;
+    color: white;
+    border-radius: .25rem;
+    // padding: .375rem .75rem;
   }
   .set-profile-text {
     color: orangered;
@@ -296,5 +342,20 @@ export default {
   }
   .daily-word-link:hover {
     cursor: pointer;
+  }
+  .emoji-card {
+    border-radius: 5rem;
+    width: 4rem;
+    height: 4rem;
+  }
+  .user-emoji {
+    margin: 0;
+  }
+  .user-subtext {
+    font-size: 0.9rem;
+  }
+  .vertical-align {
+    display: flex;
+    align-items: center;
   }
 </style>
