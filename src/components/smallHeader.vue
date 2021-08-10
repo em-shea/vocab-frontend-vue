@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import shared from './../shared'
 
 export default {
   name: 'smallHeader',

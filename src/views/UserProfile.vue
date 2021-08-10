@@ -58,11 +58,11 @@
         </div>
       </div> -->
       <div class="row">
-        <div v-if="this.userLists.length === 1" class="col-12">Today's word</div>
-        <div v-else class="col-12">Today's words</div>
+        <div v-if="this.userLists.length === 1" class="col-12 daily-word-title">Today's word</div>
+        <div v-else class="col-12 daily-word-title">Today's words</div>
         <div class="col-md-12 col-lg-6" v-for="word in recentWordsList" :key="word['UniqueListId']">
           <div class="card shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body daily-word-card-body">
               <h5 v-if="word['CharacterSet'] === 'simplified'" class="card-text">{{ word['Word']['Word'] }}</h5>
               <h5 v-if="word['CharacterSet'] === 'traditional'" class="card-text">{{ word['Word']['Word-Traditional'] }}</h5>
               <p class="card-text">{{ word['Word']['Pronunciation'] }}</p>
@@ -72,10 +72,10 @@
               </ul>
               <div class="row justify-content-between">
                 <div class="col">
-                  <a class="card-link daily-word-link float-left" @click="$router.push({ path: 'quiz', query: {list: word['ListId'], days: 14, ques: 10, char: word['CharacterSet']}})">Quiz</a>
+                  <p class="card-link daily-word-link float-left" @click="$router.push({ path: 'quiz', query: {list: word['ListId'], days: 14, ques: 10, char: word['CharacterSet']}})">Quiz</p>
                 </div>
                 <div class="col"> 
-                  <a class="card-link daily-word-link float-right" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</a>
+                  <p class="card-link daily-word-link float-right" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</p>
                 </div>
               </div>
             </div>
@@ -116,10 +116,10 @@
       </div> -->
       <div class="row">
         <div class="col">
-          Coming soon
+          Coming soon 👷‍♀️
         </div>
       </div>
-      <div class="row justify-content-center">
+      <div class="row justify-content-center pb-4">
         <div class="col-12">
           <div class="card card-button shadow-sm">
             <div class="card-body text-center">
@@ -192,7 +192,7 @@ export default {
     userCreatedDate () {
       var d = new Date(this.userData['date_created'])
       let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
-      let mo = new Intl.DateTimeFormat('en', { month: 'long' }).format(d)
+      let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
       return `${mo}, ${ye}`
     }
   },
@@ -306,8 +306,8 @@ export default {
   }
   .btn-settings {
     cursor: pointer;
-    background-color: #b7b7b7;
-    border-color: #b7b7b7;
+    background-color: #fe4c00;
+    border-color: #fe4c00;
     color: white;
     // border-radius: .5em;
     // min-width: 200px;
@@ -315,16 +315,19 @@ export default {
   }
   .card {
     border-radius: 1rem;
-    margin: 0.75rem;
+    margin: 0.75rem 0rem;
     border: none;
+  }
+  .daily-word-card-body {
+    margin-top: 0.5rem;
   }
   .user-date {
     font-size: 0.9rem;
   }
   .card-button {
     margin: .5rem;
-    background-color: #fe4c00;
-    border-color: #fe4c00;
+    background-color: #858585;
+    border-color: #858585;
     color: white;
     border-radius: .25rem;
     // padding: .375rem .75rem;
@@ -336,9 +339,14 @@ export default {
   .set-profile-text:hover {
     cursor: pointer;
   }
+  .daily-word-title {
+    margin-top: .5rem;
+  }
   .daily-word-link {
     color: orangered;
     text-decoration: underline;
+    margin-bottom: 0;
+    padding: 0rem 1rem;
   }
   .daily-word-link:hover {
     cursor: pointer;
@@ -347,6 +355,7 @@ export default {
     border-radius: 5rem;
     width: 4rem;
     height: 4rem;
+    margin: 0 auto;
   }
   .user-emoji {
     margin: 0;
@@ -357,5 +366,8 @@ export default {
   .vertical-align {
     display: flex;
     align-items: center;
+  }
+  .new-features-text {
+    font-style: italic;
   }
 </style>

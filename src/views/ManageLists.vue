@@ -1,10 +1,19 @@
 <template>
   <div id="manage-lists">
     <small-header></small-header>
-    <div class="container">
+    <div v-if="loadingPage" class="container">
+      <div class="row mt-5">
+        <div class="col d-flex justify-content-center">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="!loadingPage" class="container">
       <div class="row">
         <div class="col">
-          <button type="button" class="btn btn-light" @click="$router.push('/profile')">
+          <button type="button" class="btn btn-light my-3" @click="$router.push('/profile')">
             <span class="oi oi-chevron-left oi-icon menu-icon" title="oi-chevron-left"></span>
             Back
           </button>
@@ -27,7 +36,7 @@
                               <p class="card-text">{{ value['character_set'] }}</p>
                           </div>
                           <div class="col-6">
-                              <button type="button" class="btn btn-outline-danger" :click="unsubscribe(value)">Unsubscribe</button>
+                              <button type="button" class="btn btn-outline-danger" :click="unsubscribe(value, character_set)">Unsubscribe</button>
                           </div>
                       </div>
                   </div>
@@ -62,7 +71,7 @@
                               <p class="card-text">{{ value['character_set'] }}</p>
                           </div>
                           <div class="col-6">
-                              <button type="button" class="btn btn-outline-success" :click="subscribe(value)">Subscribe</button>
+                              <button type="button" class="btn btn-outline-success" :click="subscribe(value, character_set)">Subscribe</button>
                           </div>
                       </div>
                   </div>
@@ -87,10 +96,12 @@ export default {
   },
   data () {
     return {
+      loadingPage: true,
       showDropdown: false,
       unsubSelected: false,
       changesMade: false,
       userData: {},
+      // Temporarily hardcoding lists until list storage is moved to DyanmoDB
       allLists: [
         {
           'list_name': 'HSK Level 1',
@@ -179,9 +190,10 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.getUserData()
+  async mounted () {
+    await this.getUserData()
     console.log('all lists', this.allAvailableLists)
+    this.loadingPage = false
   },
   computed: {
     subscribedListIds () {
@@ -195,7 +207,70 @@ export default {
   methods: {
     toggleSelect (listId) {
     },
-    getUserData () {
+    async getUserData () {
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let cognitoUser = userPool.getCurrentUser()
+      return new Promise((resolve, reject) => {
+        if (cognitoUser != null) {
+          cognitoUser.getSession((err, session) => {
+            if (err) {
+              console.log(err)
+              reject(err)
+            } else if (!session.isValid()) {
+              console.log('Invalid session.')
+              reject(Error('Invalid session.'))
+            } else {
+              console.log('IdToken: ' + session.getIdToken().getJwtToken())
+              return axios
+                .get(process.env.VUE_APP_API_URL + 'user_data', {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                }
+                )
+                .then((response) => {
+                  console.log(response.data)
+                  this.userData = response.data
+                  resolve(this.userData)
+                })
+            }
+          })
+        } else {
+          console.log('User not found.')
+          reject(Error('User not found.'))
+        }
+      })
+    },
+    subscribeList (list, character_set) {
+      this.userData['user_data']['lists'].push(
+        {
+          'character_set': character_set,
+          'list_id': list['list_id'],
+          'list_name': list['list_name']
+        }
+      )
+      setUserSubscriptions(this.userData['user_data']['lists'])
+    },
+    unsubscribeList (list, character_set) {
+      for (let i = 0; i < this.userData['lists'].length; i++) {
+        // check if list in subscribed
+      }
+      setUserSubscriptions(lists)
+    },
+    setUserSubscriptions (lists) {
+      this.userDataUpdated = false
+      let requestBody = {
+        'cognito_id': this.userData['user_data']['user_id'],
+        'email': this.userData['user_data']['email_address'],
+        'character_set_preference': this.userData['user_data']['character_set_preference'],
+        'lists': lists
+      }
+      console.log(requestBody)
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
@@ -212,27 +287,22 @@ export default {
           } else {
             console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
-              .get(process.env.VUE_APP_API_URL + 'user_data', {
-                headers: {
-                  'Authorization': session.getIdToken().getJwtToken()
-                }
-              }
-              )
+              .post(process.env.VUE_APP_API_URL + 'set_subs',
+                requestBody,
+                {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                })
               .then((response) => {
                 console.log(response.data)
-                this.userData = response.data
+                this.userDataUpdated = true
               })
           }
         })
       } else {
         console.log('User not found.')
       }
-    },
-    subscribe () {
-
-    },
-    unsubscribe () {
-
     }
   }
 }

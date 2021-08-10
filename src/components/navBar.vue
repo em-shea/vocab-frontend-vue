@@ -28,28 +28,47 @@
 </template>
 
 <script>
+import shared from './../shared'
 
 export default {
   name: 'navBar',
   data () {
-    return {}
+    return {
+      user: null
+    }
   },
   computed: {
     signedIn () {
-      return this.$root.$data.store.retrieveSignInStatus()
+      if (this.user) {
+        return true
+      } else {
+        return false
+      }
     }
+    // signedIn () {
+    //   return this.$root.$data.store.retrieveSignInStatus()
+    // }
   },
-  mounted () {
-    console.log(this.signedIn)
+  created () {
+    this.getSignedInUser = shared.getSignedInUser
+    this.signOut = shared.signOut
+  },
+  async mounted () {
+    try {
+      this.user = await this.getSignedInUser()
+    } catch (error) {
+      this.user = null
+    }
+    // console.log(this.signedIn)
   },
   methods: {
     // TODO: The nav bar is not updating when a user clicks sign out while on the home page
-    signOut () {
-      console.log('sign out')
-      this.$root.$data.store.storeSessionData(null, null)
-      this.$root.$data.store.updateSignInStatus(false)
-      this.$router.push('/')
-    }
+    // signOut () {
+    //   // console.log('sign out')
+    //   // this.$root.$data.store.storeSessionData(null, null)
+    //   // this.$root.$data.store.updateSignInStatus(false)
+    //   // this.$router.push('/')
+    // }
   }
 }
 </script>

@@ -228,12 +228,12 @@ export default {
       let response = await axios.post(this.subURL, {
         'cognito_id': userCognitoId,
         'email': this.params.email,
-        'char_set_preference': this.characterSet,
-        'set_lists': [
+        'character_set_preference': this.characterSet,
+        'lists': [
           {
             'list_id': this.params.list.listId,
             'list_name': this.params.list.listName,
-            'char_set': this.characterSet
+            'character_set': this.characterSet
           }]
       })
       return response
