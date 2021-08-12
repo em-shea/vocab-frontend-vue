@@ -14,39 +14,44 @@
     </div>
     <div v-if="!loadingPage" class="container main-container bg-light">
       <div class="row header-row">
-        <div class="col">
+        <div class="col-12 col-md-8">
           <div class="card shadow-sm">
             <div class="card-body">
               <div class="row vertical-align">
                 <div class="col-4 text-center">
                   <div class="card emoji-card shadow">
                     <div class="card-body">
-                      <h1 class="user-emoji">{{ userData['user_alias_emoji']}}</h1>
+                      <h1 class="user-emoji" v-if="userData['user_alias_emoji'] !== 'Not set'">{{ userData['user_alias_emoji']}}</h1>
+                      <h1 class="user-emoji" v-if="userData['user_alias_emoji'] === 'Not set'">📙</h1>
                     </div>
                   </div>
                 </div>
-                <div class="col">
+                <div class="col-8">
                   <h3 class="userAliasHeader" v-if="userData['user_alias'] !== 'Not set'">{{ userData['user_alias'] }}</h3>
-                  <p class="mb-0 text-muted">{{ userData['user_alias_pinyin'] }}</p>
+                  <h5 class="userAliasHeader" v-if="userData['user_alias'] === 'Not set'">{{ userData['email_address'] }}</h5>
+                  <p class="mb-0 text-muted" v-if="userData['user_alias_pinyin'] !== 'Not set'">{{ userData['user_alias_pinyin'] }}</p>
                   <p class="mb-2 text-muted user-date">Studying since {{ userCreatedDate }}</p>
+                  <p class="mb-2 orange-link" v-if="userData['user_alias'] === 'Not set'" v-on:click="$router.push('/profile-settings');">Set a profile name</p>
                 </div>
               </div>
             </div>
           </div>
           <!-- <h5 class="userAliasHeader">{{ userData['email_address'] }}</h5>
-          <p class="mb-2 set-profile-text" v-on:click="$router.push('/profile-settings');">Set a profile name</p> -->
+          <p class="mb-2 orange-link" v-on:click="$router.push('/profile-settings');">Set a profile name</p> -->
         </div>
-      </div>
-      <div class="row justify-content-center">
-        <div class="col-6">
-          <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
-            Manage lists
-          </button>
-        </div>
-        <div class="col-6">
-          <button type="button" class="btn btn-settings float-right" v-on:click="$router.push('/profile-settings');">
-            Profile settings
-          </button>
+        <div class="col col-md-4">
+          <div class="row">
+            <div class="col-6 col-md-12">
+              <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
+                Manage lists
+              </button>
+            </div>
+            <div class="col-6 col-md-12">
+              <button type="button" class="btn btn-settings float-right" v-on:click="$router.push('/profile-settings');">
+                Profile settings
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <!-- <div class="row header-row" v-if="userData['user_alias'] !== 'Not set'">
@@ -60,13 +65,21 @@
       <div class="row">
         <div v-if="this.userLists.length === 1" class="col-12 daily-word-title">Today's word</div>
         <div v-else class="col-12 daily-word-title">Today's words</div>
+        <div class="col" v-if="recentWordsList.length === 0">
+          <div class="card shadow-sm text-center">
+            <div class="card-body no-subs-card">
+              <h6 class="card-text">You are not subscribed to any lists.</h6>
+              <h6>Go to <span class="orange-link" v-on:click="$router.push('/manage-lists');">Manage lists</span> to subscribe.</h6>
+            </div>
+          </div>
+        </div>
         <div class="col-md-12 col-lg-6" v-for="word in recentWordsList" :key="word['UniqueListId']">
           <div class="card shadow-sm text-center">
             <div class="card-body daily-word-card-body">
               <h5 v-if="word['CharacterSet'] === 'simplified'" class="card-text">{{ word['Word']['Word'] }}</h5>
               <h5 v-if="word['CharacterSet'] === 'traditional'" class="card-text">{{ word['Word']['Word-Traditional'] }}</h5>
               <p class="card-text">{{ word['Word']['Pronunciation'] }}</p>
-              <p class="card-text">{{ word['Word']['Definition'] }}</p>
+              <p class="card-text truncate">{{ word['Word']['Definition'] }}</p>
               <ul class="list-group list-group-flush">
                 <li class="list-group-item text-muted">HSK Level {{ word['Word']['HSK Level'] }}, {{ word['CharacterSet']}}</li>
               </ul>
@@ -74,7 +87,7 @@
                 <div class="col">
                   <p class="card-link daily-word-link float-left" @click="$router.push({ path: 'quiz', query: {list: word['ListId'], days: 14, ques: 10, char: word['CharacterSet']}})">Quiz</p>
                 </div>
-                <div class="col"> 
+                <div class="col">
                   <p class="card-link daily-word-link float-right" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</p>
                 </div>
               </div>
@@ -116,7 +129,7 @@
       </div> -->
       <div class="row">
         <div class="col">
-          Coming soon 👷‍♀️
+          Coming soon 👷🚧
         </div>
       </div>
       <div class="row justify-content-center pb-4">
@@ -170,6 +183,7 @@
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
+import shared from './../shared'
 
 export default {
   name: 'user-profile',
@@ -179,15 +193,23 @@ export default {
   },
   data () {
     return {
+      user: null,
       loadingPage: true,
       userData: {},
       userLists: [],
       recentWordsList: []
     }
   },
+  created () {
+    this.getSignedInUser = shared.getSignedInUser
+  },
   computed: {
     signedIn () {
-      return this.$root.$data.store.retrieveSignInStatus()
+      if (this.user) {
+        return true
+      } else {
+        return false
+      }
     },
     userCreatedDate () {
       var d = new Date(this.userData['date_created'])
@@ -197,16 +219,17 @@ export default {
     }
   },
   async mounted () {
-    if (!this.signedIn) {
-      this.$root.$data.store.storeSessionData(null, null)
+    try {
+      this.user = await this.getSignedInUser()
+    } catch (error) {
+      this.user = null
       this.$router.push('/signin')
-    } else {
-      try {
-        await this.getUserData()
-        await this.getRecentWords()
-      } catch (error) {
-        console.error(error)
-      }
+    }
+    try {
+      await this.getUserData()
+      await this.getRecentWords()
+    } catch (error) {
+      console.error(error)
     }
     this.loadingPage = false
   },
@@ -298,6 +321,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @media only screen and (min-width: 575px) {
+    .truncate {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .full-length {
+      white-space: wrap;
+    }
+  }
+  .main-container {
+    padding-bottom: 3rem;
+  }
   .row {
     padding: .5rem,
   }
@@ -305,6 +342,7 @@ export default {
     padding-top: 1rem;
   }
   .btn-settings {
+    min-width: 100%;
     cursor: pointer;
     background-color: #fe4c00;
     border-color: #fe4c00;
@@ -321,6 +359,9 @@ export default {
   .daily-word-card-body {
     margin-top: 0.5rem;
   }
+  .no-subs-card {
+    padding: 1rem 0.5rem;
+  }
   .user-date {
     font-size: 0.9rem;
   }
@@ -332,11 +373,11 @@ export default {
     border-radius: .25rem;
     // padding: .375rem .75rem;
   }
-  .set-profile-text {
+  .orange-link {
     color: orangered;
     text-decoration: underline;
   }
-  .set-profile-text:hover {
+  .orange-link:hover {
     cursor: pointer;
   }
   .daily-word-title {

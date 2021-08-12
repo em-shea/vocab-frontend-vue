@@ -14,7 +14,6 @@ export default {
     let cognitoUser = userPool.getCurrentUser()
     return new Promise((resolve, reject) => {
       if (cognitoUser != null) {
-        console.log('not null')
         cognitoUser.getSession((err, session) => {
           if (err) {
             console.log(err)

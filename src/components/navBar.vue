@@ -12,14 +12,14 @@
           <li class="nav-item">
             <router-link class="nav-link" :class="{ active : this.$route.name === 'history' }" :to="{ name: 'history'}">Review</router-link>
           </li>
-          <li class="nav-item" v-if="!this.signedIn && this.$route.name !== 'sign-in'">
-            <router-link class="nav-link" :to="{ name: 'sign-in'}">Sign in</router-link>
+          <li class="nav-item" v-if="!this.signedIn" >
+            <router-link class="nav-link" :class="{ active : this.$route.name === 'sign-in' }" :to="{ name: 'sign-in'}">Sign in</router-link>
           </li>
           <li class="nav-item" v-if="this.signedIn">
             <router-link class="nav-link" :class="{ active : this.$route.name === 'user-profile' }" :to="{ name: 'user-profile'}">Profile</router-link>
           </li>
           <li class="nav-item" v-if="this.signedIn">
-            <div class="nav-link" @click="signOut()">Sign out</div>
+            <div class="nav-link" @click="signUserOut()">Sign out</div>
           </li>
         </ul>
       </div>
@@ -45,9 +45,6 @@ export default {
         return false
       }
     }
-    // signedIn () {
-    //   return this.$root.$data.store.retrieveSignInStatus()
-    // }
   },
   created () {
     this.getSignedInUser = shared.getSignedInUser
@@ -59,16 +56,14 @@ export default {
     } catch (error) {
       this.user = null
     }
-    // console.log(this.signedIn)
   },
   methods: {
-    // TODO: The nav bar is not updating when a user clicks sign out while on the home page
-    // signOut () {
-    //   // console.log('sign out')
-    //   // this.$root.$data.store.storeSessionData(null, null)
-    //   // this.$root.$data.store.updateSignInStatus(false)
-    //   // this.$router.push('/')
-    // }
+    signUserOut () {
+      this.signOut()
+      if (this.$route.name !== 'home') {
+        this.$router.push('/')
+      }
+    }
   }
 }
 </script>

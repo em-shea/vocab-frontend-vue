@@ -36,24 +36,13 @@ export default {
   },
   data () {
     return {
-      displayName: '小蔡 🐼',
-      displayNamePinyin: 'Xiǎo cài',
-      userLists: [
-        'HSK Level 3',
-        'HSK Level 6'
-      ]
     }
   },
   computed: {
-    signedIn () {
-      return this.$root.$data.store.retrieveSignInStatus()
-    }
+
   },
   mounted () {
-    if (!this.signedIn) {
-      this.$root.$data.store.storeSessionData(null, null)
-      this.$router.push('/signin')
-    }
+
   },
   methods: {
   }

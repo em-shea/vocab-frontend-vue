@@ -127,7 +127,7 @@ export default {
     pushToRouter () {
       if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range || this.$route.query.char !== this.characterSet) {
         this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range, 'char': this.characterSet } })
-        console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
+        // console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
       }
     },
     checkInitialParams () {
@@ -185,7 +185,7 @@ export default {
         // add flattened word dict to final list to export
         wordHistoryListExport.push(wordFlattened)
       }
-      console.log(wordHistoryListExport)
+      // console.log(wordHistoryListExport)
 
       let worksheet = XLSX.utils.json_to_sheet(wordHistoryListExport, { header: ['Date', 'HSK Level', 'Word', 'Pronunciation', 'Definition'] })
       var newWorkbook = XLSX.utils.book_new()

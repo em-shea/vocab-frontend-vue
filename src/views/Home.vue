@@ -79,7 +79,16 @@
         </div>
       </div>
 
-      <div class="container mb-4">
+      <div class="container mb-4" v-if="sampleVocabLoading">
+        <div class="row">
+          <div class="col d-flex justify-content-center">
+            <div class="spinner-border text-secondary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container mb-4" v-if="!sampleVocabLoading">
         <div class="row m-3">
           <div class="col-4 col-md-3" id="v-pills-col">
             <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
@@ -141,6 +150,7 @@ export default {
       listValidated: null,
       userExists: null,
       exampleWordList: [],
+      sampleVocabLoading: true,
       exampleListSelected: '1',
       subscribeResponse: null,
       hskLists: [
@@ -168,7 +178,8 @@ export default {
         )
         .then((response) => {
           this.exampleWordList = response.data
-          console.log(this.exampleWordList)
+          this.sampleVocabLoading = false
+          // console.log(this.exampleWordList)
         })
     },
     validateEmail () {

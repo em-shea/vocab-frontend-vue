@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!loadingPage" class="container">
+    <div v-if="!loadingPage" class="container main-container">
       <div class="row">
         <div class="col">
           <button type="button" class="btn btn-light my-3" @click="$router.push('/profile')">
@@ -25,25 +25,39 @@
                   My subscriptions
               </h5>
           </div>
+          <div class="col">
+            <p v-if="userSubsUpdated" class="updated-flag mb-0 float-right">Updated!</p>
+          </div>
       </div>
       <div class="row">
-          <div class="col-12" v-for="(value, key) in userData['lists']" :key=key>
-              <div class="card shadow-sm text-center">
+          <div class="col-12">
+            <div class="card shadow-sm text-center" v-if="userData['lists'].length === 0">
+                <div class="card-body no-subs-card">
+                    <div class="row list-row">
+                        <div class="col">
+                            <h6 class="card-text">No lists here!</h6>
+                            <p class="card-text">Subscribe to a new list below.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <div class="card shadow-sm text-center" v-for="(value, key) in userData['lists']" :key=key>
                   <div class="card-body">
-                      <div class="row">
+                      <div class="row list-row">
                           <div class="col-6">
                               <h6 class="card-text">{{ value['list_name'] }}</h6>
                               <p class="card-text">{{ value['character_set'] }}</p>
                           </div>
                           <div class="col-6">
-                              <button type="button" class="btn btn-outline-danger" :click="unsubscribe(value, character_set)">Unsubscribe</button>
+                            <button type="button" class="btn btn-outline-secondary list-btn float-right" @click="unsubscribe(value)">Unsubscribe</button>
                           </div>
                       </div>
                   </div>
               </div>
           </div>
       </div>
-      <div class="row bg-light">
+      <hr/>
+      <div class="row">
           <div class="col">
               <h5>
                   Find new lists
@@ -51,27 +65,31 @@
           </div>
           <div class="col">
               <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" @click="showDropdown = !showDropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button v-if="!resultsFiltered" class="btn btn-light filter-btn dropdown-toggle float-right" @click="showDropdown = !showDropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Filter
                   </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="{'dropdown-open': showDropdown}">
-                      <a class="dropdown-item" href="#">Simplified</a>
-                      <a class="dropdown-item" href="#">Traditional</a>
+                  <button v-if="resultsFiltered" class="btn btn-light filter-btn float-right" @click="clearResultsFilter()" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{ filterResultsValue }}
+                      <span v-if="resultsFiltered" class="oi oi-x"></span>
+                  </button>
+                  <div v-if="!resultsFiltered" class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="{'dropdown-open': showDropdown}">
+                      <a class="dropdown-item" href="#" @click.prevent="filterResults('Simplified')">Simplified</a>
+                      <a class="dropdown-item" href="#" @click.prevent="filterResults('Traditional')">Traditional</a>
                   </div>
               </div>
           </div>
       </div>
-      <div class="row bg-light">
+      <div class="row">
           <div class="col-12 list-display">
               <div class="card shadow-sm text-center" v-for="(value, key) in allAvailableLists" :key=key>
                   <div class="card-body">
-                      <div class="row">
+                      <div class="row list-row">
                           <div class="col-6">
                               <h6 class="card-text">{{ value['list_name'] }}</h6>
                               <p class="card-text">{{ value['character_set'] }}</p>
                           </div>
                           <div class="col-6">
-                              <button type="button" class="btn btn-outline-success" :click="subscribe(value, character_set)">Subscribe</button>
+                            <button type="button" class="btn btn-outline-orange list-btn float-right" @click="subscribe(value)">Subscribe</button>
                           </div>
                       </div>
                   </div>
@@ -87,6 +105,7 @@
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
+import shared from './../shared'
 
 export default {
   name: 'manage-lists',
@@ -99,13 +118,17 @@ export default {
       loadingPage: true,
       showDropdown: false,
       unsubSelected: false,
+      userSubsUpdated: false,
       changesMade: false,
+      resultsFiltered: false,
+      filterResultsValue: null,
       userData: {},
       // Temporarily hardcoding lists until list storage is moved to DyanmoDB
       allLists: [
         {
           'list_name': 'HSK Level 1',
           'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
+          'unique_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122simplified',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -113,6 +136,7 @@ export default {
         {
           'list_name': 'HSK Level 2',
           'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
+          'unique_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122simplified',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -120,6 +144,7 @@ export default {
         {
           'list_name': 'HSK Level 3',
           'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
+          'unique_id': '1ebcad3f-f815-6b92-b3e8-acde48001122simplified',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -127,6 +152,7 @@ export default {
         {
           'list_name': 'HSK Level 4',
           'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
+          'unique_id': '1ebcad40-414f-6bc8-859d-acde48001122simplified',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -134,6 +160,7 @@ export default {
         {
           'list_name': 'HSK Level 5',
           'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
+          'unique_id': '1ebcad40-bb9e-6ece-a366-acde48001122simplified',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -141,48 +168,55 @@ export default {
         {
           'list_name': 'HSK Level 6',
           'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
+          'unique_id': '1ebcad41-197a-6700-95a3-acde48001122simplified',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 1',
-          'list_id': 'd685b31a-e161-11eb-ba80-0242ac130004',
+          'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
+          'unique_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122traditional',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 2',
-          'list_id': 'dbe24166-e161-11eb-ba80-0242ac130004',
+          'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
+          'unique_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122traditional',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 3',
-          'list_id': 'e0333b8a-e161-11eb-ba80-0242ac130004',
+          'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
+          'unique_id': '1ebcad3f-f815-6b92-b3e8-acde48001122traditional',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 4',
-          'list_id': 'e51bad3a-e161-11eb-ba80-0242ac130004',
+          'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
+          'unique_id': '1ebcad40-414f-6bc8-859d-acde48001122traditional',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 5',
-          'list_id': 'e9681f72-e161-11eb-ba80-0242ac130004',
+          'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
+          'unique_id': '1ebcad40-bb9e-6ece-a366-acde48001122traditional',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         },
         {
           'list_name': 'HSK Level 6',
-          'list_id': 'edf5677a-e161-11eb-ba80-0242ac130004',
+          'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
+          'unique_id': '1ebcad41-197a-6700-95a3-acde48001122traditional',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -190,87 +224,83 @@ export default {
       ]
     }
   },
+  created () {
+    this.getUserData = shared.getUserData
+  },
   async mounted () {
-    await this.getUserData()
+    try {
+      this.userData = await this.getUserData()
+    } catch (error) {
+      console.log('Error retrieving user data')
+    }
     console.log('all lists', this.allAvailableLists)
     this.loadingPage = false
   },
   computed: {
     subscribedListIds () {
-      return this.userData['lists'].map(elem => elem['list_id'])
+      // generate unique id
+      for (let i = 0; i < this.userData['lists'].length; i++) {
+        this.userData['lists'][i]['unique_id'] = this.userData['lists'][i]['list_id'] + this.userData['lists'][i]['character_set']
+      }
+      return this.userData['lists'].map(elem => elem['unique_id'])
     },
     allAvailableLists () {
       // return this.allLists.filter(e => this.subscribedListIds.indexOf(e['list_id']) === -1)
-      return this.allLists.filter(elem => !this.subscribedListIds.includes(elem['list_id']))
+      if (this.resultsFiltered === true) {
+        console.log('lists ', this.filterResultsValue)
+        let filteredLists = this.allLists.filter((elem) => {
+          return elem['character_set'] === this.filterResultsValue.toLowerCase()
+        })
+        return filteredLists.filter(elem => !this.subscribedListIds.includes(elem['unique_id']))
+      }
+      return this.allLists.filter(elem => !this.subscribedListIds.includes(elem['unique_id']))
     }
   },
   methods: {
     toggleSelect (listId) {
     },
-    async getUserData () {
-      let userPoolData = {
-        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
-        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
-        Storage: localStorage
-      }
-      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
-      let cognitoUser = userPool.getCurrentUser()
-      return new Promise((resolve, reject) => {
-        if (cognitoUser != null) {
-          cognitoUser.getSession((err, session) => {
-            if (err) {
-              console.log(err)
-              reject(err)
-            } else if (!session.isValid()) {
-              console.log('Invalid session.')
-              reject(Error('Invalid session.'))
-            } else {
-              console.log('IdToken: ' + session.getIdToken().getJwtToken())
-              return axios
-                .get(process.env.VUE_APP_API_URL + 'user_data', {
-                  headers: {
-                    'Authorization': session.getIdToken().getJwtToken()
-                  }
-                }
-                )
-                .then((response) => {
-                  console.log(response.data)
-                  this.userData = response.data
-                  resolve(this.userData)
-                })
-            }
-          })
-        } else {
-          console.log('User not found.')
-          reject(Error('User not found.'))
-        }
-      })
+    filterResults (value) {
+      console.log('filter results ', value)
+      this.showDropdown = !this.showDropdown
+      this.filterResultsValue = value
+      this.resultsFiltered = true
+      console.log('filter results ', value)
     },
-    subscribeList (list, character_set) {
-      this.userData['user_data']['lists'].push(
+    clearResultsFilter () {
+      console.log('clear filter')
+      this.resultsFiltered = false
+      this.filterResultsValue = null
+    },
+    subscribe (list) {
+      this.userData['lists'].push(
         {
-          'character_set': character_set,
+          'character_set': list['character_set'],
           'list_id': list['list_id'],
           'list_name': list['list_name']
         }
       )
-      setUserSubscriptions(this.userData['user_data']['lists'])
+      console.log('sub', this.userData['lists'])
+      this.setUserSubscriptions()
     },
-    unsubscribeList (list, character_set) {
+    unsubscribe (list) {
+      console.log('unsubscribe ', list['list_name'])
       for (let i = 0; i < this.userData['lists'].length; i++) {
-        // check if list in subscribed
+        if (list['unique_id'] === this.userData['lists'][i]['unique_id']) {
+          this.userData['lists'].splice(this.userData['lists'].indexOf(i), 1)
+        }
       }
-      setUserSubscriptions(lists)
+      console.log('unsub', this.userData['lists'])
+      this.setUserSubscriptions()
     },
-    setUserSubscriptions (lists) {
-      this.userDataUpdated = false
+    setUserSubscriptions () {
+      this.userSubsUpdated = false
       let requestBody = {
         'cognito_id': this.userData['user_data']['user_id'],
         'email': this.userData['user_data']['email_address'],
         'character_set_preference': this.userData['user_data']['character_set_preference'],
-        'lists': lists
+        'lists': this.userData['lists']
       }
-      console.log(requestBody)
+      console.log(requestBody.lists)
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
@@ -296,7 +326,7 @@ export default {
                 })
               .then((response) => {
                 console.log(response.data)
-                this.userDataUpdated = true
+                this.userSubsUpdated = true
               })
           }
         })
@@ -309,12 +339,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main-container {
+  padding-bottom: 3rem;
+}
 .dropdown-open {
   display: block;
 }
+.updated-flag {
+  color: orangered
+}
+.card-body {
+  padding: 0.5rem 1rem;
+}
 .list-display{
-    height: 350px;
-    overflow-y: scroll;
-    display: block;
+  height: 350px;
+  overflow-y: scroll;
+  display: block;
+}
+.list-row {
+  align-items: center;
+}
+.list-btn {
+  min-width: 120px;
+}
+.btn-outline-orange {
+  border-color: #fe4c00;
+  color: #fe4c00;
+}
+.no-subs-card {
+  padding: 1rem 0.5rem;
+}
+.filter-btn {
+  min-width: 100px;
 }
 </style>

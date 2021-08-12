@@ -1,7 +1,7 @@
 <template>
   <div id="edit-user-info">
     <small-header></small-header>
-    <div class="container">
+    <div class="container main-container">
       <div class="row">
         <div class="col">
           <button type="button" class="btn btn-light my-3" @click="$router.push('/profile')">
@@ -247,6 +247,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .main-container {
+    padding-bottom: 3rem;
+  }
   .updated-flag {
     color: orangered
   }

@@ -15,7 +15,10 @@
           <label for="exampleInputEmail1">Email address</label>
           <input type="email" v-model="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email address">
         </div>
-        <button type="button" @click="sendCode()" class="btn btn-dark">Send one-time code to my email</button>
+        <button type="button" @click="sendCode()" class="btn btn-dark">
+          <span v-if="sendingCode" class="spinner-border spinner-border-sm mb-1 mx-1" role="status" aria-hidden="true"></span>
+          Send one-time code to my email
+        </button>
       </div>
       <div class="row" v-if="invalidEmail">
         <div class="col">
@@ -48,11 +51,13 @@ export default {
       email: null,
       emailValidated: null,
       emailInputted: null,
-      invalidEmail: false
+      invalidEmail: false,
+      sendingCode: false
     }
   },
   methods: {
     async sendCode () {
+      this.sendingCode = true
       if (this.validateEmail(this.email) === true) {
         try {
           this.cognitoUser = await Auth.signIn(this.email)
@@ -65,6 +70,7 @@ export default {
         this.$root.$data.store.storeSessionData(this.cognitoUser.username, this.cognitoUser.Session)
         this.$router.push('/verification')
       } else {
+        this.sendingCode = false
         this.invalidEmail = true
       }
     },

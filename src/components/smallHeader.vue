@@ -26,14 +26,14 @@
             <li class="nav-item">
               <router-link class="nav-link" :class="{ active : this.$route.name === 'history' }" :to="{ name: 'history'}">Review</router-link>
             </li>
-            <li class="nav-item" v-if="!this.signedIn && this.$route.name !== 'sign-in'">
-              <router-link class="nav-link" :to="{ name: 'sign-in'}">Sign in</router-link>
+            <li class="nav-item" v-if="!this.signedIn">
+              <router-link class="nav-link"  :class="{ active : this.$route.name === 'sign-in' }" :to="{ name: 'sign-in'}">Sign in</router-link>
             </li>
             <li class="nav-item" v-if="this.signedIn">
               <router-link class="nav-link" :class="{ active : this.$route.name === 'user-profile' }" :to="{ name: 'user-profile'}">Profile</router-link>
             </li>
             <li class="nav-item" v-if="this.signedIn">
-              <div class="nav-link" @click="signOut()">Sign out</div>
+              <div class="nav-link" @click="signUserOut()">Sign out</div>
             </li>
           </ul>
         </div>
@@ -50,8 +50,13 @@ export default {
   name: 'smallHeader',
   data () {
     return {
-      showNav: false
+      showNav: false,
+      user: null
     }
+  },
+  created () {
+    this.getSignedInUser = shared.getSignedInUser
+    this.signOut = shared.signOut
   },
   computed: {
     mobileDevice () {
@@ -62,18 +67,24 @@ export default {
       }
     },
     signedIn () {
-      return this.$root.$data.store.retrieveSignInStatus()
+      if (this.user) {
+        return true
+      } else {
+        return false
+      }
     }
   },
-  mounted () {
-    console.log(this.signedIn)
+  async mounted () {
+    try {
+      this.user = await this.getSignedInUser()
+    } catch (error) {
+      this.user = null
+    }
   },
   methods: {
-    signOut () {
-      console.log('sign out')
-      this.$root.$data.store.storeSessionData(null, null)
-      this.$root.$data.store.updateSignInStatus(false)
-      if (this.$route.name === 'user-profile') {
+    signUserOut () {
+      this.signOut()
+      if (this.$route.name !== 'home') {
         this.$router.push('/')
       }
     }
@@ -86,8 +97,6 @@ export default {
     .header-nav-container {
       max-width: 880px;
       padding-bottom: .5rem;
-      /* padding-left: 2em;
-      padding-right: 2em; */
     }
     .nav-link {
       padding: 0rem 2rem;
@@ -95,9 +104,6 @@ export default {
   }
 
   @media only screen and (min-width: 0px) and (max-width: 500px) {
-    .header-nav-container {
-
-    }
     .nav-link {
       padding: 0.5rem 0.5rem;
     }
