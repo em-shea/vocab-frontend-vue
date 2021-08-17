@@ -3,7 +3,7 @@
 
     <small-header></small-header>
 
-    <div class="container">
+    <div class="container main-container">
       <div class="row">
         <div class="col">
           <p>One-time sign-in link sent! Please check your email and click the button to sign in.</p>
@@ -12,11 +12,11 @@
             <!-- <label for="answerChallengeCode"></label> -->
             <input type="text" v-model="code" class="form-control" id="answerChallengeCode" placeholder="One-time sign-in code">
           </div>
-          <button type="button" class="btn btn-dark" @click="resendCode()">Resend code</button>
-          <button type="button" @click="submitCode()" class="btn btn-dark">Submit</button>
+          <button type="button" class="btn btn-light code-btn" @click="resendCode()">Resend code</button>
+          <button type="button" @click="submitCode()" class="btn btn-dark code-btn float-right">Submit</button>
         </div>
       </div>
-      <div class="row">
+      <div class="row error-message">
         <div class="col" v-if="invalidCode">
           <p>This code is either incorrect or has expired. Please double check the code, or click the button above to resend a code.</p>
         </div>
@@ -52,7 +52,6 @@ export default {
       codeInputted: null,
       cognitoUser: CognitoUser,
       invalidCode: false,
-      errorMessage: null,
       codeResent: false
     }
   },
@@ -70,8 +69,13 @@ export default {
     getLocalSessionData () {
       let sessionData = this.$root.$data.store.retrieveSessionData()
       console.log(sessionData)
-      this.username = sessionData.username
-      this.session = sessionData.session
+      if (sessionData === null) {
+        // No user info stored in local storage
+        this.$router.push('/signin')
+      } else {
+        this.username = sessionData.username
+        this.session = sessionData.session
+      }
     },
     getQueryStringParams () {
       if (this.$route.query.code) {
@@ -112,7 +116,6 @@ export default {
         console.log('Error authenticating user', err)
         if (err.message === 'Invalid session for the user.') {
           this.invalidCode = true
-          this.errorMessage = 'This sign-in code is expired. Please click the button above to resend a new code.'
           return
         } else {
           throw err
@@ -122,8 +125,9 @@ export default {
       try {
         await Auth.currentSession()
       } catch (err) {
-        console.log('Error authenticating user', err)
-        throw err
+        console.log('Error retrieving user session', err)
+        this.invalidCode = true
+        return
       }
       console.log('signed in')
       this.$root.$data.store.updateSignInStatus(true)
@@ -134,7 +138,6 @@ export default {
       this.code = null
       this.codeResent = false
       this.invalidCode = false
-      this.errorMessage = null
       try {
         this.cognitoUser = await Auth.signIn(this.username)
       } catch (err) {
@@ -146,6 +149,14 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.main-container {
+  margin-top: 2rem;
+}
+.code-btn {
+  min-width: 120px;
+}
+.error-message {
+  padding: 1rem 0rem;
+}
 </style>

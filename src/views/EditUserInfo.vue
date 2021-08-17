@@ -58,13 +58,14 @@
           </form>
         </div>
       </div>
+      <!-- <hr/>
       <div class="row">
         <div class="col">
-          <button type="button" class="btn btn-light float-right" v-on:click="signOut()">
+          <button type="button" class="btn btn-light" v-on:click="signOut()">
             Sign out
           </button>
         </div>
-      </div>
+      </div> -->
     </div>
     <custom-footer></custom-footer>
   </div>

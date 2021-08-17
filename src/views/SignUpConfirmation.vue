@@ -3,10 +3,10 @@
 
     <small-header></small-header>
 
-    <div class="container">
+    <div class="container main-container">
       <div class="row">
         <div class="col">
-          <h5>成功！You're subscribed to daily vocab emails.</h5>
+          <h5 class="main-title">成功！You're subscribed to daily vocab emails.</h5>
           <p>
             You should receive a confirmation email which includes a sign-in link. This link will take you to your profile, where you can manage your vocab list subscriptions, review previous daily words, and take vocab quizzes.
           </p>
@@ -43,5 +43,10 @@ export default {
 </script>
 
 <style scoped>
-
+.main-container {
+  margin-top: 1rem;
+}
+.main-title {
+  padding: 1rem 0rem;
+}
 </style>

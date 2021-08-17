@@ -3,7 +3,7 @@
 
     <small-header></small-header>
 
-    <div class="container">
+    <div class="container main-container">
       <div class="row">
         <div class="col">
           <p>To sign in, we'll send a one-time sign-in link to your email. No need to remember a password!</p>
@@ -11,14 +11,14 @@
         </div>
       </div>
       <div>
-        <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
-          <input type="email" v-model="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email address">
-        </div>
-        <button type="button" @click="sendCode()" class="btn btn-dark">
-          <span v-if="sendingCode" class="spinner-border spinner-border-sm mb-1 mx-1" role="status" aria-hidden="true"></span>
-          Send one-time code to my email
-        </button>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="email" v-model="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email address">
+      </div>
+      <button type="button" @click="sendCode()" class="btn btn-dark">
+        <span v-if="sendingCode" class="spinner-border spinner-border-sm mb-1 mx-1" role="status" aria-hidden="true"></span>
+        Send one-time code to my email
+      </button>
       </div>
       <div class="row" v-if="invalidEmail">
         <div class="col">
@@ -91,11 +91,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .container {
       max-width: 880px;
       padding: 1em 0em;
     }
+  }
+  .main-container {
+    margin-top: 2rem;
   }
 </style>
