@@ -97,7 +97,7 @@
           </div>
       </div>
     </div>
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
   </div>
 </template>
 
@@ -221,7 +221,8 @@ export default {
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
         }
-      ]
+      ],
+      footerWidth: 'narrow'
     }
   },
   created () {

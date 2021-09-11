@@ -1,9 +1,9 @@
 <template>
-  <div id="user-profile">
+  <div id="user-profile" class="light-background">
 
     <small-header></small-header>
 
-    <div v-if="loadingPage" class="container">
+    <div v-if="loadingPage" class="container loading-container">
       <div class="row mt-5">
         <div class="col d-flex justify-content-center">
           <div class="spinner-border text-secondary" role="status">
@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!loadingPage" class="container main-container bg-light">
+    <div v-if="!loadingPage" class="container main-container">
       <div class="row header-row">
         <div class="col-12 col-md-8">
           <div class="card shadow-sm">
@@ -36,17 +36,15 @@
               </div>
             </div>
           </div>
-          <!-- <h5 class="userAliasHeader">{{ userData['email_address'] }}</h5>
-          <p class="mb-2 orange-link" v-on:click="$router.push('/profile-settings');">Set a profile name</p> -->
         </div>
-        <div class="col col-md-4">
+        <div class="desktop-header-btns col d-none d-md-flex">
           <div class="row">
-            <div class="col-6 col-md-12">
+            <div class="col-6 col-md-12 my-auto">
               <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
                 Manage lists
               </button>
             </div>
-            <div class="col-6 col-md-12">
+            <div class="col-6 col-md-12 my-auto">
               <button type="button" class="btn btn-settings float-right" v-on:click="$router.push('/profile-settings');">
                 Profile settings
               </button>
@@ -54,15 +52,19 @@
           </div>
         </div>
       </div>
-      <!-- <div class="row header-row" v-if="userData['user_alias'] !== 'Not set'">
-        <div class="col">
-          <h3 class="userAliasHeader">{{ userData['user_alias'] }}</h3>
-          <p class="mb-0 text-muted">{{ userData['user_alias_pinyin'] }}</p>
-          <p class="mb-2 text-muted">Studying since {{ userCreatedDate }}</p>
-          Level/Experience: 新手， 大二，
+      <div class="mobile-header-btns row d-flex d-md-none">
+        <div class="col-6">
+          <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
+            Manage lists
+          </button>
         </div>
-      </div> -->
-      <div class="row">
+        <div class="col-6">
+          <button type="button" class="btn btn-settings float-right" v-on:click="$router.push('/profile-settings');">
+            Profile settings
+          </button>
+        </div>
+      </div>
+      <div class="row todays-word-row">
         <div v-if="this.userLists.length === 1" class="col-12 daily-word-title">Today's word</div>
         <div v-else class="col-12 daily-word-title">Today's words</div>
         <div class="col" v-if="recentWordsList.length === 0">
@@ -173,7 +175,7 @@
       </div>
     </div> -->
 
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
 
@@ -197,7 +199,8 @@ export default {
       loadingPage: true,
       userData: {},
       userLists: [],
-      recentWordsList: []
+      recentWordsList: [],
+      footerWidth: 'narrow'
     }
   },
   created () {
@@ -321,7 +324,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @media only screen and (min-width: 575px) {
+  @media only screen and (min-width: 500px) {
+    .main-container {
+      max-width: 880px;
+      padding: 1em 0em;
+    }
     .truncate {
       width: 100%;
       white-space: nowrap;
@@ -332,8 +339,14 @@ export default {
       white-space: wrap;
     }
   }
+  .loading-container {
+    height: 550px;
+  }
   .main-container {
     padding-bottom: 3rem;
+  }
+  .light-background {
+    background: #f8f9fa;
   }
   .row {
     padding: .5rem,
@@ -362,11 +375,14 @@ export default {
   .no-subs-card {
     padding: 1rem 0.5rem;
   }
+  .todays-word-row {
+    justify-content: space-around;
+  }
   .user-date {
     font-size: 0.9rem;
   }
   .card-button {
-    margin: .5rem;
+    margin: .5rem 0rem;
     background-color: #858585;
     border-color: #858585;
     color: white;

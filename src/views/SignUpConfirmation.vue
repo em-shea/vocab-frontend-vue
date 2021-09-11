@@ -43,6 +43,12 @@ export default {
 </script>
 
 <style scoped>
+@media only screen and (min-width: 500px) {
+  .main-container {
+    max-width: 880px;
+    padding: 1em 0em;
+  }
+}
 .main-container {
   margin-top: 1rem;
 }

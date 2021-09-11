@@ -67,7 +67,7 @@
         </div>
       </div> -->
     </div>
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
   </div>
 </template>
 
@@ -93,7 +93,8 @@ export default {
       },
       userAliasOptions: userAliasOptions,
       emojiOptions: emojiOptions,
-      userDataUpdated: false
+      userDataUpdated: false,
+      footerWidth: 'narrow'
     }
   },
   async mounted () {
@@ -248,6 +249,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @media only screen and (min-width: 500px) {
+    .main-container {
+      max-width: 880px;
+      padding: 1em 0em;
+    }
+  }
   .main-container {
     padding-bottom: 3rem;
   }
