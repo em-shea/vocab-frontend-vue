@@ -821,8 +821,8 @@ export default {
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .container {
-      max-width: 880px;
-      padding: .5rem 2.5rem;
+      max-width: 55rem;
+      padding: .5rem 15px;
     }
 
     .dropdown-menu {

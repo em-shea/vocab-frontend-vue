@@ -14,11 +14,12 @@
     </div>
     <div v-if="!loadingPage" class="container main-container">
       <div class="row header-row">
-        <div class="col-12 col-md-8">
+        <div class="col">
+        <!-- <div class="col-12 col-md-8"> -->
           <div class="card shadow-sm">
-            <div class="card-body">
+            <div class="card-body profile-header-card">
               <div class="row vertical-align">
-                <div class="col-4 text-center">
+                <div class="col-4 col-md-2 text-center">
                   <div class="card emoji-card shadow">
                     <div class="card-body">
                       <h1 class="user-emoji" v-if="userData['user_alias_emoji'] !== 'Not set'">{{ userData['user_alias_emoji']}}</h1>
@@ -27,17 +28,18 @@
                   </div>
                 </div>
                 <div class="col-8">
-                  <h3 class="userAliasHeader" v-if="userData['user_alias'] !== 'Not set'">{{ userData['user_alias'] }}</h3>
+                  <h3 class="mb-0 userAliasHeader" v-if="userData['user_alias'] !== 'Not set'">{{ userData['user_alias'] }}</h3>
                   <h5 class="userAliasHeader" v-if="userData['user_alias'] === 'Not set'">{{ userData['email_address'] }}</h5>
                   <p class="mb-0 text-muted" v-if="userData['user_alias_pinyin'] !== 'Not set'">{{ userData['user_alias_pinyin'] }}</p>
-                  <p class="mb-2 text-muted user-date">Studying since {{ userCreatedDate }}</p>
-                  <p class="mb-2 orange-link" v-if="userData['user_alias'] === 'Not set'" v-on:click="$router.push('/profile-settings');">Set a profile name</p>
+                  <p class="mb-0 text-muted user-date" v-if="userData['user_alias_pinyin'] !== 'Not set'">Studying since {{ userCreatedDate }}</p>
+                  <p class="text-muted user-date" v-if="userData['user_alias_pinyin'] === 'Not set'">Studying since {{ userCreatedDate }}</p>
+                  <p class="mb-0 orange-link" v-if="userData['user_alias'] === 'Not set'" v-on:click="$router.push('/profile-settings');">Set a profile name</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="desktop-header-btns col d-none d-md-flex">
+        <!-- <div class="desktop-header-btns col d-none d-md-flex">
           <div class="row">
             <div class="col-6 col-md-12 my-auto">
               <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
@@ -50,9 +52,10 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div class="mobile-header-btns row d-flex d-md-none">
+      <!-- <div class="mobile-header-btns row d-flex d-md-none"> -->
+      <div class="row">
         <div class="col-6">
           <button type="button" class="btn btn-settings" v-on:click="$router.push('/manage-lists');">
             Manage lists
@@ -131,7 +134,7 @@
       </div> -->
       <div class="row">
         <div class="col">
-          Coming soon 👷🚧
+          Coming soon
         </div>
       </div>
       <div class="row justify-content-center pb-4">
@@ -326,8 +329,8 @@ export default {
 <style lang="scss" scoped>
   @media only screen and (min-width: 500px) {
     .main-container {
-      max-width: 880px;
-      padding: 1em 0em;
+      max-width: 55rem;
+      padding: 1em 15px;
     }
     .truncate {
       width: 100%;
@@ -353,6 +356,9 @@ export default {
   }
   .header-row {
     padding-top: 1rem;
+  }
+  .profile-header-card {
+    padding: 1em;
   }
   .btn-settings {
     min-width: 100%;
@@ -410,12 +416,13 @@ export default {
   }
   .emoji-card {
     border-radius: 5rem;
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
     margin: 0 auto;
   }
   .user-emoji {
     margin: 0;
+    font-size: 3.5rem;
   }
   .user-subtext {
     font-size: 0.9rem;

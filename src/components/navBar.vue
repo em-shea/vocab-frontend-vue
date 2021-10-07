@@ -60,6 +60,7 @@ export default {
   methods: {
     signUserOut () {
       this.signOut()
+      this.user = null
       if (this.$route.name !== 'home') {
         this.$router.push('/')
       }

@@ -48,8 +48,8 @@ export default {
   }
 
   .narrow-footer {
-    max-width: 880px;
-    padding: 0em 2.5em;
+    max-width: 55rem;
+    padding: 0rem 1.5rem;
   }
 
   .social-icons {

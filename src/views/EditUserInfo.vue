@@ -16,8 +16,13 @@
                   Profile settings
               </h5>
           </div>
-          <div class="col">
-            <p v-if="userDataUpdated" class="updated-flag mb-0 float-right">Updated!</p>
+          <div v-if="updatingUserData" class="col">
+            <div class="updating-spinner spinner-border spinner-border-sm text-secondary float-right" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div v-if="userDataUpdated" class="col">
+            <p class="updated-flag mb-0 float-right">Updated!</p>
           </div>
       </div>
       <div class="row">
@@ -93,6 +98,7 @@ export default {
       },
       userAliasOptions: userAliasOptions,
       emojiOptions: emojiOptions,
+      updatingUserData: false,
       userDataUpdated: false,
       footerWidth: 'narrow'
     }
@@ -197,6 +203,7 @@ export default {
       })
     },
     setUserData () {
+      this.updatingUserData = true
       this.userDataUpdated = false
       let requestBody = {
         'user_alias': this.userData['user_data']['user_alias'],
@@ -230,6 +237,7 @@ export default {
                 })
               .then((response) => {
                 console.log(response.data)
+                this.updatingUserData = false
                 this.userDataUpdated = true
               })
           }
@@ -251,8 +259,8 @@ export default {
 <style lang="scss" scoped>
   @media only screen and (min-width: 500px) {
     .main-container {
-      max-width: 880px;
-      padding: 1em 0em;
+      max-width: 55rem;
+      padding: 1em 15px;
     }
   }
   .main-container {
@@ -260,6 +268,9 @@ export default {
   }
   .updated-flag {
     color: orangered
+  }
+  .updating-spinner {
+    margin: 0rem 1rem;
   }
   .email-text {
     color: #717375

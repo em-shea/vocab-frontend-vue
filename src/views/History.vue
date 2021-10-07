@@ -198,7 +198,8 @@ export default {
 
 <style scoped lang="scss">
   .container {
-    max-width: 880px;
+    max-width: 55rem;
+    padding: 1rem 15px;
   }
 
   .card-holder {

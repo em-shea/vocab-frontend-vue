@@ -215,8 +215,8 @@ export default {
 
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .container {
-      max-width: 880px;
-      padding: 1em 0em;
+      max-width: 55rem;
+      padding: 1em 15px;
     }
 
     .unsub-row {

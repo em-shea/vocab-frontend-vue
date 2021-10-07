@@ -209,13 +209,13 @@ export default {
       }
       try {
         let cognitoSignupResponse = await this.signUpCognitoUser()
-        console.log('cognito id...', cognitoSignupResponse)
+        // console.log('cognito id...', cognitoSignupResponse)
         let promises = [
           this.sendCode(),
           this.createNewUser(cognitoSignupResponse.userSub)
         ]
         let responses = await Promise.all(promises)
-        console.log(responses)
+        // console.log(responses)
         this.$router.push('/subscribed')
       } catch (error) {
         console.error(error)

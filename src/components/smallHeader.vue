@@ -95,7 +95,7 @@ export default {
 <style scoped>
   @media only screen and (min-width: 500px) and (max-width: 2000px) {
     .header-nav-container {
-      max-width: 880px;
+      max-width: 55rem;
       padding-bottom: .5rem;
     }
     .nav-link {

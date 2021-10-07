@@ -6,22 +6,26 @@
     <div class="container main-container">
       <div class="row">
         <div class="col">
-          <p>One-time sign-in link sent! Please check your email and click the button to sign in.</p>
+          <p>One-time sign-in link sent! Please check your email.</p>
           <p>The sign-in link will expire in 3 minutes. If you did not receive an email, please double check that you entered your email correctly. Please <a href="mailto:help@haohaotiantian.com">reach out</a> if you are still having trouble logging in.</p>
-          <div class="form-group">
-            <!-- <label for="answerChallengeCode"></label> -->
+          <!-- <div class="form-group">
+            <label for="answerChallengeCode"></label>
             <input type="text" v-model="code" class="form-control" id="answerChallengeCode" placeholder="One-time sign-in code">
-          </div>
-          <button type="button" class="btn btn-light code-btn" @click="resendCode()">Resend code</button>
-          <button type="button" @click="submitCode()" class="btn btn-dark code-btn float-right">Submit</button>
+          </div> -->
+          <!-- <button type="button" @click="submitCode()" class="btn btn-dark code-btn float-right">Submit</button> -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-dark code-btn" @click="resendCode()">Resend sign-in link</button>
         </div>
       </div>
       <div class="row error-message">
         <div class="col" v-if="invalidCode">
-          <p>This code is either incorrect or has expired. Please double check the code, or click the button above to resend a code.</p>
+          <p>This link is either incorrect or has expired. Please click the button above to receive a new link.</p>
         </div>
         <div class="col" v-if="codeResent">
-          <p>Code resent! Please check your email.</p>
+          <p>Link resent! Please check your email.</p>
         </div>
       </div>
     </div>
@@ -152,8 +156,8 @@ export default {
 <style scoped>
 @media only screen and (min-width: 500px) {
   .main-container {
-    max-width: 880px;
-    padding: 1em 0em;
+    max-width: 55rem;
+    padding: 1em 15px;
   }
 }
 .main-container {

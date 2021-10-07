@@ -6,15 +6,15 @@
     <div class="container main-container">
       <div class="row">
         <div class="col">
-          <h5 class="main-title">成功！You're subscribed to daily vocab emails.</h5>
+          <h5 class="main-title">成功！You're subscribed to daily Chinese vocab emails.</h5>
           <p>
-            You should receive a confirmation email which includes a sign-in link. This link will take you to your profile, where you can manage your vocab list subscriptions, review previous daily words, and take vocab quizzes.
+            You should receive a confirmation email. Follow the sign-in link to view your profile, manage your vocab list subscriptions, review previous daily words, and take vocab quizzes.
           </p>
           <p>
             The sign-in link expires after 3 minutes, but you can always request a new one on the <router-link :to="{ name: 'sign-in'}">sign-in page</router-link>.
           </p>
           <p>
-            Thanks for subscribing! Follow<a href="https://twitter.com/haohaotiantian_"><p class="fa fa-twitter social-icons pl-2"></p> Haohaotiantian</a> on Twitter to learn about new features we're building.
+            Follow<a href="https://twitter.com/haohaotiantian_"><p class="fa fa-twitter social-icons pl-2"></p> Haohaotiantian</a>
           </p>
         </div>
       </div>
@@ -45,8 +45,8 @@ export default {
 <style scoped>
 @media only screen and (min-width: 500px) {
   .main-container {
-    max-width: 880px;
-    padding: 1em 0em;
+    max-width: 55rem;
+    padding: 1em 15px;
   }
 }
 .main-container {
