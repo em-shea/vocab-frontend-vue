@@ -242,10 +242,7 @@ export default {
   computed: {
     subscribedListIds () {
       // generate unique id
-      for (let i = 0; i < this.userData['lists'].length; i++) {
-        this.userData['lists'][i]['unique_id'] = this.userData['lists'][i]['list_id'] + this.userData['lists'][i]['character_set']
-      }
-      return this.userData['lists'].map(elem => elem['unique_id'])
+      return this.userData['lists'].map(elem => elem['list_id'] + elem['character_set'])
     },
     allAvailableLists () {
       // return this.allLists.filter(e => this.subscribedListIds.indexOf(e['list_id']) === -1)
