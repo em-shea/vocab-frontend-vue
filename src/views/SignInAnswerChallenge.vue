@@ -41,6 +41,7 @@ import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import { Auth } from 'aws-amplify'
 import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js'
+import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 
 export default {
   name: 'answer-challenge',
@@ -129,6 +130,12 @@ export default {
         this.invalidCode = true
         return
       }
+      try {
+        // update last login date
+        this.updateLastLogin()
+      } catch (err) {
+        console.log('Error updating last login', err)
+      }
       // console.log('signed in')
       this.$root.$data.store.updateSignInStatus(true)
       this.$router.push('/profile')
@@ -144,6 +151,43 @@ export default {
         console.log(err)
       }
       this.codeResent = true
+    },
+    updateLastLogin () {
+      // let requestBody = {
+      //   'last_login':
+      // }
+      // console.log(requestBody)
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let cognitoUser = userPool.getCurrentUser()
+      if (cognitoUser != null) {
+        cognitoUser.getSession((err, session) => {
+          if (err) {
+            console.log(err)
+          } else if (!session.isValid()) {
+            console.log('Invalid session.')
+          } else {
+            // console.log('IdToken: ' + session.getIdToken().getJwtToken())
+            return axios
+              .post(process.env.VUE_APP_API_URL + 'update_login', 
+              null,
+              {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                })
+              .then((response) => {
+                // console.log(response.data)
+              })
+          }
+        })
+      } else {
+        console.log('User not found.')
+      }
     }
   }
 }
