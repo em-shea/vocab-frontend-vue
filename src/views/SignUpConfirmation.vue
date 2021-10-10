@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
 
@@ -37,7 +37,9 @@ export default {
     'custom-footer': customFooter
   },
   data () {
-    return {}
+    return {
+      footerWidth: 'narrow'
+    }
   }
 }
 </script>
