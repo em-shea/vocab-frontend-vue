@@ -21,7 +21,7 @@
               <div class="row vertical-align">
                 <div class="col-4 col-md-2 text-center">
                   <div class="card emoji-card shadow">
-                    <div class="card-body">
+                    <div class="card-body emoji-card-body">
                       <h1 class="user-emoji" v-if="userData['user_alias_emoji'] !== 'Not set'">{{ userData['user_alias_emoji']}}</h1>
                       <h1 class="user-emoji" v-if="userData['user_alias_emoji'] === 'Not set'">📙</h1>
                     </div>
@@ -416,9 +416,14 @@ export default {
   }
   .emoji-card {
     border-radius: 5rem;
-    width: 5rem;
-    height: 5rem;
+    width: 5.5rem;
+    height: 5.5rem;
     margin: 0 auto;
+  }
+  .emoji-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .user-emoji {
     margin: 0;
