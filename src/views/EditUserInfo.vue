@@ -117,7 +117,7 @@ export default {
         'character': this.userData['user_data']['user_alias'],
         'pinyin': this.userData['user_data']['user_alias_pinyin']
       }
-      console.log('update user placeholder', this.userAliasPlaceholder)
+      // console.log('update user placeholder', this.userAliasPlaceholder)
     },
     updateUserAlias () {
       // console.log('update user data', this.userAliasPlaceholder)
@@ -149,8 +149,8 @@ export default {
             } else {
               console.log('Success')
                 .then((response) => {
-                  console.log(response.data)
-                  console.log(session.getIdToken().getJwtToken())
+                  // console.log(response.data)
+                  // console.log(session.getIdToken().getJwtToken())
                   this.userData = response.data
                   resolve(this.userData)
                 })
@@ -180,7 +180,7 @@ export default {
               console.log('Invalid session.')
               reject(Error('Invalid session.'))
             } else {
-              console.log('IdToken: ' + session.getIdToken().getJwtToken())
+              // console.log('IdToken: ' + session.getIdToken().getJwtToken())
               return axios
                 .get(process.env.VUE_APP_API_URL + 'user_data', {
                   headers: {
@@ -225,7 +225,7 @@ export default {
           } else if (!session.isValid()) {
             console.log('Invalid session.')
           } else {
-            console.log('IdToken: ' + session.getIdToken().getJwtToken())
+            // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
               .post(process.env.VUE_APP_API_URL + 'update_user',
                 requestBody,
@@ -235,7 +235,7 @@ export default {
                   }
                 })
               .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 this.updatingUserData = false
                 this.userDataUpdated = true
               })

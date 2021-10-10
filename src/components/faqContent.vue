@@ -1,6 +1,6 @@
 <template>
   <div id="faq-content">
-    <div class="container bg-light">
+    <div class="container bg-light pb-5">
       <div class="anchor-target" id="faq"></div>
       <div class="row m-3 py-3">
       <div class="col-12 my-3">

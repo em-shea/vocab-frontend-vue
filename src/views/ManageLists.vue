@@ -281,6 +281,7 @@ export default {
     },
     unsubscribe (list) {
       this.userData['lists'] = this.userData['lists'].filter((currentList) => {
+        // console.log('lists, ', list, currentList)
         if (list['unique_list_id'] === currentList['unique_list_id']) {
           return false
         } else {
@@ -324,7 +325,7 @@ export default {
                   }
                 })
               .then((response) => {
-                console.log('set subs response, ', response.data)
+                // console.log('set subs response, ', response.data)
                 this.updatingUserSubs = false
                 this.userSubsUpdated = true
               })
