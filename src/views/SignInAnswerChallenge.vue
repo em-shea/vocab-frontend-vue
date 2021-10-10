@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <custom-footer></custom-footer>
+    <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
 
@@ -57,7 +57,8 @@ export default {
       codeInputted: null,
       cognitoUser: CognitoUser,
       invalidCode: false,
-      codeResent: false
+      codeResent: false,
+      footerWidth: 'narrow'
     }
   },
   computed: {
@@ -173,9 +174,9 @@ export default {
           } else {
             // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
-              .post(process.env.VUE_APP_API_URL + 'update_login', 
-              null,
-              {
+              .post(process.env.VUE_APP_API_URL + 'update_login',
+                null,
+                {
                   headers: {
                     'Authorization': session.getIdToken().getJwtToken()
                   }
