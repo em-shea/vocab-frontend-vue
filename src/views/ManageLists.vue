@@ -130,7 +130,7 @@ export default {
         {
           'list_name': 'HSK Level 1',
           'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
-          'unique_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122simplified',
+          'unique_list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122#SIMPLIFIED',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -138,7 +138,7 @@ export default {
         {
           'list_name': 'HSK Level 2',
           'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
-          'unique_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122simplified',
+          'unique_list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122#SIMPLIFIED',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -146,7 +146,7 @@ export default {
         {
           'list_name': 'HSK Level 3',
           'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
-          'unique_id': '1ebcad3f-f815-6b92-b3e8-acde48001122simplified',
+          'unique_list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122#SIMPLIFIED',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -154,7 +154,7 @@ export default {
         {
           'list_name': 'HSK Level 4',
           'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
-          'unique_id': '1ebcad40-414f-6bc8-859d-acde48001122simplified',
+          'unique_list_id': '1ebcad40-414f-6bc8-859d-acde48001122#SIMPLIFIED',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -162,7 +162,7 @@ export default {
         {
           'list_name': 'HSK Level 5',
           'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
-          'unique_id': '1ebcad40-bb9e-6ece-a366-acde48001122simplified',
+          'unique_list_id': '1ebcad40-bb9e-6ece-a366-acde48001122#SIMPLIFIED',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -170,7 +170,7 @@ export default {
         {
           'list_name': 'HSK Level 6',
           'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
-          'unique_id': '1ebcad41-197a-6700-95a3-acde48001122simplified',
+          'unique_list_id': '1ebcad41-197a-6700-95a3-acde48001122#SIMPLIFIED',
           'character_set': 'simplified',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -178,7 +178,7 @@ export default {
         {
           'list_name': 'HSK Level 1',
           'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
-          'unique_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122traditional',
+          'unique_list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122#TRADITIONAL',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -186,7 +186,7 @@ export default {
         {
           'list_name': 'HSK Level 2',
           'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
-          'unique_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122traditional',
+          'unique_list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122#TRADITIONAL',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -194,7 +194,7 @@ export default {
         {
           'list_name': 'HSK Level 3',
           'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
-          'unique_id': '1ebcad3f-f815-6b92-b3e8-acde48001122traditional',
+          'unique_list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122#TRADITIONAL',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -202,7 +202,7 @@ export default {
         {
           'list_name': 'HSK Level 4',
           'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
-          'unique_id': '1ebcad40-414f-6bc8-859d-acde48001122traditional',
+          'unique_list_id': '1ebcad40-414f-6bc8-859d-acde48001122#TRADITIONAL',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -210,7 +210,7 @@ export default {
         {
           'list_name': 'HSK Level 5',
           'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
-          'unique_id': '1ebcad40-bb9e-6ece-a366-acde48001122traditional',
+          'unique_list_id': '1ebcad40-bb9e-6ece-a366-acde48001122#TRADITIONAL',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -218,7 +218,7 @@ export default {
         {
           'list_name': 'HSK Level 6',
           'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
-          'unique_id': '1ebcad41-197a-6700-95a3-acde48001122traditional',
+          'unique_list_id': '1ebcad41-197a-6700-95a3-acde48001122#TRADITIONAL',
           'character_set': 'traditional',
           'date_created': '2021-06-16T23:06:48.467526',
           'created_by': 'admin'
@@ -236,38 +236,35 @@ export default {
     } catch (error) {
       console.log('Error retrieving user data')
     }
-    console.log('all lists', this.allAvailableLists)
+    // console.log('all lists', this.allAvailableLists)
     this.loadingPage = false
   },
   computed: {
     subscribedListIds () {
-      // generate unique id
-      return this.userData['lists'].map(elem => elem['list_id'] + elem['character_set'])
+      // create list of unique ids
+      return this.userData['lists'].map(elem => elem['unique_list_id'])
     },
     allAvailableLists () {
-      // return this.allLists.filter(e => this.subscribedListIds.indexOf(e['list_id']) === -1)
       if (this.resultsFiltered === true) {
-        console.log('lists ', this.filterResultsValue)
         let filteredLists = this.allLists.filter((elem) => {
           return elem['character_set'] === this.filterResultsValue.toLowerCase()
         })
-        return filteredLists.filter(elem => !this.subscribedListIds.includes(elem['unique_id']))
+        // return all filtered lists (ex, simplified) and filter out subscribed lists
+        return filteredLists.filter(elem => !this.subscribedListIds.includes(elem['unique_list_id']))
       }
-      return this.allLists.filter(elem => !this.subscribedListIds.includes(elem['unique_id']))
+      // return all lists and filter out subscribed lists
+      return this.allLists.filter(elem => !this.subscribedListIds.includes(elem['unique_list_id']))
     }
   },
   methods: {
     toggleSelect (listId) {
     },
     filterResults (value) {
-      console.log('filter results ', value)
       this.showDropdown = !this.showDropdown
       this.filterResultsValue = value
       this.resultsFiltered = true
-      console.log('filter results ', value)
     },
     clearResultsFilter () {
-      console.log('clear filter')
       this.resultsFiltered = false
       this.filterResultsValue = null
     },
@@ -276,20 +273,21 @@ export default {
         {
           'character_set': list['character_set'],
           'list_id': list['list_id'],
-          'list_name': list['list_name']
+          'list_name': list['list_name'],
+          'unique_list_id': list['unique_list_id']
         }
       )
-      console.log('sub', this.userData['lists'])
       this.setUserSubscriptions()
     },
     unsubscribe (list) {
-      console.log('unsubscribe ', list['list_name'])
-      for (let i = 0; i < this.userData['lists'].length; i++) {
-        if (list['unique_id'] === this.userData['lists'][i]['unique_id']) {
-          this.userData['lists'].splice(i, 1)
+      this.userData['lists'] = this.userData['lists'].filter((currentList) => {
+        if (list['unique_list_id'] === currentList['unique_list_id']) {
+          return false
+        } else {
+          return true
         }
-      }
-      console.log('unsub', this.userData['lists'])
+      })
+      // this.userData['lists'] = this.userData['lists'].filter(currentList => list['unique_list_id'] !== currentList['unique_list_id'])
       this.setUserSubscriptions()
     },
     setUserSubscriptions () {
@@ -301,7 +299,7 @@ export default {
         'character_set_preference': this.userData['user_data']['character_set_preference'],
         'lists': this.userData['lists']
       }
-      console.log(requestBody.lists)
+      // console.log(requestBody.lists)
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
@@ -316,7 +314,7 @@ export default {
           } else if (!session.isValid()) {
             console.log('Invalid session.')
           } else {
-            console.log('IdToken: ' + session.getIdToken().getJwtToken())
+            // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
               .post(process.env.VUE_APP_API_URL + 'set_subs',
                 requestBody,
@@ -326,7 +324,7 @@ export default {
                   }
                 })
               .then((response) => {
-                console.log(response.data)
+                console.log('set subs response, ', response.data)
                 this.updatingUserSubs = false
                 this.userSubsUpdated = true
               })

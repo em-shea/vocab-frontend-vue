@@ -112,7 +112,6 @@ export default {
     setUserAliasPlaceholder () {
       if (this.userData['user_data']['user_alias_pinyin'] === 'Not set') {
         this.userData['user_data']['user_alias_pinyin'] = ''
-        console.log('set pinyin to blank', this.userData['user_data']['user_alias_pinyin'])
       }
       this.userAliasPlaceholder = {
         'character': this.userData['user_data']['user_alias'],
@@ -121,7 +120,7 @@ export default {
       console.log('update user placeholder', this.userAliasPlaceholder)
     },
     updateUserAlias () {
-      console.log('update user data', this.userAliasPlaceholder)
+      // console.log('update user data', this.userAliasPlaceholder)
       this.userData['user_data']['user_alias'] = this.userAliasPlaceholder['character']
       if (this.userAliasPlaceholder['pinyin'] === '') {
         this.userData['user_data']['user_alias_pinyin'] = 'Not set'
@@ -189,8 +188,8 @@ export default {
                   }
                 })
                 .then((response) => {
-                  console.log(response.data)
-                  console.log(session.getIdToken().getJwtToken())
+                  // console.log(response.data)
+                  // console.log(session.getIdToken().getJwtToken())
                   this.userData = response.data
                   resolve(this.userData)
                 })
@@ -211,7 +210,7 @@ export default {
         'user_alias_emoji': this.userData['user_data']['user_alias_emoji'],
         'character_set_preference': this.userData['user_data']['character_set_preference']
       }
-      console.log(requestBody)
+      // console.log(requestBody)
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
@@ -247,7 +246,7 @@ export default {
       }
     },
     signOut () {
-      console.log('sign out')
+      // console.log('sign out')
       this.$root.$data.store.storeSessionData(null, null)
       this.$root.$data.store.updateSignInStatus(false)
       this.$router.push('/')

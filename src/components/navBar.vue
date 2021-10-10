@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     signUserOut () {
-      console.log('signing out...')
+      // console.log('signing out...')
       this.signOut()
       this.user = null
       if (this.$route.name !== 'home') {

@@ -275,7 +275,7 @@ export default {
             }
           })
         } else {
-          console.log('User not found.')
+          // console.log('User not found.')
           reject(Error('User not found.'))
         }
       })
@@ -332,12 +332,12 @@ export default {
       max-width: 55rem;
       padding: 1em 15px;
     }
-    .truncate {
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    // .truncate {
+    //   width: 100%;
+    //   white-space: nowrap;
+    //   overflow: hidden;
+    //   text-overflow: ellipsis;
+    // }
     .full-length {
       white-space: wrap;
     }

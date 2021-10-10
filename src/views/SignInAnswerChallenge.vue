@@ -72,7 +72,7 @@ export default {
     // Info needed from Auth.signIn in order to Auth.sendCustomChallengeAnswer
     getLocalSessionData () {
       let sessionData = this.$root.$data.store.retrieveSessionData()
-      console.log(sessionData)
+      // console.log(sessionData)
       if (sessionData === null) {
         // No user info stored in local storage
         this.$router.push('/signin')
@@ -84,13 +84,11 @@ export default {
     getQueryStringParams () {
       if (this.$route.query.code) {
         this.code = this.$route.query.code
-        console.log('code in params')
+        // console.log('code in params')
         this.submitCode()
       }
     },
     getCognitoUser () {
-      // console.log('username', this.username)
-      // console.log('session', this.session)
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
@@ -107,14 +105,12 @@ export default {
         console.log(err)
       }
       this.cognitoUser.Session = this.session
-      // console.log('session2', this.cognitoUser.Session)
     },
     submitCode () {
       this.answerChallenge()
     },
     async answerChallenge () {
       try {
-        // console.log('answer challenge cognito user', this.cognitoUser)
         await Auth.sendCustomChallengeAnswer(this.cognitoUser, this.code)
       } catch (err) {
         console.log('Error authenticating user', err)
@@ -133,12 +129,12 @@ export default {
         this.invalidCode = true
         return
       }
-      console.log('signed in')
+      // console.log('signed in')
       this.$root.$data.store.updateSignInStatus(true)
       this.$router.push('/profile')
     },
     async resendCode () {
-      console.log('resending')
+      // console.log('resending')
       this.code = null
       this.codeResent = false
       this.invalidCode = false

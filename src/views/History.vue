@@ -58,7 +58,7 @@
       </div>
     </div> -->
 
-    <div class="container">
+    <div class="container second-container">
       <div class="row card-deck m-3">
         <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryList" :key="card['ListId']+card['Date']">
           <word-history-card :card="card"></word-history-card>
@@ -200,6 +200,10 @@ export default {
   .container {
     max-width: 55rem;
     padding: 1rem 15px;
+  }
+
+  .second-container {
+    padding-bottom: 3rem;
   }
 
   .card-holder {

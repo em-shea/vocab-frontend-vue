@@ -67,8 +67,8 @@ export default {
         } catch (err) {
           console.log(err)
         }
-        console.log('cognito user', this.cognitoUser)
-        console.log('email sent')
+        // console.log('cognito user', this.cognitoUser)
+        // console.log('email sent')
         // this.$root.$data.store.storeSessionData(this.cognitoUser)
         this.$root.$data.store.storeSessionData(this.cognitoUser.username, this.cognitoUser.Session)
         this.$router.push('/verification')

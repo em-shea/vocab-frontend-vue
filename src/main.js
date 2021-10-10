@@ -37,7 +37,7 @@ var store = {
   },
   retrieveSignInStatus () {
     if (localStorage.getItem('signInStatus')) {
-      console.log('sign in status stored')
+      // console.log('sign in status stored')
       return JSON.parse(localStorage.getItem('signInStatus'))
     }
     return false

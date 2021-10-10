@@ -838,13 +838,13 @@ export default {
       padding: .5rem 2.5rem;
     }
 
-    .quiz-main-container {
-      padding-bottom: 4em;
-    }
-
     .dropdown-menu {
       left: 5%;
       right: 5%;
     }
+  }
+
+  .quiz-main-container {
+    padding-bottom: 4em;
   }
 </style>

@@ -23,7 +23,7 @@ export default {
             console.log('Invalid session.')
             reject(Error('Invalid session.'))
           } else {
-            console.log(cognitoUser)
+            // console.log(cognitoUser)
             resolve(cognitoUser)
           }
         })
@@ -53,7 +53,7 @@ export default {
             console.log('Invalid session.')
             reject(Error('Invalid session.'))
           } else {
-            console.log('IdToken: ' + session.getIdToken().getJwtToken())
+            // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
               .get(process.env.VUE_APP_API_URL + 'user_data', {
                 headers: {
@@ -62,7 +62,7 @@ export default {
               }
               )
               .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 // this.userData = response.data['user_data']
                 // this.userLists = response.data['lists']
                 // resolve(this.userData, this.userLists)
