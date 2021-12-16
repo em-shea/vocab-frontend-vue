@@ -103,7 +103,8 @@
               <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['Word']" class="card shadow-sm p-2">
                 <div v-if="characterSet === 'simplified'" class="card-body">{{ word['Word'] }}</div>
                 <div v-if="characterSet === 'traditional'" class="card-body">{{ word['Word-Traditional'] }}</div>
-                <div class="card-body">{{ word['Pronunciation'] }}</div>
+                <div class="card-body">{{ word['Pronunciation'] }}  <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span></div>
+                <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio>
                 <div class="card-body">{{ word['Definition'] }}</div>
               </div>
             </div>
@@ -139,6 +140,7 @@ export default {
   },
   data () {
     return {
+      tempAudioFile: "https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3",
       params: {
         email: null,
         list: 'default'
@@ -260,6 +262,10 @@ export default {
     getRandomString () {
       let randomString = Date.now().toString(36) + Math.random().toString(36).substring(2)
       return randomString
+    },
+    playAudio (audioFile) {
+      let audio = new Audio(audioFile)
+      audio.play()
     }
   }
 }

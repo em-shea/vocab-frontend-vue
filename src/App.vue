@@ -51,6 +51,16 @@
     margin: .5em;
   }
 
+  .audio-icon {
+    color: #fe4c00;
+    font-size: 80%;
+  }
+
+  .audio-icon:hover {
+    color:  hsla(16, 100%, 40%, 1);
+    cursor: pointer;
+  }
+
   .tooltip {
   display: block !important;
   z-index: 10000;

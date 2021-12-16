@@ -8,7 +8,9 @@
         {{ card.Word['Word-Traditional'] }}
       </p>
       <p class="card-text">
-        {{ card.Word.Pronunciation }}
+        {{ card.Word.Pronunciation }} 
+        <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span>
+        <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio>
       </p>
       <p class="card-text" :class="{ 'truncate' : !clicked }">
         {{ card.Word.Definition }}
@@ -45,7 +47,8 @@ export default {
   },
   data () {
     return {
-      clicked: false
+      clicked: false,
+      tempAudioFile: "https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3"
     }
   },
   computed: {
