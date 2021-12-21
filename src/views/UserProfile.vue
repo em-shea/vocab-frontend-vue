@@ -83,8 +83,9 @@
             <div class="card-body daily-word-card-body">
               <h5 v-if="word['CharacterSet'] === 'simplified'" class="card-text">{{ word['Word']['Word'] }}</h5>
               <h5 v-if="word['CharacterSet'] === 'traditional'" class="card-text">{{ word['Word']['Word-Traditional'] }}</h5>
-              <p class="card-text">{{ word['Word']['Pronunciation'] }} <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span></p>
-              <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio>
+              <p class="card-text">{{ word['Word']['Pronunciation'] }}</p>
+              <!-- <p class="card-text">{{ word['Word']['Pronunciation'] }} <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span></p>
+              <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio> -->
               <p class="card-text truncate">{{ word['Word']['Definition'] }}</p>
               <ul class="list-group list-group-flush">
                 <li class="list-group-item text-muted">HSK Level {{ word['Word']['HSK Level'] }}, {{ word['CharacterSet']}}</li>

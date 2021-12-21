@@ -9,8 +9,8 @@
       </p>
       <p class="card-text">
         {{ card.Word.Pronunciation }} 
-        <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span>
-        <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio>
+        <!-- <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span>
+        <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio> -->
       </p>
       <p class="card-text" :class="{ 'truncate' : !clicked }">
         {{ card.Word.Definition }}

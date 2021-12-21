@@ -19,26 +19,12 @@
             <input type="email" v-model="params.email" class="form-control" id="subscribe" value="" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
           </div>
         </div>
-        <div class="col-xl-4 col-lg-6 col-12 p-3" v-if="characterSet == 'simplified'">
-          <select v-model="params.level" :disabled="unsubscribeAllInput" class="custom-select" id="level">
-            <option selected value="default">Choose an HSK Level</option>
-            <option value="1">1 - Simplified</option>
-            <option value="2">2 - Simplified</option>
-            <option value="3">3 - Simplified</option>
-            <option value="4">4 - Simplified</option>
-            <option value="5">5 - Simplified</option>
-            <option value="6">6 - Simplified</option>
-          </select>
-        </div>
-        <div class="col-xl-4 col-lg-6 col-12 p-3" v-if="characterSet == 'traditional'">
-          <select v-model="params.level" :disabled="unsubscribeAllInput" class="custom-select" id="level">
-            <option selected value="default">Choose an HSK Level</option>
-            <option value="1">1 - Traditional</option>
-            <option value="2">2 - Traditional</option>
-            <option value="3">3 - Traditional</option>
-            <option value="4">4 - Traditional</option>
-            <option value="5">5 - Traditional</option>
-            <option value="6">6 - Traditional</option>
+        <!-- Use dynamic vocabListIds instead -->
+        <!-- How to v-model on params.listId and vocabListIds -->
+        <!-- Filter list based on character set? Or just include all and select the given one? -->
+        <div class="col-xl-4 col-lg-6 col-12 p-3">
+          <select v-model="params.listId" :disabled="unsubscribeAllInput" class="custom-select" id="level">
+            <option v-for="list in vocabListIds" :value="list.unique_list_id" :key="list.unique_list_id">{{ list['list_name'] }} - {{ list['character_set'] }}</option>
           </select>
         </div>
         <div class="form-check form-check-inline unsub-all col-xl-3 col-6">
@@ -46,7 +32,7 @@
           <label class="form-check-label pl-1" for="exampleCheck1">Unsubscribe all</label>
         </div>
         <div class="col-xl-2 col-6 p-3">
-          <button class="btn btn-outline-secondary unsub-btn" type="button" id="button-addon2" v-on:click="submitUnsubscribe();">Unsubscribe</button>
+          <button class="btn btn-outline-secondary unsub-btn" type="button" id="button-addon2" v-on:click="unsubscribe();">Unsubscribe</button>
         </div>
       </div>
       <div class="row m-3">
@@ -66,8 +52,13 @@
           </div>
         </div>
       </div>
+      <div class="row m-3">
+        <div class="col-12">
+        To manage your subscriptions or subscribe to different lists, <router-link :to="{ name: 'sign-in'}">click here to sign in to your account</router-link>.
+        </div>
+      </div>
     </div>
-
+    
     <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
@@ -77,6 +68,7 @@
 // @ is an alias to /src
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
+import vocabListIds from '@/assets/vocabListIds.json'
 
 export default {
   name: 'unsub',
@@ -88,8 +80,9 @@ export default {
     return {
       params: {
         email: null,
-        level: 'default'
+        listId: vocabListIds[0]['unique_list_id']
       },
+      vocabListIds: vocabListIds,
       unsubscribeListParam: null,
       unsubscribeAllInput: false,
       unsubscribeResponse: null,
@@ -102,6 +95,15 @@ export default {
   computed: {
     characterSet () {
       return this.$root.$data.store.state.characterSet
+    },
+    selectedList () {
+      let selectedList = ""
+      for (let i = 0; i < this.vocabListIds.length; i++) {
+        if (this.vocabListIds[i]['unique_list_id'] === this.params.listId) {
+          selectedList = this.vocabListIds[i]
+        }
+      }
+      return selectedList
     }
   },
   mounted () {
@@ -114,51 +116,41 @@ export default {
       if (this.$route.query.email) {
         this.params.email = this.$route.query.email
       }
-      if (this.$route.query.level) {
-        this.params.level = this.$route.query.level
+      if (this.$route.query.list) {
+        this.params.listId = this.$route.query.list
+        let characterSet = this.$route.query.list.split('#')[1]
+        this.$root.$data.store.changeCharacterSet(characterSet.toLowerCase())
       }
-      if (this.$route.query.char) {
-        this.$root.$data.store.changeCharacterSet(this.$route.query.char)
-      }
-      if (this.$route.query.email || this.$route.query.level || this.$route.query.char) {
+      if (this.$route.query.email || this.$route.query.list) {
         // Once the input fields are populated, remove query parameters from URL
         let query = Object.assign({}, this.$route.query)
-        delete query.level
         delete query.email
-        delete query.char
+        delete query.list
         this.$router.replace({ query })
       }
     },
 
     // Submit the user info to unsubscribe
-    submitUnsubscribe () {
+    unsubscribe () {
       // Reset the unsubscribe response
       this.unsubscribeResponse = null
       this.emailValidated = null
       this.emailInputted = null
       this.levelValidated = null
 
-      // Ensure a valid email is inputted and a level is selected
-      if (this.params.level === 'default' && this.unsubscribeAllInput === false) {
-        this.levelValidated = false
+      if (!this.validateEmail()) {
         return false
       }
-      if (!this.validateEmail()) {
-        return
-      }
 
-      // If 'unsubscribe all' is selected, set level parameter to 'all'
       if (this.unsubscribeAllInput === true) {
-        this.unsubscribeListParam = 'all'
+        this.unsubscribeListParam = ""
+      } else {
+        this.unsubscribeListParam = this.selectedList
       }
 
-      // Call unsubscribe function
-      // Unless 'unsub all' selected, append characterSet string to selected list #
-      if (this.unsubscribeAllInput === false) {
-        this.unsubscribeListParam = this.params.level + '-' + this.characterSet
-      }
       this.subURL = process.env.VUE_APP_API_URL + 'unsub'
       return axios.post(this.subURL, {
+        cognito_id: "",
         email: this.params.email,
         list: this.unsubscribeListParam
       })
