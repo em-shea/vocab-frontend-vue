@@ -58,6 +58,9 @@ export default {
       sendingCode: false
     }
   },
+  mounted () {
+    this.getEmailParam()
+  },
   methods: {
     async sendCode () {
       this.sendingCode = true
@@ -88,6 +91,11 @@ export default {
       } else {
         this.emailValidated = true
         return true
+      }
+    },
+    getEmailParam () {
+      if (this.$route.query.email) {
+        this.email = this.$route.query.email
       }
     }
   }

@@ -44,18 +44,18 @@
                     </div>
                 </div>
             </div>
-              <div class="card shadow-sm" v-for="(value, key) in userData['lists']" :key=key>
-                  <div class="card-body">
-                      <div class="row list-row">
-                          <div class="col">
-                            <h6 class="card-text">{{ value['list_name'] }}, {{ value['character_set'] }}</h6>
-                          </div>
-                          <div class="col">
-                            <button type="button" class="btn btn-outline-secondary list-btn float-right" @click="unsubscribe(value)">Unsubscribe</button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+            <div class="card shadow-sm" v-for="(value, key) in userData['lists']" :key=key>
+                <div class="card-body">
+                    <div class="row list-row">
+                        <div class="col">
+                          <h6 class="card-text">{{ value['list_name'] }}, {{ value['character_set'] }}</h6>
+                        </div>
+                        <div class="col">
+                          <button type="button" class="btn btn-outline-secondary list-btn float-right" @click="unsubscribe(value)">Unsubscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
           </div>
       </div>
       <hr/>
