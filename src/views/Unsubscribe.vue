@@ -58,7 +58,7 @@
         </div>
       </div>
     </div>
-    
+
     <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
@@ -97,7 +97,7 @@ export default {
       return this.$root.$data.store.state.characterSet
     },
     selectedList () {
-      let selectedList = ""
+      let selectedList = ''
       for (let i = 0; i < this.vocabListIds.length; i++) {
         if (this.vocabListIds[i]['unique_list_id'] === this.params.listId) {
           selectedList = this.vocabListIds[i]
@@ -118,7 +118,7 @@ export default {
         this.params.email = this.$route.query.email
       }
       if (this.$route.query.list && this.$route.query.char) {
-        this.params.listId = this.$route.query.list + "#" + this.$route.query.char
+        this.params.listId = this.$route.query.list + '#' + this.$route.query.char
         this.$root.$data.store.changeCharacterSet(this.$route.query.char.toLowerCase())
       }
       if (this.$route.query.email || this.$route.query.list || this.$route.query.char) {
@@ -144,14 +144,14 @@ export default {
       }
 
       if (this.unsubscribeAllInput === true) {
-        this.unsubscribeListParam = ""
+        this.unsubscribeListParam = ''
       } else {
         this.unsubscribeListParam = this.selectedList
       }
 
       this.subURL = process.env.VUE_APP_API_URL + 'unsub'
       return axios.post(this.subURL, {
-        cognito_id: "",
+        cognito_id: '',
         email: this.params.email,
         list: this.unsubscribeListParam
       })

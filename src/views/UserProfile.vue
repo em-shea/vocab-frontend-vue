@@ -200,7 +200,7 @@ export default {
   },
   data () {
     return {
-      tempAudioFile: "https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3",
+      tempAudioFile: 'https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3',
       user: null,
       loadingPage: true,
       userData: {},
@@ -263,16 +263,16 @@ export default {
             } else {
               // console.log('IdToken: ' + session.getIdToken().getJwtToken())
               return axios
-                .get(process.env.VUE_APP_API_URL + 'user_data', {
+                .get(process.env.VUE_APP_API_URL + 'user', {
                   headers: {
                     'Authorization': session.getIdToken().getJwtToken()
                   }
                 }
                 )
                 .then((response) => {
-                  // console.log(response.data)
-                  this.userData = response.data['user_data']
-                  this.userLists = response.data['lists']
+                  console.log('user api response', response.data)
+                  this.userData = response.data
+                  this.userLists = response.data['subscriptions']
                   resolve(this.userData, this.userLists)
                 })
             }
@@ -324,7 +324,7 @@ export default {
           reject(error)
         }
       })
-    },    
+    },
     playAudio (audioFile) {
       let audio = new Audio(audioFile)
       audio.play()

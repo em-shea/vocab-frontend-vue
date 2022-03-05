@@ -24,7 +24,7 @@
               <router-link class="nav-link" :class="{ active : this.$route.name === 'quiz' }" :to="{ name: 'quiz'}">Quiz</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :class="{ active : this.$route.name === 'history' }" :to="{ name: 'history'}">Review</router-link>
+              <router-link class="nav-link" :class="{ active : this.$route.name === 'review' }" :to="{ name: 'review'}">Review</router-link>
             </li>
             <li class="nav-item" v-if="!this.signedIn">
               <router-link class="nav-link"  :class="{ active : this.$route.name === 'sign-in' }" :to="{ name: 'sign-in'}">Sign in</router-link>

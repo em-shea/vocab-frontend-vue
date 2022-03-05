@@ -209,14 +209,14 @@
 <script>
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
-import wordHistory from '@/components/wordHistory.vue'
+import reviewWordCard from '@/components/reviewWordCard.vue'
 
 export default {
   name: 'quiz',
   components: {
     'small-header': smallHeader,
     'custom-footer': customFooter,
-    'review-card': wordHistory
+    'review-card': reviewWordCard
   },
   data () {
     return {
@@ -316,7 +316,7 @@ export default {
     this.loadingQuiz = true
     this.checkInitialParams()
     this.pushToRouter()
-    this.getWordHistory().then((response) => {
+    this.getReviewWords().then((response) => {
       this.setQuizWords()
       this.setCharacterSet()
       this.loadingQuiz = false
@@ -355,13 +355,13 @@ export default {
         // console.log('if changed... pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
       }
     },
-    getWordHistory () {
+    getReviewWords () {
       return axios
         .get(process.env.VUE_APP_API_URL + 'history?', { params: { 'date_range': this.params.days, 'list': this.params.list } }
         )
         .then((response) => {
-          let wordHistoryResponse = response.data[this.params.list].slice().reverse()
-          let dedupedQuizWords = this.dedupe(wordHistoryResponse)
+          let reviewWordsResponse = response.data[this.params.list].slice().reverse()
+          let dedupedQuizWords = this.dedupe(reviewWordsResponse)
           this.quizWords = this.shortenDef(dedupedQuizWords)
         })
     },
@@ -500,7 +500,7 @@ export default {
         this.params = this.convertSettingsOrParams(this.settingsTemp)
         this.pushToRouter()
         this.setCharacterSet()
-        this.getWordHistory().then((response) => {
+        this.getReviewWords().then((response) => {
           this.resetQuestion()
         })
       } else {

@@ -199,7 +199,7 @@ export default {
       let mockRequestBody = {
         'list_id': '5678',
         'character_set': 'simplified',
-        'sentence': '我喜欢法语。', 
+        'sentence': '我喜欢法语。',
         'sentence_id': ''
       }
       console.log(mockRequestBody)
@@ -228,7 +228,7 @@ export default {
                 })
               .then((response) => {
                 console.log(response)
-                response.data.sentence_id
+                // response.data.sentence_id
                 this.updatingSentence = false
                 this.sentenceUpdated = true
               })

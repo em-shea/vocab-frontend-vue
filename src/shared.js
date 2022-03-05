@@ -56,17 +56,13 @@ export default {
           } else {
             // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
-              .get(process.env.VUE_APP_API_URL + 'user_data', {
+              .get(process.env.VUE_APP_API_URL + 'user', {
                 headers: {
                   'Authorization': session.getIdToken().getJwtToken()
                 }
               }
               )
               .then((response) => {
-                // console.log(response.data)
-                // this.userData = response.data['user_data']
-                // this.userLists = response.data['lists']
-                // resolve(this.userData, this.userLists)
                 resolve(response.data)
               })
           }
