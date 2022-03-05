@@ -82,7 +82,7 @@ import characterSetToggle from '@/components/characterSetToggle.vue'
 import vocabListIds from '@/assets/vocabListIds.json'
 
 export default {
-  name: 'history',
+  name: 'review',
   components: {
     'small-header': smallHeader,
     'review-word-card': reviewWordCard,
@@ -113,11 +113,11 @@ export default {
       return vocabListIds.filter(list => list.character_set === 'simplified')
     },
     listIdsArray () {
-       let array = []
-       for (let i = 0; i < this.dedupedvocabListIds.length; i++) {
-         array.push(this.dedupedvocabListIds[i]['list_id'])
-       }
-       return array
+      let array = []
+      for (let i = 0; i < this.dedupedvocabListIds.length; i++) {
+        array.push(this.dedupedvocabListIds[i]['list_id'])
+      }
+      return array
     },
     mobileDevice () {
       if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -138,18 +138,18 @@ export default {
   },
   methods: {
     pushToRouter () {
-      if (this.$route.query.list_id !== this.params.list_id || this.$route.query.dates !== this.params.date_range || this.$route.query.char !== this.characterSet) {
-        this.$router.push({ query: { 'list_id': this.params.list_id, 'dates': this.params.date_range, 'char': this.characterSet } })
+      if (this.$route.query.list_id !== this.params.list_id || this.$route.query.date_range !== this.params.date_range || this.$route.query.char !== this.characterSet) {
+        this.$router.push({ query: { 'list_id': this.params.list_id, 'date_range': this.params.date_range, 'char': this.characterSet } })
         // console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
       }
     },
     checkInitialParams () {
       // Check if acceptable parameters have been passed (HSK 1-6, 30-90 days, simplified/traditional)
-      if (this.$route.query.list_id in this.listIdsArray) {
+      if (this.listIdsArray.indexOf(this.$route.query.list_id) !== -1) {
         this.params.list_id = this.$route.query.list_id
       }
-      if (this.$route.query.dates in this.dateRange) {
-        this.params.date_range = this.$route.query.dates
+      if (this.$route.query.date_range in this.dateRange) {
+        this.params.date_range = this.$route.query.date_range
       }
       // Because the word history API response contains both simplified and traditional characters always,
       // the 'char' query param works differently than the list and dates ones.
@@ -164,7 +164,7 @@ export default {
     },
     getReviewWords () {
       // If either the HSK level or the date range has changed, update the query string parameters
-      if (this.$route.query.list_id !== this.params.list_id || this.$route.query.dates !== this.params.date_range) {
+      if (this.$route.query.list_id !== this.params.list_id || this.$route.query.date_range !== this.params.date_range) {
         this.pushToRouter()
       }
       // call reviewWord component based on dropdown inputs

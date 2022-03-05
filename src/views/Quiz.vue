@@ -8,7 +8,7 @@
         <div class="container dropdown-menu-container">
           <div class="row">
             <div class="col">
-              <h5 class="quiz-settings-title pb-2 ">Quiz settings {{ isOpen }}</h5>
+              <h5 class="quiz-settings-title pb-2 ">Quiz settings</h5>
             </div>
           </div>
           <div class="row">
@@ -17,7 +17,7 @@
             </div>
             <div class="col-12 mb-3">
               <select v-model="settingsTemp.selectedVocabList" class="form-control" id="listSelect">
-                <option v-for="list in vocabLists" :key="list">{{ list }}</option>
+                <option v-for="list in dedupedvocabListIds" :value="list.list_id" :key="list.list_name">{{ list.list_name }}</option>
               </select>
             </div>
           </div>
@@ -109,7 +109,8 @@
       <div class="row title-row">
         <div class="col-10 title-col">
           <h5 class="quiz-title">
-            {{ settingsActive.selectedVocabList }}, past {{ settingsActive.dateRangeSelected }} days
+            <!-- how to look up list name -->
+            {{ selectedVocabListName }}, past {{ settingsActive.dateRangeSelected }} days
           </h5>
         </div>
         <div class="col-2">
@@ -140,7 +141,7 @@
         <div class="row mt-4 mb-3">
           <div class="col">
             <h3 class="quiz-question m-0" v-bind:class="getTextClass(selectedTestSet['question'])">
-              {{ selectedQuizWords[0]['Word'][selectedTestSet['question']] }}
+              {{ selectedQuizWords[0]['word'][selectedTestSet['question']] }}
               <!-- <div class="question-pinyin mt-2" v-if="pinyinToggled && selectedTestSet['question'] == 'Word'">
                 {{ selectedQuizWords[0]['Word']['Pronunciation'] }}
               </div> -->
@@ -148,11 +149,11 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12 col-lg-6 my-2" v-for="word in reshuffledQuizWords" :key="word['Word']['Word']">
+          <div class="col-md-12 col-lg-6 my-2" v-for="word in reshuffledQuizWords" :key="word['word']['word_id']">
             <div class="btn-group btn-group-toggle btn-block question-answers-form my-1">
               <label class="btn btn-light quiz-answers-button shadow-sm btn-block" :class="[ answerButtonClass(word), getTextClass(selectedTestSet['answers'])]">
                 <input v-on:click="submitAnswer(word)" :value="word" type="radio" name="exampleRadios" id="exampleRadios1">
-                {{ word['Word'][selectedTestSet['answers']] }}
+                {{ word['word'][selectedTestSet['answers']] }}
                 <i v-if="answerSelected && word === selectedQuizWords[0]" class="fa fa-check-circle pl-2"></i>
                 <i v-if="answerSelected && word === answerSelected && word !== selectedQuizWords[0]" class="fa fa-times-circle pl-2"></i>
                 <!-- <label class="form-check-label pl-1" v-if="pinyinToggled && selectedTestSet['answers'] == 'Word'">
@@ -182,7 +183,7 @@
         </div>
       </div>
       <div v-if="showReviewCards" class="row card-deck">
-        <div class="card-holder col-xl-6 col-md-6 col-sm-6" v-for="word in reshuffledQuizWords" :key="word['ListId']+word['Date']">
+        <div class="card-holder col-xl-6 col-md-6 col-sm-6" v-for="word in reshuffledQuizWords" :key="word['list_id']+word['date_sent']">
           <review-card :card="word"></review-card>
         </div>
       </div>
@@ -210,6 +211,7 @@
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import reviewWordCard from '@/components/reviewWordCard.vue'
+import vocabListIds from '@/assets/vocabListIds.json'
 
 export default {
   name: 'quiz',
@@ -226,31 +228,23 @@ export default {
       // tooltipContent: 'Tooltip',
       loadingQuiz: true,
       params: {
-        list: 'HSKLevel1',
+        list: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
         days: '14',
         ques: '10'
       },
       settingsActive: {
-        selectedVocabList: 'HSK Level 1',
+        selectedVocabList: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
         questionQuantity: 10,
         dateRangeSelected: 14
       },
+      // temp settings hold quiz setting values before the user submits 'new quiz'
       settingsTemp: {
-        selectedVocabList: 'HSK Level 1',
+        selectedVocabList: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
         questionQuantity: 10,
         dateRangeSelected: 14
       },
       tempCharSet: 'simplified',
-      vocabLists: {
-        HSKLevel1: 'HSK Level 1',
-        HSKLevel2: 'HSK Level 2',
-        HSKLevel3: 'HSK Level 3',
-        HSKLevel4: 'HSK Level 4',
-        HSKLevel5: 'HSK Level 5',
-        HSKLevel6: 'HSK Level 6'
-        // Chengyu1: 'Chengyu 1',
-        // Chengyu2: 'Chengyu 2',
-      },
+      vocabListIds: vocabListIds,
       dateRange: [7, 14, 30],
       questionQuantityOptions: [5, 10, 20],
       selectedQuizWords: null,
@@ -262,14 +256,14 @@ export default {
       selectedTestSet: null,
       activeTestSetList: [],
       testSetList: [
-        { 'question': 'Word',
-          'answers': 'Definition' },
-        { 'question': 'Definition',
-          'answers': 'Word' },
-        { 'question': 'Definition',
-          'answers': 'Pronunciation' },
-        { 'question': 'Pronunciation',
-          'answers': 'Definition' }
+        { 'question': 'simplified',
+          'answers': 'definition' },
+        { 'question': 'definition',
+          'answers': 'simplified' },
+        { 'question': 'definition',
+          'answers': 'pinyin' },
+        { 'question': 'pinyin',
+          'answers': 'definition' }
       ],
       questionNumber: 1,
       lastQuestionWord: null,
@@ -291,6 +285,24 @@ export default {
       } else {
         return false
       }
+    },
+    dedupedvocabListIds () {
+      // vocabListIds includes all 12 unique list ids, reducing to 6 generic list ids
+      return vocabListIds.filter(list => list.character_set === 'simplified')
+    },
+    listIdsArray () {
+      let array = []
+      for (let i = 0; i < this.dedupedvocabListIds.length; i++) {
+        array.push(this.dedupedvocabListIds[i]['list_id'])
+      }
+      return array
+    },
+    selectedVocabListName () {
+      let matchingList = this.dedupedvocabListIds.filter(list => list.list_id === this.settingsActive.selectedVocabList)
+      if (matchingList.length === 0) {
+        return 'Loading'
+      }
+      return matchingList[0].list_name
     },
     percentCompletion () {
       let decimalValue = this.questionNumber / this.settingsActive.questionQuantity
@@ -324,15 +336,16 @@ export default {
   },
   methods: {
     checkInitialParams () {
-      // Check if acceptable parameters have been passed (HSK 1-6, (7,14,30) days, simplified/traditional)
-      if (this.$route.query.list && this.$route.query.list in this.vocabLists) {
-        this.params.list = this.$route.query.list
+      // Check if acceptable parameters have been passed (list ids, (7,14,30) days, simplified/traditional
+      if (this.$route.query.list_id && this.listIdsArray.indexOf(this.$route.query.list_id) !== -1) {
+        this.params.list = this.$route.query.list_id
         let convertedParams = this.convertSettingsOrParams(this.params)
         this.settingsTemp.selectedVocabList = convertedParams.selectedVocabList
         this.settingsActive.selectedVocabList = convertedParams.selectedVocabList
+        console.log('selected list ', this.settingsActive.selectedVocabList)
       }
-      if (this.$route.query.days && this.dateRange.indexOf(parseInt(this.$route.query.days)) !== -1) {
-        this.params.days = this.$route.query.days
+      if (this.$route.query.date_range && this.dateRange.indexOf(parseInt(this.$route.query.date_range)) !== -1) {
+        this.params.days = this.$route.query.date_range
         let convertedParams = this.convertSettingsOrParams(this.params)
         this.settingsTemp.dateRangeSelected = convertedParams.dateRangeSelected
         this.settingsActive.dateRangeSelected = convertedParams.dateRangeSelected
@@ -346,43 +359,54 @@ export default {
       if (this.$route.query.char === 'simplified' || this.$route.query.char === 'traditional') {
         if (this.characterSet !== this.$route.query.char) {
           this.$root.$data.store.changeCharacterSet(this.$route.query.char)
+          // currently query params and active settings don't update tempCharSet
         }
       }
     },
     pushToRouter () {
-      if (this.$route.query.list !== this.params.list || this.$route.query.days !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
-        this.$router.push({ query: { 'list': this.params.list, 'days': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
+      // console.log('pushing to router')
+      // new list id passed in router, this function is currently overwriting it with params
+      // issue probably in check params above
+      if (this.$route.query.list_id !== this.params.list || this.$route.query.date_range !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
+        console.log('route: ', this.$route.query)
+        console.log('params: ', this.params)
+        console.log('char set: ', this.characterSet)
+        console.log('pushing to router')
+        this.$router.push({ query: { 'list_id': this.params.list, 'date_range': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
         // console.log('if changed... pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
       }
     },
     getReviewWords () {
       return axios
-        .get(process.env.VUE_APP_API_URL + 'history?', { params: { 'date_range': this.params.days, 'list': this.params.list } }
+        .get(process.env.VUE_APP_API_URL + 'review?', { params: { 'date_range': this.params.days, 'list_id': this.params.list } }
         )
         .then((response) => {
           let reviewWordsResponse = response.data[this.params.list].slice().reverse()
+          // console.log('review words response', reviewWordsResponse)
           let dedupedQuizWords = this.dedupe(reviewWordsResponse)
           this.quizWords = this.shortenDef(dedupedQuizWords)
+          // console.log('quiz words, ', this.quizWords)
         })
     },
     setCharacterSet () {
+      // possible to simplify this - right now default is simplified and this overwrites it regardless
       if (this.characterSet === 'traditional') {
         for (let i = 0; i < this.testSetList.length; i++) {
-          if (this.testSetList[i]['question'] === 'Word') {
-            this.testSetList[i]['question'] = 'Word-Traditional'
+          if (this.testSetList[i]['question'] === 'simplified') {
+            this.testSetList[i]['question'] = 'traditional'
           }
-          if (this.testSetList[i]['answers'] === 'Word') {
-            this.testSetList[i]['answers'] = 'Word-Traditional'
+          if (this.testSetList[i]['answers'] === 'simplified') {
+            this.testSetList[i]['answers'] = 'traditional'
           }
         }
       }
       if (this.characterSet === 'simplified') {
         for (let i = 0; i < this.testSetList.length; i++) {
-          if (this.testSetList[i]['question'] === 'Word-Traditional') {
-            this.testSetList[i]['question'] = 'Word'
+          if (this.testSetList[i]['question'] === 'traditional') {
+            this.testSetList[i]['question'] = 'simplified'
           }
-          if (this.testSetList[i]['answers'] === 'Word-Traditional') {
-            this.testSetList[i]['answers'] = 'Word'
+          if (this.testSetList[i]['answers'] === 'traditional') {
+            this.testSetList[i]['answers'] = 'simplified'
           }
         }
       }
@@ -410,10 +434,10 @@ export default {
 
       // Sort words by length
       for (let i = 0; i < this.quizWords.length; i++) {
-        if (this.quizWords[i].Word.Word.length < 2) {
+        if (this.quizWords[i].word.simplified.length < 2) {
           oneCharWords.push(this.quizWords[i])
         }
-        if (this.quizWords[i].Word.Word.length === 2) {
+        if (this.quizWords[i].word.simplified.length === 2) {
           twoCharWords.push(this.quizWords[i])
         }
       }
@@ -445,6 +469,7 @@ export default {
 
       // Reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
+      // console.log('reshuffled quiz words:', this.reshuffledQuizWords)
 
       this.selectTestSet(selectedQuizWordsByCharLength)
     },
@@ -454,10 +479,12 @@ export default {
       // If the word list with specific char limit was chosen, then add additional question/answer sets
       if (selectedQuizWordsByCharLength !== this.quizWords) {
         let wordPinyinTestSets = [
-          { 'question': 'Word',
-            'answers': 'Pronunciation' },
-          { 'question': 'Pronunciation',
-            'answers': 'Word' }
+          // update to char set
+          { 'question': 'simplified',
+            'answers': 'pinyin' },
+          { 'question': 'pinyin',
+          // update to char set
+            'answers': 'simplified' }
         ]
         this.activeTestSetList = [...this.testSetList, ...wordPinyinTestSets]
       } else {
@@ -495,9 +522,11 @@ export default {
     },
     newQuiz (value) {
       if (value === 'newSettings') {
+        console.log('new quiz, temp settings: ', this.settingsTemp)
         Object.assign(this.settingsActive, this.settingsTemp)
         this.$root.$data.store.changeCharacterSet(this.tempCharSet)
         this.params = this.convertSettingsOrParams(this.settingsTemp)
+        console.log('new quiz, params: ', this.params)
         this.pushToRouter()
         this.setCharacterSet()
         this.getReviewWords().then((response) => {
@@ -531,8 +560,8 @@ export default {
       let dedupedArray = []
       let uniqueObject = {}
       for (let i in inputArray) {
-        let word = inputArray[i]['Word']['Word']
-        uniqueObject[word] = inputArray[i]
+        let word = inputArray[i]['word']
+        uniqueObject[word['word_id']] = inputArray[i]
       }
       for (let i in uniqueObject) {
         dedupedArray.push(uniqueObject[i])
@@ -542,32 +571,35 @@ export default {
     shortenDef (inputArray) {
       let shortenedDefWords = []
       for (let i in inputArray) {
-        let wordDefinition = inputArray[i]['Word']['Definition']
+        let wordDefinition = inputArray[i]['word']['definition']
         if (wordDefinition.length > 80) {
-          inputArray[i]['Word']['Definition'] = wordDefinition.substring(0, 80) + '...'
+          inputArray[i]['word']['definition'] = wordDefinition.substring(0, 80) + '...'
         }
         shortenedDefWords.push(inputArray[i])
       }
       return shortenedDefWords
     },
     convertSettingsOrParams (value) {
+      // convert settings (integers) to URL params (strings) format
       if (value === this.settingsActive || value === this.settingsTemp) {
         let convertedDict = {}
-        convertedDict.list = Object.keys(this.vocabLists).find(key => this.vocabLists[key] === value.selectedVocabList)
+        // convertedDict.list = Object.keys(this.vocabLists).find(key => this.vocabLists[key] === value.selectedVocabList)
+        convertedDict.list = value.selectedVocabList
         convertedDict.days = value.dateRangeSelected.toString()
         convertedDict.ques = value.questionQuantity.toString()
         return convertedDict
       }
+      // convert URL params (strings) to settings (integers)
       if (value === this.params) {
         let convertedDict = {}
-        convertedDict.selectedVocabList = this.vocabLists[value.list]
+        convertedDict.selectedVocabList = this.listIdsArray[this.listIdsArray.indexOf(value.list)]
         convertedDict.dateRangeSelected = parseInt(value.days)
         convertedDict.questionQuantity = parseInt(value.ques)
         return convertedDict
       }
     },
     getTextClass (value) {
-      if (value === 'Definition') {
+      if (value === 'definition') {
         return 'question-definition-small'
       }
     },

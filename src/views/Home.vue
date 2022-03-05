@@ -74,7 +74,7 @@
             <h4>Which HSK level are you?</h4>
           </div>
           <div class="col-12">
-            <p>Click on each level below to see sample words, or check out <router-link :to="{ name: 'history'}">recent daily words</router-link>.</p>
+            <p>Click on each level below to see sample words, or check out <router-link :to="{ name: 'review'}">recent daily words</router-link>.</p>
           </div>
         </div>
       </div>
@@ -103,8 +103,8 @@
               <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['word']['word_id']" class="card shadow-sm p-2">
                 <div v-if="characterSet === 'simplified'" class="card-body">{{ word['word']['Simplified'] }}</div>
                 <div v-if="characterSet === 'traditional'" class="card-body">{{ word['word']['Traditional'] }}</div>
-                <div class="card-body">{{ word['word']['Pinyin'] }} <span v-if="card.word.audio_file_key" @click="playAudio(word['word']['Audio file key'])" class="oi oi-volume-high audio-icon"></span></div>
-                <audio v-if="card.word.audio_file_key" id="audio" :src="word['word']['Audio file key']">"Sorry, your browser does not support audio files."</audio>
+                <div class="card-body">{{ word['word']['Pinyin'] }} <span v-if="word['word']['Audio file key']" @click="playAudio(word['word']['Audio file key'])" class="oi oi-volume-high audio-icon"></span></div>
+                <audio v-if="word['word']['Audio file key']" id="audio" :src="word['word']['Audio file key']">"Sorry, your browser does not support audio files."</audio>
                 <div class="card-body">{{ word['word']['Definition'] }}</div>
               </div>
             </div>
@@ -177,7 +177,7 @@ export default {
     },
     dedupedvocabListIds () {
       // vocabListIds includes all 12 unique list ids, reducing to 6 generic list ids
-      return vocabListIds.filter(list => list.character_set == 'simplified')
+      return vocabListIds.filter(list => list.character_set === 'simplified')
     }
   },
   mounted () {
@@ -185,16 +185,16 @@ export default {
   },
   methods: {
     getSampleWords () {
-      console.log('getting sample words...')
+      // console.log('getting sample words...')
       try {
         return axios
           .get(process.env.VUE_APP_API_URL + 'sample_vocab', {}
           )
           .then((response) => {
-            console.log('response', response)
+            // console.log('response', response)
             this.exampleWordList = response.data
             this.sampleVocabLoading = false
-            console.log('example words: ', this.exampleWordList)
+            // console.log('example words: ', this.exampleWordList)
           })
       } catch (error) {
         console.error('error message', error)

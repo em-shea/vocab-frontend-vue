@@ -29,9 +29,9 @@ export default {
           }
         })
       } else {
-        console.log('User not found.')
+        console.log('User not signed in or not found.')
         // resolve(null)
-        reject(Error('User not found.'))
+        reject(Error('User not signed in or not found.'))
       }
     })
   },
