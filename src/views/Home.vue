@@ -218,11 +218,7 @@ export default {
       this.emailInputted = null
       this.listValidated = null
       // Sign user out if they are already signed in
-      try {
-        this.signOut()
-      } catch (error) {
-        console.error('Error signing user out: ', error)
-      }
+      this.signOut()
       if (this.params.list === 'default') {
         this.listValidated = false
         return false

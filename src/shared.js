@@ -81,6 +81,11 @@ export default {
     }
     let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
     let cognitoUser = userPool.getCurrentUser()
-    cognitoUser.signOut()
+    // console.log('cognito user: ', cognitoUser)
+    if (cognitoUser !== null) {
+      cognitoUser.signOut()
+    } else {
+      console.log('No signed in user to sign out.')
+    }
   }
 }

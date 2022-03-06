@@ -270,7 +270,7 @@ export default {
                 }
                 )
                 .then((response) => {
-                  console.log('user api response', response.data)
+                  // console.log('user api response', response.data)
                   this.userData = response.data
                   this.userLists = response.data['subscriptions']
                   resolve(this.userData, this.userLists)
