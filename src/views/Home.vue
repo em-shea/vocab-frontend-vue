@@ -142,7 +142,6 @@ export default {
   },
   data () {
     return {
-      tempAudioFile: 'https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3',
       params: {
         email: null,
         list: 'default'
@@ -264,7 +263,7 @@ export default {
         'cognito_id': userCognitoId,
         'email': this.params.email,
         'character_set_preference': this.characterSet,
-        'lists': [
+        'subscriptions': [
           {
             'list_id': this.params.list.list_id,
             'list_name': this.params.list.list_name,

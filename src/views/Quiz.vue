@@ -235,13 +235,13 @@ export default {
       settingsActive: {
         selectedVocabList: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
         questionQuantity: 10,
-        dateRangeSelected: 14
+        dateRangeSelected: 30
       },
       // temp settings hold quiz setting values before the user submits 'new quiz'
       settingsTemp: {
         selectedVocabList: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
         questionQuantity: 10,
-        dateRangeSelected: 14
+        dateRangeSelected: 30
       },
       tempCharSet: 'simplified',
       vocabListIds: vocabListIds,
@@ -342,7 +342,6 @@ export default {
         let convertedParams = this.convertSettingsOrParams(this.params)
         this.settingsTemp.selectedVocabList = convertedParams.selectedVocabList
         this.settingsActive.selectedVocabList = convertedParams.selectedVocabList
-        console.log('selected list ', this.settingsActive.selectedVocabList)
       }
       if (this.$route.query.date_range && this.dateRange.indexOf(parseInt(this.$route.query.date_range)) !== -1) {
         this.params.days = this.$route.query.date_range
@@ -364,16 +363,10 @@ export default {
       }
     },
     pushToRouter () {
-      // console.log('pushing to router')
       // new list id passed in router, this function is currently overwriting it with params
       // issue probably in check params above
       if (this.$route.query.list_id !== this.params.list || this.$route.query.date_range !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
-        console.log('route: ', this.$route.query)
-        console.log('params: ', this.params)
-        console.log('char set: ', this.characterSet)
-        console.log('pushing to router')
         this.$router.push({ query: { 'list_id': this.params.list, 'date_range': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
-        // console.log('if changed... pushToRouter()', this.params.list, this.params.days, this.params.ques, this.characterSet)
       }
     },
     getReviewWords () {
@@ -382,10 +375,8 @@ export default {
         )
         .then((response) => {
           let reviewWordsResponse = response.data[this.params.list].slice().reverse()
-          // console.log('review words response', reviewWordsResponse)
           let dedupedQuizWords = this.dedupe(reviewWordsResponse)
           this.quizWords = this.shortenDef(dedupedQuizWords)
-          // console.log('quiz words, ', this.quizWords)
         })
     },
     setCharacterSet () {
@@ -469,7 +460,6 @@ export default {
 
       // Reshuffle the quiz word list so that the first answer is not always the correct one
       this.reshuffledQuizWords = this.shuffle(this.selectedQuizWords)
-      // console.log('reshuffled quiz words:', this.reshuffledQuizWords)
 
       this.selectTestSet(selectedQuizWordsByCharLength)
     },
@@ -522,11 +512,9 @@ export default {
     },
     newQuiz (value) {
       if (value === 'newSettings') {
-        console.log('new quiz, temp settings: ', this.settingsTemp)
         Object.assign(this.settingsActive, this.settingsTemp)
         this.$root.$data.store.changeCharacterSet(this.tempCharSet)
         this.params = this.convertSettingsOrParams(this.settingsTemp)
-        console.log('new quiz, params: ', this.params)
         this.pushToRouter()
         this.setCharacterSet()
         this.getReviewWords().then((response) => {
