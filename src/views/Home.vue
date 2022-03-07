@@ -16,13 +16,13 @@
           <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'simplified'">
             <select v-model="params.list" class="custom-select" id="list">
               <option selected value="default">Choose an HSK Level</option>
-              <option v-for="list in hskLists" :key="list.listId" :value="list">{{ list.listLevel }} - Simplified</option>
+              <option v-for="list in dedupedvocabListIds" :key="list.list_id" :value="list">{{ list.list_name }} - Simplified</option>
             </select>
           </div>
           <div class="col-md-4 col-xs-6 p-3" v-if="characterSet == 'traditional'">
             <select v-model="params.list" class="custom-select" id="list">
               <option selected value="default">Choose an HSK Level</option>
-              <option v-for="list in hskLists" :key="list.listId" :value="list">{{ list.listLevel }} - Traditional</option>
+              <option v-for="list in dedupedvocabListIds" :key="list.list_id" :value="list">{{ list.list_name }} - Traditional</option>
             </select>
           </div>
           <div class="col-md-8 col-xs-6 p-3">
@@ -74,7 +74,7 @@
             <h4>Which HSK level are you?</h4>
           </div>
           <div class="col-12">
-            <p>Click on each level below to see sample words, or check out <router-link :to="{ name: 'history'}">recent daily words</router-link>.</p>
+            <p>Click on each level below to see sample words, or check out <router-link :to="{ name: 'review'}">recent daily words</router-link>.</p>
           </div>
         </div>
       </div>
@@ -91,22 +91,21 @@
       <div class="container mb-4" v-if="!sampleVocabLoading">
         <div class="row m-3">
           <div class="col-4 col-md-3" id="v-pills-col">
-            <div v-for="(key, level) in exampleWordList" v-bind:key="level" v-on:click="exampleListSelected = level" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
-              <span class="nav-link" :class="{ active : level === exampleListSelected }" :id="'#v-pills-tab-'+level" data-toggle="pill" role="tab">
-                <span class="pills-tab-desktop">Level {{ level }}</span>
-                <span class="pills-tab-mobile">{{ level }}</span>
+            <div v-for="(value, list_id) in exampleWordList" v-bind:key="list_id" v-on:click="exampleListSelected = list_id" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
+              <span class="nav-link" :class="{ active : list_id === exampleListSelected }" :id="'#v-pills-tab-'+list_id" data-toggle="pill" role="tab">
+                <span class="pills-tab-desktop">Level {{ exampleWordList[list_id][0]['word']['HSK Level'] }}</span>
+                <span class="pills-tab-mobile">{{ exampleWordList[list_id][0]['word']['HSK Level'] }}</span>
               </span>
             </div>
           </div>
           <div class="col-8 col-md-9">
             <div class="tab-content" id="v-pills-tabContent">
-              <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['Word']" class="card shadow-sm p-2">
-                <div v-if="characterSet === 'simplified'" class="card-body">{{ word['Word'] }}</div>
-                <div v-if="characterSet === 'traditional'" class="card-body">{{ word['Word-Traditional'] }}</div>
-                <div class="card-body">{{ word['Pronunciation'] }}</div>
-                <!-- <div class="card-body">{{ word['Pronunciation'] }}  <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span></div> -->
-                <!-- <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio> -->
-                <div class="card-body">{{ word['Definition'] }}</div>
+              <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['word']['word_id']" class="card shadow-sm p-2">
+                <div v-if="characterSet === 'simplified'" class="card-body">{{ word['word']['Simplified'] }}</div>
+                <div v-if="characterSet === 'traditional'" class="card-body">{{ word['word']['Traditional'] }}</div>
+                <div class="card-body">{{ word['word']['Pinyin'] }} <span v-if="word['word']['Audio file key']" @click="playAudio(word['word']['Audio file key'])" class="oi oi-volume-high audio-icon"></span></div>
+                <audio v-if="word['word']['Audio file key']" id="audio" :src="word['word']['Audio file key']">"Sorry, your browser does not support audio files."</audio>
+                <div class="card-body">{{ word['word']['Definition'] }}</div>
               </div>
             </div>
           </div>
@@ -128,8 +127,10 @@ import faqContent from '@/components/faqContent.vue'
 import largeHeader from '@/components/header.vue'
 import customFooter from '@/components/footer.vue'
 import navBar from '@/components/navBar.vue'
+import vocabListIds from '@/assets/vocabListIds.json'
 import { Auth } from 'aws-amplify'
 import { CognitoUser } from 'amazon-cognito-identity-js'
+import shared from './../shared'
 
 export default {
   name: 'home',
@@ -141,7 +142,6 @@ export default {
   },
   data () {
     return {
-      tempAudioFile: "https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3",
       params: {
         email: null,
         list: 'default'
@@ -153,22 +153,30 @@ export default {
       listValidated: null,
       userExists: null,
       exampleWordList: [],
+      vocabListIds: vocabListIds,
       sampleVocabLoading: true,
-      exampleListSelected: '1',
-      subscribeResponse: null,
-      hskLists: [
-        { listLevel: '1', listName: 'HSK Level 1', listId: '1ebcad3f-5dfd-6bfe-bda4-acde48001122' },
-        { listLevel: '2', listName: 'HSK Level 2', listId: '1ebcad3f-adc0-6f42-b8b1-acde48001122' },
-        { listLevel: '3', listName: 'HSK Level 3', listId: '1ebcad3f-f815-6b92-b3e8-acde48001122' },
-        { listLevel: '4', listName: 'HSK Level 4', listId: '1ebcad40-414f-6bc8-859d-acde48001122' },
-        { listLevel: '5', listName: 'HSK Level 5', listId: '1ebcad40-bb9e-6ece-a366-acde48001122' },
-        { listLevel: '6', listName: 'HSK Level 6', listId: '1ebcad41-197a-6700-95a3-acde48001122' }
-      ]
+      exampleListSelected: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
+      subscribeResponse: null
+      // hskLists: [
+      //   { listLevel: '1', listName: 'HSK Level 1', listId: '1ebcad3f-5dfd-6bfe-bda4-acde48001122' },
+      //   { listLevel: '2', listName: 'HSK Level 2', listId: '1ebcad3f-adc0-6f42-b8b1-acde48001122' },
+      //   { listLevel: '3', listName: 'HSK Level 3', listId: '1ebcad3f-f815-6b92-b3e8-acde48001122' },
+      //   { listLevel: '4', listName: 'HSK Level 4', listId: '1ebcad40-414f-6bc8-859d-acde48001122' },
+      //   { listLevel: '5', listName: 'HSK Level 5', listId: '1ebcad40-bb9e-6ece-a366-acde48001122' },
+      //   { listLevel: '6', listName: 'HSK Level 6', listId: '1ebcad41-197a-6700-95a3-acde48001122' }
+      // ]
     }
+  },
+  created () {
+    this.signOut = shared.signOut
   },
   computed: {
     characterSet () {
       return this.$root.$data.store.state.characterSet
+    },
+    dedupedvocabListIds () {
+      // vocabListIds includes all 12 unique list ids, reducing to 6 generic list ids
+      return vocabListIds.filter(list => list.character_set === 'simplified')
     }
   },
   mounted () {
@@ -176,14 +184,20 @@ export default {
   },
   methods: {
     getSampleWords () {
-      return axios
-        .get(process.env.VUE_APP_API_URL + 'sample_vocab', {}
-        )
-        .then((response) => {
-          this.exampleWordList = response.data
-          this.sampleVocabLoading = false
-          // console.log(this.exampleWordList)
-        })
+      // console.log('getting sample words...')
+      try {
+        return axios
+          .get(process.env.VUE_APP_API_URL + 'sample_vocab', {}
+          )
+          .then((response) => {
+            // console.log('response', response)
+            this.exampleWordList = response.data
+            this.sampleVocabLoading = false
+            // console.log('example words: ', this.exampleWordList)
+          })
+      } catch (error) {
+        console.error('error message', error)
+      }
     },
     validateEmail () {
       if (this.params.email === null) {
@@ -203,6 +217,8 @@ export default {
       this.emailValidated = null
       this.emailInputted = null
       this.listValidated = null
+      // Sign user out if they are already signed in
+      this.signOut()
       if (this.params.list === 'default') {
         this.listValidated = false
         return false
@@ -243,10 +259,10 @@ export default {
         'cognito_id': userCognitoId,
         'email': this.params.email,
         'character_set_preference': this.characterSet,
-        'lists': [
+        'subscriptions': [
           {
-            'list_id': this.params.list.listId,
-            'list_name': this.params.list.listName,
+            'list_id': this.params.list.list_id,
+            'list_name': this.params.list.list_name,
             'character_set': this.characterSet
           }]
       })

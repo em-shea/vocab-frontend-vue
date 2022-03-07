@@ -1,6 +1,6 @@
 <template>
 
-  <div id="history">
+  <div id="review">
   <!-- Shows daily word history for the past ~3 months for given HSK level -->
     <char-set-toggle :charSetWidth="charSetWidth"></char-set-toggle>
     <small-header></small-header>
@@ -18,14 +18,14 @@
           <button class="btn btn-light btn-shadow" title="Export currently selected words to Excel." type="button" v-on:click="exportCSV();">Export</button>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 p-2">
-          <select class="custom-select" v-on:change="getWordHistory()" v-model="params.list">
-            <option v-for="(name, key) in levelList" :value="key" v-bind:key="key">
-              {{ name }}
+          <select class="custom-select" v-on:change="getReviewWords()" v-model="params.list_id">
+            <option v-for="list in dedupedvocabListIds" :value="list['list_id']" v-bind:key="list['list_id']">
+              {{ list['list_name'] }}
             </option>
           </select>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 p-2">
-          <select class="custom-select"  v-on:change="getWordHistory()" v-model="params.date_range">
+          <select class="custom-select"  v-on:change="getReviewWords()" v-model="params.date_range">
             <option v-for="(days, key) in dateRange" :value="key" v-bind:key="key">
               {{ days }}
             </option>
@@ -42,14 +42,14 @@
     <!-- <div class="container">
       <div class="row justify-content-center m-1">
         <div class="col-3">
-          <select class="custom-select" v-on:input="getWordHistory()" v-model="params.list">
+          <select class="custom-select" v-on:input="getReviewWords()" v-model="params.list">
             <option v-for="(name, key) in levelList" :value="key" v-bind:key="key">
               {{ name }}
             </option>
           </select>
         </div>
         <div class="col-3">
-          <select class="custom-select"  v-on:input="getWordHistory()" v-model="params.date_range">
+          <select class="custom-select"  v-on:input="getReviewWords()" v-model="params.date_range">
             <option v-for="(days, key) in dateRange" :value="key" v-bind:key="key">
               {{ days }}
             </option>
@@ -60,8 +60,8 @@
 
     <div class="container second-container">
       <div class="row card-deck m-3">
-        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in wordHistoryList" :key="card['ListId']+card['Date']">
-          <word-history-card :card="card"></word-history-card>
+        <div class="card-holder col-xl-3 col-md-4 col-sm-6" v-for="card in reviewWordList" :key="card['list_id']+card['date_sent']">
+          <review-word-card :card="card"></review-word-card>
         </div>
       </div>
     </div>
@@ -75,27 +75,29 @@
 <script>
 // @ is an alias to /src
 import smallHeader from '@/components/smallHeader.vue'
-import wordHistory from '@/components/wordHistory.vue'
+import reviewWordCard from '@/components/reviewWordCard.vue'
 import * as XLSX from 'xlsx'
 import customFooter from '@/components/footer.vue'
 import characterSetToggle from '@/components/characterSetToggle.vue'
+import vocabListIds from '@/assets/vocabListIds.json'
 
 export default {
-  name: 'history',
+  name: 'review',
   components: {
     'small-header': smallHeader,
-    'word-history-card': wordHistory,
+    'review-word-card': reviewWordCard,
     'custom-footer': customFooter,
     'char-set-toggle': characterSetToggle
   },
   data () {
     return {
-      wordHistoryList: [],
+      reviewWordList: [],
       page: 0,
-      levelList: { HSKLevel1: 'HSK Level 1', HSKLevel2: 'HSK Level 2', HSKLevel3: 'HSK Level 3', HSKLevel4: 'HSK Level 4', HSKLevel5: 'HSK Level 5', HSKLevel6: 'HSK Level 6' },
+      // levelList: { HSKLevel1: 'HSK Level 1', HSKLevel2: 'HSK Level 2', HSKLevel3: 'HSK Level 3', HSKLevel4: 'HSK Level 4', HSKLevel5: 'HSK Level 5', HSKLevel6: 'HSK Level 6' },
+      vocabListIds: vocabListIds,
       dateRange: { 30: 'Past 30 days', 60: 'Past 60 days', 90: 'Past 90 days' },
       params: {
-        list: 'HSKLevel1',
+        list_id: '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
         date_range: 30
       },
       footerWidth: 'narrow',
@@ -105,6 +107,17 @@ export default {
   computed: {
     characterSet () {
       return this.$root.$data.store.state.characterSet
+    },
+    dedupedvocabListIds () {
+      // vocabListIds includes all 12 unique list ids, reducing to 6 generic list ids
+      return vocabListIds.filter(list => list.character_set === 'simplified')
+    },
+    listIdsArray () {
+      let array = []
+      for (let i = 0; i < this.dedupedvocabListIds.length; i++) {
+        array.push(this.dedupedvocabListIds[i]['list_id'])
+      }
+      return array
     },
     mobileDevice () {
       if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -121,22 +134,22 @@ export default {
   },
   mounted () {
     this.checkInitialParams()
-    this.getWordHistory()
+    this.getReviewWords()
   },
   methods: {
     pushToRouter () {
-      if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range || this.$route.query.char !== this.characterSet) {
-        this.$router.push({ query: { 'list': this.params.list, 'dates': this.params.date_range, 'char': this.characterSet } })
+      if (this.$route.query.list_id !== this.params.list_id || this.$route.query.date_range !== this.params.date_range || this.$route.query.char !== this.characterSet) {
+        this.$router.push({ query: { 'list_id': this.params.list_id, 'date_range': this.params.date_range, 'char': this.characterSet } })
         // console.log('pushToRouter()', this.params.list, this.params.date_range, this.characterSet)
       }
     },
     checkInitialParams () {
       // Check if acceptable parameters have been passed (HSK 1-6, 30-90 days, simplified/traditional)
-      if (this.$route.query.list in this.levelList) {
-        this.params.list = this.$route.query.list
+      if (this.listIdsArray.indexOf(this.$route.query.list_id) !== -1) {
+        this.params.list_id = this.$route.query.list_id
       }
-      if (this.$route.query.dates in this.dateRange) {
-        this.params.date_range = this.$route.query.dates
+      if (this.$route.query.date_range in this.dateRange) {
+        this.params.date_range = this.$route.query.date_range
       }
       // Because the word history API response contains both simplified and traditional characters always,
       // the 'char' query param works differently than the list and dates ones.
@@ -149,48 +162,50 @@ export default {
         }
       }
     },
-    getWordHistory () {
+    getReviewWords () {
       // If either the HSK level or the date range has changed, update the query string parameters
-      if (this.$route.query.list !== this.params.list || this.$route.query.dates !== this.params.date_range) {
+      if (this.$route.query.list_id !== this.params.list_id || this.$route.query.date_range !== this.params.date_range) {
         this.pushToRouter()
       }
-      // call wordHistory component based on dropdown inputs
+      // call reviewWord component based on dropdown inputs
       return axios
-        .get(process.env.VUE_APP_API_URL + 'history?', { params: this.params }
+        .get(process.env.VUE_APP_API_URL + 'review?', { params: this.params }
         )
         .then((response) => {
-          this.wordHistoryList = response.data[this.params.list].slice().reverse()
+          this.reviewWordList = response.data[this.params.list_id].slice().reverse()
+          // console.log('review words: ', this.reviewWordList)
         })
     },
     exportCSV () {
       // Create final flattened list of words to export
-      let wordHistoryListExport = []
+      let reviewWordListExport = []
 
-      // set wordHistoryWords to the array inside 'hsklevel6' etc
-      let wordHistoryWords = this.wordHistoryList
+      // set reviewWords to the array inside 'hsklevel6' etc
+      let reviewWords = this.reviewWordList
 
       // loop through items (dicts) in word list array
-      for (var i = 0; i < wordHistoryWords.length; i++) {
+      for (var i = 0; i < reviewWords.length; i++) {
         // create empty dict for flattened word dict
         let wordFlattened = {}
 
-        // loop through dict items in Word dict
-        for (var wordProperty in wordHistoryWords[i]['Word']) {
-          // add items in Word dict to flattened word dict directly
-          wordFlattened[wordProperty] = wordHistoryWords[i]['Word'][wordProperty]
-        }
-        // add other items in Word dict to flattened word dict
-        wordFlattened['Date'] = wordHistoryWords[i]['Date']
+        // add items to flattened word dict
+        wordFlattened['date_sent'] = reviewWords[i]['date_sent']
+        wordFlattened['simplified'] = reviewWords[i]['word']['simplified']
+        wordFlattened['traditional'] = reviewWords[i]['word']['traditional']
+        wordFlattened['pinyin'] = reviewWords[i]['word']['pinyin']
+        wordFlattened['definition'] = reviewWords[i]['word']['definition']
+        wordFlattened['difficulty_level'] = reviewWords[i]['word']['difficulty_level']
+        wordFlattened['hsk_level'] = reviewWords[i]['word']['hsk_level']
 
         // add flattened word dict to final list to export
-        wordHistoryListExport.push(wordFlattened)
+        reviewWordListExport.push(wordFlattened)
       }
-      // console.log(wordHistoryListExport)
+      // console.log(reviewWordListExport)
 
-      let worksheet = XLSX.utils.json_to_sheet(wordHistoryListExport, { header: ['Date', 'HSK Level', 'Word', 'Pronunciation', 'Definition'] })
+      let worksheet = XLSX.utils.json_to_sheet(reviewWordListExport, { header: ['date_sent', 'simplified', 'traditional', 'pinyin', 'definition', 'difficulty_level', 'hsk_level'] })
       var newWorkbook = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(newWorkbook, worksheet, 'SheetJS')
-      XLSX.writeFile(newWorkbook, 'Daily Words ' + this.params.list + '.xlsx')
+      XLSX.writeFile(newWorkbook, 'Chinese vocab words, ' + this.dateRange[this.params.date_range].toLowerCase() + '.xlsx')
     }
   }
 }

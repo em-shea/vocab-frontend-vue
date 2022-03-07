@@ -4,7 +4,8 @@
       "list_id": "1ebcad3f-5dfd-6bfe-bda4-acde48001122",
       "unique_list_id": "1ebcad3f-5dfd-6bfe-bda4-acde48001122#SIMPLIFIED",
       "character_set": "simplified",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Beginner",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -12,7 +13,8 @@
       "list_id": "1ebcad3f-adc0-6f42-b8b1-acde48001122",
       "unique_list_id": "1ebcad3f-adc0-6f42-b8b1-acde48001122#SIMPLIFIED",
       "character_set": "simplified",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Beginner",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -20,7 +22,8 @@
       "list_id": "1ebcad3f-f815-6b92-b3e8-acde48001122",
       "unique_list_id": "1ebcad3f-f815-6b92-b3e8-acde48001122#SIMPLIFIED",
       "character_set": "simplified",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Intermediate",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -28,7 +31,8 @@
       "list_id": "1ebcad40-414f-6bc8-859d-acde48001122",
       "unique_list_id": "1ebcad40-414f-6bc8-859d-acde48001122#SIMPLIFIED",
       "character_set": "simplified",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Intermediate",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -36,7 +40,8 @@
       "list_id": "1ebcad40-bb9e-6ece-a366-acde48001122",
       "unique_list_id": "1ebcad40-bb9e-6ece-a366-acde48001122#SIMPLIFIED",
       "character_set": "simplified",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Advanced",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -44,7 +49,8 @@
       "list_id": "1ebcad41-197a-6700-95a3-acde48001122",
       "unique_list_id": "1ebcad41-197a-6700-95a3-acde48001122#SIMPLIFIED",
       "character_set": "simplified",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Advanced",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -52,7 +58,8 @@
       "list_id": "1ebcad3f-5dfd-6bfe-bda4-acde48001122",
       "unique_list_id": "1ebcad3f-5dfd-6bfe-bda4-acde48001122#TRADITIONAL",
       "character_set": "traditional",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Beginner",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -60,7 +67,8 @@
       "list_id": "1ebcad3f-adc0-6f42-b8b1-acde48001122",
       "unique_list_id": "1ebcad3f-adc0-6f42-b8b1-acde48001122#TRADITIONAL",
       "character_set": "traditional",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Beginner",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -68,7 +76,8 @@
       "list_id": "1ebcad3f-f815-6b92-b3e8-acde48001122",
       "unique_list_id": "1ebcad3f-f815-6b92-b3e8-acde48001122#TRADITIONAL",
       "character_set": "traditional",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Intermediate",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -76,7 +85,8 @@
       "list_id": "1ebcad40-414f-6bc8-859d-acde48001122",
       "unique_list_id": "1ebcad40-414f-6bc8-859d-acde48001122#TRADITIONAL",
       "character_set": "traditional",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Intermediate",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -84,7 +94,8 @@
       "list_id": "1ebcad40-bb9e-6ece-a366-acde48001122",
       "unique_list_id": "1ebcad40-bb9e-6ece-a366-acde48001122#TRADITIONAL",
       "character_set": "traditional",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Advanced",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     },
     {
@@ -92,7 +103,8 @@
       "list_id": "1ebcad41-197a-6700-95a3-acde48001122",
       "unique_list_id": "1ebcad41-197a-6700-95a3-acde48001122#TRADITIONAL",
       "character_set": "traditional",
-      "date_created": "2021-06-16T23:06:48.467526",
+      "list_difficulty_level": "Advanced",
+      "date_created": "2018-12-16T23:06:48.467526",
       "created_by": "admin"
     }
 ]

@@ -81,21 +81,21 @@
         <div class="col-md-12 col-lg-6" v-for="word in recentWordsList" :key="word['UniqueListId']">
           <div class="card shadow-sm text-center">
             <div class="card-body daily-word-card-body">
-              <h5 v-if="word['CharacterSet'] === 'simplified'" class="card-text">{{ word['Word']['Word'] }}</h5>
-              <h5 v-if="word['CharacterSet'] === 'traditional'" class="card-text">{{ word['Word']['Word-Traditional'] }}</h5>
-              <p class="card-text">{{ word['Word']['Pronunciation'] }}</p>
-              <!-- <p class="card-text">{{ word['Word']['Pronunciation'] }} <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span></p>
-              <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio> -->
-              <p class="card-text truncate">{{ word['Word']['Definition'] }}</p>
+              <h5 v-if="word.character_set === 'simplified'" class="card-text">{{ word.word.simplified }}</h5>
+              <h5 v-if="word.character_set === 'traditional'" class="card-text">{{ word.word.traditional }}</h5>
+              <!-- <p class="card-text">{{ word.word.pinyin }}</p> -->
+              <p class="card-text">{{ word.word.pinyin }} <span @click="playAudio(word.word.audio_file_key)" class="oi oi-volume-high audio-icon"></span></p>
+              <audio id="audio" :src="word.word.audio_file_key">"Sorry, your browser does not support audio files."</audio>
+              <p class="card-text truncate">{{ word.word.definition }}</p>
               <ul class="list-group list-group-flush">
-                <li class="list-group-item text-muted">HSK Level {{ word['Word']['HSK Level'] }}, {{ word['CharacterSet']}}</li>
+                <li class="list-group-item text-muted">HSK Level {{ word.word.hsk_level }}, {{ word.CharacterSet }}</li>
               </ul>
               <div class="row justify-content-between">
                 <div class="col">
-                  <p class="card-link daily-word-link float-left" @click="$router.push({ path: 'quiz', query: {list: word['ListId'], days: 14, ques: 10, char: word['CharacterSet']}})">Quiz</p>
+                  <p class="card-link daily-word-link float-left" @click="$router.push({ path: 'quiz', query: {list_id: word.list_id, date_range: 14, ques: 10, char: word.CharacterSet}})">Quiz</p>
                 </div>
                 <div class="col">
-                  <p class="card-link daily-word-link float-right" @click="$router.push({ path: 'history', query: {list: word['ListId'], dates: 30, char: word['CharacterSet']}})">Review</p>
+                  <p class="card-link daily-word-link float-right" @click="$router.push({ path: 'review', query: {list_id: word.list_id, date_range: 30, char: word.CharacterSet}})">Review</p>
                 </div>
               </div>
             </div>
@@ -200,7 +200,7 @@ export default {
   },
   data () {
     return {
-      tempAudioFile: "https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3",
+      tempAudioFile: 'https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3',
       user: null,
       loadingPage: true,
       userData: {},
@@ -263,16 +263,16 @@ export default {
             } else {
               // console.log('IdToken: ' + session.getIdToken().getJwtToken())
               return axios
-                .get(process.env.VUE_APP_API_URL + 'user_data', {
+                .get(process.env.VUE_APP_API_URL + 'user', {
                   headers: {
                     'Authorization': session.getIdToken().getJwtToken()
                   }
                 }
                 )
                 .then((response) => {
-                  // console.log(response.data)
-                  this.userData = response.data['user_data']
-                  this.userLists = response.data['lists']
+                  // console.log('user api response', response.data)
+                  this.userData = response.data
+                  this.userLists = response.data['subscriptions']
                   resolve(this.userData, this.userLists)
                 })
             }
@@ -287,7 +287,7 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           return axios
-            .get(process.env.VUE_APP_API_URL + 'history'
+            .get(process.env.VUE_APP_API_URL + 'review'
             )
             .then((response) => {
               // Create list with just the words from the most recent day
@@ -296,10 +296,10 @@ export default {
               for (let [key, value] of Object.entries(response.data)) {
                 // only copying value, not the entire dict
                 let simplifiedEntry = Object.assign({}, value.slice(-1)[0])
-                simplifiedEntry['UniqueListId'] = simplifiedEntry['ListId'].concat('simplified')
+                simplifiedEntry['UniqueListId'] = simplifiedEntry['list_id'].concat('simplified')
                 simplifiedEntry['CharacterSet'] = 'simplified'
                 let traditionalEntry = Object.assign({}, value.slice(-1)[0])
-                traditionalEntry['UniqueListId'] = traditionalEntry['ListId'].concat('traditional')
+                traditionalEntry['UniqueListId'] = traditionalEntry['list_id'].concat('traditional')
                 traditionalEntry['CharacterSet'] = 'traditional'
                 recentWordsListUnfiltered.push(simplifiedEntry)
                 recentWordsListUnfiltered.push(traditionalEntry)
@@ -309,10 +309,10 @@ export default {
               let userListsUniqueIds = []
               for (let i = 0; i < this.userLists.length; i++) {
                 if (this.userLists[i]['character_set'] === 'simplified') {
-                  userListsUniqueIds.push(this.userLists[i]['list_name'].concat('simplified').replaceAll(' ', ''))
+                  userListsUniqueIds.push(this.userLists[i]['list_id'].concat('simplified'))
                 }
                 if (this.userLists[i]['character_set'] === 'traditional') {
-                  userListsUniqueIds.push(this.userLists[i]['list_name'].concat('traditional').replaceAll(' ', ''))
+                  userListsUniqueIds.push(this.userLists[i]['list_id'].concat('traditional'))
                 }
               }
               // Filter to just show words for the lists the user is subscribed to
@@ -324,7 +324,7 @@ export default {
           reject(error)
         }
       })
-    },    
+    },
     playAudio (audioFile) {
       let audio = new Audio(audioFile)
       audio.play()

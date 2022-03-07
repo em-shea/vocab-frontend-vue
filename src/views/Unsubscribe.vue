@@ -20,10 +20,10 @@
           </div>
         </div>
         <!-- Use dynamic vocabListIds instead -->
-        <!-- How to v-model on params.listId and vocabListIds -->
+        <!-- How to v-model on params.uniqueListId and vocabListIds -->
         <!-- Filter list based on character set? Or just include all and select the given one? -->
         <div class="col-xl-4 col-lg-6 col-12 p-3">
-          <select v-model="params.listId" :disabled="unsubscribeAllInput" class="custom-select" id="level">
+          <select v-model="params.uniqueListId" :disabled="unsubscribeAllInput" class="custom-select" id="level">
             <option v-for="list in vocabListIds" :value="list.unique_list_id" :key="list.unique_list_id">{{ list['list_name'] }} - {{ list['character_set'] }}</option>
           </select>
         </div>
@@ -58,7 +58,7 @@
         </div>
       </div>
     </div>
-    
+
     <custom-footer :footerWidth="footerWidth"></custom-footer>
 
   </div>
@@ -80,7 +80,7 @@ export default {
     return {
       params: {
         email: null,
-        listId: vocabListIds[0]['unique_list_id']
+        uniqueListId: vocabListIds[0]['unique_list_id']
       },
       vocabListIds: vocabListIds,
       unsubscribeListParam: null,
@@ -97,9 +97,9 @@ export default {
       return this.$root.$data.store.state.characterSet
     },
     selectedList () {
-      let selectedList = ""
+      let selectedList = ''
       for (let i = 0; i < this.vocabListIds.length; i++) {
-        if (this.vocabListIds[i]['unique_list_id'] === this.params.listId) {
+        if (this.vocabListIds[i]['unique_list_id'] === this.params.uniqueListId) {
           selectedList = this.vocabListIds[i]
         }
       }
@@ -113,13 +113,13 @@ export default {
     // Prepopulates the input fields with the email and level if the user came from their email unsubscribe link
     // Example parameters - /unsub?level=1&email=me@testemail.com&char=simplified
     populateUserInfo () {
-      console.log(this.$route.query)
+      // console.log(this.$route.query)
       if (this.$route.query.email) {
         this.params.email = this.$route.query.email
       }
       if (this.$route.query.list && this.$route.query.char) {
-        this.params.listId = this.$route.query.list + "#" + this.$route.query.char
-        this.$root.$data.store.changeCharacterSet(this.$route.query.char.toLowerCase())
+        this.params.uniqueListId = this.$route.query.list + '#' + this.$route.query.char.toUpperCase()
+        this.$root.$data.store.changeCharacterSet(this.$route.query.char)
       }
       if (this.$route.query.email || this.$route.query.list || this.$route.query.char) {
         // Once the input fields are populated, remove query parameters from URL
@@ -144,14 +144,14 @@ export default {
       }
 
       if (this.unsubscribeAllInput === true) {
-        this.unsubscribeListParam = ""
+        this.unsubscribeListParam = ''
       } else {
         this.unsubscribeListParam = this.selectedList
       }
 
       this.subURL = process.env.VUE_APP_API_URL + 'unsub'
       return axios.post(this.subURL, {
-        cognito_id: "",
+        cognito_id: '',
         email: this.params.email,
         list: this.unsubscribeListParam
       })

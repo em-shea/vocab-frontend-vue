@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Quiz from './views/Quiz.vue'
-import History from './views/History.vue'
+import Review from './views/Review.vue'
 import Unsubscribe from './views/Unsubscribe.vue'
 
 import UserProfile from './views/UserProfile.vue'
@@ -32,9 +32,13 @@ export default new Router({
       component: Quiz
     },
     {
+      path: '/review',
+      name: 'review',
+      component: Review
+    },
+    {
       path: '/history',
-      name: 'history',
-      component: History
+      redirect: '/review'
     },
     {
       path: '/unsub',

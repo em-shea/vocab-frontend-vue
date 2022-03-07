@@ -34,7 +34,7 @@
       </div>
       <div class="row">
           <div class="col-12">
-            <div class="card shadow-sm text-center" v-if="userData['lists'].length === 0">
+            <div class="card shadow-sm text-center" v-if="userData['subscriptions'].length === 0">
                 <div class="card-body no-subs-card">
                     <div class="row list-row">
                         <div class="col">
@@ -44,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card shadow-sm" v-for="(value, key) in userData['lists']" :key=key>
+            <div class="card shadow-sm" v-for="(value, key) in userData['subscriptions']" :key=key>
                 <div class="card-body">
                     <div class="row list-row">
                         <div class="col">
@@ -105,6 +105,7 @@
 <script>
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
+import vocabListIds from '@/assets/vocabListIds.json'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import shared from './../shared'
 
@@ -126,104 +127,7 @@ export default {
       filterResultsValue: null,
       userData: {},
       // Temporarily hardcoding lists until list storage is moved to DyanmoDB
-      allLists: [
-        {
-          'list_name': 'HSK Level 1',
-          'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
-          'unique_list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122#SIMPLIFIED',
-          'character_set': 'simplified',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 2',
-          'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
-          'unique_list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122#SIMPLIFIED',
-          'character_set': 'simplified',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 3',
-          'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
-          'unique_list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122#SIMPLIFIED',
-          'character_set': 'simplified',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 4',
-          'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
-          'unique_list_id': '1ebcad40-414f-6bc8-859d-acde48001122#SIMPLIFIED',
-          'character_set': 'simplified',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 5',
-          'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
-          'unique_list_id': '1ebcad40-bb9e-6ece-a366-acde48001122#SIMPLIFIED',
-          'character_set': 'simplified',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 6',
-          'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
-          'unique_list_id': '1ebcad41-197a-6700-95a3-acde48001122#SIMPLIFIED',
-          'character_set': 'simplified',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 1',
-          'list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122',
-          'unique_list_id': '1ebcad3f-5dfd-6bfe-bda4-acde48001122#TRADITIONAL',
-          'character_set': 'traditional',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 2',
-          'list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122',
-          'unique_list_id': '1ebcad3f-adc0-6f42-b8b1-acde48001122#TRADITIONAL',
-          'character_set': 'traditional',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 3',
-          'list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122',
-          'unique_list_id': '1ebcad3f-f815-6b92-b3e8-acde48001122#TRADITIONAL',
-          'character_set': 'traditional',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 4',
-          'list_id': '1ebcad40-414f-6bc8-859d-acde48001122',
-          'unique_list_id': '1ebcad40-414f-6bc8-859d-acde48001122#TRADITIONAL',
-          'character_set': 'traditional',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 5',
-          'list_id': '1ebcad40-bb9e-6ece-a366-acde48001122',
-          'unique_list_id': '1ebcad40-bb9e-6ece-a366-acde48001122#TRADITIONAL',
-          'character_set': 'traditional',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        },
-        {
-          'list_name': 'HSK Level 6',
-          'list_id': '1ebcad41-197a-6700-95a3-acde48001122',
-          'unique_list_id': '1ebcad41-197a-6700-95a3-acde48001122#TRADITIONAL',
-          'character_set': 'traditional',
-          'date_created': '2021-06-16T23:06:48.467526',
-          'created_by': 'admin'
-        }
-      ],
+      allLists: vocabListIds,
       footerWidth: 'narrow'
     }
   },
@@ -242,7 +146,7 @@ export default {
   computed: {
     subscribedListIds () {
       // create list of unique ids
-      return this.userData['lists'].map(elem => elem['unique_list_id'])
+      return this.userData['subscriptions'].map(elem => elem['unique_list_id'])
     },
     allAvailableLists () {
       if (this.resultsFiltered === true) {
@@ -269,7 +173,7 @@ export default {
       this.filterResultsValue = null
     },
     subscribe (list) {
-      this.userData['lists'].push(
+      this.userData['subscriptions'].push(
         {
           'character_set': list['character_set'],
           'list_id': list['list_id'],
@@ -280,7 +184,7 @@ export default {
       this.setUserSubscriptions()
     },
     unsubscribe (list) {
-      this.userData['lists'] = this.userData['lists'].filter((currentList) => {
+      this.userData['subscriptions'] = this.userData['subscriptions'].filter((currentList) => {
         // console.log('lists, ', list, currentList)
         if (list['unique_list_id'] === currentList['unique_list_id']) {
           return false
@@ -295,12 +199,11 @@ export default {
       this.updatingUserSubs = true
       this.userSubsUpdated = false
       let requestBody = {
-        'cognito_id': this.userData['user_data']['user_id'],
-        'email': this.userData['user_data']['email_address'],
-        'character_set_preference': this.userData['user_data']['character_set_preference'],
-        'lists': this.userData['lists']
+        'cognito_id': this.userData['user_id'],
+        'email': this.userData['email_address'],
+        'character_set_preference': this.userData['character_set_preference'],
+        'subscriptions': this.userData['subscriptions']
       }
-      // console.log(requestBody.lists)
       let userPoolData = {
         UserPoolId: process.env.VUE_APP_USER_POOL_ID,
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,

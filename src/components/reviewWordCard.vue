@@ -2,38 +2,38 @@
   <div class="card border-secondary shadow-sm">
     <div class="card-body main-card" v-on:click="clickDescription()">
       <p v-if="characterSet === 'simplified'" class="card-text">
-        {{ card.Word.Word }}
+        {{ card.word.simplified }}
       </p>
       <p v-if="characterSet === 'traditional'" class="card-text">
-        {{ card.Word['Word-Traditional'] }}
+        {{ card.word.traditional }}
       </p>
       <p class="card-text">
-        {{ card.Word.Pronunciation }} 
-        <!-- <span @click="playAudio(tempAudioFile)" class="oi oi-volume-high audio-icon"></span>
-        <audio id="audio" :src="tempAudioFile">"Sorry, your browser does not support audio files."</audio> -->
+        {{ card.word.pinyin }}
+        <span v-if="card.word.audio_file_key" @click="playAudio(card.word.audio_file_key)" class="oi oi-volume-high audio-icon"></span>
+        <audio v-if="card.word.audio_file_key" id="audio" :src="card.word.audio_file_key">"Sorry, your browser does not support audio files."</audio>
       </p>
       <p class="card-text" :class="{ 'truncate' : !clicked }">
-        {{ card.Word.Definition }}
+        {{ card.word.definition }}
       </p>
     </div>
     <div class="card-body link-card">
-      <p class="card-text link-text" v-if="card.Word['HSK Level'] <= 3">
-        <a :href="'https://www.yellowbridge.com/chinese/sentsearch.php?word=' + card.Word.Word">
+      <p class="card-text link-text" v-if="card.word.hsk_level <= 3">
+        <a :href="'https://www.yellowbridge.com/chinese/sentsearch.php?word=' + card.word.simplified">
           Example sentences
         </a>
       </p>
-      <p class="card-text link-text" v-if="card.Word['HSK Level'] > 3">
-        <a :href="'https://fanyi.baidu.com/#zh/en/' + card.Word.Word">
+      <p class="card-text link-text" v-if="card.word.hsk_level > 3">
+        <a :href="'https://fanyi.baidu.com/#zh/en/' + card.word.simplified">
           Example sentences
         </a>
       </p>
     </div>
     <div class="card-footer main-card d-flex w-100 justify-content-between" v-on:click="clickDescription()">
       <small class="mb-0">
-        Level {{ card.Word['HSK Level'] }}
+        Level {{ card.word.hsk_level }}
       </small>
       <small>
-        {{ getDateFormat(card.Date) }}
+        {{ getDateFormat(card.date_sent) }}
       </small>
     </div>
   </div>
@@ -41,14 +41,13 @@
 
 <script>
 export default {
-  name: 'wordHistory',
+  name: 'reviewWordCard',
   props: {
     card: Object
   },
   data () {
     return {
-      clicked: false,
-      tempAudioFile: "https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3"
+      clicked: false
     }
   },
   computed: {
@@ -64,9 +63,14 @@ export default {
         this.clicked = false
       }
     },
+    playAudio (audioFile) {
+      let audio = new Audio(audioFile)
+      audio.play()
+    },
     getDateFormat (cardDate) {
-      let day = cardDate.slice(-2)
-      let month = cardDate.slice(5, 7)
+      cardDate = cardDate.split('-')
+      let day = cardDate[1]
+      let month = cardDate[2]
       let formattedDate = month.concat('/', day)
       return formattedDate
       // https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date

@@ -29,9 +29,9 @@ export default {
           }
         })
       } else {
-        console.log('User not found.')
+        console.log('User not signed in or not found.')
         // resolve(null)
-        reject(Error('User not found.'))
+        reject(Error('User not signed in or not found.'))
       }
     })
   },
@@ -56,17 +56,13 @@ export default {
           } else {
             // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
-              .get(process.env.VUE_APP_API_URL + 'user_data', {
+              .get(process.env.VUE_APP_API_URL + 'user', {
                 headers: {
                   'Authorization': session.getIdToken().getJwtToken()
                 }
               }
               )
               .then((response) => {
-                // console.log(response.data)
-                // this.userData = response.data['user_data']
-                // this.userLists = response.data['lists']
-                // resolve(this.userData, this.userLists)
                 resolve(response.data)
               })
           }
@@ -85,6 +81,11 @@ export default {
     }
     let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
     let cognitoUser = userPool.getCurrentUser()
-    cognitoUser.signOut()
+    // console.log('cognito user: ', cognitoUser)
+    if (cognitoUser !== null) {
+      cognitoUser.signOut()
+    } else {
+      console.log('No signed in user to sign out.')
+    }
   }
 }

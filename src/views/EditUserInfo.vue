@@ -31,7 +31,7 @@
             <div class="form-group row">
               <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
               <div class="col-sm-10">
-                <input type="text" readonly class="form-control-plaintext email-text" id="staticEmail" :value="userData['user_data']['email_address']">
+                <input type="text" readonly class="form-control-plaintext email-text" id="staticEmail" :value="userData['email_address']">
               </div>
             </div>
             <div class="form-group row">
@@ -45,7 +45,7 @@
             <div class="form-group row">
               <label for="staticEmail" class="col-sm-2 col-form-label">Emoji</label>
               <div class="col">
-                <select class="form-control" v-model="userData['user_data']['user_alias_emoji']" @change="setUserData()" id="exampleFormControlSelect1">
+                <select class="form-control" v-model="userData['user_alias_emoji']" @change="setUserData()" id="exampleFormControlSelect1">
                   <option v-for="emoji in emojiOptions" :key="emoji" :value="emoji">{{ emoji }}</option>
                 </select>
               </div>
@@ -53,7 +53,7 @@
             <div class="form-group row">
               <label for="inputPassword" class="col-sm-2 col-form-label">Character set preference</label>
               <div class="col-sm-10">
-                <select class="form-control" id="exampleFormControlSelect1" v-model="userData['user_data']['character_set_preference']" @change="setUserData()">
+                <select class="form-control" id="exampleFormControlSelect1" v-model="userData['character_set_preference']" @change="setUserData()">
                   <option value="simplified">Simplified</option>
                   <option value="traditional">Traditional</option>
                 </select>
@@ -63,14 +63,6 @@
           </form>
         </div>
       </div>
-      <!-- <hr/>
-      <div class="row">
-        <div class="col">
-          <button type="button" class="btn btn-light" v-on:click="signOut()">
-            Sign out
-          </button>
-        </div>
-      </div> -->
     </div>
     <custom-footer :footerWidth="footerWidth"></custom-footer>
   </div>
@@ -93,9 +85,7 @@ export default {
     return {
       cognitoUser: null,
       userAliasPlaceholder: {},
-      userData: {
-        user_data: {}
-      },
+      userData: {},
       userAliasOptions: userAliasOptions,
       emojiOptions: emojiOptions,
       updatingUserData: false,
@@ -110,22 +100,22 @@ export default {
   computed: {},
   methods: {
     setUserAliasPlaceholder () {
-      if (this.userData['user_data']['user_alias_pinyin'] === 'Not set') {
-        this.userData['user_data']['user_alias_pinyin'] = ''
+      if (this.userData['user_alias_pinyin'] === 'Not set') {
+        this.userData['user_alias_pinyin'] = ''
       }
       this.userAliasPlaceholder = {
-        'character': this.userData['user_data']['user_alias'],
-        'pinyin': this.userData['user_data']['user_alias_pinyin']
+        'character': this.userData['user_alias'],
+        'pinyin': this.userData['user_alias_pinyin']
       }
       // console.log('update user placeholder', this.userAliasPlaceholder)
     },
     updateUserAlias () {
       // console.log('update user data', this.userAliasPlaceholder)
-      this.userData['user_data']['user_alias'] = this.userAliasPlaceholder['character']
+      this.userData['user_alias'] = this.userAliasPlaceholder['character']
       if (this.userAliasPlaceholder['pinyin'] === '') {
-        this.userData['user_data']['user_alias_pinyin'] = 'Not set'
+        this.userData['user_alias_pinyin'] = 'Not set'
       } else {
-        this.userData['user_data']['user_alias_pinyin'] = this.userAliasPlaceholder['pinyin']
+        this.userData['user_alias_pinyin'] = this.userAliasPlaceholder['pinyin']
       }
       this.setUserData()
     },
@@ -182,7 +172,7 @@ export default {
             } else {
               // console.log('IdToken: ' + session.getIdToken().getJwtToken())
               return axios
-                .get(process.env.VUE_APP_API_URL + 'user_data', {
+                .get(process.env.VUE_APP_API_URL + 'user', {
                   headers: {
                     'Authorization': session.getIdToken().getJwtToken()
                   }
@@ -205,10 +195,10 @@ export default {
       this.updatingUserData = true
       this.userDataUpdated = false
       let requestBody = {
-        'user_alias': this.userData['user_data']['user_alias'],
-        'user_alias_pinyin': this.userData['user_data']['user_alias_pinyin'],
-        'user_alias_emoji': this.userData['user_data']['user_alias_emoji'],
-        'character_set_preference': this.userData['user_data']['character_set_preference']
+        'user_alias': this.userData['user_alias'],
+        'user_alias_pinyin': this.userData['user_alias_pinyin'],
+        'user_alias_emoji': this.userData['user_alias_emoji'],
+        'character_set_preference': this.userData['character_set_preference']
       }
       // console.log(requestBody)
       let userPoolData = {
@@ -244,12 +234,6 @@ export default {
       } else {
         console.log('User not found.')
       }
-    },
-    signOut () {
-      // console.log('sign out')
-      this.$root.$data.store.storeSessionData(null, null)
-      this.$root.$data.store.updateSignInStatus(false)
-      this.$router.push('/')
     }
   }
 }
