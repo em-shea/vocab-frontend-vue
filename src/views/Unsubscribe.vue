@@ -113,7 +113,7 @@ export default {
     // Prepopulates the input fields with the email and level if the user came from their email unsubscribe link
     // Example parameters - /unsub?level=1&email=me@testemail.com&char=simplified
     populateUserInfo () {
-      console.log(this.$route.query)
+      // console.log(this.$route.query)
       if (this.$route.query.email) {
         this.params.email = this.$route.query.email
       }
