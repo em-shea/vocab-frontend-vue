@@ -218,6 +218,9 @@ export default {
 .loading-container {
   height: 550px;
 }
+.row {
+  padding: .5rem;
+}
 .code-btn {
   min-width: 120px;
 }
