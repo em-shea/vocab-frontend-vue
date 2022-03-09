@@ -11,7 +11,7 @@
         What am I subscribing to?
         </p>
         <p>
-        Subscribers will receive an email message including a vocabulary word, pinyin (<a href="https://chinese.yabla.com/chinese-pinyin-chart.php">pronunciation</a>, <a href="https://chinese.yabla.com/chinese-tones-learn-the-right-way-with-tone-pairs.php">tones</a>), definition, and link to example sentences each day.
+        Select your Chinese level and subscribe to receive daily emails with vocabulary words at this level, along with links to <router-link :to="{ name: 'quiz'}">practice quizzes</router-link> and example sentences.
         </p>
         <p>
         Daily emails look like this:
@@ -21,32 +21,22 @@
         How do I unsubscribe?
         </p>
         <p>
-        Unsubscribe at any time by clicking the 'unsubscribe' link on the bottom of each email message.
-        </p>
-        <p class="bold">
-        How should I use this to learn or practice Chinese?
-        </p>
-        <p>
-        This service can help build your vocabulary, but won't cover grammar or other language fundamentals. Use this as a resource to supplement a Chinese course or HSK study plan.
+        You can <router-link :to="{ name: 'unsub'}">unsubscribe here</router-link>, or <router-link :to="{ name: 'sign-in'}">login to your account</router-link> to manage which lists you are subscribed to.
         </p>
         <p class="bold">
         How do I pronounce the words?
         </p>
         <p>
-        The link to example sentences for levels 1-3 takes you to <a href="https://www.yellowbridge.com/chinese/sentsearch.php?word=%E5%A4%A7%E5%AE%B6">YellowBridge Chinese-English dictionary</a>. Here you can find example sentences, character stroke order, and pronunciation audio.
-        </p>
-        <!-- <img src="https://hsk-vocab.s3.amazonaws.com/yellowbridge-pronunciation.PNG" style="max-width:300px;"> -->
-        <p>
-        A good first step to learning Chinese is to learn pinyin (<a href="https://chinese.yabla.com/chinese-pinyin-chart.php">pronunciation</a>, <a href="https://chinese.yabla.com/chinese-tones-learn-the-right-way-with-tone-pairs.php">tones</a>), which is included for each daily email and will help you pronounce and <a href="https://blog.fluent-forever.com/learning-pronunciation/">remember</a> characters more easily.
+        Click on the <span class="oi oi-volume-high audio-icon example-icon"></span> icon to hear the pronunciation.
         </p>
         <p class="bold">
         What is HSK vocabulary?
         </p>
         <p v-if="characterSet === 'simplified'">
-        HSK stands for 汉语水平考试 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Chinese language proficiency test. There are six levels of the HSK, with Level 1 testing for 150 basic words and Level 6 testing 5000 words. While just the vocabulary words alone are not enough to sufficiently prepare for the test, the vocabulary lists for each level provide a useful benchmark and learning tool to track a student's progress.
+        HSK stands for 汉语水平考试 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Mandarin Chinese language proficiency test for non-native speakers. There are six levels of the HSK, from Level 1 with 150 basic words to Level 6 with 5,000 words.
         </p>
         <p v-if="characterSet === 'traditional'">
-        HSK stands for 漢語水平考試 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Chinese language proficiency test. There are six levels of the HSK, with Level 1 testing for 150 basic words and Level 6 testing 5000 words. While just the vocabulary words alone are not enough to sufficiently prepare for the test, the vocabulary lists for each level provide a useful benchmark and learning tool to track a student's progress.
+        HSK stands for 漢語水平考試 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Mandarin Chinese language proficiency test for non-native speakers. There are six levels of the HSK, from Level 1 with 150 basic words to Level 6 with 5,000 words.
         </p>
         <p class="bold">
         What should I do with my daily vocab word?
@@ -59,7 +49,7 @@
               Write your own example sentences.
           </li>
           <li>
-              Make a set of flash cards.
+              Make a set of flash cards for <router-link :to="{ name: 'review'}">recent vocab words</router-link>.
           </li>
           <li>
               Draw illustrations of each word.
@@ -75,10 +65,19 @@
         What does Haohaotiantian mean?
         </p>
         <p v-if="characterSet === 'simplified'">
-        好好学习，天天向上 (Hǎo hào xuéxí, tiāntiān xiàngshàng) - Study hard and make progress every day.
+        好好学习，天天向上 <span @click="playAudio(audio_file)" class="oi oi-volume-high audio-icon"></span>
+        <audio id="audio" :src="audio_file">"Sorry, your browser does not support audio files."</audio>
         </p>
         <p v-if="characterSet === 'traditional'">
-        好好學習，天天向上 (Hǎo hào xuéxí, tiāntiān xiàngshàng) - Study hard and make progress every day.
+        好好學習，天天向上 <span @click="playAudio(audio_file)" class="oi oi-volume-high audio-icon"></span>
+        <audio id="audio" :src="audio_file">"Sorry, your browser does not support audio files."</audio>
+        </p>
+        <p>Study hard and make progress every day.</p>
+        <p class="bold">
+          How is Haohaotiantian built?
+        </p>
+        <p>
+          If you're interested in the technology that this web application is built on, you can check out <a href="https://www.youtube.com/watch?v=amLjm87Fy6s">this talk</a> and <a href="https://emshea.com/post/chinese-vocab-app">these </a><a href="https://emshea.com/post/vocab-app-database">blog </a><a href="https://emshea.com/post/vocab-subscriber-backend">posts</a>.
         </p>
         <p class="bold">
         I have a different question.
@@ -97,6 +96,7 @@ export default {
   name: 'faqContent',
   data () {
     return {
+      audio_file: 'https://vocab-static.s3.amazonaws.com/audio/.466f61ff-1959-4718-b861-103c869b07d5.mp3'
     }
   },
   computed: {
@@ -105,10 +105,17 @@ export default {
     }
   },
   methods: {
+    playAudio (audioFile) {
+      let audio = new Audio(audioFile)
+      audio.play()
+    }
   }
 }
 </script>
 
 <style scoped>
-
+  .example-icon:hover {
+    color: #fe4c00;
+    cursor: auto;
+  }
 </style>

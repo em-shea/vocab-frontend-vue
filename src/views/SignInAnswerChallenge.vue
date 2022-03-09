@@ -3,7 +3,16 @@
 
     <small-header></small-header>
 
-    <div class="container main-container">
+    <div v-if="loadingPage" class="container loading-container">
+      <div class="row mt-5">
+        <div class="col d-flex justify-content-center">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="!loadingPage" class="container main-container">
       <div class="row">
         <div class="col">
           <p>One-time sign-in link sent! Please check your email.</p>
@@ -41,7 +50,7 @@ import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import { Auth } from 'aws-amplify'
 import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js'
-import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
+// import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 
 export default {
   name: 'answer-challenge',
@@ -58,6 +67,7 @@ export default {
       cognitoUser: CognitoUser,
       invalidCode: false,
       codeResent: false,
+      loadingPage: false,
       footerWidth: 'narrow'
     }
   },
@@ -85,8 +95,9 @@ export default {
     },
     getQueryStringParams () {
       if (this.$route.query.code) {
+        // trigger loading animation if a user lands on the page from their email confirmation link
+        this.loadingPage = true
         this.code = this.$route.query.code
-        // console.log('code in params')
         this.submitCode()
       }
     },
@@ -163,7 +174,7 @@ export default {
         ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
         Storage: localStorage
       }
-      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let userPool = new CognitoUserPool(userPoolData)
       let cognitoUser = userPool.getCurrentUser()
       if (cognitoUser != null) {
         cognitoUser.getSession((err, session) => {
@@ -203,6 +214,12 @@ export default {
 }
 .main-container {
   margin-top: 2rem;
+}
+.loading-container {
+  height: 550px;
+}
+.row {
+  padding: .5rem;
 }
 .code-btn {
   min-width: 120px;
