@@ -93,19 +93,19 @@
           <div class="col-4 col-md-3" id="v-pills-col">
             <div v-for="(value, list_id) in exampleWordList" v-bind:key="list_id" v-on:click="exampleListSelected = list_id" class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist">
               <span class="nav-link" :class="{ active : list_id === exampleListSelected }" :id="'#v-pills-tab-'+list_id" data-toggle="pill" role="tab">
-                <span class="pills-tab-desktop">Level {{ exampleWordList[list_id][0]['word']['HSK Level'] }}</span>
-                <span class="pills-tab-mobile">{{ exampleWordList[list_id][0]['word']['HSK Level'] }}</span>
+                <span class="pills-tab-desktop">Level {{ exampleWordList[list_id][0]['word']['hsk_level'] }}</span>
+                <span class="pills-tab-mobile">{{ exampleWordList[list_id][0]['word']['hsk_level'] }}</span>
               </span>
             </div>
           </div>
           <div class="col-8 col-md-9">
             <div class="tab-content" id="v-pills-tabContent">
               <div v-for="word in exampleWordList[exampleListSelected]" v-bind:key="word['word']['word_id']" class="card shadow-sm p-2">
-                <div v-if="characterSet === 'simplified'" class="card-body">{{ word['word']['Simplified'] }}</div>
-                <div v-if="characterSet === 'traditional'" class="card-body">{{ word['word']['Traditional'] }}</div>
-                <div class="card-body">{{ word['word']['Pinyin'] }} <span v-if="word['word']['Audio file key']" @click="playAudio(word['word']['Audio file key'])" class="oi oi-volume-high audio-icon"></span></div>
-                <audio v-if="word['word']['Audio file key']" id="audio" :src="word['word']['Audio file key']">"Sorry, your browser does not support audio files."</audio>
-                <div class="card-body">{{ word['word']['Definition'] }}</div>
+                <div v-if="characterSet === 'simplified'" class="card-body">{{ word['word']['simplified'] }}</div>
+                <div v-if="characterSet === 'traditional'" class="card-body">{{ word['word']['traditional'] }}</div>
+                <div class="card-body">{{ word['word']['pinyin'] }} <span v-if="word['word']['audio_file_key']" @click="playAudio(word['word']['audio_file_key'])" class="oi oi-volume-high audio-icon"></span></div>
+                <audio v-if="word['word']['audio_file_key']" id="audio" :src="word['word']['audio_file_key']">"Sorry, your browser does not support audio files."</audio>
+                <div class="card-body">{{ word['word']['definition'] }}</div>
               </div>
             </div>
           </div>
@@ -184,16 +184,13 @@ export default {
   },
   methods: {
     getSampleWords () {
-      // console.log('getting sample words...')
       try {
         return axios
-          .get(process.env.VUE_APP_API_URL + 'sample_vocab', {}
+          .get(process.env.VUE_APP_API_URL + 'review', {}
           )
           .then((response) => {
-            // console.log('response', response)
             this.exampleWordList = response.data
             this.sampleVocabLoading = false
-            // console.log('example words: ', this.exampleWordList)
           })
       } catch (error) {
         console.error('error message', error)

@@ -105,6 +105,13 @@
         </div>
       </div>
     </div>
+    <!-- <div class="container" v-if="userSignedIn === false">
+      <div class="row">
+        <div class="col">
+          Sign in to save your quiz results
+        </div>
+      </div>
+    </div> -->
     <div class="container quiz-title-container">
       <div class="row title-row">
         <div class="col-10 title-col">
@@ -222,6 +229,7 @@ export default {
   },
   data () {
     return {
+      userSignedIn: false,
       quizWords: [],
       showMenu: false,
       // isOpen: true,
@@ -369,6 +377,28 @@ export default {
         this.$router.push({ query: { 'list_id': this.params.list, 'date_range': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
       }
     },
+    getSignedInUser () {
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let cognitoUser = userPool.getCurrentUser()
+      if (cognitoUser != null) {
+        cognitoUser.getSession((err, session) => {
+          if (err) {
+            console.log(err)
+          } else if (!session.isValid()) {
+            console.log('Invalid session.')
+          } else {
+            this.userSignedIn = true
+          }
+        })
+      } else {
+        console.log('User not found.')
+      }
+    },
     getReviewWords () {
       return axios
         .get(process.env.VUE_APP_API_URL + 'review?', { params: { 'date_range': this.params.days, 'list_id': this.params.list } }
@@ -410,7 +440,6 @@ export default {
       // If any list is less than 4 words long (not enough for 4 answer options), drop the list.
       // Randomly select one of the remaining lists.
       // If oneChar or twoChar lists are selected, add word & pronunciation pairs to the question/answer set array (testSetList).
-
       // TODO: Make random selection weighted on how many words are in each of the oneChar and twoChar lists
       // https://stackoverflow.com/questions/8435183/generate-a-weighted-random-number
 
@@ -507,8 +536,13 @@ export default {
         this.resetQuestion()
         this.questionNumber = this.questionNumber + 1
       } else {
+        // this.submitQuizResults()
         this.displayResults = true
       }
+    },
+    submitQuizResults () {
+      // if user signed in, post quiz results to API
+      // quiz-data
     },
     newQuiz (value) {
       if (value === 'newSettings') {
