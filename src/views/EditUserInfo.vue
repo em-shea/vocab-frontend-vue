@@ -250,12 +250,12 @@ export default {
     padding-bottom: 3rem;
   }
   .updated-flag {
-    color: orangered
+    color: orangered;
   }
   .updating-spinner {
     margin: 0rem 1rem;
   }
   .email-text {
-    color: #717375
+    color: #717375;
   }
 </style>
