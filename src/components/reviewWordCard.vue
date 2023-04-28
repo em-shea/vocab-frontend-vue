@@ -1,5 +1,5 @@
 <template>
-  <div class="card border-secondary shadow-sm">
+  <div class="card shadow-sm">
     <div class="card-body main-card" v-on:click="clickDescription()">
       <p v-if="characterSet === 'simplified'" class="card-text">
         {{ card.word.simplified }}
@@ -29,11 +29,11 @@
       </p>
     </div>
     <div class="card-footer main-card d-flex w-100 justify-content-between" v-on:click="clickDescription()">
-      <small class="mb-0">
-        Level {{ card.word.hsk_level }}
-      </small>
       <small>
         {{ getDateFormat(card.date_sent) }}
+      </small>
+      <small class="mb-0">
+        Level {{ card.word.hsk_level }}
       </small>
     </div>
   </div>
@@ -82,6 +82,7 @@ export default {
 <style scoped>
   .card {
     margin: 0.75rem;
+    /* background: #f8f9fa; */
     box-shadow: 0.5rem;
     min-height: 200px;
     padding: 0;
@@ -89,8 +90,8 @@ export default {
   }
 
   .card-footer {
-    background-color: #6c757d;
-    color: white;
+    background-color: #f8f9fa;
+    /* color: black; */
     padding: .5rem 1.25rem;
     border-radius: 1rem;
     border-top: none;

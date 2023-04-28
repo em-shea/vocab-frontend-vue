@@ -7,9 +7,9 @@
           <h4>Frequently Asked Questions</h4>
       </div>
       <div class="col-12">
-        <p class="bold">
+        <h5>
         What am I subscribing to?
-        </p>
+        </h5>
         <p>
         Select your Chinese level and subscribe to receive daily emails with vocabulary words at this level, along with links to <router-link :to="{ name: 'quiz'}">practice quizzes</router-link> and example sentences.
         </p>
@@ -17,30 +17,30 @@
         Daily emails look like this:
         </p>
         <img src="https://hhtt-static.s3.amazonaws.com/email-screenshot-wide.png">
-        <p class="bold">
+        <h5>
         How do I unsubscribe?
-        </p>
+        </h5>
         <p>
         You can <router-link :to="{ name: 'unsub'}">unsubscribe here</router-link>, or <router-link :to="{ name: 'sign-in'}">login to your account</router-link> to manage which lists you are subscribed to.
         </p>
-        <p class="bold">
+        <h5>
         How do I pronounce the words?
-        </p>
+        </h5>
         <p>
         Click on the <span class="oi oi-volume-high audio-icon example-icon"></span> icon to hear the pronunciation.
         </p>
-        <p class="bold">
+        <h5>
         What is HSK vocabulary?
-        </p>
+        </h5>
         <p v-if="characterSet === 'simplified'">
         HSK stands for 汉语水平考试 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Mandarin Chinese language proficiency test for non-native speakers. There are six levels of the HSK, from Level 1 with 150 basic words to Level 6 with 5,000 words.
         </p>
         <p v-if="characterSet === 'traditional'">
         HSK stands for 漢語水平考試 <a href="https://en.wikipedia.org/wiki/Hanyu_Shuiping_Kaoshi">Hanyu Shuiping Kaoshi</a>, China's standardized Mandarin Chinese language proficiency test for non-native speakers. There are six levels of the HSK, from Level 1 with 150 basic words to Level 6 with 5,000 words.
         </p>
-        <p class="bold">
+        <h5>
         What should I do with my daily vocab word?
-        </p>
+        </h5>
         <ul>
           <li>
               <router-link :to="{ name: 'quiz'}">Take a practice quiz.</router-link>
@@ -61,9 +61,9 @@
               Use the word in a journal entry.
           </li>
         </ul>
-        <p class="bold">
+        <h5>
         What does Haohaotiantian mean?
-        </p>
+        </h5>
         <p v-if="characterSet === 'simplified'">
         好好学习，天天向上 <span @click="playAudio(audio_file)" class="oi oi-volume-high audio-icon"></span>
         <audio id="audio" :src="audio_file">"Sorry, your browser does not support audio files."</audio>
@@ -73,15 +73,15 @@
         <audio id="audio" :src="audio_file">"Sorry, your browser does not support audio files."</audio>
         </p>
         <p>Study hard and make progress every day.</p>
-        <p class="bold">
+        <h5>
           How is Haohaotiantian built?
-        </p>
+        </h5>
         <p>
           If you're interested in the technology that this web application is built on, you can check out <a href="https://www.youtube.com/watch?v=amLjm87Fy6s">this talk</a> and <a href="https://emshea.com/post/chinese-vocab-app">these </a><a href="https://emshea.com/post/vocab-app-database">blog </a><a href="https://emshea.com/post/vocab-subscriber-backend">posts</a>.
         </p>
-        <p class="bold">
+        <h5>
         I have a different question.
-        </p>
+        </h5>
         <p>
         Please get in touch over <a href="https://twitter.com/messages/2409492241-1315062296033411072">Twitter</a> or email us at <a href="mailto:hello@haohaotiantian.com">hello@haohaotiantian.com</a>.
         </p>

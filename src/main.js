@@ -14,7 +14,7 @@ Amplify.configure({
     userPoolWebClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID
   }
   // Auth: {
-  //   region: 'us-east-1',
+  //   region: 'us-east-1', 
   //   userPoolId: 'us-east-1_5Ivj5CJ6z',
   //   userPoolWebClientId: 'mi4ig9h25fg7v9dvmlk6mgodd'
   // }

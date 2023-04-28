@@ -67,6 +67,14 @@
           </button>
         </div>
       </div>
+      <!-- <div class="row">
+        <div class="col-12">Weekly progress</div>
+      </div>
+      <div class="row">
+        <div class="col px-1 progress-icon-col" v-for="n in 7" v-bind:key="n">
+          <span class="oi oi-book book-icon"></span>
+        </div>
+      </div> -->
       <div class="row todays-word-row">
         <div v-if="this.userLists.length === 1" class="col-12 daily-word-title">Today's word</div>
         <div v-else class="col-12 daily-word-title">Today's words</div>
@@ -140,7 +148,7 @@
       </div>
       <div class="row justify-content-center pb-4">
         <div class="col-12">
-          <div class="card card-button shadow-sm">
+          <div class="card card-button btn-light shadow-sm">
             <div class="card-body text-center">
               My quizzes
               <!-- <span class="oi oi-chevron-right float-right"></span> -->
@@ -148,7 +156,7 @@
           </div>
         </div>
         <div class="col-12">
-          <div class="card card-button shadow-sm">
+          <div class="card card-button btn-light shadow-sm">
             <div class="card-body text-center">
               My practice sentences
               <!-- <span class="oi oi-chevron-right float-right"></span> -->
@@ -347,6 +355,13 @@ export default {
     .full-length {
       white-space: wrap;
     }
+  }
+  .book-icon {
+    font-size: 30px;
+  }
+  .progress-icon-col {
+    display: flex;
+    justify-content: center;
   }
   .loading-container {
     height: 550px;
