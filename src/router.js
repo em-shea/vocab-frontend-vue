@@ -51,7 +51,7 @@ export default new Router({
       component: UserProfile
     },
     {
-      path: '/practice-sentences',
+      path: '/sentences',
       name: 'user-sentences',
       component: UserSentences
     },
