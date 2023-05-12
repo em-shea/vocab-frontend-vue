@@ -104,7 +104,6 @@
                 <div v-if="characterSet === 'simplified'" class="card-body">{{ word['word']['simplified'] }}</div>
                 <div v-if="characterSet === 'traditional'" class="card-body">{{ word['word']['traditional'] }}</div>
                 <div class="card-body">{{ word['word']['pinyin'] }} <span v-if="word['word']['audio_file_key']" @click="playAudio(word['word']['audio_file_key'])" class="oi oi-volume-high audio-icon"></span></div>
-                <audio v-if="word['word']['audio_file_key']" id="audio" :src="word['word']['audio_file_key']">"Sorry, your browser does not support audio files."</audio>
                 <div class="card-body">{{ word['word']['definition'] }}</div>
               </div>
             </div>
