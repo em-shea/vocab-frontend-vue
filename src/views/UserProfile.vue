@@ -92,7 +92,6 @@
               <h5 v-if="word.CharacterSet === 'simplified'" class="card-text">{{ word.word.simplified }}</h5>
               <h5 v-if="word.CharacterSet === 'traditional'" class="card-text">{{ word.word.traditional }}</h5>
               <p class="card-text">{{ word.word.pinyin }} <span @click="playAudio(word.word.audio_file_key)" class="oi oi-volume-high audio-icon"></span></p>
-              <audio id="audio" :src="word.word.audio_file_key">"Sorry, your browser does not support audio files."</audio>
               <p class="card-text truncate">{{ word.word.definition }}</p>
               <ul class="list-group list-group-flush">
                 <li class="list-group-item text-muted">HSK Level {{ word.word.hsk_level }}, {{ word.CharacterSet }}</li>
