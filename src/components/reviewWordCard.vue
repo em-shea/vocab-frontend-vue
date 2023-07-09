@@ -10,7 +10,6 @@
       <p class="card-text">
         {{ card.word.pinyin }}
         <span v-if="card.word.audio_file_key" @click="playAudio(card.word.audio_file_key)" class="oi oi-volume-high audio-icon"></span>
-        <!-- <audio v-if="card.word.audio_file_key" id="audio" :src="card.word.audio_file_key">"Sorry, your browser does not support audio files."</audio> -->
       </p>
       <p class="card-text" :class="{ 'truncate' : !clicked }">
         {{ card.word.definition }}

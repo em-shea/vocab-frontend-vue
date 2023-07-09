@@ -105,14 +105,12 @@
         </div>
       </div>
     </div>
-    <!-- <div class="container" v-if="userSignedIn === false">
-      <div class="row">
-        <div class="col">
-          Sign in to save your quiz results
-        </div>
-      </div>
-    </div> -->
     <div class="container quiz-title-container">
+      <div v-if="!user" class="row sign-in-banner">
+        <router-link :to="{ name: 'sign-in'}">
+          Sign in to save your quiz results and track weekly quiz goals
+        </router-link>
+      </div>
       <div class="row title-row">
         <div class="col-10 title-col">
           <h5 class="quiz-title">
@@ -219,6 +217,8 @@ import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
 import reviewWordCard from '@/components/reviewWordCard.vue'
 import vocabListIds from '@/assets/vocabListIds.json'
+import shared from './../shared'
+import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 
 export default {
   name: 'quiz',
@@ -229,7 +229,7 @@ export default {
   },
   data () {
     return {
-      userSignedIn: false,
+      user: null,
       quizWords: [],
       showMenu: false,
       // isOpen: true,
@@ -278,10 +278,16 @@ export default {
       answerSelected: null,
       answerResults: null,
       correctAnswers: 0,
+      quizSummary: [],
       displayResults: false,
+      submittingQuizResults: false,
+      quizResultsSubmitted: false,
       showReviewCards: false,
       footerWidth: 'narrow'
     }
+  },
+  created () {
+    this.getSignedInUser = shared.getSignedInUser
   },
   computed: {
     characterSet () {
@@ -330,9 +336,7 @@ export default {
       }
     }
   },
-  watch: {
-  },
-  mounted: function () {
+  async mounted () {
     this.loadingQuiz = true
     this.checkInitialParams()
     this.pushToRouter()
@@ -341,6 +345,11 @@ export default {
       this.setCharacterSet()
       this.loadingQuiz = false
     })
+    try {
+      this.user = await this.getSignedInUser()
+    } catch (error) {
+      this.user = null
+    }
   },
   methods: {
     checkInitialParams () {
@@ -375,28 +384,6 @@ export default {
       // issue probably in check params above
       if (this.$route.query.list_id !== this.params.list || this.$route.query.date_range !== this.params.days || this.$route.query.ques !== this.params.ques || this.$route.query.char !== this.characterSet) {
         this.$router.push({ query: { 'list_id': this.params.list, 'date_range': this.params.days, 'ques': this.params.ques, 'char': this.characterSet } })
-      }
-    },
-    getSignedInUser () {
-      let userPoolData = {
-        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
-        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
-        Storage: localStorage
-      }
-      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
-      let cognitoUser = userPool.getCurrentUser()
-      if (cognitoUser != null) {
-        cognitoUser.getSession((err, session) => {
-          if (err) {
-            console.log(err)
-          } else if (!session.isValid()) {
-            console.log('Invalid session.')
-          } else {
-            this.userSignedIn = true
-          }
-        })
-      } else {
-        console.log('User not found.')
       }
     },
     getReviewWords () {
@@ -530,19 +517,68 @@ export default {
       } else {
         this.answerResults = false
       }
+      this.quizSummary.push({
+        'correct_answer': this.selectedQuizWords[0],
+        'answer_submitted': this.answerSelected,
+        'was_answer_correct': this.answerResults,
+        'test_set': this.selectedTestSet
+      })
+      console.log('quiz summary', this.quizSummary)
     },
     nextQuestion () {
       if (this.questionNumber !== this.settingsActive.questionQuantity) {
         this.resetQuestion()
         this.questionNumber = this.questionNumber + 1
       } else {
-        // this.submitQuizResults()
+        this.submitQuizResults()
         this.displayResults = true
       }
     },
     submitQuizResults () {
-      // if user signed in, post quiz results to API
-      // quiz-data
+      this.submittingQuizResults = true
+      this.quizResultsSubmitted = false
+      let requestBody = {
+        'list_id': this.settingsActive.selectedVocabList,
+        'character_set': this.characterSet,
+        'date_range': this.settingsActive.dateRangeSelected,
+        'question_quantity': this.settingsActive.questionQuantity,
+        'correct_answers': this.correctAnswers,
+        'quiz_data': this.quizSummary
+      }
+      console.log('submit quiz results', requestBody)
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let cognitoUser = userPool.getCurrentUser()
+      if (cognitoUser != null) {
+        cognitoUser.getSession((err, session) => {
+          if (err) {
+            console.log(err)
+          } else if (!session.isValid()) {
+            console.log('Invalid session.')
+          } else {
+            // console.log('IdToken: ' + session.getIdToken().getJwtToken())
+            return axios
+              .post(process.env.VUE_APP_API_URL + 'quizzes',
+                requestBody,
+                {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                })
+              .then((response) => {
+                console.log('submit quiz response, ', response.data)
+                this.submittingQuizResults = false
+                this.quizResultsSubmitted = true
+              })
+          }
+        })
+      } else {
+        console.log('User not found.')
+      }
     },
     newQuiz (value) {
       if (value === 'newSettings') {
@@ -560,6 +596,7 @@ export default {
       this.displayResults = false
       this.questionNumber = 1
       this.correctAnswers = 0
+      this.quizSummary = []
     },
     resetQuestion () {
       this.setQuizWords()
@@ -651,6 +688,10 @@ export default {
 <style scoped>
   .quiz {
     min-height: 100vh;
+  }
+
+  .sign-in-banner {
+    justify-content: center;
   }
 
   .overlay {
