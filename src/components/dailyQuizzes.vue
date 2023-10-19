@@ -46,16 +46,16 @@ export default {
   methods: {
     getTodaysQuizStatus() {
       let lastQuizDate = new Date(this.userQuizzes.data[this.userQuizzes.data.length-1].date_created)
-      console.log('quiz data ', this.userQuizzes)
+      // console.log('quiz data ', this.userQuizzes)
       let todaysDate = new Date()
-      console.log(lastQuizDate.toISOString().split('T')[0])
-      console.log(todaysDate.toISOString().split('T')[0])
+      // console.log(lastQuizDate.toISOString().split('T')[0])
+      // console.log(todaysDate.toISOString().split('T')[0])
       if (lastQuizDate.toISOString().split('T')[0] == todaysDate.toISOString().split('T')[0]) {
         this.todaysQuizStatus = true
       } else {
         this.todaysQuizStatus = false
       }
-      console.log('status ', this.todaysQuizStatus)
+      // console.log('status ', this.todaysQuizStatus)
     },
     calculateQuizProgress() {
       // TODO - Show quiz progress for a given week
