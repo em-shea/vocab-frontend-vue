@@ -66,11 +66,9 @@
         </h5>
         <p v-if="characterSet === 'simplified'">
         好好学习，天天向上 <span @click="playAudio(audio_file)" class="oi oi-volume-high audio-icon"></span>
-        <audio id="audio" :src="audio_file">"Sorry, your browser does not support audio files."</audio>
         </p>
         <p v-if="characterSet === 'traditional'">
         好好學習，天天向上 <span @click="playAudio(audio_file)" class="oi oi-volume-high audio-icon"></span>
-        <audio id="audio" :src="audio_file">"Sorry, your browser does not support audio files."</audio>
         </p>
         <p>Study hard and make progress every day.</p>
         <h5>

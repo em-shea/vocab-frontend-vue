@@ -67,17 +67,23 @@
           </button>
         </div>
       </div>
-      <!-- <div class="row">
-        <div class="col-12">Weekly progress</div>
-      </div>
       <div class="row">
-        <div class="col px-1 progress-icon-col" v-for="n in 7" v-bind:key="n">
-          <span class="oi oi-book book-icon"></span>
+        <div class="col-12">
+          <div class="profile-header">
+            <span class="oi oi-check header-icon"></span>
+            <p class="profile-header-text">Daily quizzes</p>
+          </div>
         </div>
-      </div> -->
+      </div>
+      <daily-quizzes :userQuizzes="userQuizzes"></daily-quizzes>
       <div class="row todays-word-row">
-        <div v-if="this.userLists.length === 1" class="col-12 daily-word-title">Today's word</div>
-        <div v-else class="col-12 daily-word-title">Today's words</div>
+        <div class="col-12">
+          <div class="profile-header">
+            <span class="oi oi-book header-icon"></span>
+            <p v-if="this.userLists.length === 1" class="profile-header-text">Today's word</p>
+            <p v-else class="profile-header-text">Today's words</p>
+          </div>
+        </div>
         <div class="col" v-if="recentWordsList.length === 0">
           <div class="card shadow-sm text-center">
             <div class="card-body no-subs-card">
@@ -142,22 +148,17 @@
       </div> -->
       <div class="row">
         <div class="col">
-          Coming soon
+          <div class="profile-header">
+            <span class="oi oi-star header-icon"></span>
+            <p class="profile-header-text">Coming soon</p>
+          </div>
         </div>
       </div>
       <div class="row justify-content-center pb-4">
         <div class="col-12">
-          <div class="card card-button btn-light shadow-sm">
-            <div class="card-body text-center">
-              My quizzes
-              <!-- <span class="oi oi-chevron-right float-right"></span> -->
-            </div>
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="card card-button btn-light shadow-sm">
-            <div class="card-body text-center">
-              My practice sentences
+          <div class="card shadow-sm">
+            <div class="card-body coming-soon-card text-center">
+              Practice sentences
               <!-- <span class="oi oi-chevron-right float-right"></span> -->
             </div>
           </div>
@@ -195,6 +196,7 @@
 <script>
 import smallHeader from '@/components/smallHeader.vue'
 import customFooter from '@/components/footer.vue'
+import dailyQuizzes from '@/components/dailyQuizzes.vue'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import shared from './../shared'
 
@@ -202,16 +204,19 @@ export default {
   name: 'user-profile',
   components: {
     'small-header': smallHeader,
-    'custom-footer': customFooter
+    'custom-footer': customFooter,
+    'daily-quizzes': dailyQuizzes
   },
   data () {
     return {
+      days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       tempAudioFile: 'https://misc-static-es.s3.amazonaws.com/polly-test-audio.mp3',
       user: null,
       loadingPage: true,
       userData: {},
       userLists: [],
       recentWordsList: [],
+      userQuizzes: [],
       footerWidth: 'narrow'
     }
   },
@@ -243,6 +248,7 @@ export default {
     try {
       await this.getUserData()
       await this.getRecentWords()
+      await this.getUserQuizzes()
     } catch (error) {
       console.error(error)
     }
@@ -331,6 +337,45 @@ export default {
         }
       })
     },
+    async getUserQuizzes () {
+      let userPoolData = {
+        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
+        Storage: localStorage
+      }
+      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+      let cognitoUser = userPool.getCurrentUser()
+      return new Promise((resolve, reject) => {
+        if (cognitoUser != null) {
+          cognitoUser.getSession((err, session) => {
+            if (err) {
+              console.log(err)
+              reject(err)
+            } else if (!session.isValid()) {
+              console.log('Invalid session.')
+              reject(Error('Invalid session.'))
+            } else {
+              // console.log('IdToken: ' + session.getIdToken().getJwtToken())
+              return axios
+                .get(process.env.VUE_APP_API_URL + 'quizzes', {
+                  headers: {
+                    'Authorization': session.getIdToken().getJwtToken()
+                  }
+                }
+                )
+                .then((response) => {
+                  console.log('quiz api response', response.data)
+                  this.userQuizzes = response.data
+                  resolve(this.userQuizzes)
+                })
+            }
+          })
+        } else {
+          // console.log('User not found.')
+          reject(Error('User not found.'))
+        }
+      })
+    },
     playAudio (audioFile) {
       let audio = new Audio(audioFile)
       audio.play()
@@ -354,13 +399,6 @@ export default {
     .full-length {
       white-space: wrap;
     }
-  }
-  .book-icon {
-    font-size: 30px;
-  }
-  .progress-icon-col {
-    display: flex;
-    justify-content: center;
   }
   .loading-container {
     height: 550px;
@@ -401,19 +439,14 @@ export default {
   .no-subs-card {
     padding: 1rem 0.5rem;
   }
+  .coming-soon-card {
+    padding: 1rem;
+  }
   .todays-word-row {
     justify-content: space-around;
   }
   .user-date {
     font-size: 0.9rem;
-  }
-  .card-button {
-    margin: .5rem 0rem;
-    background-color: #858585;
-    border-color: #858585;
-    color: white;
-    border-radius: .25rem;
-    // padding: .375rem .75rem;
   }
   .orange-link {
     color: orangered;
@@ -421,9 +454,6 @@ export default {
   }
   .orange-link:hover {
     cursor: pointer;
-  }
-  .daily-word-title {
-    margin-top: .5rem;
   }
   .daily-word-link {
     color: orangered;
@@ -456,7 +486,14 @@ export default {
     display: flex;
     align-items: center;
   }
-  .new-features-text {
-    font-style: italic;
+  .profile-header {
+    margin-top: 1rem;
   }
+  .profile-header-text {
+    display: inline;
+    padding-left: 10px;
+  }
+  // .coming-soon-btn {
+  //   background: #d3d3d4;
+  // }
 </style>

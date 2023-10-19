@@ -173,7 +173,7 @@ export default {
         )
         .then((response) => {
           this.reviewWordList = response.data[this.params.list_id].slice().reverse()
-          // console.log('review words: ', this.reviewWordList)
+          console.log('review words: ', this.reviewWordList)
         })
     },
     exportCSV () {
