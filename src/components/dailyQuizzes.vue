@@ -1,95 +1,87 @@
 <template>
   <div class="row">
-    <div v-for="item in quizWeekData" :key="item.day_name" class="col px-1 progress-icon-col">
+      <div class="col text-center">
+        <div class="card shadow-sm">
+          <div class="card-body">
+              <div v-if="!todaysQuizStatus">
+                加油！<br>
+                <router-link :to="{ name: 'quiz'}">Click here to take a daily quiz</router-link>
+              </div>
+              <div v-if="todaysQuizStatus">很棒！<br>Today's quiz completed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div v-for="item in quizWeekData" :key="item.day_name" class="col px-1 progress-icon-col">
       <div class="card daily-quiz-card shadow-sm" :class="{'day-completed': item['completed'],  'day-missed': item['missed']}">
         <div class="card-body m-2">
           <span class="oi oi-check check-icon" ></span>
           <div class="card-title">
             {{ item.day_name }}
           </div>
-          <!-- <div v-if="item['completed']" class="card-text">
+          <div v-if="item['completed']" class="card-text">
             Score {{ item.quizResults }}
-          </div> -->
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div> -->
 </template>
 
 <script>
 export default {
   name: 'dailyQuizzes',
   props: {
-    userQuizzes: Array
+    userQuizzes: Object
   },
   data () {
     return {
-      quizWeekData: {
-        0: {
-            'day_name': '星期日',
-            'quizResults': '50%',
-            'completed': true,
-            'missed': false
-          },
-        1: {
-            'day_name': '星期一',
-            'quizResults': '',
-            'completed': false,
-            'missed': false
-        },
-        2: {
-            'day_name': '星期二',
-            'quizResults': '',
-            'completed': false,
-            'missed': false
-          },
-        3: {
-            'day_name': '星期三',
-            'quizResults': '',
-            'completed': false,
-            'missed': false
-        },
-        4: {
-            'day_name': '星期四',
-            'quizResults': '',
-            'completed': false,
-            'missed': false
-        },
-        5: {
-            'day_name': '星期五',
-            'quizResults': '',
-            'completed': false,
-            'missed': false
-          },
-        6: {
-            'day_name': '星期六',
-            'quizResults': '',
-            'completed': false,
-            'missed': false
-        }
-      }
+      todaysQuizStatus: false
+      // quizWeekData: []
     }
   },
   mounted () {
-    this.calculateQuizProgress()
+    // this.calculateQuizProgress()
+    this.getTodaysQuizStatus()
   },
   methods: {
-    calculateQuizProgress() {
-      // Find Sunday, the first day of the week
-      let todays_date = new Date()
-      let first_date_of_week = todays_date.getDate() - todays_date.getDay() + 1
-      let first_day_of_week = new Date(todays_date.setDate(first_date_of_week)).toISOString()
-      // console.log(first_day_of_week)
-
-      for (let i =0; i <= 6; i++) {
-        // Update this.quizWeekData with user's quiz results from this.userQuizzes
+    getTodaysQuizStatus() {
+      let lastQuizDate = new Date(this.userQuizzes.data[this.userQuizzes.data.length-1].date_created)
+      console.log('quiz data ', this.userQuizzes)
+      let todaysDate = new Date()
+      console.log(lastQuizDate.toISOString().split('T')[0])
+      console.log(todaysDate.toISOString().split('T')[0])
+      if (lastQuizDate.toISOString().split('T')[0] == todaysDate.toISOString().split('T')[0]) {
+        this.todaysQuizStatus = true
+      } else {
+        this.todaysQuizStatus = false
       }
+      console.log('status ', this.todaysQuizStatus)
+    },
+    calculateQuizProgress() {
+      // TODO - Show quiz progress for a given week
+      // Find Sunday, the first day of the week
+      let todaysDate = new Date()
+      let firstDateOfWeek = todaysDate.getDate() - todaysDate.getDay() + 1
+      let firstDayOfWeek = new Date(todaysDate.setDate(firstDateOfWeek)).toISOString()
+      // console.log(firstDateOfWeek)
+      // console.log(firstDayOfWeek)
+      // Set days of week in this.quizWeekData
+      // Update this.quizWeekData with user's quiz results from this.userQuizzes
+      console.log(this.quizWeekData)
     }
   }
 }
 </script>
 
 <style scoped>
+  .card {
+    border-radius: 1rem;
+    margin: 0.75rem 0rem;
+    border: none;
+  }
+  .card-body {
+    padding: 1em;
+  }
   .daily-quiz-card {
     text-align: center;
     border: none;

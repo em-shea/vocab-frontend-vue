@@ -157,7 +157,7 @@
       <div class="row justify-content-center pb-4">
         <div class="col-12">
           <div class="card shadow-sm">
-            <div class="card-body text-center">
+            <div class="card-body coming-soon-card text-center">
               Practice sentences
               <!-- <span class="oi oi-chevron-right float-right"></span> -->
             </div>
@@ -438,6 +438,9 @@ export default {
   }
   .no-subs-card {
     padding: 1rem 0.5rem;
+  }
+  .coming-soon-card {
+    padding: 1rem;
   }
   .todays-word-row {
     justify-content: space-around;
