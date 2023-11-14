@@ -523,7 +523,7 @@ export default {
         'was_answer_correct': this.answerResults,
         'test_set': this.selectedTestSet
       })
-      console.log('quiz summary', this.quizSummary)
+      // console.log('quiz summary', this.quizSummary)
     },
     nextQuestion () {
       if (this.questionNumber !== this.settingsActive.questionQuantity) {
