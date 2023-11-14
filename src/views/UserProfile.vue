@@ -215,7 +215,7 @@ export default {
       loadingPage: true,
       userData: {},
       userLists: [],
-      recentWordsList: [],
+      recentWordsListUnfiltered: [],
       userQuizzes: [],
       footerWidth: 'narrow'
     }
@@ -236,22 +236,53 @@ export default {
       let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
       let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
       return `${mo}, ${ye}`
+    },
+    recentWordsList () {
+      // Recent word list filtered for the user's subscriptions
+      // Remove spaces from user's list names (temp fix before switching everything to list ids)
+      // Create unique id - HSKLevel1simplified
+      let userListsUniqueIds = []
+      for (let i = 0; i < this.userLists.length; i++) {
+        if (this.userLists[i]['character_set'] === 'simplified') {
+          userListsUniqueIds.push(this.userLists[i]['list_id'].concat('simplified'))
+        }
+        if (this.userLists[i]['character_set'] === 'traditional') {
+          userListsUniqueIds.push(this.userLists[i]['list_id'].concat('traditional'))
+        }
+      }
+      // Filter to just show words for the lists the user is subscribed to
+      return this.recentWordsListUnfiltered.filter(elem => userListsUniqueIds.includes(elem['UniqueListId']))
     }
+
   },
   async mounted () {
-    try {
-      this.user = await this.getSignedInUser()
-    } catch (error) {
+    let promises = [
+      this.getSignedInUser(),
+      this.getUserData(),
+      this.getRecentWords(),
+      this.getUserQuizzes()
+    ]
+    const results = await Promise.allSettled(promises)
+    if (results[0].status == "rejected") {
       this.user = null
       this.$router.push('/signin')
+    } else {
+      this.user = results[0].value
     }
-    try {
-      await this.getUserData()
-      await this.getRecentWords()
-      await this.getUserQuizzes()
-    } catch (error) {
-      console.error(error)
-    }
+
+    // try {
+    //   this.user = await this.getSignedInUser()
+    // } catch (error) {
+    //   this.user = null
+    //   this.$router.push('/signin')
+    // }
+    // try {
+    //   await this.getUserData()
+    //   await this.getUserData()
+    //   await this.getUserQuizzes()
+    // } catch (error) {
+    //   console.error(error)
+    // }
     this.loadingPage = false
   },
   methods: {
@@ -304,7 +335,7 @@ export default {
             .then((response) => {
               // Create list with just the words from the most recent day
               // Add unique id - HSKLevel1simplified (temp fix before switching everything to list ids)
-              let recentWordsListUnfiltered = []
+              this.recentWordsListUnfiltered = []
               for (let [key, value] of Object.entries(response.data)) {
                 // only copying value, not the entire dict
                 let simplifiedEntry = Object.assign({}, value.slice(-1)[0])
@@ -313,23 +344,10 @@ export default {
                 let traditionalEntry = Object.assign({}, value.slice(-1)[0])
                 traditionalEntry['UniqueListId'] = traditionalEntry['list_id'].concat('traditional')
                 traditionalEntry['CharacterSet'] = 'traditional'
-                recentWordsListUnfiltered.push(simplifiedEntry)
-                recentWordsListUnfiltered.push(traditionalEntry)
+                this.recentWordsListUnfiltered.push(simplifiedEntry)
+                this.recentWordsListUnfiltered.push(traditionalEntry)
               }
-              // Remove spaces from user's list names (temp fix before switching everything to list ids)
-              // Create unique id - HSKLevel1simplified
-              let userListsUniqueIds = []
-              for (let i = 0; i < this.userLists.length; i++) {
-                if (this.userLists[i]['character_set'] === 'simplified') {
-                  userListsUniqueIds.push(this.userLists[i]['list_id'].concat('simplified'))
-                }
-                if (this.userLists[i]['character_set'] === 'traditional') {
-                  userListsUniqueIds.push(this.userLists[i]['list_id'].concat('traditional'))
-                }
-              }
-              // Filter to just show words for the lists the user is subscribed to
-              this.recentWordsList = recentWordsListUnfiltered.filter(elem => userListsUniqueIds.includes(elem['UniqueListId']))
-              resolve(this.recentWordsList)
+              resolve(this.recentWordsListUnfiltered)
             })
         } catch (error) {
           console.error(error)
