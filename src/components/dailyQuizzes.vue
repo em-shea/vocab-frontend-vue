@@ -35,28 +35,31 @@ export default {
   },
   data () {
     return {
-      todaysQuizStatus: false
+      // todaysQuizStatus: false
       // quizWeekData: []
     }
   },
-  mounted () {
-    // this.calculateQuizProgress()
-    this.getTodaysQuizStatus()
-  },
-  methods: {
-    getTodaysQuizStatus() {
-      let lastQuizDate = new Date(this.userQuizzes.data[this.userQuizzes.data.length-1].date_created)
-      // console.log('quiz data ', this.userQuizzes)
-      let todaysDate = new Date()
-      // console.log(lastQuizDate.toISOString().split('T')[0])
-      // console.log(todaysDate.toISOString().split('T')[0])
-      if (lastQuizDate.toISOString().split('T')[0] == todaysDate.toISOString().split('T')[0]) {
-        this.todaysQuizStatus = true
+  computed: {
+    todaysQuizStatus () {
+      // console.log('quiz: ', this.userQuizzes)
+      // If no past quizzes
+      if (this.userQuizzes.data.length == 0) {
+        return false
       } else {
-        this.todaysQuizStatus = false
+        let lastQuizDate = new Date(this.userQuizzes.data[this.userQuizzes.data.length-1].date_created)
+        let todaysDate = new Date()
+        // console.log(lastQuizDate.toISOString().split('T')[0])
+        // console.log(todaysDate.toISOString().split('T')[0])
+        if (lastQuizDate.toISOString().split('T')[0] == todaysDate.toISOString().split('T')[0]) {
+          return true
+        } else {
+          return false
+        }
       }
-      // console.log('status ', this.todaysQuizStatus)
-    },
+    }
+  },
+  mounted () {},
+  methods: {
     calculateQuizProgress() {
       // TODO - Show quiz progress for a given week
       // Find Sunday, the first day of the week

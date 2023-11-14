@@ -4,8 +4,8 @@
     <small-header></small-header>
 
     <div v-if="loadingPage" class="container loading-container">
-      <div class="row mt-5">
-        <div class="col d-flex justify-content-center">
+      <div class="row">
+        <div class="col d-flex loading-spinner-col justify-content-center">
           <div class="spinner-border text-secondary" role="status">
             <span class="sr-only">Loading...</span>
           </div>
@@ -269,20 +269,6 @@ export default {
     } else {
       this.user = results[0].value
     }
-
-    // try {
-    //   this.user = await this.getSignedInUser()
-    // } catch (error) {
-    //   this.user = null
-    //   this.$router.push('/signin')
-    // }
-    // try {
-    //   await this.getUserData()
-    //   await this.getUserData()
-    //   await this.getUserQuizzes()
-    // } catch (error) {
-    //   console.error(error)
-    // }
     this.loadingPage = false
   },
   methods: {
@@ -382,7 +368,7 @@ export default {
                 }
                 )
                 .then((response) => {
-                  console.log('quiz api response', response.data)
+                  // console.log('quiz api response', response.data)
                   this.userQuizzes = response.data
                   resolve(this.userQuizzes)
                 })
@@ -419,7 +405,10 @@ export default {
     }
   }
   .loading-container {
-    height: 550px;
+    height: 85vh;
+  }
+  .loading-spinner-col {
+    padding-top: 35vh;
   }
   .main-container {
     padding-bottom: 3rem;
