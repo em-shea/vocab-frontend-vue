@@ -51,6 +51,10 @@
     margin: .5em;
   }
 
+  .orange-button:hover {
+    color: white;
+  }
+
   .audio-icon {
     color: #fe4c00;
     font-size: 80%;

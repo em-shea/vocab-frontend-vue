@@ -28,11 +28,13 @@
         </div>
       </div>
       <button class="btn btn-outline-secondary" type="button" @click="updateSentence()">test button</button>
-      <div class="row" v-if="userLists.length > 1">
-        <div class="col">
-          <list-dropdown :userLists="userLists"></list-dropdown>
+
+      <div class="row card-deck m-3">
+        <div class="card-holder" v-for="card in recentWordList" :key="card['list_id']+card['date_sent']">
+          <practice-sentence-card :card="card"></practice-sentence-card>
         </div>
       </div>
+
       <div class="row">
         <div class="col">
           <div class="card shadow-sm" v-for="item in daysOfTheWeek" :key=item.date>
@@ -64,10 +66,7 @@
       </div>
       <div class="row">
         <div class="col">
-          <div class="btn-group" role="group" aria-label="Change page">
-            <button type="button" class="btn btn-secondary">Previous</button>
-            <button type="button" class="btn btn-secondary">Next</button>
-          </div>
+          <button type="button" class="btn btn-secondary">Load more</button>
         </div>
       </div>
     </div>
@@ -82,24 +81,21 @@ import customFooter from '@/components/footer.vue'
 import listDropdown from '@/components/listDropdown.vue'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import shared from './../shared'
+import practiceSentenceCard from '../components/practiceSentenceCard.vue'
 
 export default {
   name: 'user-sentences',
   components: {
     'small-header': smallHeader,
     'custom-footer': customFooter,
-    'list-dropdown': listDropdown
+    'list-dropdown': listDropdown,
+    'practice-sentence-card': practiceSentenceCard
   },
   data () {
     return {
       userData: {},
       userLists: ['HSK 1'],
       loadingPage: true,
-      displayWeek: 0, // -1, -2
-      // datesThisWeek: [{'day': 'Sunday', 'date': '20211010'}],
-      datesThisWeek: [],
-      daysOfTheWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      todaysDate: null,
       recentWordList: null,
       sentenceUpdated: false,
       updatingSentence: false,
@@ -108,16 +104,34 @@ export default {
         {
           'sentence_id': '123',
           'sentence': '我喜欢学习汉语。',
-          'date_created': '2021-11-04T23:06:48.467526',
           'list_id': '123',
-          'character_set': 'simplified'
+          'date_created': '2024-04-27',
+          'character_set': 'simplified',
+          'word': {
+            'Audio file key': '',
+            'Definition': 'term; semester; CL:個|个[ge4]',
+            'Difficulty level': 'Advanced',
+            'HSK Level': '5',
+            'Pinyin': 'xué qī',
+            'Simplified': '学期',
+            'Traditional': '學期'
+          }
         },
         {
           'sentence_id': '234',
           'sentence': '我喜欢写句子。',
-          'date_created': '2021-11-02T23:06:48.467526',
           'list_id': '234',
-          'character_set': 'simplified'
+          'date_created': '2024-04-27',
+          'character_set': 'simplified',
+          'word': {
+            'Audio file key': '',
+            'Definition': 'term; semester; CL:個|个[ge4]',
+            'Difficulty level': 'Advanced',
+            'HSK Level': '5',
+            'Pinyin': 'xué qī',
+            'Simplified': '学期',
+            'Traditional': '學期'
+          }
         }
       ]
     }
@@ -135,21 +149,12 @@ export default {
     //   console.log('Error retrieving user data')
     // }
     // console.log('all lists', this.allAvailableLists)
+    // await this.getRecentWords()
     await this.getSentences()
-    this.generateThisWeek()
     this.loadingPage = false
   },
   methods: {
-    generateThisWeek () {
-      let today = new Date()
-      // this.todaysDate = today.toString()
-      // console.log(this.todaysDate)
-      let todaysDay = this.daysOfTheWeek[ today.getDay() ]
-      console.log(todaysDay)
-      // set todays date and day
-      // set this weeks date and day
-    },
-    getRecentWords () {
+    async getRecentWords () {
       let params = {
         'list': '',
         'date_range': ''
@@ -176,8 +181,9 @@ export default {
           } else if (!session.isValid()) {
             console.log('Invalid session.')
           } else {
+            console.log('token: ', session.getIdToken().getJwtToken())
             return axios
-              .get(process.env.VUE_APP_API_URL + 'sentence',
+              .get(process.env.VUE_APP_API_URL + 'sentences',
                 {
                   headers: {
                     'Authorization': session.getIdToken().getJwtToken()
@@ -187,6 +193,9 @@ export default {
               .then((response) => {
                 console.log(response)
                 this.userSentences = response.data.sentences
+                // for (let i = 0; i < 4; i++) {
+                // Loop through sentence array - if date and list ID match item in recentWordList, add sentence to that item
+                // }
               })
           }
         })
@@ -199,8 +208,18 @@ export default {
       let mockRequestBody = {
         'list_id': '5678',
         'character_set': 'simplified',
-        'sentence': '我喜欢法语。',
-        'sentence_id': ''
+        'sentence': '中文很好听。',
+        'sentence_id': '',
+        'word': {
+          'Audio file key': 'https://s3.us-east-1.amazonaws.com/vocab-audio-staging/audio/.ab745f79-9728-4326-9dc1-332a181796f8.mp3',
+          'Definition': 'term; semester; CL:個|个[ge4]',
+          'Difficulty level': 'Advanced',
+          'HSK Level': '5',
+          'Pinyin': 'xué qī',
+          'Simplified': '学期',
+          'Traditional': '學期',
+          'Word id': '1ec4a4cc-42d2-65fa-b218-acde48001122'
+        }
       }
       console.log(mockRequestBody)
       let userPoolData = {
@@ -219,7 +238,7 @@ export default {
           } else {
             // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
-              .post(process.env.VUE_APP_API_URL + 'sentence',
+              .post(process.env.VUE_APP_API_URL + 'sentences',
                 mockRequestBody,
                 {
                   headers: {
