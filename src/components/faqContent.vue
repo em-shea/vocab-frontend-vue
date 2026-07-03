@@ -11,7 +11,7 @@
         What am I subscribing to?
         </h5>
         <p>
-        Select your Chinese level and subscribe to receive daily emails with vocabulary words at this level, along with links to <router-link :to="{ name: 'quiz'}">practice quizzes</router-link> and example sentences.
+        Select your Chinese level and subscribe to receive daily emails with vocabulary words, along with links to <router-link :to="{ name: 'quiz'}">practice quizzes</router-link> and example sentences.
         </p>
         <p>
         Daily emails look like this:
