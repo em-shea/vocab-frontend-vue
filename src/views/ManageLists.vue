@@ -198,10 +198,10 @@ export default {
     setUserSubscriptions () {
       this.updatingUserSubs = true
       this.userSubsUpdated = false
+      // Identity is taken from the Cognito token by the API, not from the body -
+      // sending cognito_id here would be ignored, so it is omitted rather than
+      // implying the client gets to choose who it is acting as.
       let requestBody = {
-        'cognito_id': this.userData['user_id'],
-        'email': this.userData['email_address'],
-        'character_set_preference': this.userData['character_set_preference'],
         'subscriptions': this.userData['subscriptions']
       }
       let userPoolData = {
@@ -220,7 +220,7 @@ export default {
           } else {
             // console.log('IdToken: ' + session.getIdToken().getJwtToken())
             return axios
-              .post(process.env.VUE_APP_API_URL + 'set_subs',
+              .post(process.env.VUE_APP_API_URL + 'subscriptions',
                 requestBody,
                 {
                   headers: {
