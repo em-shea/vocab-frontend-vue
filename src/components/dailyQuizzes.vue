@@ -31,48 +31,13 @@
 export default {
   name: 'dailyQuizzes',
   props: {
-    userQuizzes: Object
+    todaysQuizStatus: Boolean
   },
   data () {
-    return {
-      // todaysQuizStatus: false
-      // quizWeekData: []
-    }
-  },
-  computed: {
-    todaysQuizStatus () {
-      // console.log('quiz: ', this.userQuizzes)
-      // If no past quizzes
-      if (this.userQuizzes.data.length == 0) {
-        return false
-      } else {
-        let lastQuizDate = new Date(this.userQuizzes.data[this.userQuizzes.data.length-1].date_created)
-        let todaysDate = new Date()
-        // console.log(lastQuizDate.toISOString().split('T')[0])
-        // console.log(todaysDate.toISOString().split('T')[0])
-        if (lastQuizDate.toISOString().split('T')[0] == todaysDate.toISOString().split('T')[0]) {
-          return true
-        } else {
-          return false
-        }
-      }
-    }
+    return {}
   },
   mounted () {},
-  methods: {
-    calculateQuizProgress() {
-      // TODO - Show quiz progress for a given week
-      // Find Sunday, the first day of the week
-      let todaysDate = new Date()
-      let firstDateOfWeek = todaysDate.getDate() - todaysDate.getDay() + 1
-      let firstDayOfWeek = new Date(todaysDate.setDate(firstDateOfWeek)).toISOString()
-      // console.log(firstDateOfWeek)
-      // console.log(firstDayOfWeek)
-      // Set days of week in this.quizWeekData
-      // Update this.quizWeekData with user's quiz results from this.userQuizzes
-      console.log(this.quizWeekData)
-    }
-  }
+  methods: {}
 }
 </script>
 

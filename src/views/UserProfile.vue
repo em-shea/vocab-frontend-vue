@@ -75,7 +75,7 @@
           </div>
         </div>
       </div>
-      <daily-quizzes :userQuizzes="userQuizzes"></daily-quizzes>
+      <daily-quizzes :todaysQuizStatus="todaysQuizStatus"></daily-quizzes>
       <div class="row todays-word-row">
         <div class="col-12">
           <div class="profile-header">
@@ -84,7 +84,7 @@
             <p v-else class="profile-header-text">Today's words</p>
           </div>
         </div>
-        <div class="col" v-if="recentWordsList.length === 0">
+        <div class="col" v-if="this.userLists.length === 0">
           <div class="card shadow-sm text-center">
             <div class="card-body no-subs-card">
               <h6 class="card-text">You are not subscribed to any lists.</h6>
@@ -150,16 +150,22 @@
         <div class="col">
           <div class="profile-header">
             <span class="oi oi-star header-icon"></span>
-            <p class="profile-header-text">Coming soon</p>
+            <p class="profile-header-text">{{ sentencesEnabled ? 'Practice sentences' : 'Coming soon' }}</p>
           </div>
         </div>
       </div>
-      <div class="row justify-content-center pb-4">
+      <!-- Held behind SENTENCES_ENABLED until the feature is ready to announce.
+           Until then this shows the placeholder card it replaced. -->
+      <div class="row" v-if="sentencesEnabled">
+        <div class="col-12" v-for="review_word in this.userData['activity'][this.todaysDate]['review_words']" :key="review_word['word_id']">
+          <practice-sentence-card :review_word="review_word"></practice-sentence-card>
+        </div>
+      </div>
+      <div class="row justify-content-center pb-4" v-else>
         <div class="col-12">
           <div class="card shadow-sm">
             <div class="card-body coming-soon-card text-center">
               Practice sentences
-              <!-- <span class="oi oi-chevron-right float-right"></span> -->
             </div>
           </div>
         </div>
@@ -199,13 +205,16 @@ import customFooter from '@/components/footer.vue'
 import dailyQuizzes from '@/components/dailyQuizzes.vue'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import shared from './../shared'
+import practiceSentenceCard from '../components/practiceSentenceCard.vue'
+import { SENTENCES_ENABLED } from './../featureFlags'
 
 export default {
   name: 'user-profile',
   components: {
     'small-header': smallHeader,
     'custom-footer': customFooter,
-    'daily-quizzes': dailyQuizzes
+    'daily-quizzes': dailyQuizzes,
+    'practice-sentence-card': practiceSentenceCard
   },
   data () {
     return {
@@ -216,8 +225,8 @@ export default {
       userData: {},
       userLists: [],
       recentWordsListUnfiltered: [],
-      userQuizzes: [],
-      footerWidth: 'narrow'
+      footerWidth: 'narrow',
+      sentencesEnabled: SENTENCES_ENABLED
     }
   },
   created () {
@@ -231,11 +240,25 @@ export default {
         return false
       }
     },
+    todaysDate () {
+      var d = new Date()
+      let year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+      let month = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d)
+      let day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+      return `${year}-${month}-${day}`
+    },
     userCreatedDate () {
       var d = new Date(this.userData['date_created'])
       let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
       let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
       return `${mo}, ${ye}`
+    },
+    todaysQuizStatus () {
+      // If there's a quiz result for today, set to true
+      if (this.userData['activity'][this.todaysDate]['quiz']) {
+        return true
+      }
+      return false
     },
     recentWordsList () {
       // Recent word list filtered for the user's subscriptions
@@ -250,6 +273,7 @@ export default {
           userListsUniqueIds.push(this.userLists[i]['list_id'].concat('traditional'))
         }
       }
+      // console.log('recent words: ', this.recentWordsListUnfiltered.filter(elem => userListsUniqueIds.includes(elem['UniqueListId'])))
       // Filter to just show words for the lists the user is subscribed to
       return this.recentWordsListUnfiltered.filter(elem => userListsUniqueIds.includes(elem['UniqueListId']))
     }
@@ -259,11 +283,10 @@ export default {
     let promises = [
       this.getSignedInUser(),
       this.getUserData(),
-      this.getRecentWords(),
-      this.getUserQuizzes()
+      this.getRecentWords()
     ]
     const results = await Promise.allSettled(promises)
-    if (results[0].status == "rejected") {
+    if (results[0].status == 'rejected') {
       this.user = null
       this.$router.push('/signin')
     } else {
@@ -292,14 +315,14 @@ export default {
             } else {
               // console.log('IdToken: ' + session.getIdToken().getJwtToken())
               return axios
-                .get(process.env.VUE_APP_API_URL + 'user', {
+                .get(process.env.VUE_APP_API_URL + 'user_activity', {
                   headers: {
                     'Authorization': session.getIdToken().getJwtToken()
                   }
                 }
                 )
                 .then((response) => {
-                  // console.log('user api response', response.data)
+                  console.log('get user data response', response.data)
                   this.userData = response.data
                   this.userLists = response.data['subscriptions']
                   resolve(this.userData, this.userLists)
@@ -338,45 +361,6 @@ export default {
         } catch (error) {
           console.error(error)
           reject(error)
-        }
-      })
-    },
-    async getUserQuizzes () {
-      let userPoolData = {
-        UserPoolId: process.env.VUE_APP_USER_POOL_ID,
-        ClientId: process.env.VUE_APP_USER_POOL_WEB_CLIENT_ID,
-        Storage: localStorage
-      }
-      let userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
-      let cognitoUser = userPool.getCurrentUser()
-      return new Promise((resolve, reject) => {
-        if (cognitoUser != null) {
-          cognitoUser.getSession((err, session) => {
-            if (err) {
-              console.log(err)
-              reject(err)
-            } else if (!session.isValid()) {
-              console.log('Invalid session.')
-              reject(Error('Invalid session.'))
-            } else {
-              // console.log('IdToken: ' + session.getIdToken().getJwtToken())
-              return axios
-                .get(process.env.VUE_APP_API_URL + 'quizzes', {
-                  headers: {
-                    'Authorization': session.getIdToken().getJwtToken()
-                  }
-                }
-                )
-                .then((response) => {
-                  // console.log('quiz api response', response.data)
-                  this.userQuizzes = response.data
-                  resolve(this.userQuizzes)
-                })
-            }
-          })
-        } else {
-          // console.log('User not found.')
-          reject(Error('User not found.'))
         }
       })
     },

@@ -15,6 +15,8 @@ import SignUpConfirmation from './views/SignUpConfirmation.vue'
 import SignIn from './views/SignIn.vue'
 import SignInAnswerChallenge from './views/SignInAnswerChallenge.vue'
 
+import { SENTENCES_ENABLED } from './featureFlags'
+
 Vue.use(Router)
 
 export default new Router({
@@ -50,10 +52,12 @@ export default new Router({
       name: 'user-profile',
       component: UserProfile
     },
+    // Nothing links here, but the route would still resolve if typed directly.
+    // Redirect to the profile while the feature is hidden.
     {
       path: '/sentences',
       name: 'user-sentences',
-      component: UserSentences
+      ...(SENTENCES_ENABLED ? { component: UserSentences } : { redirect: '/profile' })
     },
     {
       path: '/my-quizzes',
