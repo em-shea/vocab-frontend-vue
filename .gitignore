@@ -22,3 +22,9 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# v2 (Vue 3 + Vite rewrite) build artefacts
+v2/node_modules
+v2/dist
+v2/.screenshots
+v2/.font-build

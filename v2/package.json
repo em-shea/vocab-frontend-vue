@@ -1,0 +1,26 @@
+{
+  "name": "haohaotiantian-v2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Vue 3 + Vite rewrite of the Haohaotiantian frontend (水浒传 redesign). Built alongside the Vue 2 app in this repo until cutover.",
+  "scripts": {
+    "dev": "vite",
+    "build:staging": "vite build --mode staging",
+    "build:prod": "vite build --mode production",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.vue"
+  },
+  "dependencies": {
+    "amazon-cognito-identity-js": "^6.3.12",
+    "axios": "^1.7.9",
+    "pinia": "^2.3.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "playwright": "^1.61.1",
+    "vite": "^6.0.7"
+  }
+}

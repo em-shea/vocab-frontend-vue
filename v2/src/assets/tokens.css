@@ -1,0 +1,97 @@
+/* Design tokens for the 水浒传 redesign.
+ *
+ * Every colour, type and spacing decision in the app comes from here. Components
+ * reference tokens, never raw hex, so the palette can be adjusted against the
+ * design mockup in one place once it lands in v2/design/.
+ *
+ * Palette values are from the redesign brief. The dark band is a deliberate
+ * inversion used for the oath section and hero cards - it is not a theme.
+ */
+
+:root {
+  /* --- Ground and surfaces --- */
+  --c-ground: #EDE4D0;        /* aged paper, page background */
+  --c-panel: #F6EFDC;         /* lifted panel on the ground */
+  --c-rule: #C9BB9C;          /* hairlines, borders, dividers */
+
+  /* --- Ink --- */
+  --c-ink: #2A2318;           /* headings, primary text, borders */
+  --c-body: #5C5342;          /* running text */
+  --c-muted: #8A7F68;         /* captions, metadata, disabled */
+
+  /* --- Accents --- */
+  --c-seal: #B03A2B;          /* seal red: marks, emphasis, the brush stroke */
+  --c-button: #8DB6C6;        /* button blue */
+  --c-pinyin: #2C4A6B;        /* pinyin, deep blue */
+  --c-gold: #E0A93B;          /* gold - dark band only, never on the ground */
+
+  /* --- Dark band --- */
+  --c-band: #2A2318;          /* the band's ground is the ink colour */
+  --c-band-text: #EDE4D0;
+  --c-band-muted: #8A7F68;
+
+  /* --- Type stack ---
+   * Archivo carries display weight, Instrument Sans the interface, Noto Serif SC
+   * the Chinese, Ma Shan Zheng the brush headings, DM Mono the data, Outfit the
+   * pinyin and labels. */
+  --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-ui: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --f-hanzi: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  --f-brush: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
+  --f-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --f-label: 'Outfit', 'Instrument Sans', sans-serif;
+
+  /* --- Type scale (1.25 major third, 16px base) --- */
+  --t-xs: 0.75rem;
+  --t-sm: 0.875rem;
+  --t-base: 1rem;
+  --t-md: 1.25rem;
+  --t-lg: 1.563rem;
+  --t-xl: 1.953rem;
+  --t-2xl: 2.441rem;
+  --t-3xl: 3.052rem;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-body: 1.6;
+
+  /* --- Spacing (4px base) --- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+  --s-24: 6rem;
+
+  /* --- Structure --- */
+  --measure: 65ch;            /* running text width */
+  --page-max: 1120px;         /* the wide breakpoint the plan verifies against */
+  --border-w: 2px;            /* Button and Panel border weight */
+  --shadow-hard: 3px 3px 0 var(--c-ink);  /* hard offset, never blurred */
+  --frame-w: 4px;             /* PrintFrame */
+}
+
+/* Zero radius everywhere - a woodblock print has no rounded corners. Set once
+ * here rather than reset per component. */
+*,
+*::before,
+*::after {
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+/* The design commits to a single aged-paper world, so it does not invert for a
+ * dark OS preference. Honour reduced motion regardless. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

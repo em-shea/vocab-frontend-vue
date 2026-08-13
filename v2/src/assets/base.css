@@ -1,0 +1,84 @@
+/* Base element styling. Tokens only - no raw values below this line. */
+
+@import './fonts.css';
+@import './tokens.css';
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--c-ground);
+  color: var(--c-body);
+  font-family: var(--f-ui);
+  font-size: var(--t-base);
+  line-height: var(--lh-body);
+  /* Paper fibre. Two offset radial speckles over the ground read as fibre at
+   * normal viewing distance without an image request. */
+  background-image:
+    radial-gradient(circle at 17% 32%, rgba(42, 35, 24, 0.035) 0.6px, transparent 0.7px),
+    radial-gradient(circle at 63% 71%, rgba(42, 35, 24, 0.028) 0.5px, transparent 0.6px);
+  background-size: 37px 41px, 53px 47px;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  color: var(--c-ink);
+  font-family: var(--f-display);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--t-3xl); font-weight: 900; }
+h2 { font-size: var(--t-2xl); }
+h3 { font-size: var(--t-xl); }
+h4 { font-size: var(--t-lg); }
+
+p {
+  margin: 0;
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--c-seal);
+  text-underline-offset: 0.2em;
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: var(--border-w) solid var(--c-seal);
+  outline-offset: 2px;
+}
+
+/* Chinese runs in the serif face; pinyin in Outfit, in the deep blue. */
+.hanzi {
+  font-family: var(--f-hanzi);
+  color: var(--c-ink);
+}
+
+.pinyin {
+  font-family: var(--f-label);
+  color: var(--c-pinyin);
+  font-size: var(--t-sm);
+  letter-spacing: 0.02em;
+}
+
+.brush {
+  font-family: var(--f-brush);
+  color: var(--c-ink);
+  font-weight: 400;
+}
+
+.mono {
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Wide content scrolls inside its own container so the page never scrolls
+ * sideways. */
+.scroll-x {
+  overflow-x: auto;
+}
