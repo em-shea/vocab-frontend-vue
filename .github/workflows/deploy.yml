@@ -30,6 +30,52 @@ jobs:
             npm run build:prod
           fi
 
+      # Guards against the built bundle pointing at the wrong environment. The
+      # Cognito pool and API URL come from committed .env files, and .env.production
+      # on the staging branch held the STAGING pool for years - a merge to master
+      # would have shipped a prod build that authenticated against the staging user
+      # pool, locking every real user out of sign-in. Values are checked against
+      # literals here rather than against the .env files, so a wrong .env is caught
+      # instead of validating itself. These are public client identifiers.
+      - name: Verify the build targets the right environment
+        run: |
+          set -euo pipefail
+          PROD_POOL=us-east-1_yRxMUcgpm
+          STAGING_POOL=us-east-1_5Ivj5CJ6z
+
+          if [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            WANT_POOL=$PROD_POOL; WRONG_POOL=$STAGING_POOL
+            WANT_API=https://api.haohaotiantian.com/
+            WRONG_API=https://api.staging.haohaotiantian.com/
+          else
+            WANT_POOL=$STAGING_POOL; WRONG_POOL=$PROD_POOL
+            WANT_API=https://api.staging.haohaotiantian.com/
+            WRONG_API=https://api.haohaotiantian.com/
+          fi
+
+          # --include='*.js' restricts this to executable bundles. Source maps embed
+          # pre-build sources and legitimately mention both environments, so scanning
+          # them produces false positives.
+          scan() { grep -rqF --include='*.js' "$1" dist/js/; }
+
+          if ! scan "$WANT_POOL"; then
+            echo "::error::bundle is missing the expected Cognito pool $WANT_POOL"
+            exit 1
+          fi
+          if scan "$WRONG_POOL"; then
+            echo "::error::bundle contains the WRONG Cognito pool $WRONG_POOL"
+            exit 1
+          fi
+          if ! scan "$WANT_API"; then
+            echo "::error::bundle is missing the expected API URL $WANT_API"
+            exit 1
+          fi
+          if scan "$WRONG_API"; then
+            echo "::error::bundle contains the WRONG API URL $WRONG_API"
+            exit 1
+          fi
+          echo "bundle verified: pool $WANT_POOL, api $WANT_API"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
