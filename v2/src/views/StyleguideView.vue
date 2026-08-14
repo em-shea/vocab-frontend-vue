@@ -5,12 +5,22 @@ import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
 import PrintFrame from '../components/PrintFrame.vue'
 import ScrollRods from '../components/ScrollRods.vue'
+import { useI18n } from 'vue-i18n'
+import ImmersionToggle from '../components/ImmersionToggle.vue'
 import { usePreferencesStore } from '../stores/preferences'
 
 // The phase's verification surface: every token and primitive on one page, so
 // regressions are visible rather than discovered later in a real screen.
 
 const prefs = usePreferencesStore()
+const { t } = useI18n()
+
+// Real interface strings from the design file, shown so the switch can be seen
+// to work rather than taken on trust.
+const copyKeys = [
+  'navHome', 'navQuiz', 'navReview', 'chooseLevel', 'email', 'subscribe',
+  'dailyHeadline', 'collectHeadline', 'heroesGathered', 'dayStreak'
+]
 
 const surfaces = [
   ['--c-raised', 'raised', 'lightest card'],
@@ -71,13 +81,13 @@ const scale = [
   ['--t-2xs', '2xs', '10px']
 ]
 
-// A real word from the HSK data rather than placeholder text, so the CJK subset
-// is genuinely exercised.
+// A real HSK word whose forms differ between character sets, so the switch below
+// visibly changes the content — 前面 is identical in both and demonstrated nothing.
 const word = {
-  simplified: '前面',
-  traditional: '前面',
-  pinyin: 'qián miàn',
-  definition: 'in front; ahead; above'
+  simplified: '爱护',
+  traditional: '愛護',
+  pinyin: 'ài hù',
+  definition: 'to cherish; to treasure; to take care of'
 }
 const pressed = ref(0)
 </script>
@@ -226,6 +236,25 @@ const pressed = ref(0)
       </section>
 
       <section class="stack">
+        <SectionHead label="Language" :title="t('navHome') ? 'Interface language' : ''" hanzi="语" />
+        <p class="note">
+          Interface language is a separate axis from the character set above: this
+          switches the chrome, that switches how vocabulary renders. Copy comes
+          from the design file, so both columns are the real strings.
+        </p>
+        <div class="lang">
+          <ImmersionToggle />
+          <p class="lang__state mono">locale: {{ prefs.language }} · characterSet: {{ prefs.characterSet }}</p>
+        </div>
+        <div class="copy">
+          <div v-for="key in copyKeys" :key="key" class="copy__row">
+            <code class="copy__key mono">{{ key }}</code>
+            <span class="copy__val" :class="{ 'hanzi-ui': prefs.language === 'cn' }">{{ t(key) }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="stack">
         <SectionHead label="Band" title="Dark treatment" />
         <AppPanel band>
           <h3>上山聚义，共一百零八人。</h3>
@@ -337,6 +366,21 @@ const pressed = ref(0)
   font-size: var(--t-base);
   max-width: var(--measure);
 }
+
+.lang { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
+.lang__state { font-size: var(--t-sm); color: var(--c-muted); }
+
+.copy { display: flex; flex-direction: column; }
+.copy__row {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: var(--s-4);
+  padding: var(--s-3) 0;
+  border-bottom: var(--bw-hair) solid var(--c-rule);
+  align-items: baseline;
+}
+.copy__key { font-size: var(--t-sm); color: var(--c-muted); }
+.copy__val { color: var(--c-ink); min-width: 0; overflow-wrap: anywhere; }
 
 .radii { display: flex; flex-wrap: wrap; gap: var(--s-4); }
 .radius { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
