@@ -14,6 +14,14 @@ import AudioButton from '../components/AudioButton.vue'
 
 import { useVocabListsStore } from '../stores/vocabLists'
 
+// Placeholder artwork: Kuniyoshi's One Hundred and Eight Heroes of the Popular
+// Water Margin, public domain, standing in until licensed or original prints
+// exist. See src/assets/prints/README.md.
+import printQuest from '../assets/prints/hero-quest.jpg'
+import printStory from '../assets/prints/hero-story.jpg'
+import printCollect from '../assets/prints/hero-collect.jpg'
+import printBoard from '../assets/prints/heroes-board.jpg'
+
 // The 5a home page: seven sections, prints and text alternating sides.
 
 const { t } = useI18n()
@@ -56,7 +64,12 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
             <p class="quest__note">{{ t('questNote') }}</p>
           </div>
         </div>
-        <PrintFrame ratio="4 / 5" class="quest__print" />
+        <PrintFrame
+          ratio="4 / 5"
+          class="quest__print"
+          :src="printQuest"
+          alt="Woodblock print of a Liangshan outlaw seated with a long staff"
+        />
       </section>
 
       <!-- 2. Subscribe band -->
@@ -75,7 +88,12 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
           <p>{{ t('storyBody') }}</p>
           <p>{{ t('storyBody2') }}</p>
         </div>
-        <PrintFrame ratio="3 / 4" class="split__print" />
+        <PrintFrame
+          ratio="3 / 4"
+          class="split__print"
+          :src="printStory"
+          alt="Woodblock print of an outlaw of the Water Margin in armour"
+        />
       </section>
 
       <!-- 4. Daily word -->
@@ -150,7 +168,12 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 
       <!-- 6. Heroes -->
       <section class="split split--reverse">
-        <PrintFrame ratio="1 / 1" class="split__print" />
+        <PrintFrame
+          ratio="1 / 1"
+          class="split__print"
+          :src="printCollect"
+          alt="Woodblock print of a tattooed hero wrestling an opponent"
+        />
         <div class="split__text">
           <SectionHead :label="t('markHeroes')" :title="t('collectHeadline')" hanzi="一百零八" />
           <p>{{ t('collectBody') }}</p>
@@ -170,9 +193,10 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
             {{ t('closeHeadlineA') }}<br />{{ t('closeHeadlineB') }}
           </h2>
           <p class="oath__body">{{ t('closeBody') }}</p>
-          <div class="oath__board" aria-hidden="true">
-            <span class="oath__board-note label">{{ t('boardNote') }}</span>
-          </div>
+          <figure class="oath__board">
+            <img :src="printBoard" alt="Two outlaws of the Water Margin, woodblock print" />
+            <figcaption class="oath__board-note label">{{ t('boardNote') }}</figcaption>
+          </figure>
           <SubscribeForm variant="band" />
         </AppPanel>
       </section>
@@ -270,11 +294,23 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 .oath__headline { font-size: var(--t-2xl); color: var(--c-on-dark); }
 .oath__body { color: var(--c-on-dark); opacity: 0.85; }
 .oath__board {
-  display: grid;
-  place-items: center;
-  min-height: 120px;
-  border: var(--bw-rule) dashed var(--c-rule-gold);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  border: var(--bw-rule) solid var(--c-rule-gold);
   border-radius: var(--r-md);
+  padding: var(--s-3);
+  overflow: hidden;
+}
+.oath__board img {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  object-position: center 22%;
+  border-radius: var(--r-xs);
+  filter: sepia(0.2) saturate(0.9);
 }
 .oath__board-note { color: var(--c-gold); }
 

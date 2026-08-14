@@ -36,9 +36,10 @@ defineProps({
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Prints are single-colour; desaturating keeps stand-in artwork consistent
-   * with the palette until real artwork lands. */
-  filter: grayscale(1) contrast(1.08);
+  /* A slight warm shift settles the print onto the paper ground without
+   * draining it — these are colour woodblocks, and desaturating them fully
+   * throws away the thing worth showing. */
+  filter: sepia(0.18) saturate(0.92) contrast(1.02);
 }
 
 .print__placeholder {

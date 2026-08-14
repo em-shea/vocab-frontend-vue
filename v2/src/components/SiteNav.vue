@@ -1,14 +1,12 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
-import ImmersionToggle from './ImmersionToggle.vue'
-import { usePreferencesStore } from '../stores/preferences'
+import LanguageMenu from './LanguageMenu.vue'
 import { useAuthStore } from '../stores/auth'
 
 // Home, Quiz, Review, Sign in — replacing the old navBar. Quiz and Review are
 // not ported yet, so they point at the current site rather than at dead routes.
 
 const { t } = useI18n()
-const prefs = usePreferencesStore()
 const auth = useAuthStore()
 </script>
 
@@ -32,22 +30,9 @@ const auth = useAuthStore()
     </nav>
 
     <div class="nav__prefs">
-      <div class="charset" role="group" aria-label="Character set">
-        <button
-          type="button"
-          class="charset__btn"
-          :class="{ 'charset__btn--on': !prefs.isTraditional }"
-          @click="prefs.setCharacterSet('simplified')"
-        >{{ t('simplified') }}</button>
-        <button
-          type="button"
-          class="charset__btn"
-          :class="{ 'charset__btn--on': prefs.isTraditional }"
-          @click="prefs.setCharacterSet('traditional')"
-        >{{ t('traditional') }}</button>
-      </div>
-      <ImmersionToggle />
+      <LanguageMenu />
     </div>
+
   </header>
 </template>
 
@@ -109,26 +94,7 @@ const auth = useAuthStore()
   color: var(--c-ink);
 }
 
-.nav__prefs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
-
-.charset {
-  display: inline-flex;
-  border: var(--bw-hair) solid var(--c-rule);
-  border-radius: var(--r-pill);
-  overflow: hidden;
-}
-
-.charset__btn {
-  padding: var(--s-2) var(--s-3);
-  border: 0;
-  background: transparent;
-  font-family: var(--f-label);
-  font-size: var(--t-sm);
-  color: var(--c-muted);
-  cursor: pointer;
-}
-
-.charset__btn--on { background-color: var(--c-ink); color: var(--c-on-dark); }
+.nav__prefs { display: flex; align-items: center; }
 
 @media (max-width: 719px) {
   .nav__brand { margin-right: 0; width: 100%; }

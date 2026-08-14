@@ -6,7 +6,7 @@ import AppButton from '../components/AppButton.vue'
 import PrintFrame from '../components/PrintFrame.vue'
 import ScrollRods from '../components/ScrollRods.vue'
 import { useI18n } from 'vue-i18n'
-import ImmersionToggle from '../components/ImmersionToggle.vue'
+import LanguageMenu from '../components/LanguageMenu.vue'
 import AudioButton from '../components/AudioButton.vue'
 import { usePreferencesStore } from '../stores/preferences'
 
@@ -270,7 +270,7 @@ const pressed = ref(0)
           from the design file, so both columns are the real strings.
         </p>
         <div class="lang">
-          <ImmersionToggle />
+          <LanguageMenu />
           <p class="lang__state mono">locale: {{ prefs.language }} · characterSet: {{ prefs.characterSet }}</p>
         </div>
         <div class="copy">
