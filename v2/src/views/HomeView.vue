@@ -298,8 +298,9 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
-  border: var(--bw-rule) solid var(--c-rule-gold);
-  border-radius: var(--r-md);
+  /* Same square ink frame as the prints, lightened for the dark band. */
+  border: var(--bw-frame) solid var(--c-on-dark);
+  border-radius: 0;
   padding: var(--s-3);
   overflow: hidden;
 }
@@ -309,7 +310,6 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
   max-height: 260px;
   object-fit: cover;
   object-position: center 22%;
-  border-radius: var(--r-xs);
   filter: sepia(0.2) saturate(0.9);
 }
 .oath__board-note { color: var(--c-gold); }

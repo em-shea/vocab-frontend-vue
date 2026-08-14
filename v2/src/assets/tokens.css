@@ -134,6 +134,9 @@
   --bw-hair: 1px;
   --bw-rule: 1.5px;
   --bw-heavy: 2px;
+  /* Prints are framed heavier than anything else, and squarely: the radius scale
+   * above applies to cards and controls, not to artwork. */
+  --bw-frame: 4px;
 
   /* ---------------------------------------------------------------------
    * Shadows. Both a printed hard offset and real soft lifts — the brief only

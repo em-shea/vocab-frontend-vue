@@ -25,8 +25,11 @@ defineProps({
 .print {
   position: relative;
   margin: 0;
-  border: var(--bw-heavy) solid var(--c-ink);
-  border-radius: var(--r-md);
+  /* Heavy, square ink frame — the design frames every print this way (4px solid
+   * ink, no radius). Rounding it makes the artwork read as a UI card rather than
+   * something printed. */
+  border: var(--bw-frame) solid var(--c-ink);
+  border-radius: 0;
   background-color: var(--c-panel);
   overflow: hidden;
 }
