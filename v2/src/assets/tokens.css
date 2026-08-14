@@ -61,14 +61,19 @@
    * Type. The design uses a hand-tuned px scale rather than a modular one,
    * with a 15px base — not the 16px/1.25 scale the brief implied.
    * ------------------------------------------------------------------- */
-  --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --f-ui: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
-  --f-serif: 'Instrument Serif', Georgia, serif;   /* editorial display serif */
+  /* Every stack names a CJK face before its generic fallback. The Latin faces
+   * carry no Chinese glyphs, so a stack without one silently hands mixed text
+   * like the 繁體 button to whatever the operating system provides — which looks
+   * plausible and is not the design's typeface, and means the subset chunk for
+   * those characters is never requested. */
+  --f-display: 'Archivo', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
+  --f-ui: 'Instrument Sans', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
+  --f-serif: 'Instrument Serif', 'Noto Serif SC', Georgia, serif; /* editorial display serif */
   --f-hanzi: 'Noto Serif SC', 'Songti SC', serif;  /* study content */
   --f-hanzi-ui: 'Noto Sans SC', 'PingFang SC', sans-serif; /* Chinese interface text */
   --f-brush: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
-  --f-mono: 'DM Mono', ui-monospace, Menlo, monospace;
-  --f-label: 'Outfit', 'Instrument Sans', sans-serif;
+  --f-mono: 'DM Mono', 'Noto Sans SC', ui-monospace, Menlo, monospace;
+  --f-label: 'Outfit', 'Noto Sans SC', 'Instrument Sans', sans-serif;
 
   /* rem against the 16px root, so user font-size preferences still scale these.
    * Comments give the design's px value. */
