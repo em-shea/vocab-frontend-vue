@@ -28,3 +28,7 @@ v2/node_modules
 v2/dist
 v2/.screenshots
 v2/.font-build
+
+# Local design reference images (keep the folder and its README)
+v2/design/samples/*
+!v2/design/samples/README.md
