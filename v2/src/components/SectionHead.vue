@@ -49,9 +49,9 @@ defineProps({
 .section-head__label {
   flex: 0 0 auto;
   font-family: var(--f-label);
-  font-size: var(--t-xs);
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--c-muted);
 }
@@ -71,6 +71,6 @@ defineProps({
 
 .section-head__hanzi {
   font-size: var(--t-xl);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 </style>

@@ -1,61 +1,150 @@
 /* Design tokens for the 水浒传 redesign.
  *
- * Every colour, type and spacing decision in the app comes from here. Components
- * reference tokens, never raw hex, so the palette can be adjusted against the
- * design mockup in one place once it lands in v2/design/.
+ * Reconciled against v2/design/Haohaotiantian Redesign.dc.html, not the written
+ * brief. Where the two disagreed the design file won, and the three places they
+ * disagreed are called out below — they are the reason this pass existed.
  *
- * Palette values are from the redesign brief. The dark band is a deliberate
- * inversion used for the oath section and hero cards - it is not a theme.
+ * Components reference tokens, never raw hex.
  */
 
 :root {
-  /* --- Ground and surfaces --- */
-  --c-ground: #EDE4D0;        /* aged paper, page background */
-  --c-panel: #F6EFDC;         /* lifted panel on the ground */
-  --c-rule: #C9BB9C;          /* hairlines, borders, dividers */
+  /* ---------------------------------------------------------------------
+   * Surfaces, lightest to darkest
+   * ------------------------------------------------------------------- */
+  --c-raised: #FFFCF3;        /* lightest card, sits above panel */
+  --c-panel: #F6EFDC;         /* standard panel */
+  --c-ground: #EDE4D0;        /* page background */
+  --c-sunk: #E3D8BD;          /* recessed / inactive surface */
 
-  /* --- Ink --- */
-  --c-ink: #2A2318;           /* headings, primary text, borders */
+  /* ---------------------------------------------------------------------
+   * Ink. Four darks, not one: borders sit darker than fills, and the band
+   * ground is darker still than body ink.
+   * ------------------------------------------------------------------- */
+  --c-ink: #2A2318;           /* primary ink: text, borders, most dark fills */
+  --c-ink-deep: #241D12;      /* dark band ground */
+  --c-ink-deeper: #1A1614;    /* deepest fills and highest-contrast text */
+  --c-ink-edge: #17120F;      /* border on dark surfaces */
+
+  /* ---------------------------------------------------------------------
+   * Text
+   * ------------------------------------------------------------------- */
   --c-body: #5C5342;          /* running text */
-  --c-muted: #8A7F68;         /* captions, metadata, disabled */
+  --c-muted: #8A7F68;         /* captions and metadata - the most used text colour */
+  --c-muted-warm: #8A8579;    /* muted on warmer surfaces */
+  --c-on-dark: #F6EFDC;       /* text on the dark band */
+  --c-on-dark-soft: #EFE6D2;
+  --c-on-red: #FFF6E4;        /* text on a solid red fill */
 
-  /* --- Accents --- */
-  --c-seal: #B03A2B;          /* seal red: marks, emphasis, the brush stroke */
-  --c-button: #8DB6C6;        /* button blue */
-  --c-pinyin: #2C4A6B;        /* pinyin, deep blue */
-  --c-gold: #E0A93B;          /* gold - dark band only, never on the ground */
+  /* ---------------------------------------------------------------------
+   * Rules and borders, heaviest to lightest
+   * ------------------------------------------------------------------- */
+  --c-rule: #C9BB9C;          /* standard hairline */
+  --c-rule-light: #E0C89A;    /* lighter hairline, usually 1.5px */
+  --c-rule-faint: #E2DDD4;    /* faintest, on raised cards */
+  --c-rule-gold: #B79A5E;     /* gold-tinted rule in the dark band */
 
-  /* --- Dark band --- */
-  --c-band: #2A2318;          /* the band's ground is the ink colour */
-  --c-band-text: #EDE4D0;
-  --c-band-muted: #8A7F68;
+  /* ---------------------------------------------------------------------
+   * Accents. Four reds, each with a job — collapsing them loses the design's
+   * distinction between a printed seal and an alert.
+   * ------------------------------------------------------------------- */
+  --c-seal: #B03A2B;          /* seal red: brush marks, printed emphasis */
+  --c-red: #C4171C;           /* bright red text, used on light surfaces */
+  --c-red-solid: #D7261E;     /* solid red fill, takes --c-on-red text */
+  --c-vermilion: #F04E23;     /* hottest accent, sparingly */
 
-  /* --- Type stack ---
-   * Archivo carries display weight, Instrument Sans the interface, Noto Serif SC
-   * the Chinese, Ma Shan Zheng the brush headings, DM Mono the data, Outfit the
-   * pinyin and labels. */
+  --c-button: #8DB6C6;        /* button blue, takes ink text */
+  --c-pinyin: #2C4A6B;        /* pronunciation */
+  --c-gold: #E0A93B;          /* gold - legible on dark only */
+  --c-gold-light: #E8B23A;
+
+  /* ---------------------------------------------------------------------
+   * Type. The design uses a hand-tuned px scale rather than a modular one,
+   * with a 15px base — not the 16px/1.25 scale the brief implied.
+   * ------------------------------------------------------------------- */
   --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --f-ui: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
-  --f-hanzi: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  --f-serif: 'Instrument Serif', Georgia, serif;   /* editorial display serif */
+  --f-hanzi: 'Noto Serif SC', 'Songti SC', serif;  /* study content */
+  --f-hanzi-ui: 'Noto Sans SC', 'PingFang SC', sans-serif; /* Chinese interface text */
   --f-brush: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
-  --f-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --f-mono: 'DM Mono', ui-monospace, Menlo, monospace;
   --f-label: 'Outfit', 'Instrument Sans', sans-serif;
 
-  /* --- Type scale (1.25 major third, 16px base) --- */
-  --t-xs: 0.75rem;
-  --t-sm: 0.875rem;
-  --t-base: 1rem;
-  --t-md: 1.25rem;
-  --t-lg: 1.563rem;
-  --t-xl: 1.953rem;
-  --t-2xl: 2.441rem;
-  --t-3xl: 3.052rem;
+  /* rem against the 16px root, so user font-size preferences still scale these.
+   * Comments give the design's px value. */
+  --t-2xs: 0.625rem;    /* 10px   smallest labels */
+  --t-xs: 0.6875rem;    /* 11px */
+  --t-sm: 0.75rem;      /* 12px   labels, captions */
+  --t-sm-plus: 0.78125rem; /* 12.5px */
+  --t-base-sm: 0.8125rem;  /* 13px */
+  --t-base: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;  /* 15px   the most used size in the design */
+  --t-body-lg: 1rem;    /* 16px */
+  --t-lead: 1.0625rem;  /* 17px   second most used */
+  --t-md: 1.375rem;     /* 22px */
+  --t-lg: 1.5rem;       /* 24px */
+  --t-xl: 1.875rem;     /* 30px */
+  --t-2xl: 2.5rem;      /* 40px */
+  --t-3xl: 3.375rem;    /* 54px */
+  --t-4xl: 4rem;        /* 64px */
+  --t-hero: 6rem;       /* 96px   largest display size in the design */
 
-  --lh-tight: 1.15;
-  --lh-snug: 1.35;
+  /* Weights: the design is medium-and-up almost everywhere. 400 appears only
+   * for body copy and mono. */
+  --w-body: 400;
+  --w-medium: 500;
+  --w-semi: 600;
+  --w-bold: 700;
+  --w-heavy: 800;
+  --w-black: 900;
+
+  --lh-tight: 1.08;
+  --lh-snug: 1.3;
   --lh-body: 1.6;
 
-  /* --- Spacing (4px base) --- */
+  --ls-tight: 0.06em;
+  --ls-label: 0.12em;   /* the most used label tracking */
+  --ls-wide: 0.16em;
+  --ls-widest: 0.18em;
+
+  /* ---------------------------------------------------------------------
+   * Radius. The brief said zero radius everywhere; the design does not — it
+   * uses a full scale, and pills and circles throughout. Setting radius to 0
+   * globally was wrong and is not done here.
+   * ------------------------------------------------------------------- */
+  --r-xs: 6px;
+  --r-sm: 8px;         /* most common */
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 16px;
+  --r-2xl: 18px;
+  --r-3xl: 28px;
+  --r-pill: 999px;
+  --r-circle: 50%;
+
+  /* ---------------------------------------------------------------------
+   * Borders. The design uses 1px and 1.5px hairlines; 2px is reserved for
+   * the hard-shadow controls.
+   * ------------------------------------------------------------------- */
+  --bw-hair: 1px;
+  --bw-rule: 1.5px;
+  --bw-heavy: 2px;
+
+  /* ---------------------------------------------------------------------
+   * Shadows. Both a printed hard offset and real soft lifts — the brief only
+   * described the hard one.
+   * ------------------------------------------------------------------- */
+  --shadow-hard: 3px 3px 0 var(--c-ink);
+  --shadow-hard-soft: 8px 8px 0 rgba(28, 26, 22, 0.18);
+  --shadow-hard-on-dark: 3px 3px 0 rgba(239, 230, 210, 0.35);
+  --shadow-lift: 0 24px 60px -20px rgba(42, 35, 24, 0.34);
+  --shadow-lift-strong: 0 20px 50px -22px rgba(42, 35, 24, 0.4);
+  --shadow-hairline: 0 2px 0 rgba(26, 22, 20, 0.05);
+
+  /* ---------------------------------------------------------------------
+   * Spacing and structure. Section padding in the design is 56px side,
+   * 40-96px vertical.
+   * ------------------------------------------------------------------- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -63,28 +152,20 @@
   --s-6: 1.5rem;
   --s-8: 2rem;
   --s-12: 3rem;
+  --s-14: 3.5rem;   /* 56px - the design's section inset */
   --s-16: 4rem;
-  --s-24: 6rem;
+  --s-24: 6rem;     /* 96px - largest section gap */
 
-  /* --- Structure --- */
-  --measure: 65ch;            /* running text width */
-  --page-max: 1120px;         /* the wide breakpoint the plan verifies against */
-  --border-w: 2px;            /* Button and Panel border weight */
-  --shadow-hard: 3px 3px 0 var(--c-ink);  /* hard offset, never blurred */
-  --frame-w: 4px;             /* PrintFrame */
+  --measure: 65ch;
+  --page-max: 1120px;
 }
 
-/* Zero radius everywhere - a woodblock print has no rounded corners. Set once
- * here rather than reset per component. */
 *,
 *::before,
 *::after {
-  border-radius: 0;
   box-sizing: border-box;
 }
 
-/* The design commits to a single aged-paper world, so it does not invert for a
- * dark OS preference. Honour reduced motion regardless. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

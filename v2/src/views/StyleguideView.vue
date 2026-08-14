@@ -12,27 +12,63 @@ import { usePreferencesStore } from '../stores/preferences'
 
 const prefs = usePreferencesStore()
 
-const colours = [
+const surfaces = [
+  ['--c-raised', 'raised', 'lightest card'],
+  ['--c-panel', 'panel', 'standard panel'],
   ['--c-ground', 'ground', 'page background'],
-  ['--c-panel', 'panel', 'lifted surface'],
-  ['--c-rule', 'rule', 'hairlines and borders'],
-  ['--c-ink', 'ink', 'headings, borders'],
+  ['--c-sunk', 'sunk', 'recessed surface']
+]
+
+const inks = [
+  ['--c-ink', 'ink', 'text, borders, fills'],
+  ['--c-ink-deep', 'ink-deep', 'dark band ground'],
+  ['--c-ink-deeper', 'ink-deeper', 'deepest fills'],
+  ['--c-ink-edge', 'ink-edge', 'border on dark']
+]
+
+const texts = [
   ['--c-body', 'body', 'running text'],
-  ['--c-muted', 'muted', 'captions, metadata'],
-  ['--c-seal', 'seal', 'marks and emphasis'],
+  ['--c-muted', 'muted', 'most used text colour'],
+  ['--c-muted-warm', 'muted-warm', 'on warm surfaces'],
+  ['--c-pinyin', 'pinyin', 'pronunciation']
+]
+
+const rules = [
+  ['--c-rule', 'rule', 'standard hairline'],
+  ['--c-rule-light', 'rule-light', 'lighter, usually 1.5px'],
+  ['--c-rule-faint', 'rule-faint', 'on raised cards'],
+  ['--c-rule-gold', 'rule-gold', 'in the dark band']
+]
+
+const accents = [
+  ['--c-seal', 'seal', 'brush marks, printed emphasis'],
+  ['--c-red', 'red', 'bright red text'],
+  ['--c-red-solid', 'red-solid', 'solid red fill'],
+  ['--c-vermilion', 'vermilion', 'hottest accent'],
   ['--c-button', 'button', 'primary action'],
-  ['--c-pinyin', 'pinyin', 'pronunciation'],
   ['--c-gold', 'gold', 'dark band only']
 ]
 
+const groups = [
+  ['Surfaces', surfaces], ['Ink', inks], ['Text', texts],
+  ['Rules', rules], ['Accents', accents]
+]
+
+const radii = [
+  ['--r-xs', '6'], ['--r-sm', '8'], ['--r-md', '10'], ['--r-lg', '14'],
+  ['--r-xl', '16'], ['--r-2xl', '18'], ['--r-3xl', '28'], ['--r-pill', 'pill']
+]
+
 const scale = [
-  ['--t-3xl', '3xl', 'page title'],
-  ['--t-2xl', '2xl', 'section title'],
-  ['--t-xl', 'xl', 'card heading'],
-  ['--t-lg', 'lg', 'lead'],
-  ['--t-base', 'base', 'body'],
-  ['--t-sm', 'sm', 'caption'],
-  ['--t-xs', 'xs', 'label']
+  ['--t-hero', 'hero', '96px'],
+  ['--t-3xl', '3xl', '54px'],
+  ['--t-2xl', '2xl', '40px'],
+  ['--t-xl', 'xl', '30px'],
+  ['--t-lg', 'lg', '24px'],
+  ['--t-lead', 'lead', '17px'],
+  ['--t-body', 'body', '15px'],
+  ['--t-sm', 'sm', '12px'],
+  ['--t-2xs', '2xs', '10px']
 ]
 
 // A real word from the HSK data rather than placeholder text, so the CJK subset
@@ -61,16 +97,23 @@ const pressed = ref(0)
 
       <section class="stack">
         <SectionHead label="Colour" title="Palette" hanzi="色" />
-        <div class="swatches">
-          <div v-for="[token, name, use] in colours" :key="token" class="swatch">
-            <span
-              class="swatch__chip"
-              :style="{ backgroundColor: `var(${token})` }"
-              aria-hidden="true"
-            ></span>
-            <span class="swatch__name">{{ name }}</span>
-            <span class="swatch__use">{{ use }}</span>
-            <code class="swatch__token mono">{{ token }}</code>
+        <p class="note">
+          Reconciled against the design file. The brief listed ten colours; the
+          design uses these — four reds and four darks, each with a distinct job.
+        </p>
+        <div v-for="[groupName, items] in groups" :key="groupName" class="group">
+          <p class="label">{{ groupName }}</p>
+          <div class="swatches">
+            <div v-for="[token, name, use] in items" :key="token" class="swatch">
+              <span
+                class="swatch__chip"
+                :style="{ backgroundColor: `var(${token})` }"
+                aria-hidden="true"
+              ></span>
+              <span class="swatch__name">{{ name }}</span>
+              <span class="swatch__use">{{ use }}</span>
+              <code class="swatch__token mono">{{ token }}</code>
+            </div>
           </div>
         </div>
       </section>
@@ -99,6 +142,14 @@ const pressed = ref(0)
           <AppPanel>
             <p class="faces__label">Hanzi · Noto Serif SC</p>
             <p class="hanzi faces__hanzi">共一百零八人</p>
+          </AppPanel>
+          <AppPanel>
+            <p class="faces__label">Hanzi UI · Noto Sans SC</p>
+            <p class="hanzi-ui faces__hanzi">订阅每日一词</p>
+          </AppPanel>
+          <AppPanel>
+            <p class="faces__label">Serif · Instrument Serif</p>
+            <p class="serif faces__serif">One word a day</p>
           </AppPanel>
           <AppPanel>
             <p class="faces__label">Mono · DM Mono</p>
@@ -139,11 +190,27 @@ const pressed = ref(0)
       </section>
 
       <section class="stack">
+        <SectionHead label="Shape" title="Corner radius" />
+        <p class="note">
+          The brief called for zero radius everywhere. The design uses a full
+          scale, so the global reset was removed.
+        </p>
+        <div class="radii">
+          <div v-for="[token, px] in radii" :key="token" class="radius">
+            <span class="radius__box" :style="{ borderRadius: `var(${token})` }" aria-hidden="true"></span>
+            <code class="mono radius__label">{{ px }}</code>
+          </div>
+        </div>
+      </section>
+
+      <section class="stack">
         <SectionHead label="Controls" title="Buttons" />
         <div class="buttons">
           <AppButton variant="primary" @click="pressed++">Subscribe</AppButton>
           <AppButton variant="seal" @click="pressed++">Take the quiz</AppButton>
+          <AppButton variant="solid" @click="pressed++">Unsubscribe</AppButton>
           <AppButton variant="quiet" @click="pressed++">Review words</AppButton>
+          <AppButton variant="primary" shape="sm" @click="pressed++">Square</AppButton>
           <AppButton variant="primary" disabled>Unavailable</AppButton>
         </div>
         <p class="mono buttons__count">pressed: {{ pressed }}</p>
@@ -202,9 +269,9 @@ const pressed = ref(0)
 
 .masthead__eyebrow {
   font-family: var(--f-label);
-  font-size: var(--t-xs);
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--c-seal);
 }
@@ -221,13 +288,14 @@ const pressed = ref(0)
 }
 
 .swatch {
+  border-radius: var(--r-sm);
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-areas: 'chip name' 'chip use' 'token token';
   align-items: center;
   gap: var(--s-1) var(--s-3);
   padding: var(--s-3);
-  border: 1px solid var(--c-rule);
+  border: var(--bw-hair) solid var(--c-rule);
   background-color: var(--c-panel);
 }
 
@@ -235,14 +303,15 @@ const pressed = ref(0)
   grid-area: chip;
   width: 40px;
   height: 40px;
-  border: var(--border-w) solid var(--c-ink);
+  border: var(--bw-hair) solid var(--c-ink);
+  border-radius: var(--r-xs);
 }
 
-.swatch__name { grid-area: name; color: var(--c-ink); font-weight: 600; }
+.swatch__name { grid-area: name; color: var(--c-ink); font-weight: var(--w-semi); }
 .swatch__use { grid-area: use; font-size: var(--t-xs); color: var(--c-muted); }
 .swatch__token {
   grid-area: token;
-  font-size: var(--t-xs);
+  font-size: var(--t-2xs);
   color: var(--c-muted);
   padding-top: var(--s-1);
 }
@@ -256,15 +325,38 @@ const pressed = ref(0)
   align-items: baseline;
   gap: var(--s-4);
   padding-bottom: var(--s-3);
-  border-bottom: 1px solid var(--c-rule);
+  border-bottom: var(--bw-hair) solid var(--c-rule);
 }
 
-.scale__label { font-size: var(--t-xs); color: var(--c-muted); }
+.scale__label { font-size: var(--t-sm); color: var(--c-muted); }
+
+.group { display: flex; flex-direction: column; gap: var(--s-3); }
+
+.note {
+  color: var(--c-muted);
+  font-size: var(--t-base);
+  max-width: var(--measure);
+}
+
+.radii { display: flex; flex-wrap: wrap; gap: var(--s-4); }
+.radius { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.radius__box {
+  width: 64px;
+  height: 64px;
+  background-color: var(--c-button);
+  border: var(--bw-rule) solid var(--c-ink);
+}
+.radius__label { font-size: var(--t-sm); color: var(--c-muted); }
+.faces__serif { font-size: var(--t-lg); }
 .scale__sample {
   font-family: var(--f-display);
-  font-weight: 800;
+  font-weight: var(--w-heavy);
   color: var(--c-ink);
   line-height: var(--lh-tight);
+  /* Grid children default to min-width:auto, so at 390px the 96px sample could
+   * not shrink below its own text and pushed the page sideways. */
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .scale__use { display: none; }
 
@@ -276,16 +368,16 @@ const pressed = ref(0)
 
 .faces__label {
   font-family: var(--f-label);
-  font-size: var(--t-xs);
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--c-muted);
 }
 
-.faces__display { font-family: var(--f-display); font-weight: 900; font-size: var(--t-xl); color: var(--c-ink); }
+.faces__display { font-family: var(--f-display); font-weight: var(--w-black); font-size: var(--t-xl); color: var(--c-ink); }
 .faces__brush { font-size: var(--t-2xl); }
-.faces__hanzi { font-size: var(--t-xl); font-weight: 700; }
+.faces__hanzi { font-size: var(--t-lg); font-weight: var(--w-bold); }
 .faces__mono { font-size: var(--t-sm); }
 
 /* --- word card --- */
@@ -315,11 +407,11 @@ const pressed = ref(0)
 }
 
 /* --- band --- */
-.band__body { color: var(--c-band-text); opacity: 0.85; }
+.band__body { color: var(--c-on-dark); opacity: 0.85; }
 .band__gold {
   font-family: var(--f-label);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: var(--w-semi);
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   font-size: var(--t-sm);
   color: var(--c-gold);

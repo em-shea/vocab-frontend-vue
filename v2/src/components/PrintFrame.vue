@@ -25,7 +25,8 @@ defineProps({
 .print {
   position: relative;
   margin: 0;
-  border: var(--frame-w) solid var(--c-ink);
+  border: var(--bw-heavy) solid var(--c-ink);
+  border-radius: var(--r-md);
   background-color: var(--c-panel);
   overflow: hidden;
 }

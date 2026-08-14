@@ -1,11 +1,16 @@
 <script setup>
-// 2px ink border, 3px hard shadow, no radius, no blur. Pressing moves the button
-// onto its shadow rather than animating a colour.
+// Ink border with a 3px hard offset shadow. Pressing moves the button onto its
+// shadow rather than animating a colour.
+//
+// The design rounds its controls — the written brief's "no radius anywhere" did
+// not survive contact with the mockup. `pill` is the design's most common
+// control shape; `sm` is the squarer card-style button.
 //
 // Named AppButton rather than Button so it never collides with the HTML element
 // in templates or in devtools.
 defineProps({
-  variant: { type: String, default: 'primary' }, // primary | quiet | seal
+  variant: { type: String, default: 'primary' }, // primary | quiet | seal | solid
+  shape: { type: String, default: 'pill' },      // pill | sm
   as: { type: String, default: 'button' },
   type: { type: String, default: 'button' },
   disabled: { type: Boolean, default: false }
@@ -18,7 +23,7 @@ defineProps({
     :type="as === 'button' ? type : undefined"
     :disabled="as === 'button' ? disabled : undefined"
     class="btn"
-    :class="`btn--${variant}`"
+    :class="[`btn--${variant}`, `btn--${shape}`]"
   >
     <slot />
   </component>
@@ -31,22 +36,26 @@ defineProps({
   justify-content: center;
   gap: var(--s-2);
   padding: var(--s-3) var(--s-6);
-  border: var(--border-w) solid var(--c-ink);
+  border: var(--bw-heavy) solid var(--c-ink);
   box-shadow: var(--shadow-hard);
   background-color: var(--c-panel);
   color: var(--c-ink);
   font-family: var(--f-label);
   font-size: var(--t-sm);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: var(--w-semi);
+  letter-spacing: var(--ls-tight);
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   transition: transform 90ms ease-out, box-shadow 90ms ease-out;
 }
 
+.btn--pill { border-radius: var(--r-pill); }
+.btn--sm { border-radius: var(--r-sm); }
+
 .btn--primary { background-color: var(--c-button); }
-.btn--seal { background-color: var(--c-seal); color: var(--c-panel); }
+.btn--seal { background-color: var(--c-seal); color: var(--c-on-red); }
+.btn--solid { background-color: var(--c-red-solid); color: var(--c-on-red); }
 .btn--quiet { background-color: transparent; }
 
 .btn:hover:not(:disabled) {

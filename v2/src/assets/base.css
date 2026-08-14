@@ -1,4 +1,4 @@
-/* Base element styling. Tokens only - no raw values below this line. */
+/* Base element styling. Tokens only — no raw values below this line. */
 
 @import './fonts.css';
 @import './tokens.css';
@@ -12,10 +12,10 @@ body {
   background-color: var(--c-ground);
   color: var(--c-body);
   font-family: var(--f-ui);
-  font-size: var(--t-base);
+  font-size: var(--t-body);
   line-height: var(--lh-body);
-  /* Paper fibre. Two offset radial speckles over the ground read as fibre at
-   * normal viewing distance without an image request. */
+  /* Paper fibre: two offset radial speckles over the ground, which read as
+   * fibre at normal viewing distance without an image request. */
   background-image:
     radial-gradient(circle at 17% 32%, rgba(42, 35, 24, 0.035) 0.6px, transparent 0.7px),
     radial-gradient(circle at 63% 71%, rgba(42, 35, 24, 0.028) 0.5px, transparent 0.6px);
@@ -26,12 +26,12 @@ h1, h2, h3, h4 {
   margin: 0;
   color: var(--c-ink);
   font-family: var(--f-display);
-  font-weight: 800;
+  font-weight: var(--w-heavy);
   line-height: var(--lh-tight);
   text-wrap: balance;
 }
 
-h1 { font-size: var(--t-3xl); font-weight: 900; }
+h1 { font-size: var(--t-3xl); font-weight: var(--w-black); }
 h2 { font-size: var(--t-2xl); }
 h3 { font-size: var(--t-xl); }
 h4 { font-size: var(--t-lg); }
@@ -49,32 +49,53 @@ a {
 a:focus-visible,
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: var(--border-w) solid var(--c-seal);
+  outline: var(--bw-heavy) solid var(--c-seal);
   outline-offset: 2px;
 }
 
-/* Chinese runs in the serif face; pinyin in Outfit, in the deep blue. */
+/* Chinese has two faces: a serif for study content, a sans for interface text.
+ * Using one for both flattens a distinction the design makes deliberately. */
 .hanzi {
   font-family: var(--f-hanzi);
+  color: var(--c-ink);
+}
+
+.hanzi-ui {
+  font-family: var(--f-hanzi-ui);
   color: var(--c-ink);
 }
 
 .pinyin {
   font-family: var(--f-label);
   color: var(--c-pinyin);
-  font-size: var(--t-sm);
+  font-size: var(--t-base);
   letter-spacing: 0.02em;
 }
 
 .brush {
   font-family: var(--f-brush);
   color: var(--c-ink);
-  font-weight: 400;
+  font-weight: var(--w-body);
+}
+
+.serif {
+  font-family: var(--f-serif);
+  color: var(--c-ink);
 }
 
 .mono {
   font-family: var(--f-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* Uppercase tracked label, used for every section eyebrow. */
+.label {
+  font-family: var(--f-label);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--c-muted);
 }
 
 /* Wide content scrolls inside its own container so the page never scrolls
