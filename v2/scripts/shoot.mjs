@@ -17,22 +17,24 @@ import { mkdirSync } from 'node:fs'
 
 const url = process.argv[2] ?? 'http://localhost:5173/'
 const outDir = process.argv[3] ?? '.screenshots'
+// Name the output after the page so shooting several does not overwrite one file.
+const name = process.argv[4] ?? (new URL(url).pathname.replace(/\//g, '') || 'home')
 const WIDTHS = [
-  { name: '390', width: 390, height: 844 },
-  { name: '1120', width: 1120, height: 900 }
+  { width: 390, height: 844 },
+  { width: 1120, height: 900 }
 ]
 
 mkdirSync(outDir, { recursive: true })
 const browser = await chromium.launch()
 let failed = false
 
-for (const { name, width, height } of WIDTHS) {
+for (const { width, height } of WIDTHS) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2 })
   await page.goto(url, { waitUntil: 'networkidle' })
   // Webfonts must be settled or the shot captures fallback metrics.
   await page.evaluate(() => document.fonts.ready)
 
-  const path = `${outDir}/styleguide-${name}.png`
+  const path = `${outDir}/${name}-${width}.png`
   await page.screenshot({ path, fullPage: true })
 
   const { scrollWidth, clientWidth, fontsLoaded } = await page.evaluate(() => ({
@@ -44,7 +46,7 @@ for (const { name, width, height } of WIDTHS) {
   const overflows = scrollWidth > clientWidth
   if (overflows) failed = true
   console.log(
-    `${name.padEnd(5)} viewport ${String(clientWidth).padStart(4)}  content ${String(scrollWidth).padStart(4)}  ` +
+    `${String(width).padEnd(5)} viewport ${String(clientWidth).padStart(4)}  content ${String(scrollWidth).padStart(4)}  ` +
     `${overflows ? 'HORIZONTAL OVERFLOW' : 'no overflow'}  ->  ${path}`
   )
   console.log(`      fonts loaded: ${[...new Set(fontsLoaded)].join(', ') || 'none'}`)

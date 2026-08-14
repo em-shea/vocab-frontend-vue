@@ -7,6 +7,7 @@ import PrintFrame from '../components/PrintFrame.vue'
 import ScrollRods from '../components/ScrollRods.vue'
 import { useI18n } from 'vue-i18n'
 import ImmersionToggle from '../components/ImmersionToggle.vue'
+import AudioButton from '../components/AudioButton.vue'
 import { usePreferencesStore } from '../stores/preferences'
 
 // The phase's verification surface: every token and primitive on one page, so
@@ -200,6 +201,32 @@ const pressed = ref(0)
       </section>
 
       <section class="stack">
+        <SectionHead label="Audio" title="Pronunciation button" hanzi="音" />
+        <p class="note">
+          Words without a recording render no button at all, rather than one that
+          clicks and does nothing — two of the Vue 2 word cards did the latter.
+          The disabled form is only used where a layout needs the space held.
+        </p>
+        <div class="audio-states">
+          <div class="audio-state">
+            <AudioButton
+              src="https://s3.us-east-1.amazonaws.com/vocab-audio-prod/audio/example.mp3"
+              label="爱护"
+            />
+            <span class="mono audio-state__label">has audio</span>
+          </div>
+          <div class="audio-state">
+            <AudioButton src="" label="爱护" show-when-missing />
+            <span class="mono audio-state__label">no recording (placeholder)</span>
+          </div>
+          <div class="audio-state">
+            <span class="audio-state__none">— nothing rendered —</span>
+            <span class="mono audio-state__label">no recording (default)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="stack">
         <SectionHead label="Shape" title="Corner radius" />
         <p class="note">
           The brief called for zero radius everywhere. The design uses a full
@@ -365,6 +392,15 @@ const pressed = ref(0)
   color: var(--c-muted);
   font-size: var(--t-base);
   max-width: var(--measure);
+}
+
+.audio-states { display: flex; flex-wrap: wrap; gap: var(--s-8); }
+.audio-state { display: flex; align-items: center; gap: var(--s-3); }
+.audio-state__label { font-size: var(--t-sm); color: var(--c-muted); }
+.audio-state__none {
+  font-size: var(--t-sm);
+  color: var(--c-muted);
+  font-style: italic;
 }
 
 .lang { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
