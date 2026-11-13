@@ -21,6 +21,22 @@ export const SAMPLE_VOCAB = {
   [HSK2]: [word('w3', '帮助', '幫助', 'bāng zhù', 'to help')]
 }
 
+// What GET /review returns: oldest first, keyed by list id.
+const sent = (listId, date, simplified, traditional, pinyin, definition, level, audio = '') => ({
+  list_id: listId,
+  date_sent: date,
+  word: { simplified, traditional, pinyin, definition, audio_file_key: audio, difficulty_level: 'Beginner', hsk_level: level }
+})
+
+export const REVIEW = {
+  [HSK1]: [
+    sent(HSK1, '2026-11-10', '朋友', '朋友', 'péng you', 'friend', '1'),
+    sent(HSK1, '2026-11-11', '学习', '學習', 'xué xí', 'to study; to learn', '1'),
+    sent(HSK1, '2026-11-12', '爱护', '愛護', 'ài hù', 'to cherish, "to treasure"', '1')
+  ],
+  [HSK2]: [sent(HSK2, '2026-11-12', '帮助', '幫助', 'bāng zhù', 'to help', '2')]
+}
+
 export const USER = {
   email_address: EMAIL,
   character_set_preference: 'simplified',
@@ -45,6 +61,8 @@ export async function mockBackend (page, options = {}) {
     validCode: options.validCode ?? 'good-code',
     knownUser: options.knownUser ?? true,
     existingUser: options.existingUser ?? false,
+    reviewFails: options.reviewFails ?? false,
+    reviewEmpty: options.reviewEmpty ?? false,
     cognito: [],   // X-Amz-Target action names, in order
     api: [],       // { method, path, headers, body }
     unexpected: [] // anything else that tried to leave the page
@@ -94,12 +112,23 @@ export async function mockBackend (page, options = {}) {
     const path = new URL(request.url()).pathname
     const method = request.method()
     if (method === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
-    state.api.push({ method, path, headers: request.headers(), body: request.postDataJSON?.() ?? null })
+    state.api.push({
+      method,
+      path,
+      query: Object.fromEntries(new URL(request.url()).searchParams),
+      headers: request.headers(),
+      body: request.postDataJSON?.() ?? null
+    })
 
     const json = (payload, status = 200) =>
       route.fulfill({ status, contentType: 'application/json', headers: cors, body: JSON.stringify(payload) })
 
     if (method === 'GET' && path === '/sample_vocab') return json(SAMPLE_VOCAB)
+    if (method === 'GET' && path === '/review') {
+      if (state.reviewFails) return json({ message: 'Internal server error' }, 500)
+      const listId = new URL(request.url()).searchParams.get('list_id')
+      return json({ [listId]: state.reviewEmpty ? [] : (REVIEW[listId] ?? []) })
+    }
     if (method === 'GET' && path === '/user') return json(USER)
     if (method === 'POST' && path === '/update_login') return json({ success: true })
     if (method === 'POST' && path === '/update_user') return json({ success: true })

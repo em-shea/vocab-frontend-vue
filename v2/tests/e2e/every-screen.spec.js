@@ -15,6 +15,7 @@ import { mockBackend, watchForErrors, overflowsSideways } from './support/backen
 const SCREENS = [
   { name: 'home', path: '/' },
   { name: 'sign in', path: '/signin' },
+  { name: 'review', path: '/review' },
   {
     name: 'check your email',
     path: '/verification',
@@ -38,7 +39,7 @@ for (const screen of SCREENS) {
       // vue-i18n renders the key itself when a translation is missing. Keys are
       // camelCase with no spaces; real copy in either language is not.
       const text = await page.locator('body').innerText()
-      expect(text.match(/\b(signIn|verify|nav|quest|story|faq)[A-Z]\w+\b/g) ?? []).toEqual([])
+      expect(text.match(/\b(signIn|verify|review|nav|quest|story|faq)[A-Z]\w+\b/g) ?? []).toEqual([])
 
       expect(await overflowsSideways(page), 'page scrolls sideways').toBe(false)
       expect(problems).toEqual([])

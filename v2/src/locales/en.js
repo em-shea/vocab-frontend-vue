@@ -103,5 +103,23 @@ export default {
   "verifyCheckingBody": "Checking your sign-in link.",
   "verifyElsewhereTitle": "Open the link where you asked for it",
   "verifyElsewhereBody": "Sign-in links only work in the browser that requested them. Open the link there, or start again here.",
-  "verifyStartAgain": "Start again"
+  "verifyStartAgain": "Start again",
+
+  "reviewMark": "review",
+  "reviewTitle": "Review daily words",
+  "reviewBody": "Every word sent for a level, newest first.",
+  "reviewList": "Vocab list",
+  "reviewRange": "Sent in",
+  "reviewRange30": "Past 30 days",
+  "reviewRange60": "Past 60 days",
+  "reviewRange90": "Past 90 days",
+  "reviewExport": "Export",
+  "reviewExportHint": "Download these words as a spreadsheet file.",
+  "reviewLoading": "Loading words…",
+  "reviewEmpty": "No words were sent for this list in that time.",
+  "reviewError": "We could not load the words. Check your connection and try again.",
+  "reviewRetry": "Try again",
+  "reviewExamples": "Example sentences",
+  "reviewLevel": "Level {level}",
+  "reviewCount": "{count} words"
 }

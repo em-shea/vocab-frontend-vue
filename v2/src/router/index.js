@@ -10,6 +10,17 @@ export const routes = [
     component: HomeView
   },
   {
+    path: '/review',
+    name: 'review',
+    component: () => import('../views/ReviewView.vue')
+  },
+  {
+    // The old site sent /history to /review. Daily emails from before that
+    // change still link here, so the redirect has to outlive the old app.
+    path: '/history',
+    redirect: (to) => ({ name: 'review', query: to.query })
+  },
+  {
     path: '/signin',
     name: 'signin',
     component: () => import('../views/SignInView.vue')

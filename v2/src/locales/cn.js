@@ -102,5 +102,23 @@ export default {
   "verifyCheckingBody": "正在验证登录链接。",
   "verifyElsewhereTitle": "请在申请链接的浏览器中打开",
   "verifyElsewhereBody": "登录链接只能在申请它的浏览器中使用。请在那里打开，或在此重新开始。",
-  "verifyStartAgain": "重新开始"
+  "verifyStartAgain": "重新开始",
+
+  "reviewMark": "复习",
+  "reviewTitle": "复习每日一词",
+  "reviewBody": "该级别发送过的所有词语，最新的在前。",
+  "reviewList": "词表",
+  "reviewRange": "发送时间",
+  "reviewRange30": "过去 30 天",
+  "reviewRange60": "过去 60 天",
+  "reviewRange90": "过去 90 天",
+  "reviewExport": "导出",
+  "reviewExportHint": "将这些词语下载为表格文件。",
+  "reviewLoading": "正在加载词语…",
+  "reviewEmpty": "这段时间内该词表没有发送过词语。",
+  "reviewError": "无法加载词语，请检查网络后重试。",
+  "reviewRetry": "重试",
+  "reviewExamples": "例句",
+  "reviewLevel": "{level} 级",
+  "reviewCount": "{count} 个词"
 }
