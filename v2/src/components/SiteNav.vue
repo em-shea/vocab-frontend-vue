@@ -24,9 +24,9 @@ const auth = useAuthStore()
       <a class="nav__link nav__link--current" href="/">{{ t('navHome') }}</a>
       <a class="nav__link" href="/quiz">{{ t('navQuiz') }}</a>
       <a class="nav__link" href="/review">{{ t('navReview') }}</a>
-      <a class="nav__link nav__link--strong" href="/signin">
+      <RouterLink class="nav__link nav__link--strong" :to="{ name: 'signin' }">
         {{ auth.signedIn ? auth.email : t('navSignIn') }}
-      </a>
+      </RouterLink>
     </nav>
 
     <div class="nav__prefs">

@@ -1,0 +1,45 @@
+<script setup>
+import ScrollRods from './ScrollRods.vue'
+import SiteNav from './SiteNav.vue'
+
+// The frame every ported screen sits in: scroll rods top and bottom, the nav,
+// then the screen's own content. Home predates this and lays out its own page
+// because its sections need the widest gap; the smaller screens share this one
+// so they cannot drift apart.
+defineProps({
+  // narrow suits a single form or message; wide suits tables and card grids.
+  width: { type: String, default: 'narrow' } // narrow | wide
+})
+</script>
+
+<template>
+  <div class="shell">
+    <ScrollRods position="top" />
+    <div class="shell__inner">
+      <SiteNav />
+      <main class="shell__main" :class="`shell__main--${width}`">
+        <slot />
+      </main>
+    </div>
+    <ScrollRods position="bottom" />
+  </div>
+</template>
+
+<style scoped>
+.shell { display: flex; flex-direction: column; gap: var(--s-6); min-height: 100vh; padding: var(--s-4) 0; }
+
+.shell__inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--s-12);
+  width: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 0 var(--s-4);
+}
+
+.shell__main { display: flex; flex-direction: column; gap: var(--s-6); width: 100%; margin: 0 auto; }
+.shell__main--narrow { max-width: 34rem; }
+.shell__main--wide { max-width: none; }
+</style>

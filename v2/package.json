@@ -9,6 +9,10 @@
     "build:staging": "vite build --mode staging",
     "build:prod": "vite build --mode production",
     "preview": "vite preview",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "check:cutover": "node scripts/check-cutover.mjs",
     "lint": "eslint . --ext .js,.vue"
   },
   "dependencies": {
@@ -20,8 +24,12 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.5.1",
+    "jsdom": "^31.0.1",
     "playwright": "^1.61.1",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vitest": "^5.1.0"
   }
 }

@@ -77,5 +77,30 @@ export default {
   "faq3a": "每日练习，约一年可聚齐一百零八人。",
   "faq4zhq": "等级",
   "faq4q": "哪个水平？",
-  "faq4a": "HSK 一到六级，上山的进度相同。词会变，山不变。"
+  "faq4a": "HSK 一到六级，上山的进度相同。词会变，山不变。",
+
+  // --- Phase 4: screens ported from the Vue 2 app. Not in the design file,
+  // which only covers the home page; written for this port.
+  "signInMark": "登录",
+  "signInTitle": "登录",
+  "signInBody": "输入邮箱，我们会发送一次性登录链接，无需密码。",
+  "signInSend": "发送登录链接",
+  "signInSending": "发送中…",
+  "signInInvalid": "请输入有效的邮箱地址。",
+  "signInUnknown": "找不到该邮箱对应的账号，请先在首页订阅。",
+  "signInError": "发送链接时出错，请重试。",
+  "signInNoAccount": "还没有注册？",
+  "signInNoAccountLink": "在首页选择级别并订阅。",
+  "verifyMark": "查看邮箱",
+  "verifyTitle": "登录链接已发送",
+  "verifyBody": "请打开邮件中的链接完成登录。链接 3 分钟后失效。已发送至",
+  "verifyHelp": "没有收到邮件？请确认邮箱地址、查看垃圾邮件，或联系",
+  "verifyResend": "重新发送登录链接",
+  "verifyResent": "链接已重新发送，请查看邮箱。",
+  "verifyInvalid": "链接有误或已过期，请点击上方按钮获取新链接。",
+  "verifyChecking": "正在登录…",
+  "verifyCheckingBody": "正在验证登录链接。",
+  "verifyElsewhereTitle": "请在申请链接的浏览器中打开",
+  "verifyElsewhereBody": "登录链接只能在申请它的浏览器中使用。请在那里打开，或在此重新开始。",
+  "verifyStartAgain": "重新开始"
 }

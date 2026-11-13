@@ -78,5 +78,30 @@ export default {
   "faq3a": "The full band gathers over about a year of daily practice.",
   "faq4zhq": "哪个水平？",
   "faq4q": "Which level",
-  "faq4a": "HSK 1 through 6 climb on the same schedule. The words change; the mountain does not."
+  "faq4a": "HSK 1 through 6 climb on the same schedule. The words change; the mountain does not.",
+
+  // --- Phase 4: screens ported from the Vue 2 app. Not in the design file,
+  // which only covers the home page; written for this port.
+  "signInMark": "sign in",
+  "signInTitle": "Sign in",
+  "signInBody": "Enter your email and we will send you a one-time sign-in link. No password needed.",
+  "signInSend": "Send sign-in link",
+  "signInSending": "Sending…",
+  "signInInvalid": "Please enter a valid email address.",
+  "signInUnknown": "We could not find an account for that address. Subscribe on the home page first.",
+  "signInError": "Something went wrong sending the link. Please try again.",
+  "signInNoAccount": "Not signed up yet?",
+  "signInNoAccountLink": "Choose a level on the home page and subscribe.",
+  "verifyMark": "check your email",
+  "verifyTitle": "Sign-in link sent",
+  "verifyBody": "Open the link in the email to finish signing in. It expires after 3 minutes. Sent to",
+  "verifyHelp": "No email? Check the address is right, look in spam, or write to",
+  "verifyResend": "Resend sign-in link",
+  "verifyResent": "Link resent. Please check your email.",
+  "verifyInvalid": "That link is incorrect or has expired. Use the button above to get a new one.",
+  "verifyChecking": "Signing you in…",
+  "verifyCheckingBody": "Checking your sign-in link.",
+  "verifyElsewhereTitle": "Open the link where you asked for it",
+  "verifyElsewhereBody": "Sign-in links only work in the browser that requested them. Open the link there, or start again here.",
+  "verifyStartAgain": "Start again"
 }
