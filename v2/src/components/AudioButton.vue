@@ -102,6 +102,7 @@ onBeforeUnmount(stop)
 .audio:hover:not(:disabled) {
   background-color: var(--c-button);
   border-color: var(--c-ink);
+  color: var(--c-on-button);
 }
 
 .audio svg { width: 17px; height: 17px; }
@@ -118,6 +119,7 @@ onBeforeUnmount(stop)
 .audio--playing {
   background-color: var(--c-button);
   border-color: var(--c-ink);
+  color: var(--c-on-button);
 }
 
 .audio--playing .audio__wave--far {

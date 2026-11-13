@@ -135,6 +135,14 @@ async function submit () {
 .sub--band .label,
 .sub--band .sub__note { color: var(--c-on-dark); opacity: 0.8; }
 .sub--band .sub__msg--ok { color: var(--c-gold); }
+/* The secondary button is navy, which vanishes on the navy band. Here it takes
+ * the print ochre instead, with a light edge so the hard shadow still reads. */
+.sub--band :deep(.btn--primary) {
+  background-color: var(--c-gold);
+  color: var(--c-ink-deep);
+  border-color: var(--c-on-dark);
+  box-shadow: var(--shadow-hard-on-dark);
+}
 
 @media (min-width: 720px) {
   .sub { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto; }

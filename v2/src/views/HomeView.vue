@@ -226,7 +226,7 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 /* --- 1. quest --- */
 .quest { display: grid; gap: var(--s-8); align-items: center; }
 .quest__text { display: flex; flex-direction: column; gap: var(--s-4); }
-.quest__kicker { font-family: var(--f-hanzi); letter-spacing: var(--ls-tight); color: var(--c-seal); }
+.quest__kicker { font-family: var(--f-brush); font-weight: var(--w-body); font-size: var(--t-md); letter-spacing: 0.02em; text-transform: none; color: var(--c-seal); }
 .quest__headline { font-size: var(--t-3xl); }
 .quest__body { font-size: var(--t-lead); }
 .quest__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }

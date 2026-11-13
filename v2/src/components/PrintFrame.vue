@@ -1,6 +1,6 @@
 <script setup>
-// Holds a woodblock print: a 4px ink frame with a halftone dot overlay, so
-// artwork reads as printed on the same paper rather than pasted on top.
+// Holds a woodblock print: a 4px ink frame with a faint halftone dot overlay,
+// so artwork reads as printed on the same paper rather than pasted on top.
 //
 // The halftone is a CSS dot grid rather than an image, so it costs nothing and
 // scales with the frame.
@@ -39,10 +39,8 @@ defineProps({
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* A slight warm shift settles the print onto the paper ground without
-   * draining it — these are colour woodblocks, and desaturating them fully
-   * throws away the thing worth showing. */
-  filter: sepia(0.18) saturate(0.92) contrast(1.02);
+  /* Shown in full colour, unfiltered: these are colour woodblocks and the
+   * colour is the thing worth showing. */
 }
 
 .print__placeholder {
@@ -59,7 +57,7 @@ defineProps({
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: radial-gradient(circle, rgba(42, 35, 24, 0.22) 0.9px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(27, 33, 64, 0.12) 0.9px, transparent 1px);
   background-size: 4px 4px;
   mix-blend-mode: multiply;
 }

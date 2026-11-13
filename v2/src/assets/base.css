@@ -53,8 +53,8 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
-/* Chinese has two faces: a serif for study content, a sans for interface text.
- * Using one for both flattens a distinction the design makes deliberately. */
+/* Chinese has three faces: a Kai for study content, a sans for interface text
+ * and a brush script for accents. Study text must stay the plain, legible one. */
 .hanzi {
   font-family: var(--f-hanzi);
   color: var(--c-ink);
