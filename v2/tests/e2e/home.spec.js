@@ -47,3 +47,52 @@ test('switching to traditional characters changes the study content', async ({ p
   await page.goto('/?char=traditional')
   await expect(page.getByText('愛護').first()).toBeVisible()
 })
+
+test('the subscribe form is visible without scrolling on a phone', async ({ page }) => {
+  await mockBackend(page)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+
+  const form = page.locator('form').first()
+  await expect(form.getByRole('button', { name: /subscribe/i })).toBeInViewport({ ratio: 1 })
+  await expect(form.getByRole('textbox')).toBeInViewport({ ratio: 1 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
+})
+
+test('every woodblock print has a source credit', async ({ page }) => {
+  await mockBackend(page)
+  await page.goto('/')
+
+  const figures = page.locator('figure').filter({ has: page.locator('img[src*="prints"], .print__img, .oath__board img') })
+  const count = await figures.count()
+  expect(count).toBeGreaterThanOrEqual(3)
+  for (let i = 0; i < count; i++) {
+    const caption = figures.nth(i).locator('figcaption')
+    await expect(caption).toContainText('Utagawa Kuniyoshi')
+    await expect(caption).toContainText('One Hundred and Eight Heroes of the Popular Water Margin')
+    await expect(caption).toContainText('Public domain')
+  }
+  // No print is left without a figcaption, whatever its source path.
+  expect(await page.locator('img.print__img').count()).toBe(await page.locator('figure.print > figcaption').count())
+})
+
+test('shows an example of the daily email', async ({ page }) => {
+  await mockBackend(page)
+  await page.goto('/')
+
+  const mail = page.getByRole('figure', { name: 'Example of the daily email' })
+  await expect(mail).toContainText("Today's word: 爱护")
+  await expect(mail).toContainText('我们要爱护环境。')
+  await expect(mail).toContainText('Wǒmen yào àihù huánjìng.')
+  await expect(mail).toContainText('We should take care of the environment.')
+})
+
+test('unbuilt features say "Launching soon", and nothing leads to the upload page', async ({ page }) => {
+  await mockBackend(page)
+  await page.goto('/')
+
+  // Catalogue, upload, sentences, writing and quests.
+  await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(5)
+  await expect(page.locator('a[href*="manage-lists"]')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /upload/i })).toHaveCount(0)
+})

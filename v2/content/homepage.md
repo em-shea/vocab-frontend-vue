@@ -45,7 +45,7 @@ key: traditional
 en: Traditional (繁体字)
 cn: 繁体字
 
-## 1. Quest
+## 1. Top: quest and subscribe
 
 key: questKicker
 en: 替天行道
@@ -60,18 +60,8 @@ en: Unite the 108.
 cn: 集齐一百单八将
 
 key: questBody
-en: One Chinese word arrives by email each day, with a short quiz after it. Every few days of practice, another of the 108 outlaws of Liangshan joins you.
-cn: 每天一封邮件，送来一个中文词，还有一个小测验。练上几天，就有一位梁山好汉入伙。
-
-key: questCta
-en: Begin the climb
-cn: 上梁山
-
-## 2. Subscribe
-
-key: subscribeLine
-en: Get a Chinese word by email every day.
-cn: 每天用邮件收到一个中文词。
+en: One Chinese word arrives by email each day, with a short quiz after it. Keep practising and the 108 outlaws of Liangshan join you one by one.
+cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位一位入伙。
 
 key: chooseLevel
 en: Choose an HSK Level
@@ -85,67 +75,39 @@ key: subscribe
 en: Subscribe
 cn: 订阅
 
-## 3. The story
+## 2. Choose what to study
 
-key: storyHeadline
-en: There were once 108 outlaws on Mount Liang.
-cn: 梁山上曾有一百零八位好汉。
-
-key: storyBody
-en: They defied the court and swore brotherhood in the marshes below the mountain. Their story, Shuihuzhuan (The Water Margin), is one of the four great classic novels of Chinese literature.
-cn: 他们对抗朝廷，在梁山泊结为兄弟。他们的故事就是《水浒传》，中国四大名著之一。
-
-## 4. Daily word
-
-key: dailyHeadline
-en: One word a day, then a quiz.
-cn: 每天一个词，再做个小测验。
-
-key: dailyBody
-en: Each email has the characters, pinyin, meaning and an example sentence.
-cn: 每封邮件有汉字、拼音、释义和例句。
-
-key: beat1
-en: A word every morning
-cn: 每天早上一个词
-
-key: beat2
-en: A quiz the next day
-cn: 第二天小测验
-
-key: beat3
-en: Keep practising and a hero joins you
-cn: 坚持练习，好汉入伙
-
-key: defQianMian
-en: ahead; in front; preceding; above
-cn: 前边；在前方；上文
-
-## 5. Your level
+key: chooseHeadline
+en: Choose what to study.
+cn: 选择学习内容。
 
 key: levelHeadline
 en: Pick your level.
 cn: 选择你的等级。
 
 key: levelBody
-en: Choose one of the six HSK levels, or upload your own list. The daily word comes from it.
-cn: 六个 HSK 等级任选一个，也可以上传自己的词表。每日一词就从中选取。
+en: Choose one of the six HSK levels and see sample words.
+cn: 六个 HSK 等级任选一个，查看示例词汇。
 
-key: clickPre
-en: Click on each level below to see sample words, or check out 
-cn: 点击下方等级查看示例词汇，或查看
+key: launchingSoon
+en: Launching soon
+cn: 即将推出
 
-key: recentWords
-en: recent daily words
-cn: 近期每日词汇
+key: catalogueHeadline
+en: Choose from a catalogue.
+cn: 从目录中选词表。
 
-key: clickPost
-en: .
-cn: 。
+key: catalogueBody
+en: Pick from ready-made lists on other topics.
+cn: 从其他主题的现成词表中挑选。
 
-key: uploadOwn
-en: Upload my own list
-cn: 上传我的词表
+key: uploadHeadline
+en: Upload your own list.
+cn: 上传自己的词表。
+
+key: uploadBody
+en: Use your own words and the daily email draws from your list.
+cn: 用你自己的词，每日邮件就从你的词表中选词。
 
 key: level1
 en: Level 1
@@ -167,37 +129,113 @@ key: defBaba
 en: (informal) father
 cn: 父亲（口语）
 
-## 6. The 108
+## 3. Daily email
+
+key: dailyHeadline
+en: Get a Chinese word by email every day.
+cn: 每天用邮件收到一个中文词。
+
+key: dailyBody
+en: Each email has the characters, pinyin, meaning and an example sentence.
+cn: 每封邮件有汉字、拼音、释义和例句。
+
+key: emailLabel
+en: Example of the daily email
+cn: 每日邮件示例
+
+key: emailSubject
+en: Today's word: 爱护
+cn: 今日一词：爱护
+
+key: emailMeaning
+en: to cherish; to take care of
+cn: 爱惜；保护
+
+key: emailTranslation
+en: We should take care of the environment.
+cn: 我们应该保护环境。
+
+key: defQianMian
+en: ahead; in front; preceding; above
+cn: 前边；在前方；上文
+
+## 4. Study
+
+key: studyHeadline
+en: Three ways to study.
+cn: 三种学习方式。
+
+key: quizHeadline
+en: Take quizzes.
+cn: 做测验。
+
+key: quizBody
+en: Check each word with a short quiz.
+cn: 用小测验检验每个词。
+
+key: sentenceHeadline
+en: Use words in sentences.
+cn: 用词造句。
+
+key: sentenceBody
+en: Write a sentence of your own with each word.
+cn: 用每个词写一个自己的句子。
+
+key: writeHeadline
+en: Practise writing characters.
+cn: 练习写汉字。
+
+key: writeBody
+en: Write on paper or on a tablet or phone, then upload a photo of your handwriting.
+cn: 在纸上，或用平板、手机书写，再上传手写照片。
+
+## 5. Collect heroes
 
 key: collectHeadline
 en: Collect heroes.
 cn: 收集好汉。
 
 key: collectBody
-en: Every few days of practice, another of the 108 joins you on the mountain. You meet his nickname first, then his name, then his whole story.
-cn: 每练几天，就有一位好汉上山入伙。你先认识他的绰号，再知道他的姓名，最后读到他的故事。
+en: New heroes join you every week you keep practising.
+cn: 只要坚持练习，每周都有新的好汉入伙。
 
-key: abilityName
-en: 天杀星
-cn: 天杀星
+key: storyBody
+en: The 108 outlaws of Mount Liang defied the court and swore brotherhood in the marshes below the mountain. Their story, Shuihuzhuan (The Water Margin), is one of the four great classic novels of Chinese literature.
+cn: 梁山上的一百零八位好汉对抗朝廷，在梁山泊结为兄弟。他们的故事就是《水浒传》，中国四大名著之一。
 
-key: abilityNote
-en: Li Kui, the Black Whirlwind
-cn: 黑旋风李逵
+key: heroName
+en: 鲁智深
+cn: 鲁智深
 
-## 7. Join the oath
+key: heroPinyin
+en: Lǔ Zhìshēn
+cn: Lǔ Zhìshēn
+
+key: heroNickname
+en: 花和尚
+cn: 花和尚
+
+key: heroNicknameGloss
+en: the Flowery Monk
+cn: 绰号
+
+key: printCredit
+en: Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.
+cn: 歌川国芳，《通俗水浒传豪杰百八人之一个》，约 1827–1830 年。公有领域。
+
+## 6. Quests and the closing subscribe
 
 key: closeHeadlineA
-en: Practise Chinese.
-cn: 练习中文
+en: Complete quests.
+cn: 完成任务
 
 key: closeHeadlineB
-en: Join the outlaws of Liangshan.
-cn: 上梁山入伙
+en: Unite all 108.
+cn: 一百单八将聚义梁山
 
 key: closeBody
-en: It is free. You can unsubscribe at any time.
-cn: 免费，可随时退订。
+en: Finish the quests and the whole band gathers on Mount Liang.
+cn: 完成任务，一百单八将就在梁山聚齐。
 
 ## Progress
 

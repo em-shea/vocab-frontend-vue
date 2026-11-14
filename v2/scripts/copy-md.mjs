@@ -25,15 +25,15 @@ const MD = join(HERE, '..', 'content', 'homepage.md')
 // new key is never silently lost.
 const SECTIONS = [
   ['Header and navigation', ['tagline', 'navHome', 'navQuiz', 'navReview', 'navSignIn', 'immersion', 'simplified', 'traditional']],
-  ['1. Quest', ['questKicker', 'questHeadlineA', 'questHeadlineB', 'questBody', 'questNote', 'questCta']],
-  ['2. Subscribe', ['subscribeLine', 'chooseLevel', 'email', 'subscribe', 'subNote']],
-  ['3. The story', ['markStory', 'storyKicker', 'storyHeadline', 'storyBody', 'storyBody2']],
-  ['4. Daily word', ['markHow', 'dailyHeadline', 'dailyBody', 'beat1', 'beat2', 'beat3', 'defQianMian']],
-  ['5. Your level', ['markLevels', 'levelHeadline', 'levelBody', 'whichLevel', 'clickPre', 'recentWords', 'clickPost', 'uploadOwn',
+  ['1. Top: quest and subscribe', ['questKicker', 'questHeadlineA', 'questHeadlineB', 'questBody', 'questNote', 'chooseLevel', 'email', 'subscribe', 'subNote']],
+  ['2. Choose what to study', ['markLevels', 'chooseHeadline', 'levelHeadline', 'levelBody', 'whichLevel', 'launchingSoon',
+    'catalogueHeadline', 'catalogueBody', 'uploadHeadline', 'uploadBody',
     'level1', 'level2', 'level3', 'level4', 'level5', 'level6',
     'defHen', 'defFeiji', 'defDu', 'defBaba']],
-  ['6. The 108', ['markHeroes', 'collectHeadline', 'collectBody', 'abilityLabel', 'abilityName', 'abilityNote']],
-  ['7. Join the oath', ['markJoin', 'closeHeadlineA', 'closeHeadlineB', 'closeBody', 'boardNote']],
+  ['3. Daily email', ['markHow', 'dailyHeadline', 'dailyBody', 'emailLabel', 'emailSubject', 'emailMeaning', 'emailTranslation', 'defQianMian']],
+  ['4. Study', ['studyHeadline', 'quizHeadline', 'quizBody', 'sentenceHeadline', 'sentenceBody', 'writeHeadline', 'writeBody']],
+  ['5. Collect heroes', ['markHeroes', 'collectHeadline', 'collectBody', 'storyBody', 'heroName', 'heroPinyin', 'heroNickname', 'heroNicknameGloss', 'printCredit']],
+  ['6. Quests and the closing subscribe', ['markJoin', 'closeHeadlineA', 'closeHeadlineB', 'closeBody', 'boardNote']],
   ['Progress', ['dayStreak', 'wordsSeen', 'heroesGathered', 'weekProgress', 'markDaily', 'markWords']],
   ['FAQ', ['markFaq', 'faq1zhq', 'faq1q', 'faq1a', 'faq2zhq', 'faq2q', 'faq2a',
     'faq3zhq', 'faq3q', 'faq3a', 'faq4zhq', 'faq4q', 'faq4a']]

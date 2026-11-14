@@ -38,7 +38,9 @@ const UI_CHARS =
   '一二三四五六七八九十首页测验复习收集位已聚天连续学中文步接近目标' +
   '选择等电子邮箱简体繁体' +
   // Brush-script line above the home headline (Ma Shan Zheng ships the ui tier only).
-  '替行道'
+  '替行道' +
+  // The hero card on the home page names its hero in brush script.
+  '花和尚'
 // Punctuation that appears in Chinese copy and definitions.
 const PUNCT = '，。、；：？！「」『』（）《》〈〉—…·　'
 
