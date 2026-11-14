@@ -25,15 +25,15 @@ const MD = join(HERE, '..', 'content', 'homepage.md')
 // new key is never silently lost.
 const SECTIONS = [
   ['Header and navigation', ['tagline', 'navHome', 'navQuiz', 'navReview', 'navSignIn', 'immersion', 'simplified', 'traditional']],
-  ['1. Top: quest and subscribe', ['questKicker', 'questHeadlineA', 'questHeadlineB', 'questBody', 'questNote', 'chooseLevel', 'email', 'subscribe', 'subNote']],
+  ['1. Top: quest and subscribe', ['questKicker', 'questHeadlineA', 'questHeadlineB', 'questBody', 'questNote', 'launchHeadline', 'launchBody', 'chooseLevel', 'email', 'subscribe', 'subNote']],
   ['2. Choose what to study', ['markLevels', 'chooseHeadline', 'levelHeadline', 'levelBody', 'whichLevel', 'launchingSoon',
     'catalogueHeadline', 'catalogueBody', 'uploadHeadline', 'uploadBody',
     'level1', 'level2', 'level3', 'level4', 'level5', 'level6',
     'defHen', 'defFeiji', 'defDu', 'defBaba']],
   ['3. Daily email', ['markHow', 'dailyHeadline', 'dailyBody', 'emailLabel', 'emailSubject', 'emailMeaning', 'emailTranslation', 'defQianMian']],
-  ['4. Study', ['studyHeadline', 'quizHeadline', 'quizBody', 'sentenceHeadline', 'sentenceBody', 'writeHeadline', 'writeBody']],
+  ['4. Study', ['studyHeadline', 'studyHeadlineLaunch', 'quizHeadline', 'quizBody', 'studyReviewHeadline', 'studyReviewBody', 'sentenceHeadline', 'sentenceBody', 'writeHeadline', 'writeBody']],
   ['5. Collect heroes', ['markHeroes', 'collectHeadline', 'collectBody', 'storyBody', 'heroName', 'heroPinyin', 'heroNickname', 'heroNicknameGloss', 'printCredit']],
-  ['6. Quests and the closing subscribe', ['markJoin', 'closeHeadlineA', 'closeHeadlineB', 'closeBody', 'boardNote']],
+  ['6. Quests and the closing subscribe', ['markJoin', 'closeHeadlineA', 'closeHeadlineB', 'closeBody', 'previewHeadline', 'previewBody', 'boardNote']],
   ['Progress', ['dayStreak', 'wordsSeen', 'heroesGathered', 'weekProgress', 'markDaily', 'markWords']],
   ['FAQ', ['markFaq', 'faq1zhq', 'faq1q', 'faq1a', 'faq2zhq', 'faq2q', 'faq2a',
     'faq3zhq', 'faq3q', 'faq3a', 'faq4zhq', 'faq4q', 'faq4a']]

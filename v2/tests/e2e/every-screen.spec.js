@@ -14,6 +14,7 @@ import { mockBackend, watchForErrors, overflowsSideways } from './support/backen
 
 const SCREENS = [
   { name: 'home', path: '/' },
+  { name: 'home (heroes version)', path: '/?home=heroes' },
   { name: 'sign in', path: '/signin' },
   { name: 'review', path: '/review' },
   {
@@ -32,7 +33,8 @@ for (const screen of SCREENS) {
       const problems = watchForErrors(page)
       await screen.before?.(page)
 
-      await page.goto(`${screen.path}?lang=${lang}`)
+      // A path may already carry a query string.
+      await page.goto(`${screen.path}${screen.path.includes('?') ? '&' : '?'}lang=${lang}`)
       await expect(page.getByRole('heading').first()).toBeVisible()
       await page.evaluate(() => document.fonts.ready)
 

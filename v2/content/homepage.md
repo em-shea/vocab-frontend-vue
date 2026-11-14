@@ -63,6 +63,14 @@ key: questBody
 en: One Chinese word arrives by email each day, with a short quiz after it. Keep practising and the 108 outlaws of Liangshan join you one by one.
 cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位一位入伙。
 
+key: launchHeadline
+en: One Chinese word a day.
+cn: 每天一个中文词
+
+key: launchBody
+en: A new word arrives by email each morning, with a short quiz to help it stick.
+cn: 每天早上用邮件收到一个新词，再做个小测验帮你记住。
+
 key: chooseLevel
 en: Choose an HSK Level
 cn: 选择 HSK 等级
@@ -165,6 +173,10 @@ key: studyHeadline
 en: Three ways to study.
 cn: 三种学习方式。
 
+key: studyHeadlineLaunch
+en: Two ways to study.
+cn: 两种学习方式。
+
 key: quizHeadline
 en: Take quizzes.
 cn: 做测验。
@@ -172,6 +184,14 @@ cn: 做测验。
 key: quizBody
 en: Check each word with a short quiz.
 cn: 用小测验检验每个词。
+
+key: studyReviewHeadline
+en: Review past words.
+cn: 复习以前的词。
+
+key: studyReviewBody
+en: Look back at every word you have been sent, and export the list.
+cn: 回顾收到过的每个词，也可以导出词表。
 
 key: sentenceHeadline
 en: Use words in sentences.
@@ -236,6 +256,14 @@ cn: 一百单八将聚义梁山
 key: closeBody
 en: Finish the quests and the whole band gathers on Mount Liang.
 cn: 完成任务，一百单八将就在梁山聚齐。
+
+key: previewHeadline
+en: Coming soon: collect the 108 heroes of Liangshan.
+cn: 即将推出：集齐梁山一百单八将
+
+key: previewBody
+en: Soon, practising will bring the outlaws of the Water Margin to you one by one.
+cn: 很快，只要坚持练习，水浒好汉就会一位一位入伙。
 
 ## Progress
 
