@@ -61,7 +61,6 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
           <p class="quest__body">{{ t('questBody') }}</p>
           <div class="quest__actions">
             <AppButton variant="seal" as="a" href="#subscribe">{{ t('questCta') }}</AppButton>
-            <p class="quest__note">{{ t('questNote') }}</p>
           </div>
         </div>
         <PrintFrame
@@ -74,7 +73,7 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 
       <!-- 2. Subscribe band -->
       <section id="subscribe" class="stack">
-        <SectionHead label="subscribe" :title="t('subscribeLine')" />
+        <SectionHead :title="t('subscribeLine')" />
         <AppPanel>
           <SubscribeForm variant="light" />
         </AppPanel>
@@ -83,10 +82,8 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
       <!-- 3. The story — print on the right -->
       <section class="split">
         <div class="split__text">
-          <SectionHead :label="t('markStory')" :title="t('storyHeadline')" />
-          <p class="split__kicker hanzi">{{ t('storyKicker') }}</p>
+          <SectionHead :title="t('storyHeadline')" />
           <p>{{ t('storyBody') }}</p>
-          <p>{{ t('storyBody2') }}</p>
         </div>
         <PrintFrame
           ratio="3 / 4"
@@ -98,7 +95,7 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 
       <!-- 4. Daily word -->
       <section class="stack">
-        <SectionHead :label="t('markHow')" :title="t('dailyHeadline')" hanzi="每日一词" />
+        <SectionHead :title="t('dailyHeadline')" />
         <div class="daily">
           <WordCard
             v-if="featured"
@@ -123,10 +120,9 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 
       <!-- 5. Levels -->
       <section class="stack">
-        <SectionHead :label="t('markLevels')" :title="t('levelHeadline')" />
+        <SectionHead :title="t('levelHeadline')" />
         <p class="note">{{ t('levelBody') }}</p>
 
-        <p class="levels__prompt">{{ t('whichLevel') }}</p>
         <div class="levels" role="tablist">
           <button
             v-for="list in lists.all"
@@ -175,10 +171,9 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
           alt="Woodblock print of a tattooed hero wrestling an opponent"
         />
         <div class="split__text">
-          <SectionHead :label="t('markHeroes')" :title="t('collectHeadline')" hanzi="一百零八" />
+          <SectionHead :title="t('collectHeadline')" />
           <p>{{ t('collectBody') }}</p>
           <AppPanel class="hero-card">
-            <p class="label">{{ t('abilityLabel') }}</p>
             <p class="hanzi hero-card__name">{{ t('abilityName') }}</p>
             <p class="hero-card__note">{{ t('abilityNote') }}</p>
           </AppPanel>
@@ -187,7 +182,6 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 
       <!-- 7. Oath — dark band -->
       <section class="stack">
-        <SectionHead :label="t('markJoin')" :title="t('closeHeadlineA')" />
         <AppPanel band class="oath">
           <h2 class="oath__headline">
             {{ t('closeHeadlineA') }}<br />{{ t('closeHeadlineB') }}
@@ -195,7 +189,6 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
           <p class="oath__body">{{ t('closeBody') }}</p>
           <figure class="oath__board">
             <img :src="printBoard" alt="Two outlaws of the Water Margin, woodblock print" />
-            <figcaption class="oath__board-note label">{{ t('boardNote') }}</figcaption>
           </figure>
           <SubscribeForm variant="band" />
         </AppPanel>
@@ -230,13 +223,11 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 .quest__headline { font-size: var(--t-3xl); }
 .quest__body { font-size: var(--t-lead); }
 .quest__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
-.quest__note { font-size: var(--t-base); color: var(--c-muted); }
 .quest__print { max-width: 420px; width: 100%; justify-self: center; }
 
 /* --- alternating text/print sections --- */
 .split { display: grid; gap: var(--s-8); align-items: start; }
 .split__text { display: flex; flex-direction: column; gap: var(--s-4); }
-.split__kicker { color: var(--c-seal); font-size: var(--t-lead); }
 .split__print { max-width: 420px; width: 100%; justify-self: center; }
 
 /* --- 4. daily --- */
@@ -266,7 +257,6 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
 }
 
 /* --- 5. levels --- */
-.levels__prompt { font-family: var(--f-display); font-weight: var(--w-heavy); color: var(--c-ink); font-size: var(--t-lg); }
 .levels { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .levels__tab {
   padding: var(--s-2) var(--s-4);
@@ -312,7 +302,6 @@ const beats = computed(() => [t('beat1'), t('beat2'), t('beat3')])
   object-position: center 22%;
   filter: sepia(0.2) saturate(0.9);
 }
-.oath__board-note { color: var(--c-gold); }
 
 @media (min-width: 720px) {
   .page__inner { padding: 0 var(--s-14); }

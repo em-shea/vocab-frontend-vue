@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
-import SectionHead from '../components/SectionHead.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
 import { useAuthStore } from '../stores/auth'
@@ -48,8 +47,6 @@ async function submit () {
 
 <template>
   <PageShell>
-    <SectionHead :label="t('signInMark')" />
-
     <AppPanel>
       <h1 class="signin__title">{{ t('signInTitle') }}</h1>
       <p>{{ t('signInBody') }}</p>

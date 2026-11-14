@@ -36,7 +36,9 @@ const UI_CHARS =
   '天罡地煞英雄豪杰鲁智深武松李逵逼上梁山聚义厅印色字画卷轴' +
   '汉语水平考试级别词汇练习句子测验复习订阅退订登录注册' +
   '一二三四五六七八九十首页测验复习收集位已聚天连续学中文步接近目标' +
-  '选择等电子邮箱简体繁体'
+  '选择等电子邮箱简体繁体' +
+  // Brush-script line above the home headline (Ma Shan Zheng ships the ui tier only).
+  '替行道'
 // Punctuation that appears in Chinese copy and definitions.
 const PUNCT = '，。、；：？！「」『』（）《》〈〉—…·　'
 

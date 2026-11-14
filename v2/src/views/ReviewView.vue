@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
-import SectionHead from '../components/SectionHead.vue'
 import AppButton from '../components/AppButton.vue'
 import WordCard from '../components/WordCard.vue'
 import { api } from '../api/client'
@@ -115,8 +114,6 @@ function exportWords () {
 
 <template>
   <PageShell width="wide">
-    <SectionHead :label="t('reviewMark')" />
-
     <div class="review__intro">
       <h1 class="review__title">{{ t('reviewTitle') }}</h1>
       <p>{{ t('reviewBody') }}</p>

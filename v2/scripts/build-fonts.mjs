@@ -199,10 +199,14 @@ for (const [name, cuts] of CJK_DIRECT.filter(([n]) => wanted(n))) {
 // ---- Display face --------------------------------------------------------
 if (wanted(DISPLAY[0])) {
   const [name, family] = DISPLAY
-  const css = await fetchText(`https://fonts.googleapis.com/css2?family=${family}`, UA_LEGACY)
-  const url = css.match(/url\((https:\/\/[^)]+\.ttf)\)/)?.[1]
   const ttf = join(CACHE, `${name}-400.ttf`)
-  if (!existsSync(ttf)) writeFileSync(ttf, await fetchBinary(url, UA_LEGACY))
+  // Only ask Google when the file is not already cached, so the brush subset
+  // can be rebuilt offline after a copy change.
+  if (!existsSync(ttf)) {
+    const css = await fetchText(`https://fonts.googleapis.com/css2?family=${family}`, UA_LEGACY)
+    const url = css.match(/url\((https:\/\/[^)]+\.ttf)\)/)?.[1]
+    writeFileSync(ttf, await fetchBinary(url, UA_LEGACY))
+  }
   // Display copy only, so the ui tier alone is enough.
   const uiTier = tiers.find((t) => t.name === 'ui')
   const file = `${name}-400.woff2`

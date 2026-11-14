@@ -84,11 +84,9 @@ async function submit () {
       {{ busy ? '…' : t('subscribe') }}
     </AppButton>
 
-    <p class="sub__note">{{ t('subNote') }}</p>
-
     <!-- Outcomes say what happened and what to do next, rather than just failing. -->
     <p v-if="status === 'done'" class="sub__msg sub__msg--ok" role="status">
-      {{ t('questNote') }} Check your inbox to confirm.
+      Check your inbox to confirm.
     </p>
     <p v-else-if="status === 'exists'" class="sub__msg" role="status">
       That address is already subscribed. <a href="/signin">Sign in</a> to change your lists.
@@ -121,19 +119,12 @@ async function submit () {
   min-width: 0;
 }
 
-.sub__note {
-  grid-column: 1 / -1;
-  font-size: var(--t-sm);
-  color: var(--c-muted);
-}
-
 .sub__msg { grid-column: 1 / -1; font-size: var(--t-base); }
 .sub__msg--ok { color: var(--c-seal); font-weight: var(--w-semi); }
 .sub__msg--bad { color: var(--c-red); }
 
 /* On the dark band the fields keep their light ground so they stay legible. */
-.sub--band .label,
-.sub--band .sub__note { color: var(--c-on-dark); opacity: 0.8; }
+.sub--band .label { color: var(--c-on-dark); opacity: 0.8; }
 .sub--band .sub__msg--ok { color: var(--c-gold); }
 /* The secondary button is navy, which vanishes on the navy band. Here it takes
  * the print ochre instead, with a light edge so the hard shadow still reads. */
@@ -146,6 +137,5 @@ async function submit () {
 
 @media (min-width: 720px) {
   .sub { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto; }
-  .sub__note { grid-column: 1 / -1; }
 }
 </style>

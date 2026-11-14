@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
-import SectionHead from '../components/SectionHead.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
 import { useAuthStore } from '../stores/auth'
@@ -75,8 +74,6 @@ async function resend () {
 
 <template>
   <PageShell>
-    <SectionHead :label="t('verifyMark')" />
-
     <AppPanel>
       <template v-if="status === 'verifying'">
         <h1 class="verify__title">{{ t('verifyChecking') }}</h1>
