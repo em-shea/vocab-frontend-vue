@@ -121,5 +121,14 @@ export default {
   "reviewRetry": "重试",
   "reviewExamples": "例句",
   "reviewLevel": "{level} 级",
-  "reviewCount": "{count} 个词"
+  "reviewCount": "{count} 个词",
+  "heroCardRank": "第 {n} 位，共 108 位",
+  "heroCardTierHeavenly": "三十六天罡",
+  "heroCardTierEarthly": "七十二地煞",
+  "heroCardStar": "星宿",
+  "heroCardWeapon": "兵器",
+  "heroCardLockedName": "？？？",
+  "heroCardLocked": "尚未收集",
+  "heroCardArt": "木刻版画前的{name}像素小人",
+  "heroCardArtLocked": "尚未收集的好汉：褪色木刻版画前的黑色剪影"
 }

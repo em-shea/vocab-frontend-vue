@@ -122,5 +122,14 @@ export default {
   "reviewRetry": "Try again",
   "reviewExamples": "Example sentences",
   "reviewLevel": "Level {level}",
-  "reviewCount": "{count} words"
+  "reviewCount": "{count} words",
+  "heroCardRank": "Rank {n} of 108",
+  "heroCardTierHeavenly": "Heavenly Spirit",
+  "heroCardTierEarthly": "Earthly Fiend",
+  "heroCardStar": "Star",
+  "heroCardWeapon": "Weapon",
+  "heroCardLockedName": "？？？",
+  "heroCardLocked": "Not yet collected",
+  "heroCardArt": "Pixel sprite of {name} in front of a woodblock print",
+  "heroCardArtLocked": "Dark silhouette of a hero not yet collected, in front of a faded woodblock print"
 }

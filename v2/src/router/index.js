@@ -36,6 +36,12 @@ export const routes = [
     path: '/styleguide',
     name: 'styleguide',
     component: () => import('../views/StyleguideView.vue')
+  },
+  {
+    // Internal preview of the collectible hero card in its three layouts.
+    path: '/hero-card',
+    name: 'hero-card',
+    component: () => import('../views/HeroCardLabView.vue')
   }
 ]
 

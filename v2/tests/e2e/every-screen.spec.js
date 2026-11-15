@@ -17,6 +17,7 @@ const SCREENS = [
   { name: 'home (heroes version)', path: '/?home=heroes' },
   { name: 'sign in', path: '/signin' },
   { name: 'review', path: '/review' },
+  { name: 'hero card lab', path: '/hero-card' },
   {
     name: 'check your email',
     path: '/verification',

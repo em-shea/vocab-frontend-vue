@@ -40,7 +40,10 @@ const UI_CHARS =
   // Brush-script line above the home headline (Ma Shan Zheng ships the ui tier only).
   '替行道' +
   // The hero card on the home page names its hero in brush script.
-  '花和尚'
+  '花和尚' +
+  // The hero card (HeroCard.vue) sets names and nicknames in brush script. 扈三娘 and
+  // 一丈青 are the Earthly Fiend example; 鲁智深 and 花和尚 are above.
+  '扈三娘一丈青'
 // Punctuation that appears in Chinese copy and definitions.
 const PUNCT = '，。、；：？！「」『』（）《》〈〉—…·　'
 
