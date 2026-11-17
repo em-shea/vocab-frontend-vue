@@ -124,6 +124,7 @@ export default {
   "reviewLevel": "Level {level}",
   "reviewCount": "{count} words",
   "heroCardRank": "Rank {n} of 108",
+  "heroCardRankTier": "Rank {n} of 108, {tier}",
   "heroCardTierHeavenly": "Heavenly Spirit",
   "heroCardTierEarthly": "Earthly Fiend",
   "heroCardStar": "Star",

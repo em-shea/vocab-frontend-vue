@@ -14,13 +14,15 @@ import { useI18n } from 'vue-i18n'
 // The rank is where a hero stands in the novel's own list of 108.
 //
 // `hero` fields: rank, tier ('天罡' | '地煞'), name, pinyin, nameEn, nickname,
-// nicknameEn, star, starEn, weapon, weaponEn, lineEn, lineCn, and the image
-// imports print, sprite (256x64 sheet, four 64px frames) and silhouette
-// (one 64px frame).
+// nicknameEn, star, starEn, weapon, weaponEn, an optional quote
+// ({ cn, en, sourceCn, sourceEn }; a hero without one simply shows no quote),
+// and the image imports print, sprite (a strip of `frames` 64px frames, so
+// 64*frames wide and 64 high; `frames` defaults to 4) and silhouette (one 64px
+// frame).
 //
 // `state`: 'revealed' shows everything; 'locked' swaps the sprite for the
 // silhouette, fades the print, and leaves out the name, nickname, star, weapon
-// and line. The rank and tier stay: they say where the empty slot is.
+// and quote. The rank and tier stay: they say where the empty slot is.
 //
 // The two tiers are told apart by colour alone as well as by text: vermilion
 // seal and frame for the 36 Heavenly Spirits, navy for the 72 Earthly Fiends.
@@ -37,7 +39,12 @@ const chinese = computed(() => locale.value === 'cn')
 const heavenly = computed(() => props.hero.tier === '天罡')
 const tierGloss = computed(() => t(heavenly.value ? 'heroCardTierHeavenly' : 'heroCardTierEarthly'))
 const rankText = computed(() => t('heroCardRank', { n: props.hero.rank }))
-const line = computed(() => (chinese.value ? props.hero.lineCn : props.hero.lineEn))
+// Full art has no visible footer, so its screen-reader text carries the tier too.
+const rankTierText = computed(() => t('heroCardRankTier', { n: props.hero.rank, tier: tierGloss.value }))
+const quote = computed(() => props.hero.quote || null)
+const quoteSource = computed(() => (quote.value ? (chinese.value ? quote.value.sourceCn : quote.value.sourceEn) : ''))
+// Second line under the name: pinyin, then the English nickname in English.
+const subline = computed(() => (chinese.value ? props.hero.pinyin : `${props.hero.pinyin} · ${props.hero.nicknameEn}`))
 const artLabel = computed(() =>
   locked.value
     ? t('heroCardArtLocked')
@@ -48,6 +55,7 @@ const artLabel = computed(() =>
 const scale = computed(() => (props.variant === 'compact' ? 2 : 3))
 const spriteStyle = computed(() => ({
   '--k': scale.value,
+  '--n': props.hero.frames || 4,
   backgroundImage: `url("${locked.value ? props.hero.silhouette : props.hero.sprite}")`
 }))
 </script>
@@ -58,7 +66,8 @@ const spriteStyle = computed(() => ({
     :class="[`card--${variant}`, heavenly ? 'card--heavenly' : 'card--earthly', { 'card--locked': locked }]"
   >
     <!-- Full art: the print is the card, so the name plate comes first in the
-         reading order and the art layer sits behind everything. -->
+         reading order and the art layer sits behind everything. There is no
+         footer: the tier shows by colour and is read out in the hidden text. -->
     <template v-if="variant === 'full-art'">
       <div class="stage" role="img" :aria-label="artLabel">
         <img class="stage__print" :src="hero.print" alt="" />
@@ -68,9 +77,13 @@ const spriteStyle = computed(() => ({
       <div class="flow">
         <header class="plate plate--name">
           <div class="plate__text">
-            <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-            <p v-if="!locked" class="pinyin">{{ hero.pinyin }}</p>
+            <div class="namerow">
+              <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
+              <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+            </div>
+            <p v-if="!locked" class="pinyin">{{ subline }}</p>
           </div>
+          <span class="sr-only">{{ rankTierText }}</span>
           <span class="seal" aria-hidden="true">{{ hero.rank }}</span>
         </header>
 
@@ -80,10 +93,6 @@ const spriteStyle = computed(() => ({
 
         <div class="plate plate--info">
           <template v-if="!locked">
-            <p class="nick">
-              <span class="brush nick__zh">{{ hero.nickname }}</span>
-              <span v-if="!chinese" class="nick__gloss">{{ hero.nicknameEn }}</span>
-            </p>
             <dl class="facts">
               <div>
                 <dt>{{ t('heroCardStar') }}</dt>
@@ -94,14 +103,13 @@ const spriteStyle = computed(() => ({
                 <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
               </div>
             </dl>
-            <p class="line" :class="{ hanzi: chinese }">{{ line }}</p>
+            <figure v-if="quote" class="quote">
+              <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
+              <p v-if="!chinese" class="quote__en" lang="en">{{ quote.en }}</p>
+              <figcaption class="quote__src">{{ quoteSource }}</figcaption>
+            </figure>
           </template>
           <p v-else class="line">{{ t('heroCardLocked') }}</p>
-          <footer class="foot">
-            <span class="sr-only">{{ rankText }}</span>
-            <span class="foot__rank mono" aria-hidden="true">{{ hero.rank }} / 108</span>
-            <span class="foot__tier"><i class="tick" aria-hidden="true"></i><span class="brush">{{ hero.tier }}</span> {{ tierGloss }}</span>
-          </footer>
         </div>
       </div>
     </template>
@@ -117,24 +125,27 @@ const spriteStyle = computed(() => ({
       <div class="body">
         <header class="head">
           <div class="head__text">
-            <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-            <p v-if="!locked" class="pinyin">{{ hero.pinyin }}</p>
+            <div class="namerow">
+              <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
+              <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+            </div>
+            <p v-if="!locked" class="pinyin">{{ subline }}</p>
           </div>
           <span class="seal seal--small" aria-hidden="true">{{ hero.rank }}</span>
         </header>
 
         <template v-if="!locked">
-          <p class="nick">
-            <span class="brush nick__zh">{{ hero.nickname }}</span>
-            <span v-if="!chinese" class="nick__gloss">{{ hero.nicknameEn }}</span>
-          </p>
           <p class="meta">
             <span class="hanzi">{{ hero.star }}</span>
             <span aria-hidden="true"> · </span>
             <span class="hanzi">{{ hero.weapon }}</span>
             <span v-if="!chinese" class="meta__gloss"> ({{ hero.starEn }}; {{ hero.weaponEn }})</span>
           </p>
-          <p class="line" :class="{ hanzi: chinese }">{{ line }}</p>
+          <!-- Chinese only here: the card is short on room. -->
+          <figure v-if="quote" class="quote">
+            <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
+            <figcaption class="quote__src">{{ quoteSource }}</figcaption>
+          </figure>
         </template>
         <p v-else class="line">{{ t('heroCardLocked') }}</p>
 
@@ -150,8 +161,11 @@ const spriteStyle = computed(() => ({
     <template v-else>
       <header class="head">
         <div class="head__text">
-          <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-          <p v-if="!locked" class="pinyin">{{ hero.pinyin }}</p>
+          <div class="namerow">
+            <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
+            <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+          </div>
+          <p v-if="!locked" class="pinyin">{{ subline }}</p>
         </div>
         <span class="seal" aria-hidden="true">{{ hero.rank }}</span>
       </header>
@@ -162,25 +176,23 @@ const spriteStyle = computed(() => ({
         <div class="sprite" :class="{ 'sprite--still': locked }" :style="spriteStyle" aria-hidden="true"></div>
       </div>
 
-      <template v-if="!locked">
-        <p class="nick">
-          <span class="brush nick__zh">{{ hero.nickname }}</span>
-          <span v-if="!chinese" class="nick__gloss">{{ hero.nicknameEn }}</span>
-        </p>
-        <div class="panel">
-          <dl class="facts">
-            <div>
-              <dt>{{ t('heroCardStar') }}</dt>
-              <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
-            </div>
-            <div>
-              <dt>{{ t('heroCardWeapon') }}</dt>
-              <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
-            </div>
-          </dl>
-          <p class="line" :class="{ hanzi: chinese }">{{ line }}</p>
-        </div>
-      </template>
+      <div v-if="!locked" class="panel">
+        <dl class="facts">
+          <div>
+            <dt>{{ t('heroCardStar') }}</dt>
+            <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
+          </div>
+          <div>
+            <dt>{{ t('heroCardWeapon') }}</dt>
+            <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
+          </div>
+        </dl>
+        <figure v-if="quote" class="quote">
+          <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
+          <p v-if="!chinese" class="quote__en" lang="en">{{ quote.en }}</p>
+          <figcaption class="quote__src">{{ quoteSource }}</figcaption>
+        </figure>
+      </div>
       <div v-else class="panel panel--empty">
         <p class="line">{{ t('heroCardLocked') }}</p>
       </div>
@@ -237,9 +249,16 @@ const spriteStyle = computed(() => ({
 }
 .seal--small { min-width: 2rem; height: 2rem; font-size: var(--t-body); }
 
-.nick { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-2); margin: 0; }
-.nick__zh { font-size: var(--t-lg); line-height: var(--lh-snug); color: var(--c-seal); }
-.nick__gloss { font-size: var(--t-base); color: var(--c-body); }
+.namerow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--s-2); }
+.nick__zh { font-size: var(--t-md); line-height: var(--lh-tight); color: var(--c-seal); }
+.pinyin { letter-spacing: 0; }
+
+/* The quote: Chinese in the study face, the English translation in body text,
+ * a small muted attribution. Plain text, no decorative marks. */
+.quote { display: flex; flex-direction: column; gap: var(--s-1); margin: 0; }
+.quote__zh { margin: 0; text-wrap: pretty; font-size: var(--t-body-lg); line-height: var(--lh-body); }
+.quote__en { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-body); }
+.quote__src { font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
 
 .facts { display: grid; gap: var(--s-1); margin: 0; }
 .facts div { display: grid; grid-template-columns: 3.5rem 1fr; gap: var(--s-2); align-items: baseline; }
@@ -247,7 +266,6 @@ const spriteStyle = computed(() => ({
 .facts dd { margin: 0; font-size: var(--t-base); color: var(--c-ink); }
 
 .line { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); color: var(--c-body); }
-.line.hanzi { color: var(--c-body); }
 .meta { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); }
 .meta__gloss { color: var(--c-body); }
 
@@ -272,17 +290,18 @@ const spriteStyle = computed(() => ({
   white-space: nowrap;
 }
 
-/* Sprite: a 256x64 sheet of four 64px frames, shown at a whole-number scale
- * and stepped across with background-position. CSS only. */
+/* Sprite: a strip of --n 64px frames (default 4), shown at a whole-number
+ * scale --k and stepped across with background-position. 160ms a frame. CSS only. */
 .sprite {
+  --n: 4;
   flex: none;
   width: calc(64px * var(--k));
   height: calc(64px * var(--k));
   background-repeat: no-repeat;
-  background-size: calc(256px * var(--k)) calc(64px * var(--k));
+  background-size: calc(var(--n) * 64px * var(--k)) calc(64px * var(--k));
   background-position: 0 0;
   image-rendering: pixelated;
-  animation: idle 0.8s steps(4) infinite;
+  animation: idle calc(var(--n) * 0.16s) steps(var(--n)) infinite;
 }
 .sprite--still {
   /* The silhouette is a single frame. */
@@ -291,7 +310,7 @@ const spriteStyle = computed(() => ({
 }
 @keyframes idle {
   from { background-position: 0 0; }
-  to { background-position: calc(-256px * var(--k)) 0; }
+  to { background-position: calc(var(--n) * -64px * var(--k)) 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sprite { animation: none; }
@@ -354,14 +373,14 @@ const spriteStyle = computed(() => ({
 }
 .card--framed .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); padding-bottom: var(--s-3); border-bottom: var(--bw-rule) solid var(--c-rule); }
 .card--framed .window { height: 14rem; }
-.card--framed .panel { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-3); background-color: var(--c-ground); border: var(--bw-rule) solid var(--c-rule); }
+.card--framed .panel { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-3); background-color: var(--c-ground); border: var(--bw-rule) solid var(--c-rule); }
 .card--framed .panel--empty { align-items: center; justify-content: center; min-height: 5.5rem; }
 .card--framed .foot { margin-top: auto; padding-top: var(--s-3); border-top: var(--bw-rule) solid var(--c-rule); }
 
 /* B: full art ----------------------------------------------------------- */
 .card--full-art {
   max-width: 320px;
-  min-height: 31.25rem;
+  min-height: 34rem;
   overflow: hidden;
   background-color: var(--c-ink);
   border-width: var(--bw-frame);
@@ -382,10 +401,25 @@ const spriteStyle = computed(() => ({
   box-shadow: var(--shadow-hard);
 }
 .card--full-art .plate--name { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-2) var(--s-3); }
-.card--full-art .name { font-size: var(--t-lg); }
-.card--full-art .figure { flex: 1; display: flex; align-items: flex-end; justify-content: center; }
-.card--full-art .plate--info { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-3); }
-.card--full-art .foot { padding-top: var(--s-2); border-top: var(--bw-rule) solid var(--c-rule); }
+.card--full-art .plate__text { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
+.card--full-art .figure { position: relative; flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: var(--s-2); }
+.card--full-art .figure .sprite { position: relative; z-index: 1; }
+/* The same ochre ground line the art windows have, under the feet. */
+.card--full-art .figure::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-2);
+  width: 6rem;
+  height: 0.375rem;
+  transform: translateX(-50%);
+  background-color: var(--c-gold);
+  border-top: var(--bw-hair) solid var(--c-ink);
+  opacity: 0.9;
+}
+.card--locked .figure::after { display: none; }
+.card--full-art .plate--info { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-3); }
+.card--full-art .quote { padding-top: var(--s-3); border-top: var(--bw-rule) solid var(--c-rule); }
 
 /* C: compact ------------------------------------------------------------ */
 .card--compact {
@@ -402,8 +436,9 @@ const spriteStyle = computed(() => ({
 .card--compact .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-2); }
 .card--compact .name { font-size: var(--t-lg); }
 .card--compact .pinyin { font-size: var(--t-sm); }
-.card--compact .nick__zh { font-size: var(--t-md); }
-.card--compact .nick__gloss { font-size: var(--t-sm); }
+.card--compact .nick__zh { font-size: var(--t-body-lg); }
+.card--compact .quote__zh { font-size: var(--t-base); line-height: var(--lh-snug); }
+.card--compact .quote__src { font-size: var(--t-xs); }
 .card--compact .line { font-size: var(--t-sm); }
 .card--compact .foot { margin-top: auto; padding-top: var(--s-1); }
 

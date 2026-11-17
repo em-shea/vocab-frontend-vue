@@ -43,7 +43,9 @@ const UI_CHARS =
   '花和尚' +
   // The hero card (HeroCard.vue) sets names and nicknames in brush script. 扈三娘 and
   // 一丈青 are the Earthly Fiend example; 鲁智深 and 花和尚 are above.
-  '扈三娘一丈青'
+  '扈三娘一丈青' +
+  // Guan Sheng (关胜) and his nickname 大刀 are the first real card, set in brush script.
+  '关胜大刀'
 // Punctuation that appears in Chinese copy and definitions.
 const PUNCT = '，。、；：？！「」『』（）《》〈〉—…·　'
 

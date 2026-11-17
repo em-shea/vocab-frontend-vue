@@ -1,35 +1,42 @@
 <script setup>
 import HeroCard from '../components/HeroCard.vue'
 import printCollect from '../assets/prints/hero-collect.jpg'
-import luSheet from '../assets/sprites/lu-zhishen.png'
-import luSilhouette from '../assets/sprites/lu-zhishen-silhouette.png'
+import guanSheet from '../assets/sprites/guan-sheng-idle.png'
+import guanSilhouette from '../assets/sprites/guan-sheng-silhouette.png'
 import wuSheet from '../assets/sprites/wu-song.png'
 
 // Internal preview: the three hero card layouts side by side so one can be
 // chosen. Headings and labels here are hard-coded English; the card's own
 // text comes from the hero object and the i18n keys.
 
-const lu = {
-  rank: 13,
+// Guan Sheng: the sprite is the first real AI-generated one (five frames). The
+// print is a stand-in; which hero it shows is not recorded.
+const guan = {
+  rank: 5,
   tier: '天罡',
-  name: '鲁智深',
-  pinyin: 'Lǔ Zhìshēn',
-  nameEn: 'Lu Zhishen',
-  nickname: '花和尚',
-  nicknameEn: 'the Flowery Monk',
-  star: '天孤星',
-  starEn: 'the Solitary Star',
-  weapon: '禅杖',
-  weaponEn: "monk's staff",
-  lineEn: 'A monk who drinks, brawls and cannot stand to see the weak bullied.',
-  lineCn: '一个喝酒打架、见不得弱者受欺负的和尚。',
+  name: '关胜',
+  pinyin: 'Guān Shèng',
+  nameEn: 'Guan Sheng',
+  nickname: '大刀',
+  nicknameEn: 'Great Blade',
+  star: '天勇星',
+  starEn: 'the Brave Star',
+  weapon: '青龙偃月刀',
+  weaponEn: 'Green Dragon Crescent Blade',
+  quote: {
+    cn: '幼读兵书，深通武艺，有万夫不当之勇。',
+    en: 'He read books on war as a boy, mastered the martial arts, and has the courage to stand against ten thousand men.',
+    sourceCn: '宣赞荐关胜',
+    sourceEn: 'Xuan Zan, recommending him to the court'
+  },
   print: printCollect,
-  sprite: luSheet,
-  silhouette: luSilhouette
+  sprite: guanSheet,
+  frames: 5,
+  silhouette: guanSilhouette
 }
 
-// Stand-ins: Hu Sanniang has no art yet, so she borrows the same print and the
-// Wu Song placeholder sprite. Both are placeholders, not her likeness.
+// Stand-in: Hu Sanniang has no art yet, so she borrows the same print and the
+// Wu Song placeholder sprite (four frames). Neither is her likeness. No quote.
 const hu = {
   rank: 59,
   tier: '地煞',
@@ -42,11 +49,10 @@ const hu = {
   starEn: 'the Wise Star',
   weapon: '日月双刀',
   weaponEn: 'twin sabres',
-  lineEn: 'A swordswoman who captures her opponents with a red silk lasso.',
-  lineCn: '用红锦套索生擒对手的女将。',
   print: printCollect,
   sprite: wuSheet,
-  silhouette: luSilhouette
+  frames: 4,
+  silhouette: guanSilhouette
 }
 
 const options = [
@@ -60,7 +66,7 @@ const options = [
   <main class="lab">
     <h1>Hero card</h1>
     <p class="lab__note">
-      Three layouts for the collectible card. The sprite and print are placeholders.
+      Three layouts for the collectible card. The Guan Sheng sprite is real; the print and Hu Sanniang's sprite are placeholders.
       Vermilion marks the 36 Heavenly Spirits, navy the 72 Earthly Fiends.
     </p>
 
@@ -68,11 +74,11 @@ const options = [
       <h2>{{ o.title }}</h2>
       <div class="option__row">
         <figure class="slot">
-          <HeroCard :hero="lu" :variant="o.variant" state="revealed" />
+          <HeroCard :hero="guan" :variant="o.variant" state="revealed" />
           <figcaption>Revealed, Heavenly Spirit</figcaption>
         </figure>
         <figure class="slot">
-          <HeroCard :hero="lu" :variant="o.variant" state="locked" />
+          <HeroCard :hero="guan" :variant="o.variant" state="locked" />
           <figcaption>Locked</figcaption>
         </figure>
         <figure v-if="o.extra" class="slot">

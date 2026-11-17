@@ -123,6 +123,7 @@ export default {
   "reviewLevel": "{level} 级",
   "reviewCount": "{count} 个词",
   "heroCardRank": "第 {n} 位，共 108 位",
+  "heroCardRankTier": "第 {n} 位，共 108 位，{tier}",
   "heroCardTierHeavenly": "三十六天罡",
   "heroCardTierEarthly": "七十二地煞",
   "heroCardStar": "星宿",
