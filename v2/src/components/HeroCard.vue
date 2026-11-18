@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HeroLine from './HeroLine.vue'
 
@@ -18,12 +18,12 @@ import HeroLine from './HeroLine.vue'
 //
 // `hero` fields: rank, tier ('天罡' | '地煞'), name, pinyin, nameEn, nickname,
 // nicknameEn, and three facts, each { cn, en, pinyin }: `star` (星宿), `weapon`
-// (兵器) and `background` (出身, what the hero was before Liangshan). `pinyin` is
+// (兵器) and `background` (出身, labelled "Background" in English: an occupation or a family position). `pinyin` is
 // space-separated syllables with tone marks, ONE PER CHINESE CHARACTER
-// (punctuation takes none); it is set as ruby over the characters. If the counts
-// do not match, the line is shown without ruby and a warning is logged in dev.
+// (punctuation takes none); it is shown in a pop-up bubble over the line. If the counts
+// do not match, the line is shown without pinyin and a warning is logged in dev.
 // Also an optional quote ({ cn, en, pinyin, sourceCn, sourceEn }), an optional
-// story ({ en, cn }) and printCredit ({ en, cn }) for the back of the card, and
+// story ({ en, cn }) and printCredit ({ en, cn }) for the back of the card (the credit is shown in the print viewer, not on the back face), and
 // the image imports print, sprite (a strip of `frames` 64px frames, so 64*frames
 // wide and 64 high; `frames` defaults to 4) and silhouette (one 64px frame).
 //
@@ -46,10 +46,12 @@ import HeroLine from './HeroLine.vue'
 //
 // `reading` ('guided' by default, or 'immersive') is how much help the card
 // gives. It is independent of the interface locale (`lang`).
-//   guided     pinyin and English. The subline under the name is the nickname
+//   guided     pinyin and English. Pinyin is on demand: each Chinese line is a
+//              button (see HeroLine) that pops its pinyin up in a small bubble on
+//              hover or click, so nothing in the card ever moves. The subline under the name is the nickname
 //              in curly quotes, then the pinyin, in BOTH locales: “Great Blade”
-//              Guān Shèng. Fact values and the quote are Chinese with ruby pinyin
-//              over each character and the English on its own line beneath. The
+//              Guān Shèng. Fact values and the quote are Chinese; the pinyin pops up in a bubble above
+//              (the English stays on its own line beneath). The
 //              fact labels, the story, the credit and the quote's source follow
 //              the interface locale.
 //   immersive  Chinese only: no pinyin, no English, nothing Latin on the card
@@ -61,7 +63,16 @@ import HeroLine from './HeroLine.vue'
 // Front faces carry three facts, in this order: star, weapon, and background
 // (framed and full art as a three-row list, compact as its meta line). There is
 // no quote on the front. The back is the print band, the name line, the story,
-// the quote (Chinese, English when guided, source) and the print's credit.
+// the quote (Chinese, English when guided, source). A small expand button in the
+// corner of the print band opens the whole print in a native modal dialog, with
+// its credit beneath (UI locale when guided, Chinese when immersive).
+//
+// Same text box in every state: on full art and framed fronts the art area has a
+// FIXED height (--art-h; full art also fixes the name plate, --name-h, and framed
+// its header, --head-h) and the fact plate or panel takes the rest of the card, so
+// the plate is the same height whether the card is guided, immersive or locked,
+// and the sprite never moves between modes. The heights are sized so the guided
+// facts of the longest lab hero (Hu Sanniang, whose English wraps) fit at 320px.
 //
 // `state`: 'revealed' shows everything; 'locked' swaps the sprite for the
 // silhouette, fades the print, and leaves out the name, nickname, the facts, the
@@ -69,8 +80,7 @@ import HeroLine from './HeroLine.vue'
 // empty slot is.
 //
 // `face`: 'front' (default) or 'back'. The back shows the print at full
-// strength, then a solid plate with the name line, the story, the quote and the
-// print's credit. A locked card has no back: `face` and `flippable` are ignored.
+// strength, then a solid plate with the name line, the story and the quote. A locked card has no back: `face` and `flippable` are ignored.
 //
 // `flippable`: renders both faces and a real button that turns the card over
 // (3D rotateY, or a plain swap under prefers-reduced-motion). The hidden face
@@ -126,6 +136,7 @@ const facts = computed(() => [
 ].filter(([, , f]) => f).map(([key, label, f]) => ({ key, label: msg(label), cn: f.cn, pinyin: f.pinyin, en: immersive.value ? '' : f.en })))
 
 const story = computed(() => (props.hero.story ? (zh.value ? props.hero.story.cn : props.hero.story.en) : ''))
+// Shown in the print viewer, not on the back face itself.
 const printCredit = computed(() => (props.hero.printCredit ? (zh.value ? props.hero.printCredit.cn : props.hero.printCredit.en) : ''))
 
 // Flipping. Locked cards and heroes without a story have no back.
@@ -140,6 +151,22 @@ const renderBack = computed(() => canFlip.value || backUp.value)
 const frontHidden = computed(() => canFlip.value && backUp.value)
 const backHidden = computed(() => canFlip.value && !backUp.value)
 const flip = () => { showBack.value = !showBack.value }
+
+// Pinyin bubbles: one pinned per card. Escape, a click outside and flipping close it.
+const openId = ref(null)
+const root = ref(null)
+provide('heroPinyin', { openId })
+watch(showBack, () => { openId.value = null })
+const onKey = (e) => { if (e.key === 'Escape') openId.value = null }
+const onPointer = (e) => { if (openId.value && !(e.target instanceof Element && root.value?.contains(e.target) && e.target.closest('.hl__btn'))) openId.value = null }
+onMounted(() => { document.addEventListener('keydown', onKey); document.addEventListener('pointerdown', onPointer) })
+onBeforeUnmount(() => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onPointer) })
+// The print viewer: a native modal dialog on the back face.
+const viewer = ref(null)
+const expandBtn = ref(null)
+const openViewer = () => { if (viewer.value && !viewer.value.open) viewer.value.showModal() }
+const closeViewer = () => { viewer.value?.close() }
+const onViewerClick = (e) => { if (e.target === viewer.value) closeViewer() }
 const sideText = computed(() => t(backUp.value ? 'heroCardShowingBack' : 'heroCardShowingFront'))
 
 // Whole-number sprite scale, so the pixel art stays crisp: 4x (256px frames) in
@@ -159,6 +186,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 
 <template>
   <article
+    ref="root"
     class="card"
     :class="[`card--${variant}`, `card--${reading}`, heavenly ? 'card--heavenly' : 'card--earthly', { 'card--locked': locked, 'card--flippable': canFlip }]"
     :data-reading="reading"
@@ -300,8 +328,14 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
           :inert="backHidden"
           :aria-hidden="backHidden ? 'true' : null"
         >
-          <div class="backprint" role="img" :aria-label="msg('heroCardPrintArt')">
-            <img class="backprint__img" :src="hero.print" alt="" />
+          <div class="backprint">
+            <div class="backprint__art" role="img" :aria-label="msg('heroCardPrintArt')">
+              <img class="backprint__img" :src="hero.print" alt="" />
+            </div>
+            <!-- Outside the role="img" block, so it stays reachable. -->
+            <button ref="expandBtn" type="button" class="expandbtn" :aria-label="t('heroCardViewPrint')" @click="openViewer">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" aria-hidden="true" focusable="false"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9" /></svg>
+            </button>
           </div>
           <div class="plate plate--back">
             <div class="plate__text">
@@ -316,8 +350,20 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
               <blockquote class="quote__text"><HeroLine :cn="quote.cn" :pinyin="quote.pinyin" :en="immersive ? '' : quote.en" :ruby="!immersive" /></blockquote>
               <figcaption class="quote__src" :lang="zh ? 'zh-Hans' : 'en'">{{ quoteSource }}</figcaption>
             </figure>
-            <p class="credit" :lang="zh ? 'zh-Hans' : 'en'">{{ printCredit }}</p>
           </div>
+
+          <!-- The whole print and its credit, in a native modal dialog. Escape and
+               the close button close it and focus goes back to the expand button;
+               a click on the backdrop (the dialog element itself) closes it too. -->
+          <dialog ref="viewer" class="viewer" :aria-label="msg('heroCardPrintArt')" @click="onViewerClick" @close="expandBtn?.focus()">
+            <div class="viewer__body">
+              <img class="viewer__img" :src="hero.print" alt="" />
+              <p v-if="printCredit" class="viewer__credit" :lang="zh ? 'zh-Hans' : 'en'">{{ printCredit }}</p>
+            </div>
+            <button type="button" class="viewer__close" :aria-label="t('heroCardClose')" @click="closeViewer">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" aria-hidden="true" focusable="false"><path d="M3 3l10 10M13 3 3 13" /></svg>
+            </button>
+          </dialog>
         </div>
       </div>
     </div>
@@ -431,12 +477,12 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .namerow .name { flex: none; }
 .pinyin { letter-spacing: 0; }
 
-/* The quote, on the back: Chinese (ruby when guided), English, then the source. */
+/* The quote, on the back: Chinese, English (when guided), then the source. */
 .quote { display: flex; flex-direction: column; gap: 2px; margin: 0; padding-left: var(--s-2); border-left: var(--bw-heavy) solid var(--tier); }
-.quote__text { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); --hl-zh-lh: 1.9; color: var(--c-ink); --hl-en-size: var(--t-sm); }
+.quote__text { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); color: var(--c-ink); --hl-en-size: var(--t-sm); }
 .quote__src { font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
 
-/* Three fact rows: label, then the Chinese (ruby when guided) with the English beneath. */
+/* Three fact rows: label, then the Chinese with the English beneath. */
 .facts { display: grid; gap: var(--s-1); margin: 0; --hl-en-size: var(--t-sm); }
 .facts div { display: grid; grid-template-columns: 4.5rem 1fr; gap: var(--s-2); align-items: baseline; }
 .facts dt { font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
@@ -555,6 +601,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 /* Back ------------------------------------------------------------------ */
 .face--back { overflow: hidden; }
 .backprint { position: relative; flex: 1; min-height: 4.5rem; background-color: var(--c-sunk); }
+.backprint__art { position: absolute; inset: 0; }
 .backprint__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; opacity: 1; }
 .plate--back {
   display: flex;
@@ -566,7 +613,65 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 }
 .story { margin: 0; max-width: none; font-size: var(--t-base-sm); line-height: 1.5; }
 .story.hanzi { color: var(--c-body); }
-.credit { margin: 0; max-width: none; font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
+
+/* Expand button: a small paper square with the hard shadow, bottom-right of the print band. */
+.expandbtn {
+  position: absolute;
+  right: var(--s-2);
+  bottom: var(--s-2);
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: var(--c-ink);
+  background-color: var(--c-panel);
+  border: var(--bw-rule) solid var(--c-ink);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--c-ink);
+  cursor: pointer;
+}
+.expandbtn:hover { background-color: var(--c-ground); }
+.expandbtn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--c-ink); }
+
+/* Print viewer: the print whole, its credit beneath, a close button. */
+.viewer {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  box-sizing: border-box;
+  width: min(94vw, 1200px);
+  height: min(92vh, 900px);
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  overflow: hidden;
+  color: var(--c-body);
+  background-color: var(--c-panel);
+  border: var(--bw-heavy) solid var(--c-ink);
+  box-shadow: var(--shadow-hard);
+}
+.viewer[open] { display: flex; flex-direction: column; }
+.viewer::backdrop { background-color: rgba(27, 33, 64, 0.72); }
+.viewer__body { display: flex; flex: 1; flex-direction: column; gap: var(--s-3); min-height: 0; padding: var(--s-3); }
+.viewer__img { flex: 1; width: 100%; min-height: 0; object-fit: contain; background-color: var(--c-sunk); }
+.viewer__credit { margin: 0; max-width: none; padding-right: 3rem; font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
+.viewer__close {
+  position: absolute;
+  right: var(--s-3);
+  bottom: var(--s-3);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  color: var(--c-on-button);
+  background-color: var(--c-button);
+  border: var(--bw-heavy) solid var(--c-ink);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--c-ink);
+  cursor: pointer;
+}
 
 /* Trading-card proportions (63:88, as Pokémon and Magic: The Gathering) for
  * both faces of the portrait layouts. min-height 0 and overflow hidden stop
@@ -574,20 +679,21 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .card--framed .face, .card--full-art .face { aspect-ratio: 63 / 88; min-height: 0; overflow: hidden; }
 
 /* A: framed ------------------------------------------------------------- */
-.card--framed { max-width: 320px; --name-size: var(--t-xl); }
+.card--framed { max-width: 320px; --name-size: var(--t-xl); --head-h: 4.25rem; --art-h: 8.125rem; }
 .card--framed .face--front { gap: var(--s-2); padding: var(--s-3); }
-.card--framed .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); padding-bottom: var(--s-2); border-bottom: var(--bw-rule) solid var(--c-rule); }
-.card--framed .window { flex: 1; min-height: 0; }
+.card--framed .head { flex: none; box-sizing: border-box; height: var(--head-h); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); padding-bottom: var(--s-2); border-bottom: var(--bw-rule) solid var(--c-rule); }
+.card--framed .window { flex: none; box-sizing: border-box; height: var(--art-h); }
 /* The frame's empty bottom rows already clear the shadow, so no extra margin:
  * the 3x figure needs every pixel of the shorter window. */
 .card--framed .window .sprite { margin-bottom: 0; }
 .card--framed .window .shade { --base: 0px; }
-.card--framed .panel { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-3); background-color: var(--c-ground); border: var(--bw-rule) solid var(--c-rule); }
+.card--framed .panel { display: flex; flex: 1; min-height: 0; flex-direction: column; justify-content: center; gap: var(--s-3); padding: 6px var(--s-3); background-color: var(--c-ground); border: var(--bw-rule) solid var(--c-rule); }
+.card--framed .facts { gap: 2px; }
 .card--framed .panel--empty { align-items: center; justify-content: center; }
-.card--framed .foot { margin-top: auto; padding-top: var(--s-2); border-top: var(--bw-rule) solid var(--c-rule); }
+.card--framed .foot { flex: none; padding-top: var(--s-1); border-top: var(--bw-rule) solid var(--c-rule); }
 
 /* B: full art ----------------------------------------------------------- */
-.card--full-art { max-width: 320px; --name-size: var(--t-lg); }
+.card--full-art { max-width: 320px; --name-size: var(--t-lg); --name-h: 4rem; --art-h: 10.75rem; }
 .card--full-art .face { overflow: hidden; background-color: var(--c-ink); border-width: var(--bw-frame); }
 .card--full-art .face--back { background-color: var(--c-panel); }
 .card--full-art .stage { position: absolute; inset: 0; background-color: var(--c-ground); }
@@ -609,15 +715,15 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
   box-shadow: var(--shadow-hard);
 }
 .card--full-art .plate--back { border: 0; border-top: var(--bw-heavy) solid var(--tier); box-shadow: none; }
-.card--full-art .plate--name { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-2) var(--s-3); }
+.card--full-art .plate--name { flex: none; box-sizing: border-box; height: var(--name-h); display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: 6px var(--s-3); }
 .card--full-art .plate__text { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
 .plate--back .plate__text { display: flex; flex-direction: column; gap: var(--s-1); }
 /* The figure takes what the plates leave. The sprite's empty headroom rows hang
  * above it, behind the name plate (the plates sit above, z-index 2). */
-.card--full-art .figure { position: relative; flex: 1; display: flex; align-items: flex-end; justify-content: center; min-height: 0; padding-bottom: var(--s-2); }
+.card--full-art .figure { position: relative; flex: none; box-sizing: border-box; height: var(--art-h); display: flex; align-items: flex-end; justify-content: center; }
 .card--full-art .figure .sprite { position: relative; z-index: 1; }
-.card--full-art .figure .shade { --base: var(--s-2); }
-.card--full-art .plate--info { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-2) var(--s-3); }
+.card--full-art .figure .shade { --base: 0px; }
+.card--full-art .plate--info { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: var(--s-3); min-height: 0; padding: var(--s-2) var(--s-3); }
 .card--full-art .pinyin { font-size: var(--t-sm); }
 .card--full-art .plate--back { z-index: auto; }
 

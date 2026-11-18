@@ -66,7 +66,7 @@ for (const L of LAYOUTS) {
     if (L !== 'C') {
       await expect(c.locator('dl.facts > div')).toHaveCount(3)
       await expect(c.locator('dl.facts > div').evaluateAll((els) => els.map((e) => e.dataset.fact))).resolves.toEqual(['star', 'weapon', 'background'])
-      await expect(c.locator('dl.facts dt')).toHaveText(['Star', 'Weapon', 'Before Liangshan'])
+      await expect(c.locator('dl.facts dt')).toHaveText(['Star', 'Weapon', 'Background'])
       await expect(c.locator('dl.facts')).toContainText('the Brave Star')
       await expect(c.locator('dl.facts')).toContainText('Green Dragon Crescent Blade')
       await expect(c.locator('dl.facts')).toContainText('Patrol officer of Pudong')
@@ -108,7 +108,7 @@ for (const L of LAYOUTS) {
     await open(page)
     const c = card(page, `${L}-locked`)
     const html = await c.evaluate((el) => el.outerHTML)
-    for (const secret of ['关胜', 'Guan Sheng', 'Guān', '大刀', 'Great Blade', '天勇星', 'Brave Star', '青龙偃月刀', 'Crescent', QUOTE_CN, '幼读兵书', 'ten thousand', 'Xuan Zan', '宣赞荐关胜', 'Guan Yu', '关羽', 'Song Jiang', 'Kuniyoshi', '歌川', 'Tiger', '蒲东巡检', 'Pudong', 'Patrol', 'Before Liangshan', 'tiān', 'yòu dú', 'Huyan', '呼延灼']) {
+    for (const secret of ['关胜', 'Guan Sheng', 'Guān', '大刀', 'Great Blade', '天勇星', 'Brave Star', '青龙偃月刀', 'Crescent', QUOTE_CN, '幼读兵书', 'ten thousand', 'Xuan Zan', '宣赞荐关胜', 'Guan Yu', '关羽', 'Song Jiang', 'Kuniyoshi', '歌川', 'Tiger', '蒲东巡检', 'Pudong', 'Patrol', 'Background', 'tiān', 'yòu dú', 'Huyan', '呼延灼']) {
       expect(html, secret).not.toContain(secret)
     }
     await expect(c.getByRole('heading')).toHaveText('？？？')
@@ -223,7 +223,7 @@ test('star, weapon and background are on the front and not on the back', async (
   await expect(card(page, 'B-locked').locator('dl')).toHaveCount(0)
   for (const L of LAYOUTS) {
     await expect(card(page, `${L}-locked`).locator('[data-fact="background"]'), L).toHaveCount(0)
-    expect(await visibleText(card(page, `${L}-locked`)), L).not.toMatch(/Before Liangshan|出身|蒲东/)
+    expect(await visibleText(card(page, `${L}-locked`)), L).not.toMatch(/Background|出身|蒲东/)
   }
 })
 
@@ -237,7 +237,7 @@ test('the background row: present on every revealed front, guided and immersive,
       await expect(row.locator('.sr-only[lang="zh-Hans"], .hl__zh').first(), `${lang} ${id}`).toHaveText(zh)
     }
     // Label: the locale's when guided, always Chinese when immersive.
-    await expect(card(page, 'B-front').locator('dl.facts dt').nth(2)).toHaveText(lang === 'en' ? 'Before Liangshan' : '出身')
+    await expect(card(page, 'B-front').locator('dl.facts dt').nth(2)).toHaveText(lang === 'en' ? 'Background' : '出身')
     await expect(card(page, 'B-front-imm').locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
     await expect(card(page, 'A-front-imm').locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
   }
@@ -255,11 +255,9 @@ test('the quote is on the back, below the story, and not on the front', async ({
   await expect(c.locator('figcaption')).toHaveText(SOURCE_EN)
   const story = await c.locator('.story').boundingBox()
   const quote = await c.locator('figure.quote').boundingBox()
-  const credit = await c.locator('.credit').boundingBox()
   const name = await c.locator('.namerow').boundingBox()
   expect(name.y + name.height).toBeLessThanOrEqual(story.y + 1)
   expect(quote.y).toBeGreaterThanOrEqual(story.y + story.height - 1)
-  expect(credit.y).toBeGreaterThanOrEqual(quote.y + quote.height - 1)
   // The English comes after the Chinese, and the source after both.
   const zhBox = await c.locator('blockquote .hl__zh').boundingBox()
   const enBox = await c.locator('blockquote .hl__en').boundingBox()
@@ -276,7 +274,7 @@ test('the immersive back has the Chinese quote and source, and no English or pin
   await expect(c.locator('blockquote .hl__zh')).toHaveText(QUOTE_CN)
   await expect(c.locator('figcaption')).toHaveText('宣赞荐关胜')
   await expect(c.locator('.story')).toContainText(STORY_CN)
-  await expect(c.locator('.credit')).toContainText('歌川国芳')
+  await expect(c.locator('.viewer__credit')).toContainText('歌川国芳')
   await expect(c.locator('rt')).toHaveCount(0)
   await expect(c.locator('.pinyin')).toHaveCount(0)
 })
@@ -301,7 +299,8 @@ for (const lang of ['en', 'cn']) {
           if (/[A-Za-z]/.test(n.textContent)) out.push(`<${el.tagName.toLowerCase()} class="${el.className}"> ${n.textContent.trim()}`)
         }
         // Nothing Latin in the card's own accessible names either.
-        for (const el of root.querySelectorAll('[aria-label]')) if (/[A-Za-z]/.test(el.getAttribute('aria-label'))) out.push(`aria-label ${el.getAttribute('aria-label')}`)
+        // The flip, expand and close buttons are interface, not card content: they stay in the locale.
+        for (const el of root.querySelectorAll('[aria-label]')) if (!el.closest('.flipbtn, .expandbtn, .viewer__close') && /[A-Za-z]/.test(el.getAttribute('aria-label'))) out.push(`aria-label ${el.getAttribute('aria-label')}`)
         for (const el of root.querySelectorAll('.sr-only')) if (/[A-Za-z]/.test(el.textContent)) out.push(`sr-only ${el.textContent}`)
         return out
       })
@@ -314,7 +313,7 @@ for (const lang of ['en', 'cn']) {
     await expect(card(page, 'B-front-imm').locator('dl.facts dd')).toHaveText(['天勇星', '青龙偃月刀', '蒲东巡检'])
     // Story and credit in Chinese on the immersive back, in the English locale too.
     await expect(card(page, 'B-back-imm').locator('.story')).toContainText(STORY_CN)
-    await expect(card(page, 'B-back-imm').locator('.credit')).toContainText('歌川国芳')
+    await expect(card(page, 'B-back-imm').locator('.viewer__credit')).toContainText('歌川国芳')
   })
 }
 
@@ -328,43 +327,67 @@ test('immersive footers and locked-card text are Chinese (the flip button is not
   }
 })
 
-test('guided cards: ruby has one rt per character, English is present, and ruby is hidden from screen readers', async ({ page }) => {
+const PINYIN = { star: 'tiān yǒng xīng', weapon: 'qīng lóng yǎn yuè dāo', background: 'Pú dōng xún jiǎn' }
+const CHARS = { star: 3, weapon: 5, background: 4 }
+
+test('guided cards: each line has a pinyin bubble matching its characters, English is present, and there is no ruby', async ({ page }) => {
   const warnings = []
   page.on('console', (m) => { if (m.type() === 'warning' && /HeroLine/.test(m.text())) warnings.push(m.text()) })
   await open(page)
-  const counts = { star: 3, weapon: 5, background: 4 }
   for (const id of ['A-front', 'B-front', 'C-front']) {
     const c = card(page, id)
-    for (const [key, n] of Object.entries(counts)) {
+    await expect(c.locator('rt'), id).toHaveCount(0)
+    await expect(c.locator('ruby'), id).toHaveCount(0)
+    for (const key of Object.keys(PINYIN)) {
       const row = c.locator(`[data-fact="${key}"]`)
-      await expect(row.locator('rt'), `${id} ${key}`).toHaveCount(n)
-      await expect(row.locator('ruby'), `${id} ${key}`).toHaveCount(n)
+      await expect(row.locator('.hl__tip'), `${id} ${key}`).toHaveText(PINYIN[key])
+      expect((await row.locator('.hl__tip').textContent()).split(' ').length, `${id} ${key}`).toBe(CHARS[key])
       await expect(row.locator('.hl__en'), `${id} ${key}`).toHaveCount(1)
-      await expect(row.locator('.hl__zh--ruby')).toHaveAttribute('aria-hidden', 'true')
-      await expect(row.locator('rt').first()).toHaveAttribute('lang', 'zh-Latn-pinyin')
-      await expect(row.locator('.hl__zh--ruby')).toHaveAttribute('lang', 'zh-Hans')
+      await expect(row.locator('.hl__zh')).toHaveAttribute('aria-hidden', 'true')
+      await expect(row.locator('.hl__zh')).toHaveAttribute('lang', 'zh-Hans')
+      await expect(row.locator('.hl__zh')).toHaveText(key === 'star' ? '天勇星' : key === 'weapon' ? '青龙偃月刀' : '蒲东巡检')
     }
-    const pin = await c.locator('[data-fact="weapon"] rt').allTextContents()
-    expect(pin.join(' ')).toBe('qīng lóng yǎn yuè dāo')
     const sr = await c.locator('[data-fact="star"] .sr-only[lang="zh-Hans"]').textContent()
     expect(sr).toBe('天勇星')
-    // rt is small, in the UI font and muted.
-    const st = await c.locator('[data-fact="star"] rt').first().evaluate((el) => {
-      const cs = getComputedStyle(el), base = parseFloat(getComputedStyle(el.parentElement).fontSize)
-      return { size: parseFloat(cs.fontSize), base, family: cs.fontFamily }
+    // The bubble: navy, paper text, the UI font at about 11px, a tail, and out of the flow.
+    const st = await c.locator('[data-fact="star"] .hl__tip').evaluate((el) => {
+      const cs = getComputedStyle(el), tail = getComputedStyle(el, '::after')
+      return { bg: cs.backgroundColor, color: cs.color, size: cs.fontSize, family: cs.fontFamily, pos: cs.position, shadow: cs.boxShadow, tail: tail.borderTopWidth, tailColor: tail.borderTopColor }
     })
-    expect(st.size).toBeLessThan(st.base)
+    expect(st.bg).toBe('rgb(27, 33, 64)')
+    expect(st.color).toBe('rgb(250, 245, 234)')
+    expect(st.size).toBe('11px')
     expect(st.family).toMatch(/Instrument Sans/)
+    expect(st.pos).toBe('absolute')
+    expect(st.shadow).not.toBe('none')
+    expect(st.tail).toBe('4px')
+    expect(st.tailColor).toBe('rgb(27, 33, 64)')
+    // Natural character spacing: three characters take about three characters of width.
+    const w = (await c.locator('[data-fact="star"] .hl__zh').boundingBox()).width
+    const fs = await c.locator('[data-fact="star"] .hl__zh').evaluate((el) => parseFloat(getComputedStyle(el).fontSize))
+    expect(w).toBeLessThan(3 * fs * 1.2)
   }
   // Hu Sanniang: 3, 4 and 7 characters.
   const hu = card(page, 'A-earthly')
-  for (const [key, n] of Object.entries({ star: 3, weapon: 4, background: 7 })) await expect(hu.locator(`[data-fact="${key}"] rt`), key).toHaveCount(n)
-  // The quote: one rt per character, punctuation takes none.
+  for (const [key, n] of Object.entries({ star: 3, weapon: 4, background: 7 })) expect((await hu.locator(`[data-fact="${key}"] .hl__tip`).textContent()).split(' ').length, key).toBe(n)
+  // The quote: one syllable per character, punctuation takes none.
   const q = card(page, 'B-back').locator('blockquote')
-  await expect(q.locator('rt')).toHaveCount(15)
-  expect((await q.locator('rt').allTextContents()).join(' ')).toBe(QUOTE_PINYIN)
-  await expect(q.locator('.hl__zh--ruby')).toHaveAttribute('aria-hidden', 'true')
+  await expect(q.locator('.hl__tip')).toHaveText(QUOTE_PINYIN)
+  expect((await q.locator('.hl__tip').textContent()).split(' ').length).toBe(15)
+  await expect(q.locator('.hl__zh')).toHaveAttribute('aria-hidden', 'true')
   expect(warnings).toEqual([])
+})
+
+test('the label sits beside the first line of the Chinese, with no gap above it', async ({ page }) => {
+  await open(page)
+  for (const id of ['A-front', 'B-front']) {
+    for (const key of ['star', 'weapon', 'background']) {
+      const row = card(page, id).locator(`[data-fact="${key}"]`)
+      const dt = await row.locator('dt').boundingBox()
+      const zh = await row.locator('.hl__zh').boundingBox()
+      expect(Math.abs((dt.y + dt.height / 2) - (zh.y + zh.height / 2)), `${id} ${key}`).toBeLessThan(5)
+    }
+  }
 })
 
 test('guided cn: English glosses and the curly-quoted subline are still there; labels, story and credit are Chinese', async ({ page }) => {
@@ -374,12 +397,12 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(c.locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
   await expect(c.locator('dl.facts')).toContainText('the Brave Star')
   await expect(c.locator('dl.facts')).toContainText('Patrol officer of Pudong')
-  await expect(c.locator('[data-fact="star"] rt')).toHaveCount(3)
+  await expect(c.locator('[data-fact="star"] .hl__tip')).toHaveText('tiān yǒng xīng')
   const b = card(page, 'B-back')
   await expect(b.locator('.story')).toContainText(STORY_CN)
   await expect(b.locator('blockquote .hl__en')).toHaveText(QUOTE_EN)
   await expect(b.locator('figcaption')).toHaveText('宣赞荐关胜')
-  await expect(b.locator('.credit')).toContainText('歌川国芳')
+  await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
 test('the rank seal is round and vermilion for Heavenly Spirits, square and navy for Earthly Fiends', async ({ page }) => {
@@ -545,12 +568,12 @@ test('a hero with no quote shows no quote block', async ({ page }) => {
   await expect(hu.getByRole('heading', { name: '扈三娘' })).toBeVisible()
   await expect(hu.locator('figure')).toHaveCount(0)
   await expect(hu).toContainText('地煞')
-  await expect(hu.getByRole('button')).toHaveCount(0)
+  await expect(hu.getByRole('button', { name: 'Flip card' })).toHaveCount(0)
 })
 
 // Back and flip -------------------------------------------------------------
 
-test('the back shows the print at full strength, the name line, the story and the credit, and nothing else', async ({ page }) => {
+test('the back shows the print at full strength, the name line and the story, and no credit', async ({ page }) => {
   await open(page)
   const c = card(page, 'B-back')
   await expect(c.locator('.face--front')).toHaveCount(0)
@@ -558,7 +581,12 @@ test('the back shows the print at full strength, the name line, the story and th
   await expect(c.locator('.story')).toHaveText(new RegExp('^' + STORY_EN))
   // Huyan Zhuo feigned surrender; Song Jiang did not trick him.
   await expect(c.locator('.story')).not.toContainText('Song Jiang lured')
-  await expect(c.locator('.credit')).toHaveText(CREDIT_EN)
+  // The credit lives in the print viewer, not on the back face.
+  await expect(c.locator('.credit')).toHaveCount(0)
+  await expect(c.locator('.plate--back')).not.toContainText('Kuniyoshi')
+  expect(await visibleText(c.locator('.face--back > :not(dialog)').first())).not.toContain('Kuniyoshi')
+  await expect(c.locator('.viewer__credit')).toHaveText(CREDIT_EN)
+  await expect(c.locator('.viewer__credit')).toBeHidden()
   await expect(c.getByRole('heading', { name: '关胜' })).toBeVisible()
   expect(await c.locator('.nick__zh').textContent()).toBe('大刀')
   await expect(c.locator('.pinyin')).toHaveText('“Great Blade” Guān Shèng')
@@ -579,7 +607,7 @@ test('the back shows the Chinese story in Chinese', async ({ page }) => {
   await open(page, 'cn')
   const c = card(page, 'B-back')
   await expect(c.locator('.story')).toContainText(STORY_CN)
-  await expect(c.locator('.credit')).toContainText('歌川国芳')
+  await expect(c.locator('.viewer__credit')).toContainText('歌川国芳')
   await expect(c).not.toContainText('Huyan Zhuo pretended')
   await expect(c.locator('.story')).toContainText('呼延灼诈降')
   await expect(c.locator('.story')).not.toContainText('宋江设计')
@@ -637,9 +665,380 @@ test('the flip button reads in Chinese', async ({ page }) => {
 test('Hu Sanniang has no story and no flip button; the other flippable options need a story too', async ({ page }) => {
   await open(page)
   for (const id of ['A-earthly', 'C-earthly', 'A-stress', 'B-stress']) {
-    await expect(card(page, id).getByRole('button'), id).toHaveCount(0)
+    await expect(card(page, id).getByRole('button', { name: 'Flip card' }), id).toHaveCount(0)
+    await expect(card(page, id).locator('.expandbtn'), id).toHaveCount(0)
   }
-  await expect(lab(page, 'B-flip').getByRole('button')).toHaveCount(1)
+  await expect(lab(page, 'B-flip').getByRole('button', { name: 'Flip card' })).toHaveCount(1)
+})
+
+// Pinyin on demand -------------------------------------------------------------
+
+const tipVis = (row) => row.locator('.hl__tip').first().evaluate((el) => getComputedStyle(el).visibility)
+// Where things are, relative to the face so that scrolling the page does not count as movement.
+const layoutOf = (c) => c.evaluate((el) => {
+  const f = el.querySelector('.face').getBoundingClientRect()
+  const out = {}
+  for (const e of el.querySelectorAll('.face *')) {
+    if (e.classList.contains('hl__tip')) continue
+    const r = e.getBoundingClientRect()
+    if (r.width === 0 && r.height === 0) continue // not rendered (the closed dialog)
+    out[`${e.tagName}#${out.n = (out.n || 0) + 1}`] = [r.x - f.x, r.y - f.y, r.width, r.height].map((n) => Math.round(n * 100) / 100)
+  }
+  return out
+})
+// The bubble must lie inside the inside of the face's border.
+const tipInside = (c, row) => c.evaluate((el, key) => {
+  const face = el.querySelector('.face:not([aria-hidden="true"])').getBoundingClientRect()
+  const bw = parseFloat(getComputedStyle(el.querySelector('.face')).borderLeftWidth)
+  const t = el.querySelector(key).getBoundingClientRect()
+  return t.left >= face.left + bw - 0.5 && t.right <= face.right - bw + 0.5 && t.top >= face.top + bw - 0.5 && t.bottom <= face.bottom - bw + 0.5
+}, row)
+
+for (const L of LAYOUTS) {
+  test(`${L}: pinyin is hidden by default, a click shows it, a second click hides it, and nothing moves`, async ({ page }) => {
+    await open(page)
+    const c = card(page, `${L}-front`)
+    const row = c.locator('[data-fact="star"]')
+    const btn = row.getByRole('button', { name: 'Show pinyin: 天勇星' })
+    await expect(btn).toHaveCount(1)
+    await expect(btn).toHaveAttribute('aria-pressed', 'false')
+    await expect(btn).not.toHaveAttribute('aria-describedby', /.+/)
+    // Its look: text, not a button.
+    const look = await btn.evaluate((el) => { const cs = getComputedStyle(el); return { border: cs.borderTopWidth, bg: cs.backgroundColor, family: cs.fontFamily, parent: getComputedStyle(el.parentElement).fontFamily } })
+    expect(look.border).toBe('0px')
+    expect(look.bg).toBe('rgba(0, 0, 0, 0)')
+    expect(look.family).toBe(look.parent)
+    expect(await tipVis(row)).toBe('hidden')
+    // The dotted underline marks it while hidden.
+    const ul = () => row.locator('.hl__zh').evaluate((el) => { const cs = getComputedStyle(el); return `${cs.textDecorationLine} ${cs.textDecorationStyle} ${cs.textDecorationColor}` })
+    expect(await ul()).toBe('underline dotted rgb(95, 98, 118)')
+    await page.mouse.move(0, 0)
+    const before = await layoutOf(c)
+
+    await btn.click()
+    await page.mouse.move(0, 0)
+    await expect(btn).toHaveAttribute('aria-pressed', 'true')
+    expect(await tipVis(row)).toBe('visible')
+    const id = await row.locator('.hl__tip').getAttribute('id')
+    expect(id).toBeTruthy()
+    await expect(btn).toHaveAttribute('aria-describedby', id)
+    expect(await ul()).toBe('underline solid rgb(200, 50, 30)')
+    expect(await layoutOf(c)).toEqual(before)
+    expect(await tipInside(c, '[data-fact="star"] .hl__tip')).toBe(true)
+    // Left-aligned with the line, just above it.
+    const tb = await row.locator('.hl__tip').boundingBox()
+    const lb = await btn.boundingBox()
+    expect(Math.abs(tb.x - lb.x)).toBeLessThanOrEqual(1)
+    expect(tb.y + tb.height).toBeLessThanOrEqual(lb.y + 1)
+    // Only that line: the weapon's pinyin is still hidden.
+    expect(await tipVis(c.locator('[data-fact="weapon"]'))).toBe('hidden')
+
+    await btn.click()
+    await page.mouse.move(0, 0)
+    await expect(btn).toHaveAttribute('aria-pressed', 'false')
+    await expect(btn).not.toHaveAttribute('aria-describedby', /.+/)
+    expect(await tipVis(row)).toBe('hidden')
+    expect(await layoutOf(c)).toEqual(before)
+  })
+
+  test(`${L}: Tab reaches each line, Enter and Space toggle it, Escape and an outside click close it, focus is visible`, async ({ page }) => {
+    await open(page)
+    const c = card(page, `${L}-front`)
+    const row = c.locator('[data-fact="weapon"]')
+    const btn = row.getByRole('button')
+    await btn.focus()
+    await page.keyboard.press('Enter')
+    await expect(btn).toHaveAttribute('aria-pressed', 'true')
+    expect(await tipVis(row)).toBe('visible')
+    await page.keyboard.press('Space')
+    await expect(btn).toHaveAttribute('aria-pressed', 'false')
+    expect(await tipVis(row)).toBe('hidden')
+    await page.keyboard.press('Enter')
+    await expect(btn).toHaveAttribute('aria-pressed', 'true')
+    await page.keyboard.press('Escape')
+    await expect(btn).toHaveAttribute('aria-pressed', 'false')
+    expect(await tipVis(row)).toBe('hidden')
+    // Outside click.
+    await btn.click()
+    await expect(btn).toHaveAttribute('aria-pressed', 'true')
+    await page.mouse.click(2, 2)
+    await expect(btn).toHaveAttribute('aria-pressed', 'false')
+    // Tab order: star, weapon, background.
+    await c.locator('[data-fact="star"] button').focus()
+    await page.keyboard.press('Tab')
+    await expect(c.locator('[data-fact="weapon"] button')).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(c.locator('[data-fact="background"] button')).toBeFocused()
+    const outline = await c.locator('[data-fact="background"] button').evaluate((el) => getComputedStyle(el).outlineStyle + ' ' + getComputedStyle(el).outlineWidth)
+    expect(outline).toBe('solid 2px')
+  })
+}
+
+test('only one bubble is open per card, and flipping closes it', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-front')
+  const star = c.locator('[data-fact="star"] button')
+  const weapon = c.locator('[data-fact="weapon"] button')
+  await star.click()
+  await page.mouse.move(0, 0)
+  await weapon.click()
+  await page.mouse.move(0, 0)
+  await expect(star).toHaveAttribute('aria-pressed', 'false')
+  await expect(weapon).toHaveAttribute('aria-pressed', 'true')
+  expect(await c.locator('.hl__tip').evaluateAll((els) => els.filter((e) => getComputedStyle(e).visibility === 'visible').length)).toBe(1)
+  // Another card is independent.
+  const other = card(page, 'A-front').locator('[data-fact="star"] button')
+  await other.click()
+  await expect(other).toHaveAttribute('aria-pressed', 'true')
+  await expect(weapon).toHaveAttribute('aria-pressed', 'false')
+
+  // Flipping closes an open bubble.
+  const fl = card(page, 'B-flip')
+  const line = fl.locator('.face--front [data-fact="star"] button')
+  await line.click()
+  await expect(line).toHaveAttribute('aria-pressed', 'true')
+  await fl.getByRole('button', { name: 'Flip card' }).click()
+  await expect(line).toHaveAttribute('aria-pressed', 'false')
+  await fl.getByRole('button', { name: 'Flip card' }).click()
+  await expect(line).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('every bubble stays inside the face, including the first fact row and the back quote, and moves nothing', async ({ page }) => {
+  for (const lang of ['en', 'cn']) {
+    await open(page, lang)
+    for (const id of ['A-front', 'A-earthly', 'A-stress', 'B-front', 'B-stress', 'B-back', 'C-front', 'C-earthly']) {
+      const c = card(page, id)
+      const n = await c.locator('.hl__btn').count()
+      expect(n, id).toBeGreaterThan(0)
+      const before = await layoutOf(c)
+      for (let i = 0; i < n; i++) {
+        const b = c.locator('.hl__btn').nth(i)
+        await b.click()
+        await page.mouse.move(0, 0)
+        await expect(b).toHaveAttribute('aria-pressed', 'true')
+        const t = await b.locator('xpath=following-sibling::*[contains(@class,"hl__tip")]').boundingBox()
+        const face = await c.locator('.face').boundingBox()
+        expect(t.x, `${lang} ${id} ${i}`).toBeGreaterThanOrEqual(face.x)
+        expect(t.y, `${lang} ${id} ${i}`).toBeGreaterThanOrEqual(face.y)
+        expect(t.x + t.width, `${lang} ${id} ${i}`).toBeLessThanOrEqual(face.x + face.width)
+        expect(t.y + t.height, `${lang} ${id} ${i}`).toBeLessThanOrEqual(face.y + face.height)
+        expect(await layoutOf(c), `${lang} ${id} ${i}`).toEqual(before)
+        await page.keyboard.press('Escape')
+      }
+    }
+  }
+})
+
+test('hovering a line shows its pinyin on pointer devices', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'hover needs a pointer')
+  await open(page)
+  const c = card(page, 'B-front')
+  const row = c.locator('[data-fact="star"]')
+  const before = await layoutOf(c)
+  expect(await tipVis(row)).toBe('hidden')
+  await row.getByRole('button').hover()
+  expect(await tipVis(row)).toBe('visible')
+  expect(await layoutOf(c)).toEqual(before)
+  // Hover does not press it.
+  await expect(row.getByRole('button')).toHaveAttribute('aria-pressed', 'false')
+  await page.mouse.move(0, 0)
+  expect(await tipVis(row)).toBe('hidden')
+})
+
+test('the pinyin buttons read in Chinese in the cn locale, and the quote line on the back has one too', async ({ page }) => {
+  await open(page, 'cn')
+  await expect(card(page, 'B-front').getByRole('button', { name: '显示拼音：天勇星' })).toHaveCount(1)
+  await expect(card(page, 'B-back').locator('blockquote').getByRole('button', { name: `显示拼音：${QUOTE_CN}` })).toHaveCount(1)
+})
+
+test('immersive and locked cards have no pinyin buttons', async ({ page }) => {
+  await open(page)
+  for (const id of ['A-front-imm', 'B-front-imm', 'C-front-imm', 'A-locked', 'B-locked', 'B-back-imm']) {
+    await expect(card(page, id).locator('.hl__btn'), id).toHaveCount(0)
+  }
+})
+
+test('the hidden face of a flippable card has inert pinyin buttons', async ({ page }) => {
+  await open(page)
+  const fl = card(page, 'B-flip')
+  expect(await fl.locator('.face--back').evaluate((el) => el.inert)).toBe(true)
+  await expect(fl.locator('.face--back .hl__btn')).toHaveCount(1)
+  await expect(fl.getByRole('button', { name: /Show pinyin/ })).toHaveCount(3)
+})
+
+// Same text-box height in every state ----------------------------------------------
+
+test('full art: the fact plate is the same height in guided, immersive and locked, and the sprite does not move', async ({ page }) => {
+  await open(page)
+  const m = (id) => card(page, id).evaluate((el) => {
+    const r = (sel) => el.querySelector(sel).getBoundingClientRect()
+    const face = el.querySelector('.face').getBoundingClientRect()
+    return { plate: r('.plate--info').height, plateTop: r('.plate--info').top - face.top, spriteTop: r('.sprite').top - face.top, figure: r('.figure').height, name: r('.plate--name').height }
+  })
+  const g = await m('B-front')
+  for (const id of ['B-front-imm', 'B-locked', 'B-stress']) {
+    const o = await m(id)
+    expect(Math.abs(o.plate - g.plate), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.plateTop - g.plateTop), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.spriteTop - g.spriteTop), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.figure - g.figure), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.name - g.name), id).toBeLessThanOrEqual(0.5)
+  }
+  await expect(card(page, 'B-locked').locator('.plate--info')).toContainText('Not yet collected')
+})
+
+test('framed: the fact panel is the same height in guided, immersive and locked, and the art window does not move', async ({ page }) => {
+  await open(page)
+  const m = (id) => card(page, id).evaluate((el) => {
+    const r = (sel) => el.querySelector(sel).getBoundingClientRect()
+    const face = el.querySelector('.face').getBoundingClientRect()
+    return { panel: r('.panel').height, panelTop: r('.panel').top - face.top, window: r('.window').height, windowTop: r('.window').top - face.top, spriteTop: r('.sprite').top - face.top }
+  })
+  const g = await m('A-front')
+  for (const id of ['A-front-imm', 'A-locked', 'A-earthly', 'A-stress']) {
+    const o = await m(id)
+    expect(Math.abs(o.panel - g.panel), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.panelTop - g.panelTop), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.window - g.window), id).toBeLessThanOrEqual(0.5)
+    expect(Math.abs(o.windowTop - g.windowTop), id).toBeLessThanOrEqual(0.5)
+    if (id !== 'A-earthly') expect(Math.abs(o.spriteTop - g.spriteTop), id).toBeLessThanOrEqual(0.5)
+  }
+  await expect(card(page, 'A-locked').locator('.panel')).toContainText('Not yet collected')
+})
+
+for (const lang of ['en', 'cn']) {
+  test(`${lang}: the guided facts fit inside the plate or panel, and the sprite's feet and shadow are inside the art`, async ({ page }) => {
+    await open(page, lang)
+    const bad = await page.evaluate((ids) => {
+      const out = []
+      for (const id of ids) {
+        const c = document.querySelector(`[data-lab-id="${id}"] article`)
+        const plate = c.querySelector('.plate--info, .panel').getBoundingClientRect()
+        const dl = c.querySelector('dl').getBoundingClientRect()
+        const cs = getComputedStyle(c.querySelector('.plate--info, .panel'))
+        const top = plate.top + parseFloat(cs.borderTopWidth) + parseFloat(cs.paddingTop)
+        const bottom = plate.bottom - parseFloat(cs.borderBottomWidth) - parseFloat(cs.paddingBottom)
+        if (dl.top < top - 0.5 || dl.bottom > bottom + 0.5) out.push(`${id} facts ${dl.top.toFixed(1)}-${dl.bottom.toFixed(1)} vs ${top.toFixed(1)}-${bottom.toFixed(1)}`)
+        const art = c.querySelector('.figure, .window').getBoundingClientRect()
+        const sh = c.querySelector('.shade').getBoundingClientRect()
+        if (sh.bottom > art.bottom + 0.5 || sh.top < art.top) out.push(`${id} shadow ${sh.top.toFixed(1)}-${sh.bottom.toFixed(1)} vs ${art.top.toFixed(1)}-${art.bottom.toFixed(1)}`)
+        // Every row of the facts sits inside the plate's own box, nothing scrolls.
+        const p = c.querySelector('.plate--info, .panel')
+        if (p.scrollHeight > p.clientHeight + 1) out.push(`${id} plate scrolls`)
+      }
+      return out
+    }, ['B-front', 'B-stress', 'A-front', 'A-earthly', 'A-stress'])
+    expect(bad).toEqual([])
+  })
+}
+
+// The print viewer --------------------------------------------------------------
+
+test('the back has an expand button in the print band, bottom-right, 2rem', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-back')
+  const btn = c.getByRole('button', { name: 'View full print' })
+  await expect(btn).toHaveCount(1)
+  const b = await btn.boundingBox()
+  const band = await c.locator('.backprint').boundingBox()
+  expect(Math.abs(b.width - 32)).toBeLessThanOrEqual(0.5)
+  expect(Math.abs(b.height - 32)).toBeLessThanOrEqual(0.5)
+  expect(b.x + b.width).toBeLessThanOrEqual(band.x + band.width)
+  expect(band.x + band.width - (b.x + b.width)).toBeLessThan(16)
+  expect(band.y + band.height - (b.y + b.height)).toBeLessThan(16)
+  expect(b.x).toBeGreaterThan(band.x + band.width / 2)
+  expect(await btn.evaluate((el) => getComputedStyle(el).boxShadow)).toMatch(/2px 2px 0px/)
+  await expect(btn.locator('svg')).toHaveCount(1)
+  // The band is still tall: it gained the credit's space.
+  expect(band.height).toBeGreaterThanOrEqual(72)
+})
+
+test('the print band is taller without the credit', async ({ page }) => {
+  await open(page)
+  const band = await card(page, 'B-back').locator('.backprint').boundingBox()
+  expect(band.height).toBeGreaterThan(110)
+})
+
+test('the expand button opens a modal dialog with the whole print and the credit; Escape, the close button and the backdrop close it', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-back')
+  const btn = c.getByRole('button', { name: 'View full print' })
+  const dlg = page.getByRole('dialog')
+  await expect(dlg).toHaveCount(0)
+
+  await btn.click()
+  await expect(dlg).toBeVisible()
+  expect(await dlg.evaluate((el) => el.matches(':modal'))).toBe(true)
+  await expect(dlg.locator('img')).toBeVisible()
+  expect(await dlg.locator('img').evaluate((el) => getComputedStyle(el).objectFit)).toBe('contain')
+  await expect(dlg.locator('.viewer__credit')).toHaveText(CREDIT_EN)
+  expect(await dlg.evaluate((el) => getComputedStyle(el, '::backdrop').backgroundColor)).toBe('rgba(27, 33, 64, 0.72)')
+  // As large as the viewport allows, with a margin.
+  const vp = page.viewportSize()
+  const d = await dlg.boundingBox()
+  expect(d.width).toBeGreaterThan(vp.width * 0.8)
+  expect(d.width).toBeLessThanOrEqual(vp.width * 0.95)
+  expect(d.height).toBeGreaterThan(vp.height * 0.7)
+  expect(d.height).toBeLessThanOrEqual(vp.height * 0.95)
+  expect(d.x).toBeGreaterThan(0)
+  expect(d.y).toBeGreaterThanOrEqual(0)
+  // The credit sits beneath the print, and the close button is inside the dialog.
+  const im = await dlg.locator('img').boundingBox()
+  const cr = await dlg.locator('.viewer__credit').boundingBox()
+  expect(cr.y).toBeGreaterThanOrEqual(im.y + im.height - 1)
+  await expect(dlg.getByRole('button', { name: 'Close' })).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await expect(dlg).toHaveCount(0)
+  await expect(btn).toBeFocused()
+
+  await btn.click()
+  await expect(dlg).toBeVisible()
+  await dlg.getByRole('button', { name: 'Close' }).click()
+  await expect(dlg).toHaveCount(0)
+  await expect(btn).toBeFocused()
+
+  await btn.click()
+  await expect(dlg).toBeVisible()
+  await page.mouse.click(3, 3)
+  await expect(dlg).toHaveCount(0)
+  await expect(btn).toBeFocused()
+
+  // Clicking inside the dialog does not close it.
+  await btn.click()
+  await dlg.locator('img').click()
+  await expect(dlg).toBeVisible()
+})
+
+test('the viewer reads in Chinese in the cn locale, and in immersive mode shows the credit in Chinese', async ({ page }) => {
+  await open(page, 'cn')
+  const c = card(page, 'B-back')
+  await c.getByRole('button', { name: '查看全图' }).click()
+  const dlg = page.getByRole('dialog')
+  await expect(dlg.locator('.viewer__credit')).toContainText('歌川国芳')
+  await expect(dlg.getByRole('button', { name: '关闭' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await open(page, 'en')
+  await card(page, 'B-back-imm').getByRole('button', { name: 'View full print' }).click()
+  await expect(page.getByRole('dialog').locator('.viewer__credit')).toContainText('歌川国芳')
+  await expect(page.getByRole('dialog').locator('.viewer__credit')).not.toContainText('Kuniyoshi')
+})
+
+test('opening the viewer does not flip the card, and locked cards have no expand button', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-flip')
+  const flip = c.getByRole('button', { name: 'Flip card' })
+  await flip.click()
+  await expect(flip).toHaveAttribute('aria-pressed', 'true')
+  await page.waitForTimeout(700)
+  await c.getByRole('button', { name: 'View full print' }).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(flip).toHaveAttribute('aria-pressed', 'true')
+  await expect(c.getByRole('status')).toHaveText('Showing the back of the card')
+  // The front face's expand button (the hidden back's, before flipping) is not reachable.
+  for (const L of LAYOUTS) await expect(card(page, `${L}-locked`).locator('.expandbtn'), L).toHaveCount(0)
+  await expect(card(page, 'B-locked').locator('dialog')).toHaveCount(0)
 })
 
 test.describe('reduced motion', () => {

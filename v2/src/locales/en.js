@@ -129,7 +129,7 @@ export default {
   "heroCardTierEarthly": "Earthly Fiend",
   "heroCardStar": "Star",
   "heroCardWeapon": "Weapon",
-  "heroCardBackground": "Before Liangshan",
+  "heroCardBackground": "Background",
   "heroCardLockedName": "？？？",
   "heroCardLocked": "Not yet collected",
   "heroCardArt": "Pixel sprite of {name} in front of a woodblock print",
@@ -137,5 +137,8 @@ export default {
   "heroCardPrintArt": "Woodblock print of a Water Margin outlaw",
   "heroCardFlip": "Flip card",
   "heroCardShowingFront": "Showing the front of the card",
-  "heroCardShowingBack": "Showing the back of the card"
+  "heroCardShowingBack": "Showing the back of the card",
+  "heroCardShowPinyin": "Show pinyin: {text}",
+  "heroCardViewPrint": "View full print",
+  "heroCardClose": "Close"
 }
