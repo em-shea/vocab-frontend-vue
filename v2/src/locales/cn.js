@@ -131,5 +131,9 @@ export default {
   "heroCardLockedName": "？？？",
   "heroCardLocked": "尚未收集",
   "heroCardArt": "木刻版画前的{name}像素小人",
-  "heroCardArtLocked": "尚未收集的好汉：褪色木刻版画前的黑色剪影"
+  "heroCardArtLocked": "尚未收集的好汉：褪色木刻版画前的黑色剪影",
+  "heroCardPrintArt": "水浒好汉木刻版画",
+  "heroCardFlip": "翻转卡片",
+  "heroCardShowingFront": "当前显示卡片正面",
+  "heroCardShowingBack": "当前显示卡片背面"
 }

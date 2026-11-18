@@ -132,5 +132,9 @@ export default {
   "heroCardLockedName": "？？？",
   "heroCardLocked": "Not yet collected",
   "heroCardArt": "Pixel sprite of {name} in front of a woodblock print",
-  "heroCardArtLocked": "Dark silhouette of a hero not yet collected, in front of a faded woodblock print"
+  "heroCardArtLocked": "Dark silhouette of a hero not yet collected, in front of a faded woodblock print",
+  "heroCardPrintArt": "Woodblock print of a Water Margin outlaw",
+  "heroCardFlip": "Flip card",
+  "heroCardShowingFront": "Showing the front of the card",
+  "heroCardShowingBack": "Showing the back of the card"
 }

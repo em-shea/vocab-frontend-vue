@@ -45,7 +45,9 @@ const UI_CHARS =
   // 一丈青 are the Earthly Fiend example; 鲁智深 and 花和尚 are above.
   '扈三娘一丈青' +
   // Guan Sheng (关胜) and his nickname 大刀 are the first real card, set in brush script.
-  '关胜大刀'
+  '关胜大刀' +
+  // Layout stress test on /hero-card: nickname 神行太保 and name 公孙胜 (a fake pairing, the longest case).
+  '神行太保公孙'
 // Punctuation that appears in Chinese copy and definitions.
 const PUNCT = '，。、；：？！「」『』（）《》〈〉—…·　'
 
