@@ -128,6 +128,7 @@ export default {
   "heroCardTierEarthly": "七十二地煞",
   "heroCardStar": "星宿",
   "heroCardWeapon": "兵器",
+  "heroCardBackground": "出身",
   "heroCardLockedName": "？？？",
   "heroCardLocked": "尚未收集",
   "heroCardArt": "木刻版画前的{name}像素小人",

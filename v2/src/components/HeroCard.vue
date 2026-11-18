@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import HeroLine from './HeroLine.vue'
 
 // The collectible hero card. One component, three layouts:
 //
@@ -16,12 +17,15 @@ import { useI18n } from 'vue-i18n'
 // The rank is where a hero stands in the novel's own list of 108.
 //
 // `hero` fields: rank, tier ('天罡' | '地煞'), name, pinyin, nameEn, nickname,
-// nicknameEn, star, starEn, weapon, weaponEn, an optional quote
-// ({ cn, en, sourceCn, sourceEn }; kept as data, shown only with `showQuote`),
-// an optional story ({ en, cn }) and printCredit ({ en, cn }) for the back of
-// the card, and the image imports print, sprite (a strip of `frames` 64px
-// frames, so 64*frames wide and 64 high; `frames` defaults to 4) and
-// silhouette (one 64px frame).
+// nicknameEn, and three facts, each { cn, en, pinyin }: `star` (星宿), `weapon`
+// (兵器) and `background` (出身, what the hero was before Liangshan). `pinyin` is
+// space-separated syllables with tone marks, ONE PER CHINESE CHARACTER
+// (punctuation takes none); it is set as ruby over the characters. If the counts
+// do not match, the line is shown without ruby and a warning is logged in dev.
+// Also an optional quote ({ cn, en, pinyin, sourceCn, sourceEn }), an optional
+// story ({ en, cn }) and printCredit ({ en, cn }) for the back of the card, and
+// the image imports print, sprite (a strip of `frames` 64px frames, so 64*frames
+// wide and 64 high; `frames` defaults to 4) and silhouette (one 64px frame).
 //
 // Three optional sprite-placement fields, because the art is rarely centred in
 // its 64x64 frame: `bodyX`, the column (0 to 63) the body is centred on, not
@@ -38,25 +42,35 @@ import { useI18n } from 'vue-i18n'
 // ONE title in the novel's own word order, 大刀关胜: same size, same ink colour,
 // same brush font, a small gap between, on ONE line that never wraps. One shared
 // size per layout (--name-size) is chosen so the worst case, a four-character
-// nickname with a three-character name, fits next to the rank seal. In English
-// the line under it gives the nickname in curly quotes first, in the same order
-// as the Chinese: “Great Blade” Guān Shèng. Chinese shows pinyin only.
+// nickname with a three-character name, fits next to the rank seal.
 //
-// Front faces carry the star and the weapon (framed and full art as a two-row
-// list, compact as its one-line meta) and no quote. The quote stays in the data:
-// the boolean prop `showQuote` (default false) brings it back in its previous
-// place (full art: in the plate under the figure; framed: under the facts in the
-// panel; compact: under the meta line). The back is the print band, the name
-// line, the story and the print's credit.
+// `reading` ('guided' by default, or 'immersive') is how much help the card
+// gives. It is independent of the interface locale (`lang`).
+//   guided     pinyin and English. The subline under the name is the nickname
+//              in curly quotes, then the pinyin, in BOTH locales: “Great Blade”
+//              Guān Shèng. Fact values and the quote are Chinese with ruby pinyin
+//              over each character and the English on its own line beneath. The
+//              fact labels, the story, the credit and the quote's source follow
+//              the interface locale.
+//   immersive  Chinese only: no pinyin, no English, nothing Latin on the card
+//              (the rank numbers apart). No subline; the fact labels (星宿, 兵器,
+//              出身), story, source, credit and locked-card text are Chinese
+//              whatever the locale. The flip button stays in the locale: it is
+//              interface, not card content.
+//
+// Front faces carry three facts, in this order: star, weapon, and background
+// (framed and full art as a three-row list, compact as its meta line). There is
+// no quote on the front. The back is the print band, the name line, the story,
+// the quote (Chinese, English when guided, source) and the print's credit.
 //
 // `state`: 'revealed' shows everything; 'locked' swaps the sprite for the
-// silhouette, fades the print, and leaves out the name, nickname, star, weapon,
+// silhouette, fades the print, and leaves out the name, nickname, the facts, the
 // quote and the sprite's shadow. The rank and tier stay: they say where the
 // empty slot is.
 //
 // `face`: 'front' (default) or 'back'. The back shows the print at full
-// strength, then a solid plate with the name line, the story and the print's
-// credit. A locked card has no back: `face` and `flippable` are ignored.
+// strength, then a solid plate with the name line, the story, the quote and the
+// print's credit. A locked card has no back: `face` and `flippable` are ignored.
 //
 // `flippable`: renders both faces and a real button that turns the card over
 // (3D rotateY, or a plain swap under prefers-reduced-motion). The hidden face
@@ -75,31 +89,44 @@ const props = defineProps({
   state: { type: String, default: 'revealed', validator: (v) => ['revealed', 'locked'].includes(v) },
   face: { type: String, default: 'front', validator: (v) => ['front', 'back'].includes(v) },
   flippable: { type: Boolean, default: false },
-  // Show the hero's quote (when it has one). Off by default: the front carries star and weapon instead.
-  showQuote: { type: Boolean, default: false }
+  // How much help the card gives: pinyin and English, or Chinese only. Independent of the locale.
+  reading: { type: String, default: 'guided', validator: (v) => ['guided', 'immersive'].includes(v) }
 })
 
 const { t, locale } = useI18n()
 
 const locked = computed(() => props.state === 'locked')
-const chinese = computed(() => locale.value === 'cn')
+const immersive = computed(() => props.reading === 'immersive')
+// Chinese is the language of the card's own text in immersive mode and in the cn locale.
+const zh = computed(() => immersive.value || locale.value === 'cn')
+// Card copy: Chinese whatever the locale when immersive; the flip button uses t() directly.
+const msg = (key, named = {}) => (immersive.value ? t(key, named, { locale: 'cn' }) : t(key, named))
 const heavenly = computed(() => props.hero.tier === '天罡')
-const tierGloss = computed(() => t(heavenly.value ? 'heroCardTierHeavenly' : 'heroCardTierEarthly'))
-const rankText = computed(() => t('heroCardRank', { n: props.hero.rank }))
+const tierGloss = computed(() => msg(heavenly.value ? 'heroCardTierHeavenly' : 'heroCardTierEarthly'))
+const rankText = computed(() => msg('heroCardRank', { n: props.hero.rank }))
 // Full art has no visible footer, so its screen-reader text carries the tier too.
-const rankTierText = computed(() => t('heroCardRankTier', { n: props.hero.rank, tier: tierGloss.value }))
-const quote = computed(() => (props.showQuote && props.hero.quote) || null)
-const quoteSource = computed(() => (quote.value ? (chinese.value ? quote.value.sourceCn : quote.value.sourceEn) : ''))
-// Second line under the name: in English the nickname in curly quotes, then the
-// pinyin, matching the Chinese order (“Great Blade” Guān Shèng); pinyin only in Chinese.
-const subline = computed(() => (chinese.value ? props.hero.pinyin : `\u201C${props.hero.nicknameEn}\u201D ${props.hero.pinyin}`))
+const rankTierText = computed(() => msg('heroCardRankTier', { n: props.hero.rank, tier: tierGloss.value }))
+const lockedText = computed(() => msg('heroCardLocked'))
+const quote = computed(() => props.hero.quote || null)
+const quoteSource = computed(() => (quote.value ? (zh.value ? quote.value.sourceCn : quote.value.sourceEn) : ''))
+// Second line under the name (guided only): the nickname in curly quotes, then the pinyin,
+// matching the Chinese order (“Great Blade” Guān Shèng), in both locales.
+const subline = computed(() => `\u201C${props.hero.nicknameEn}\u201D ${props.hero.pinyin}`)
+const showSub = computed(() => !locked.value && !immersive.value)
 const artLabel = computed(() =>
   locked.value
-    ? t('heroCardArtLocked')
-    : t('heroCardArt', { name: chinese.value ? props.hero.name : props.hero.nameEn }))
+    ? msg('heroCardArtLocked')
+    : msg('heroCardArt', { name: zh.value ? props.hero.name : props.hero.nameEn }))
 
-const story = computed(() => (props.hero.story ? (chinese.value ? props.hero.story.cn : props.hero.story.en) : ''))
-const printCredit = computed(() => (props.hero.printCredit ? (chinese.value ? props.hero.printCredit.cn : props.hero.printCredit.en) : ''))
+// The three facts, in front-face order.
+const facts = computed(() => [
+  ['star', 'heroCardStar', props.hero.star],
+  ['weapon', 'heroCardWeapon', props.hero.weapon],
+  ['background', 'heroCardBackground', props.hero.background]
+].filter(([, , f]) => f).map(([key, label, f]) => ({ key, label: msg(label), cn: f.cn, pinyin: f.pinyin, en: immersive.value ? '' : f.en })))
+
+const story = computed(() => (props.hero.story ? (zh.value ? props.hero.story.cn : props.hero.story.en) : ''))
+const printCredit = computed(() => (props.hero.printCredit ? (zh.value ? props.hero.printCredit.cn : props.hero.printCredit.en) : ''))
 
 // Flipping. Locked cards and heroes without a story have no back.
 const hasBack = computed(() => !locked.value && Boolean(story.value))
@@ -133,7 +160,8 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 <template>
   <article
     class="card"
-    :class="[`card--${variant}`, heavenly ? 'card--heavenly' : 'card--earthly', { 'card--locked': locked, 'card--flippable': canFlip }]"
+    :class="[`card--${variant}`, `card--${reading}`, heavenly ? 'card--heavenly' : 'card--earthly', { 'card--locked': locked, 'card--flippable': canFlip }]"
+    :data-reading="reading"
   >
     <div class="flipstage">
       <div class="flip" :class="{ 'flip--3d': canFlip, 'flip--back': canFlip && backUp }">
@@ -157,11 +185,11 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
             <div class="flow">
               <header class="plate plate--name">
                 <div class="plate__text">
-<div class="namerow">
-  <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
-  <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-</div>
-<p v-if="!locked" class="pinyin">{{ subline }}</p>
+                  <div class="namerow">
+                    <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+                    <h3 class="name brush">{{ locked ? msg('heroCardLockedName') : hero.name }}</h3>
+                  </div>
+                  <p v-if="showSub" class="pinyin">{{ subline }}</p>
                 </div>
                 <span class="sr-only">{{ rankTierText }}</span>
                 <span class="seal" aria-hidden="true">{{ hero.rank }}</span>
@@ -175,22 +203,13 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
               <div class="plate plate--info">
                 <template v-if="!locked">
                   <dl class="facts">
-                    <div>
-                      <dt>{{ t('heroCardStar') }}</dt>
-                      <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
-                    </div>
-                    <div>
-                      <dt>{{ t('heroCardWeapon') }}</dt>
-                      <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
+                    <div v-for="f in facts" :key="f.key" :data-fact="f.key">
+                      <dt>{{ f.label }}</dt>
+                      <dd><HeroLine :cn="f.cn" :pinyin="f.pinyin" :en="f.en" :ruby="!immersive" /></dd>
                     </div>
                   </dl>
-                  <figure v-if="quote" class="quote">
-                    <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
-                    <p v-if="!chinese" class="quote__en" lang="en">{{ quote.en }}</p>
-                    <figcaption class="quote__src">{{ quoteSource }}</figcaption>
-                  </figure>
                 </template>
-                <p v-else class="line">{{ t('heroCardLocked') }}</p>
+                <p v-else class="line">{{ lockedText }}</p>
               </div>
             </div>
           </template>
@@ -207,29 +226,22 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
             <div class="body">
               <header class="head">
                 <div class="head__text">
-<div class="namerow">
-  <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
-  <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-</div>
-<p v-if="!locked" class="pinyin">{{ subline }}</p>
+                  <div class="namerow">
+                    <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+                    <h3 class="name brush">{{ locked ? msg('heroCardLockedName') : hero.name }}</h3>
+                  </div>
+                  <p v-if="showSub" class="pinyin">{{ subline }}</p>
                 </div>
                 <span class="seal seal--small" aria-hidden="true">{{ hero.rank }}</span>
               </header>
 
-              <template v-if="!locked">
-                <p class="meta">
-                  <span class="hanzi">{{ hero.star }}</span>
-                  <span aria-hidden="true"> · </span>
-                  <span class="hanzi">{{ hero.weapon }}</span>
-                  <span v-if="!chinese" class="meta__gloss"> ({{ hero.starEn }}; {{ hero.weaponEn }})</span>
-                </p>
-                <!-- Chinese only here: the card is short on room. -->
-                <figure v-if="quote" class="quote">
-                  <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
-                  <figcaption class="quote__src">{{ quoteSource }}</figcaption>
-                </figure>
-              </template>
-              <p v-else class="line">{{ t('heroCardLocked') }}</p>
+              <p v-if="!locked" class="meta">
+                <span v-for="f in facts" :key="f.key" class="meta__item" :data-fact="f.key">
+                  <span class="sr-only">{{ f.label }}: </span>
+                  <HeroLine :cn="f.cn" :pinyin="f.pinyin" :en="f.en" :ruby="!immersive" />
+                </span>
+              </p>
+              <p v-else class="line">{{ lockedText }}</p>
 
               <footer class="foot">
                 <span class="sr-only">{{ rankText }}</span>
@@ -243,11 +255,11 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
           <template v-else>
             <header class="head">
               <div class="head__text">
-<div class="namerow">
-  <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
-  <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-</div>
-<p v-if="!locked" class="pinyin">{{ subline }}</p>
+                <div class="namerow">
+                  <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+                  <h3 class="name brush">{{ locked ? msg('heroCardLockedName') : hero.name }}</h3>
+                </div>
+                <p v-if="showSub" class="pinyin">{{ subline }}</p>
               </div>
               <span class="seal" aria-hidden="true">{{ hero.rank }}</span>
             </header>
@@ -260,24 +272,15 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
             </div>
 
             <div v-if="locked" class="panel panel--empty">
-              <p class="line">{{ t('heroCardLocked') }}</p>
+              <p class="line">{{ lockedText }}</p>
             </div>
             <div v-else class="panel">
               <dl class="facts">
-                <div>
-                  <dt>{{ t('heroCardStar') }}</dt>
-                  <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
-                </div>
-                <div>
-                  <dt>{{ t('heroCardWeapon') }}</dt>
-                  <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
+                <div v-for="f in facts" :key="f.key" :data-fact="f.key">
+                  <dt>{{ f.label }}</dt>
+                  <dd><HeroLine :cn="f.cn" :pinyin="f.pinyin" :en="f.en" :ruby="!immersive" /></dd>
                 </div>
               </dl>
-              <figure v-if="quote" class="quote">
-                <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
-                <p v-if="!chinese" class="quote__en" lang="en">{{ quote.en }}</p>
-                <figcaption class="quote__src">{{ quoteSource }}</figcaption>
-              </figure>
             </div>
 
             <footer class="foot">
@@ -289,27 +292,31 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
         </div>
 
         <!-- BACK: the print at full strength (no sprite, no fade, no halftone),
-             then a solid plate with the name line, the story and the credit.
-             Never rendered for a locked card. -->
+             then a solid plate with the name line, the story, the quote and the
+             credit. Never rendered for a locked card. -->
         <div
           v-if="renderBack"
           class="face face--back"
           :inert="backHidden"
           :aria-hidden="backHidden ? 'true' : null"
         >
-          <div class="backprint" role="img" :aria-label="t('heroCardPrintArt')">
+          <div class="backprint" role="img" :aria-label="msg('heroCardPrintArt')">
             <img class="backprint__img" :src="hero.print" alt="" />
           </div>
           <div class="plate plate--back">
             <div class="plate__text">
-<div class="namerow">
-  <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
-  <h3 class="name brush">{{ locked ? t('heroCardLockedName') : hero.name }}</h3>
-</div>
-<p v-if="!locked" class="pinyin">{{ subline }}</p>
+              <div class="namerow">
+                <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
+                <h3 class="name brush">{{ locked ? msg('heroCardLockedName') : hero.name }}</h3>
+              </div>
+              <p v-if="showSub" class="pinyin">{{ subline }}</p>
             </div>
-            <p class="story" :class="{ hanzi: chinese }" :lang="chinese ? 'zh-Hans' : 'en'">{{ story }}</p>
-            <p class="credit" :lang="chinese ? 'zh-Hans' : 'en'">{{ printCredit }}</p>
+            <p class="story" :class="{ hanzi: zh }" :lang="zh ? 'zh-Hans' : 'en'">{{ story }}</p>
+            <figure v-if="quote" class="quote">
+              <blockquote class="quote__text"><HeroLine :cn="quote.cn" :pinyin="quote.pinyin" :en="immersive ? '' : quote.en" :ruby="!immersive" /></blockquote>
+              <figcaption class="quote__src" :lang="zh ? 'zh-Hans' : 'en'">{{ quoteSource }}</figcaption>
+            </figure>
+            <p class="credit" :lang="zh ? 'zh-Hans' : 'en'">{{ printCredit }}</p>
           </div>
         </div>
       </div>
@@ -424,19 +431,20 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .namerow .name { flex: none; }
 .pinyin { letter-spacing: 0; }
 
-.quote { display: flex; flex-direction: column; gap: var(--s-1); margin: 0; }
-.quote__zh { margin: 0; text-wrap: pretty; font-size: var(--t-body-lg); line-height: var(--lh-body); }
-.quote__en { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-body); }
-.quote__src { font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
+/* The quote, on the back: Chinese (ruby when guided), English, then the source. */
+.quote { display: flex; flex-direction: column; gap: 2px; margin: 0; padding-left: var(--s-2); border-left: var(--bw-heavy) solid var(--tier); }
+.quote__text { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); --hl-zh-lh: 1.9; color: var(--c-ink); --hl-en-size: var(--t-sm); }
+.quote__src { font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
 
-.facts { display: grid; gap: var(--s-1); margin: 0; }
-.facts div { display: grid; grid-template-columns: 3.5rem 1fr; gap: var(--s-2); align-items: baseline; }
-.facts dt { font-size: var(--t-sm); color: var(--c-muted); }
-.facts dd { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); }
+/* Three fact rows: label, then the Chinese (ruby when guided) with the English beneath. */
+.facts { display: grid; gap: var(--s-1); margin: 0; --hl-en-size: var(--t-sm); }
+.facts div { display: grid; grid-template-columns: 4.5rem 1fr; gap: var(--s-2); align-items: baseline; }
+.facts dt { font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
+.facts dd { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); min-width: 0; }
 
 .line { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); color: var(--c-body); }
-.meta { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); }
-.meta__gloss { color: var(--c-body); }
+.meta { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); --hl-en-size: var(--t-xs); }
+.meta__item { min-width: 0; }
 
 .foot {
   display: flex;
@@ -546,7 +554,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 
 /* Back ------------------------------------------------------------------ */
 .face--back { overflow: hidden; }
-.backprint { position: relative; flex: 1; min-height: 6rem; background-color: var(--c-sunk); }
+.backprint { position: relative; flex: 1; min-height: 4.5rem; background-color: var(--c-sunk); }
 .backprint__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; opacity: 1; }
 .plate--back {
   display: flex;
@@ -622,8 +630,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .card--compact .body { display: flex; flex: 1; flex-direction: column; gap: var(--s-1); min-width: 0; }
 .card--compact .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-2); }
 .card--compact .pinyin { font-size: var(--t-sm); }
-.card--compact .quote__zh { font-size: var(--t-base); line-height: var(--lh-snug); }
-.card--compact .quote__src { font-size: var(--t-xs); }
 .card--compact .line { font-size: var(--t-sm); }
 .card--compact .foot { flex-wrap: wrap; margin-top: auto; padding-top: var(--s-1); }
 .card--compact .foot__rank, .card--compact .foot__tier { white-space: nowrap; }

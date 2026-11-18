@@ -19,19 +19,19 @@ const guan = {
   nameEn: 'Guan Sheng',
   nickname: '大刀',
   nicknameEn: 'Great Blade',
-  star: '天勇星',
-  starEn: 'the Brave Star',
-  weapon: '青龙偃月刀',
-  weaponEn: 'Green Dragon Crescent Blade',
+  star: { cn: '天勇星', pinyin: 'tiān yǒng xīng', en: 'the Brave Star' },
+  weapon: { cn: '青龙偃月刀', pinyin: 'qīng lóng yǎn yuè dāo', en: 'Green Dragon Crescent Blade' },
+  background: { cn: '蒲东巡检', pinyin: 'Pú dōng xún jiǎn', en: 'Patrol officer of Pudong' },
   quote: {
     cn: '幼读兵书，深通武艺，有万夫不当之勇。',
+    pinyin: 'yòu dú bīng shū shēn tōng wǔ yì yǒu wàn fū bù dāng zhī yǒng',
     en: 'He read books on war as a boy, mastered the martial arts, and has the courage to stand against ten thousand men.',
     sourceCn: '宣赞荐关胜',
     sourceEn: 'Xuan Zan, recommending him to the court'
   },
   story: {
-    en: 'A border patrol officer said to descend from the great general Guan Yu, he was sent to crush the Liangshan outlaws. Song Jiang lured him into a night raid and captured him, then treated him with such respect that he changed sides. He became the first of the Five Tiger Generals of the Liangshan cavalry.',
-    cn: '关胜相传是关羽的后代，原是一名巡检，奉命征讨梁山。宋江设计诱他夜袭劫寨，将他擒获，又以礼相待，关胜感其诚意，归顺梁山，后来位列马军五虎将之首。'
+    en: 'Said to descend from the great general Guan Yu, he was sent to crush Liangshan. Huyan Zhuo pretended to defect and lured him into a night raid, where he was captured. Song Jiang\'s respect won him over, and he became first of the Five Tiger Generals.',
+    cn: '关胜相传是关羽后代，奉命征讨梁山。呼延灼诈降，诱他夜袭劫寨，将他擒获。宋江以礼相待，关胜归顺梁山，位列马军五虎将之首。'
   },
   // The print is a stand-in: its subject is not recorded, so the credit does not name a hero.
   printCredit: {
@@ -52,7 +52,7 @@ const guan = {
 
 // LAYOUT TEST ONLY, not a real hero: a fake pairing of the longest nickname
 // (神行太保, four characters) with the longest name (公孙胜, three) to prove the
-// name line stays on one line in every layout. Reuses Guan Sheng's art and facts.
+// name line stays on one line in every layout. Reuses Guan Sheng's art and facts (background included).
 const stress = {
   ...guan,
   rank: 6,
@@ -75,10 +75,9 @@ const hu = {
   nameEn: 'Hu Sanniang',
   nickname: '一丈青',
   nicknameEn: 'Ten Feet of Blue',
-  star: '地慧星',
-  starEn: 'the Wise Star',
-  weapon: '日月双刀',
-  weaponEn: 'twin sabres',
+  star: { cn: '地慧星', pinyin: 'dì huì xīng', en: 'the Wise Star' },
+  weapon: { cn: '日月双刀', pinyin: 'rì yuè shuāng dāo', en: 'twin sabres' },
+  background: { cn: '扈家庄庄主之女', pinyin: 'Hù jiā zhuāng zhuāng zhǔ zhī nǚ', en: 'Daughter of the lord of Hu Family Manor' },
   print: printCollect,
   sprite: wuSheet,
   frames: 4,
@@ -117,11 +116,15 @@ const hu = {
           <figcaption>Front, locked</figcaption>
         </figure>
       </div>
-      <h3 class="lab__sub">With the quote (showQuote)</h3>
+      <h3 class="lab__sub">Immersive (Chinese only, no pinyin, no English)</h3>
       <div class="option__row">
-        <figure class="slot" data-lab-id="B-quote">
-          <HeroCard :hero="guan" variant="full-art" show-quote />
-          <figcaption>Front with the quote switched on</figcaption>
+        <figure class="slot" data-lab-id="B-front-imm">
+          <HeroCard :hero="guan" variant="full-art" reading="immersive" />
+          <figcaption>Front, immersive</figcaption>
+        </figure>
+        <figure class="slot" data-lab-id="B-back-imm">
+          <HeroCard :hero="guan" variant="full-art" face="back" reading="immersive" />
+          <figcaption>Back, immersive</figcaption>
         </figure>
       </div>
       <h3 class="lab__sub">Layout test: longest nickname and name (fake hero)</h3>
@@ -156,6 +159,13 @@ const hu = {
           <figcaption>Layout test, not a real hero</figcaption>
         </figure>
       </div>
+      <h3 class="lab__sub">Immersive</h3>
+      <div class="option__row">
+        <figure class="slot" data-lab-id="A-front-imm">
+          <HeroCard :hero="guan" variant="framed" reading="immersive" />
+          <figcaption>Revealed, immersive</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="option" data-option="c">
@@ -179,6 +189,13 @@ const hu = {
         <figure class="slot" data-lab-id="C-stress">
           <HeroCard :hero="stress" variant="compact" />
           <figcaption>Layout test, not a real hero</figcaption>
+        </figure>
+      </div>
+      <h3 class="lab__sub">Immersive</h3>
+      <div class="option__row">
+        <figure class="slot" data-lab-id="C-front-imm">
+          <HeroCard :hero="guan" variant="compact" reading="immersive" />
+          <figcaption>Revealed, immersive</figcaption>
         </figure>
       </div>
     </section>

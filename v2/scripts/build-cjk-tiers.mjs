@@ -47,7 +47,10 @@ const UI_CHARS =
   // Guan Sheng (关胜) and his nickname 大刀 are the first real card, set in brush script.
   '关胜大刀' +
   // Layout stress test on /hero-card: nickname 神行太保 and name 公孙胜 (a fake pairing, the longest case).
-  '神行太保公孙'
+  '神行太保公孙' +
+  // Hero card, second pass: story, quote, facts (star, weapon, background) and card copy, in the
+  // lab data and the heroCard* strings, so the card never falls back to a system font.
+  '勇星龙偃月蒲东巡检幼读兵书通艺有万夫不当之宣赞荐相是羽后代奉命征讨呼延灼诈降诱他夜袭劫寨将擒获宋江以礼待归顺列马军虎歌川国芳俗个约年领域慧双家庄主女第宿器出身未木刻版的像素小褪黑剪影翻转卡片显示正背'
 // Punctuation that appears in Chinese copy and definitions.
 const PUNCT = '，。、；：？！「」『』（）《》〈〉—…·　'
 

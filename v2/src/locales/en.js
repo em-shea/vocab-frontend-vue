@@ -129,6 +129,7 @@ export default {
   "heroCardTierEarthly": "Earthly Fiend",
   "heroCardStar": "Star",
   "heroCardWeapon": "Weapon",
+  "heroCardBackground": "Before Liangshan",
   "heroCardLockedName": "？？？",
   "heroCardLocked": "Not yet collected",
   "heroCardArt": "Pixel sprite of {name} in front of a woodblock print",

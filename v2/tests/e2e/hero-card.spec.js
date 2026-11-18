@@ -6,23 +6,30 @@ import { mockBackend } from './support/backend'
 // shows the back and one flippable card); A and C also show Hu Sanniang, an
 // Earthly Fiend with no quote and no story; every layout shows the fake
 // stress-test hero (nickname 神行太保, name 公孙胜) to prove the name line
-// never wraps. The phone and desktop projects supply the 390 and 1120 viewports.
+// never wraps. Each layout also has an immersive (Chinese only) card, ids ending
+// -imm; B has a front and a back. The rest are guided (pinyin and English).
+// The phone and desktop projects supply the 390 and 1120 viewports.
 
 const LAYOUTS = ['A', 'B', 'C']
 const QUOTE_CN = '幼读兵书，深通武艺，有万夫不当之勇。'
 const QUOTE_EN = 'He read books on war as a boy, mastered the martial arts, and has the courage to stand against ten thousand men.'
 const SOURCE_EN = 'Xuan Zan, recommending him to the court'
-const STORY_EN = 'A border patrol officer said to descend from the great general Guan Yu'
-const STORY_CN = '关胜相传是关羽的后代'
+const STORY_EN = 'Said to descend from the great general Guan Yu, he was sent to crush Liangshan. Huyan Zhuo pretended to defect'
+const STORY_CN = '关胜相传是关羽后代'
+const QUOTE_PINYIN = 'yòu dú bīng shū shēn tōng wǔ yì yǒu wàn fū bù dāng zhī yǒng'
 const CREDIT_EN = 'Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.'
 const SPRITE_PX = { A: 192, B: 256, C: 128 }
 const SPRITE_SCALE = { A: 3, B: 4, C: 2 }
-const ALL_IDS = ['B-quote', 'B-flip', 'B-front', 'B-back', 'B-locked', 'B-stress', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress']
+const ALL_IDS = ['B-flip', 'B-front', 'B-back', 'B-front-imm', 'B-back-imm', 'B-locked', 'B-stress', 'A-front', 'A-front-imm', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-front-imm', 'C-locked', 'C-earthly', 'C-stress']
+const IMM_IDS = ['B-front-imm', 'B-back-imm', 'A-front-imm', 'C-front-imm']
 
 async function open (page, lang = 'en') {
   await mockBackend(page)
   await page.goto(`/hero-card?lang=${lang}`)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  // Layout checks measure text, so wait until every web font in use has loaded:
+  // under load the fallback face (wider glyphs) can still be showing.
+  await page.evaluate(async () => { await document.fonts.ready })
 }
 
 const lab = (page, id) => page.locator(`[data-lab-id="${id}"]`)
@@ -37,35 +44,42 @@ const visibleText = (c) => c.evaluate((el) => {
 
 test('every lab id is present once', async ({ page }) => {
   await open(page)
-  for (const id of ['B-flip', 'B-front', 'B-back', 'B-locked', 'B-quote', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress', 'B-stress']) {
+  for (const id of ALL_IDS) {
     await expect(lab(page, id), id).toHaveCount(1)
     await expect(card(page, id), id).toHaveCount(1)
   }
 })
 
 for (const L of LAYOUTS) {
-  test(`${L}: a revealed card shows nickname then name, the subline, star and weapon, and no quote`, async ({ page }) => {
+  test(`${L}: a revealed card shows nickname then name, the subline, star, weapon and background, and no quote`, async ({ page }) => {
     await open(page)
     const c = card(page, `${L}-front`)
     await expect(c.getByRole('heading', { name: '关胜' })).toBeVisible()
     expect(await c.locator('.nick__zh').textContent()).toBe('大刀')
-    // English subline: the curly-quoted nickname first, then the pinyin.
+    // The subline: the curly-quoted nickname first, then the pinyin.
     await expect(c.locator('.pinyin')).toHaveText('“Great Blade” Guān Shèng')
     expect(await c.locator('.pinyin').textContent()).toMatch(/^\u201CGreat Blade\u201D Guān Shèng$/)
-    // Star and weapon are on every front, and the quote is not.
+    // Star, weapon and background are on every front, in that order, and the quote is not.
     await expect(c).toContainText('天勇星')
     await expect(c).toContainText('青龙偃月刀')
+    await expect(c).toContainText('蒲东巡检')
     if (L !== 'C') {
-      await expect(c.locator('dl.facts > div')).toHaveCount(2)
+      await expect(c.locator('dl.facts > div')).toHaveCount(3)
+      await expect(c.locator('dl.facts > div').evaluateAll((els) => els.map((e) => e.dataset.fact))).resolves.toEqual(['star', 'weapon', 'background'])
+      await expect(c.locator('dl.facts dt')).toHaveText(['Star', 'Weapon', 'Before Liangshan'])
       await expect(c.locator('dl.facts')).toContainText('the Brave Star')
       await expect(c.locator('dl.facts')).toContainText('Green Dragon Crescent Blade')
+      await expect(c.locator('dl.facts')).toContainText('Patrol officer of Pudong')
+    } else {
+      await expect(c.locator('.meta__item')).toHaveCount(3)
+      await expect(c.locator('.meta')).toContainText('Patrol officer of Pudong')
     }
     await expect(c.locator('blockquote')).toHaveCount(0)
     await expect(c.locator('figure')).toHaveCount(0)
-    expect(await visibleText(c)).not.toMatch(/幼读兵书|ten thousand|Xuan Zan/)
+    expect(await visibleText(c)).not.toMatch(/幼读兵书|ten thousand|Xuan Zan|yòu dú/)
   })
 
-  for (const [id, name, nick] of [[`${L}-front`, '关胜', '大刀'], [`${L}-stress`, '公孙胜', '神行太保']]) {
+  for (const [id, name, nick] of [[`${L}-front`, '关胜', '大刀'], [`${L}-front-imm`, '关胜', '大刀'], [`${L}-stress`, '公孙胜', '神行太保']]) {
     test(`${id}: nickname and name stay on one line, nickname first`, async ({ page }) => {
       await open(page)
       const c = card(page, id)
@@ -94,7 +108,7 @@ for (const L of LAYOUTS) {
     await open(page)
     const c = card(page, `${L}-locked`)
     const html = await c.evaluate((el) => el.outerHTML)
-    for (const secret of ['关胜', 'Guan Sheng', 'Guān', '大刀', 'Great Blade', '天勇星', 'Brave Star', '青龙偃月刀', 'Crescent', QUOTE_CN, '幼读兵书', 'ten thousand', 'Xuan Zan', '宣赞荐关胜', 'Guan Yu', '关羽', 'Song Jiang', 'Kuniyoshi', '歌川', 'Tiger']) {
+    for (const secret of ['关胜', 'Guan Sheng', 'Guān', '大刀', 'Great Blade', '天勇星', 'Brave Star', '青龙偃月刀', 'Crescent', QUOTE_CN, '幼读兵书', 'ten thousand', 'Xuan Zan', '宣赞荐关胜', 'Guan Yu', '关羽', 'Song Jiang', 'Kuniyoshi', '歌川', 'Tiger', '蒲东巡检', 'Pudong', 'Patrol', 'Before Liangshan', 'tiān', 'yòu dú', 'Huyan', '呼延灼']) {
       expect(html, secret).not.toContain(secret)
     }
     await expect(c.getByRole('heading')).toHaveText('？？？')
@@ -164,13 +178,13 @@ test('full art has no visible footer, and keeps rank and tier for screen readers
     expect(text).not.toContain('Heavenly Spirit')
     expect(text).not.toContain('天罡')
     await expect(c.locator('footer')).toHaveCount(0)
-    await expect(c.locator('.sr-only')).toHaveText('Rank 5 of 108, Heavenly Spirit')
+    await expect(c.locator('.plate--name .sr-only')).toHaveText('Rank 5 of 108, Heavenly Spirit')
   }
 })
 
 test('full art: the sprite figure sits between the plates, its bottom clear of the quote plate', async ({ page }) => {
   await open(page)
-  for (const id of ['B-front', 'B-stress']) {
+  for (const id of ['B-front', 'B-front-imm', 'B-stress']) {
     const c = card(page, id)
     const face = await c.locator('.face--front').boundingBox()
     const top = await c.locator('.plate--name').boundingBox()
@@ -187,31 +201,185 @@ test('full art: the sprite figure sits between the plates, its bottom clear of t
   }
 })
 
-test('star and weapon are on the front and not on the back', async ({ page }) => {
+test('star, weapon and background are on the front and not on the back', async ({ page }) => {
   await open(page)
-  const f = card(page, 'B-front')
-  await expect(f.locator('dl.facts > div')).toHaveCount(2)
-  await expect(f.locator('dl.facts')).toContainText('天勇星')
-  await expect(f.locator('dl.facts')).toContainText('青龙偃月刀')
-  const b = card(page, 'B-back')
-  await expect(b.locator('dl')).toHaveCount(0)
-  expect(await visibleText(b)).not.toMatch(/天勇星|青龙偃月刀|Brave Star|Crescent/)
+  for (const id of ['B-front', 'B-front-imm']) {
+    const f = card(page, id)
+    await expect(f.locator('dl.facts > div')).toHaveCount(3)
+    await expect(f.locator('dl.facts')).toContainText('天勇星')
+    await expect(f.locator('dl.facts')).toContainText('青龙偃月刀')
+    await expect(f.locator('dl.facts')).toContainText('蒲东巡检')
+  }
+  for (const id of ['B-back', 'B-back-imm']) {
+    const b = card(page, id)
+    await expect(b.locator('dl')).toHaveCount(0)
+    expect(await visibleText(b)).not.toMatch(/天勇星|青龙偃月刀|蒲东巡检|Brave Star|Crescent|Pudong/)
+  }
   // The flippable card keeps them on its front only.
   const fl = card(page, 'B-flip')
   await expect(fl.locator('.face--front dl.facts')).toHaveCount(1)
   await expect(fl.locator('.face--back dl')).toHaveCount(0)
-  // Locked fronts leak neither.
+  // Locked fronts leak none, and have no background row.
   await expect(card(page, 'B-locked').locator('dl')).toHaveCount(0)
+  for (const L of LAYOUTS) {
+    await expect(card(page, `${L}-locked`).locator('[data-fact="background"]'), L).toHaveCount(0)
+    expect(await visibleText(card(page, `${L}-locked`)), L).not.toMatch(/Before Liangshan|出身|蒲东/)
+  }
 })
 
-test('the quote is off by default and comes back with showQuote', async ({ page }) => {
+test('the background row: present on every revealed front, guided and immersive, in en and cn', async ({ page }) => {
+  for (const lang of ['en', 'cn']) {
+    await open(page, lang)
+    for (const id of ['A-front', 'B-front', 'C-front', 'A-front-imm', 'B-front-imm', 'C-front-imm', 'A-earthly', 'C-earthly', 'B-stress']) {
+      const row = card(page, id).locator('[data-fact="background"]')
+      await expect(row, `${lang} ${id}`).toHaveCount(1)
+      const zh = id.startsWith('A-earthly') || id.startsWith('C-earthly') ? '扈家庄庄主之女' : '蒲东巡检'
+      await expect(row.locator('.sr-only[lang="zh-Hans"], .hl__zh').first(), `${lang} ${id}`).toHaveText(zh)
+    }
+    // Label: the locale's when guided, always Chinese when immersive.
+    await expect(card(page, 'B-front').locator('dl.facts dt').nth(2)).toHaveText(lang === 'en' ? 'Before Liangshan' : '出身')
+    await expect(card(page, 'B-front-imm').locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
+    await expect(card(page, 'A-front-imm').locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
+  }
+})
+
+test('the quote is on the back, below the story, and not on the front', async ({ page }) => {
   await open(page)
-  for (const id of ['A-front', 'B-front', 'C-front', 'B-flip']) await expect(card(page, id).locator('blockquote'), id).toHaveCount(0)
-  const c = card(page, 'B-quote')
-  await expect(c.locator('blockquote')).toHaveText(QUOTE_CN)
+  for (const id of ['A-front', 'B-front', 'C-front', 'B-front-imm', 'A-front-imm', 'C-front-imm']) await expect(card(page, id).locator('blockquote'), id).toHaveCount(0)
+  const fl = card(page, 'B-flip')
+  await expect(fl.locator('.face--front blockquote')).toHaveCount(0)
+  await expect(fl.locator('.face--back blockquote')).toHaveCount(1)
+  const c = card(page, 'B-back')
+  await expect(c.locator('blockquote .sr-only[lang="zh-Hans"]')).toHaveText(QUOTE_CN)
+  await expect(c.locator('blockquote .hl__en')).toHaveText(QUOTE_EN)
   await expect(c.locator('figcaption')).toHaveText(SOURCE_EN)
-  await expect(c).toContainText(QUOTE_EN)
-  await expect(c.locator('dl.facts')).toHaveCount(1)
+  const story = await c.locator('.story').boundingBox()
+  const quote = await c.locator('figure.quote').boundingBox()
+  const credit = await c.locator('.credit').boundingBox()
+  const name = await c.locator('.namerow').boundingBox()
+  expect(name.y + name.height).toBeLessThanOrEqual(story.y + 1)
+  expect(quote.y).toBeGreaterThanOrEqual(story.y + story.height - 1)
+  expect(credit.y).toBeGreaterThanOrEqual(quote.y + quote.height - 1)
+  // The English comes after the Chinese, and the source after both.
+  const zhBox = await c.locator('blockquote .hl__zh').boundingBox()
+  const enBox = await c.locator('blockquote .hl__en').boundingBox()
+  const srcBox = await c.locator('figcaption').boundingBox()
+  expect(enBox.y).toBeGreaterThanOrEqual(zhBox.y + zhBox.height - 1)
+  expect(srcBox.y).toBeGreaterThanOrEqual(enBox.y + enBox.height - 1)
+  // Hu Sanniang has no quote and no back.
+  await expect(card(page, 'A-earthly').locator('blockquote')).toHaveCount(0)
+})
+
+test('the immersive back has the Chinese quote and source, and no English or pinyin', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-back-imm')
+  await expect(c.locator('blockquote .hl__zh')).toHaveText(QUOTE_CN)
+  await expect(c.locator('figcaption')).toHaveText('宣赞荐关胜')
+  await expect(c.locator('.story')).toContainText(STORY_CN)
+  await expect(c.locator('.credit')).toContainText('歌川国芳')
+  await expect(c.locator('rt')).toHaveCount(0)
+  await expect(c.locator('.pinyin')).toHaveCount(0)
+})
+
+// Reading modes ----------------------------------------------------------------
+
+for (const lang of ['en', 'cn']) {
+  test(`${lang}: immersive cards have no Latin letters, no pinyin, no subline`, async ({ page }) => {
+    await open(page, lang)
+    for (const id of IMM_IDS) {
+      const c = card(page, id)
+      await expect(c.locator('rt'), id).toHaveCount(0)
+      await expect(c.locator('.pinyin'), id).toHaveCount(0)
+      await expect(c.locator('.hl__en'), id).toHaveCount(0)
+      await expect(c.locator('ruby'), id).toHaveCount(0)
+      const latin = await c.evaluate((root) => {
+        const out = []
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          const el = n.parentElement
+          if (el.closest('.sr-only, .flipbtn')) continue
+          if (/[A-Za-z]/.test(n.textContent)) out.push(`<${el.tagName.toLowerCase()} class="${el.className}"> ${n.textContent.trim()}`)
+        }
+        // Nothing Latin in the card's own accessible names either.
+        for (const el of root.querySelectorAll('[aria-label]')) if (/[A-Za-z]/.test(el.getAttribute('aria-label'))) out.push(`aria-label ${el.getAttribute('aria-label')}`)
+        for (const el of root.querySelectorAll('.sr-only')) if (/[A-Za-z]/.test(el.textContent)) out.push(`sr-only ${el.textContent}`)
+        return out
+      })
+      expect(latin, `${lang} ${id}`).toEqual([])
+    }
+    // The name line is nickname then name, with no subline under it.
+    await expect(card(page, 'B-front-imm').getByRole('heading', { name: '关胜' })).toBeVisible()
+    // Labels are Chinese whatever the locale.
+    await expect(card(page, 'B-front-imm').locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
+    await expect(card(page, 'B-front-imm').locator('dl.facts dd')).toHaveText(['天勇星', '青龙偃月刀', '蒲东巡检'])
+    // Story and credit in Chinese on the immersive back, in the English locale too.
+    await expect(card(page, 'B-back-imm').locator('.story')).toContainText(STORY_CN)
+    await expect(card(page, 'B-back-imm').locator('.credit')).toContainText('歌川国芳')
+  })
+}
+
+test('immersive footers and locked-card text are Chinese (the flip button is not card content)', async ({ page }) => {
+  await open(page)
+  for (const id of ['A-front-imm', 'C-front-imm']) {
+    const c = card(page, id)
+    await expect(c).toContainText('5 / 108')
+    await expect(c).toContainText('三十六天罡')
+    expect(await visibleText(c)).not.toContain('Heavenly Spirit')
+  }
+})
+
+test('guided cards: ruby has one rt per character, English is present, and ruby is hidden from screen readers', async ({ page }) => {
+  const warnings = []
+  page.on('console', (m) => { if (m.type() === 'warning' && /HeroLine/.test(m.text())) warnings.push(m.text()) })
+  await open(page)
+  const counts = { star: 3, weapon: 5, background: 4 }
+  for (const id of ['A-front', 'B-front', 'C-front']) {
+    const c = card(page, id)
+    for (const [key, n] of Object.entries(counts)) {
+      const row = c.locator(`[data-fact="${key}"]`)
+      await expect(row.locator('rt'), `${id} ${key}`).toHaveCount(n)
+      await expect(row.locator('ruby'), `${id} ${key}`).toHaveCount(n)
+      await expect(row.locator('.hl__en'), `${id} ${key}`).toHaveCount(1)
+      await expect(row.locator('.hl__zh--ruby')).toHaveAttribute('aria-hidden', 'true')
+      await expect(row.locator('rt').first()).toHaveAttribute('lang', 'zh-Latn-pinyin')
+      await expect(row.locator('.hl__zh--ruby')).toHaveAttribute('lang', 'zh-Hans')
+    }
+    const pin = await c.locator('[data-fact="weapon"] rt').allTextContents()
+    expect(pin.join(' ')).toBe('qīng lóng yǎn yuè dāo')
+    const sr = await c.locator('[data-fact="star"] .sr-only[lang="zh-Hans"]').textContent()
+    expect(sr).toBe('天勇星')
+    // rt is small, in the UI font and muted.
+    const st = await c.locator('[data-fact="star"] rt').first().evaluate((el) => {
+      const cs = getComputedStyle(el), base = parseFloat(getComputedStyle(el.parentElement).fontSize)
+      return { size: parseFloat(cs.fontSize), base, family: cs.fontFamily }
+    })
+    expect(st.size).toBeLessThan(st.base)
+    expect(st.family).toMatch(/Instrument Sans/)
+  }
+  // Hu Sanniang: 3, 4 and 7 characters.
+  const hu = card(page, 'A-earthly')
+  for (const [key, n] of Object.entries({ star: 3, weapon: 4, background: 7 })) await expect(hu.locator(`[data-fact="${key}"] rt`), key).toHaveCount(n)
+  // The quote: one rt per character, punctuation takes none.
+  const q = card(page, 'B-back').locator('blockquote')
+  await expect(q.locator('rt')).toHaveCount(15)
+  expect((await q.locator('rt').allTextContents()).join(' ')).toBe(QUOTE_PINYIN)
+  await expect(q.locator('.hl__zh--ruby')).toHaveAttribute('aria-hidden', 'true')
+  expect(warnings).toEqual([])
+})
+
+test('guided cn: English glosses and the curly-quoted subline are still there; labels, story and credit are Chinese', async ({ page }) => {
+  await open(page, 'cn')
+  const c = card(page, 'B-front')
+  await expect(c.locator('.pinyin')).toHaveText('“Great Blade” Guān Shèng')
+  await expect(c.locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
+  await expect(c.locator('dl.facts')).toContainText('the Brave Star')
+  await expect(c.locator('dl.facts')).toContainText('Patrol officer of Pudong')
+  await expect(c.locator('[data-fact="star"] rt')).toHaveCount(3)
+  const b = card(page, 'B-back')
+  await expect(b.locator('.story')).toContainText(STORY_CN)
+  await expect(b.locator('blockquote .hl__en')).toHaveText(QUOTE_EN)
+  await expect(b.locator('figcaption')).toHaveText('宣赞荐关胜')
+  await expect(b.locator('.credit')).toContainText('歌川国芳')
 })
 
 test('the rank seal is round and vermilion for Heavenly Spirits, square and navy for Earthly Fiends', async ({ page }) => {
@@ -221,7 +389,7 @@ test('the rank seal is round and vermilion for Heavenly Spirits, square and navy
     const b = el.getBoundingClientRect()
     return { radius: cs.borderTopLeftRadius, bg: cs.backgroundColor, w: b.width, h: b.height, text: el.textContent.trim() }
   })
-  for (const id of ['A-front', 'B-front', 'C-front', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
+  for (const id of ['A-front', 'B-front', 'C-front', 'A-front-imm', 'B-front-imm', 'C-front-imm', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
     const st = await style(id)
     expect(st.radius, id).toBe('50%')
     expect(st.bg, id).toBe('rgb(200, 50, 30)')
@@ -252,7 +420,7 @@ test('there is no plinth bar, and a drop shadow sits under the feet on the centr
       }
     }
   }
-  for (const id of ['A-front', 'A-earthly', 'B-front', 'B-stress', 'C-front', 'C-earthly']) {
+  for (const id of ['A-front', 'A-front-imm', 'A-earthly', 'B-front', 'B-front-imm', 'B-stress', 'C-front', 'C-front-imm', 'C-earthly']) {
     const c = card(page, id)
     const shade = c.locator('.shade')
     await expect(shade, id).toHaveCount(1)
@@ -277,11 +445,12 @@ test('there is no plinth bar, and a drop shadow sits under the feet on the centr
 test('the back has no sprite shadow', async ({ page }) => {
   await open(page)
   await expect(card(page, 'B-back').locator('.shade')).toHaveCount(0)
+  await expect(card(page, 'B-back-imm').locator('.shade')).toHaveCount(0)
 })
 
 // Proportions and fit --------------------------------------------------------
 
-const FACE_IDS = ['B-flip', 'B-front', 'B-back', 'B-locked', 'B-stress', 'A-front', 'A-locked', 'A-earthly', 'A-stress']
+const FACE_IDS = ['B-flip', 'B-front', 'B-back', 'B-front-imm', 'B-back-imm', 'B-locked', 'B-stress', 'A-front', 'A-front-imm', 'A-locked', 'A-earthly', 'A-stress']
 
 test('full art and framed faces are 63:88 trading cards, front and back the same', async ({ page }) => {
   await open(page)
@@ -335,18 +504,20 @@ for (const lang of ['en', 'cn']) {
   })
 }
 
-test('the print band on the back keeps at least 6rem', async ({ page }) => {
+test('the print band on the back keeps at least 4.5rem, in both modes and locales', async ({ page }) => {
   await open(page)
   for (const lang of ['en', 'cn']) {
     await page.goto(`/hero-card?lang=${lang}`)
-    const h = await card(page, 'B-back').locator('.backprint').boundingBox()
-    expect(h.height, lang).toBeGreaterThanOrEqual(96)
+    for (const id of ['B-back', 'B-back-imm']) {
+      const h = await card(page, id).locator('.backprint').boundingBox()
+      expect(h.height, `${lang} ${id}`).toBeGreaterThanOrEqual(72)
+    }
   }
 })
 
 test('nickname and name are one title: same size, colour and font', async ({ page }) => {
   await open(page)
-  for (const id of ['A-front', 'A-stress', 'B-front', 'B-stress', 'B-back', 'C-front', 'C-stress']) {
+  for (const id of ['A-front', 'A-stress', 'B-front', 'B-stress', 'B-back', 'C-front', 'C-stress', 'A-front-imm', 'B-front-imm', 'B-back-imm', 'C-front-imm']) {
     const [a, b] = await card(page, id).evaluate((el) => ['.nick__zh', '.name'].map((q) => {
       const cs = getComputedStyle(el.querySelector(q))
       return { size: cs.fontSize, color: cs.color, family: cs.fontFamily }
@@ -377,19 +548,6 @@ test('a hero with no quote shows no quote block', async ({ page }) => {
   await expect(hu.getByRole('button')).toHaveCount(0)
 })
 
-test('the Chinese interface shows the Chinese quote and source (showQuote), pinyin only under the name', async ({ page }) => {
-  await open(page, 'cn')
-  const c = card(page, 'B-quote')
-  await expect(c.locator('blockquote')).toHaveText(QUOTE_CN)
-  await expect(c.locator('figcaption')).toHaveText('宣赞荐关胜')
-  await expect(c).not.toContainText('ten thousand')
-  await expect(c).not.toContainText('Great Blade')
-  await expect(c.locator('.pinyin')).toHaveText('Guān Shèng')
-  // Star and weapon: Chinese only, no English gloss.
-  await expect(card(page, 'B-front').locator('dl.facts')).toContainText('天勇星')
-  await expect(card(page, 'B-front').locator('dl.facts')).not.toContainText('Brave Star')
-})
-
 // Back and flip -------------------------------------------------------------
 
 test('the back shows the print at full strength, the name line, the story and the credit, and nothing else', async ({ page }) => {
@@ -398,9 +556,12 @@ test('the back shows the print at full strength, the name line, the story and th
   await expect(c.locator('.face--front')).toHaveCount(0)
   await expect(c.locator('.sprite')).toHaveCount(0)
   await expect(c.locator('.story')).toHaveText(new RegExp('^' + STORY_EN))
+  // Huyan Zhuo feigned surrender; Song Jiang did not trick him.
+  await expect(c.locator('.story')).not.toContainText('Song Jiang lured')
   await expect(c.locator('.credit')).toHaveText(CREDIT_EN)
   await expect(c.getByRole('heading', { name: '关胜' })).toBeVisible()
   expect(await c.locator('.nick__zh').textContent()).toBe('大刀')
+  await expect(c.locator('.pinyin')).toHaveText('“Great Blade” Guān Shèng')
   // No opacity reduction on the print or anything above it.
   const ops = await c.locator('.backprint__img').evaluate((el) => {
     const out = []
@@ -419,7 +580,9 @@ test('the back shows the Chinese story in Chinese', async ({ page }) => {
   const c = card(page, 'B-back')
   await expect(c.locator('.story')).toContainText(STORY_CN)
   await expect(c.locator('.credit')).toContainText('歌川国芳')
-  await expect(c).not.toContainText('border patrol')
+  await expect(c).not.toContainText('Huyan Zhuo pretended')
+  await expect(c.locator('.story')).toContainText('呼延灼诈降')
+  await expect(c.locator('.story')).not.toContainText('宋江设计')
 })
 
 test('the front and back are the same size', async ({ page }) => {
