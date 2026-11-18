@@ -138,7 +138,7 @@ export default {
   "heroCardFlip": "Flip card",
   "heroCardShowingFront": "Showing the front of the card",
   "heroCardShowingBack": "Showing the back of the card",
-  "heroCardShowPinyin": "Show pinyin: {text}",
+  "heroCardWordPinyin": "Pinyin for {text}",
   "heroCardViewPrint": "View full print",
   "heroCardClose": "Close"
 }

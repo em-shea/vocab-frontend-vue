@@ -19,12 +19,12 @@ const guan = {
   nameEn: 'Guan Sheng',
   nickname: '大刀',
   nicknameEn: 'Great Blade',
-  star: { cn: '天勇星', pinyin: 'tiān yǒng xīng', en: 'the Brave Star' },
-  weapon: { cn: '青龙偃月刀', pinyin: 'qīng lóng yǎn yuè dāo', en: 'Green Dragon Crescent Blade' },
-  background: { cn: '蒲东巡检', pinyin: 'Pú dōng xún jiǎn', en: 'Patrol officer of Pudong' },
+  star: { cn: '天勇星', pinyin: 'tiān yǒng / xīng', en: 'the Brave Star' },
+  weapon: { cn: '青龙偃月刀', pinyin: 'qīng lóng / yǎn yuè dāo', en: 'Green Dragon Crescent Blade' },
+  background: { cn: '蒲东巡检', pinyin: 'Pú dōng / xún jiǎn', en: 'Patrol officer of Pudong' },
   quote: {
     cn: '幼读兵书，深通武艺，有万夫不当之勇。',
-    pinyin: 'yòu dú bīng shū shēn tōng wǔ yì yǒu wàn fū bù dāng zhī yǒng',
+    pinyin: 'yòu / dú / bīng shū / shēn tōng / wǔ yì / yǒu / wàn fū / bù dāng / zhī / yǒng',
     en: 'He read books on war as a boy, mastered the martial arts, and has the courage to stand against ten thousand men.',
     sourceCn: '宣赞荐关胜',
     sourceEn: 'Xuan Zan, recommending him to the court'
@@ -75,12 +75,14 @@ const hu = {
   nameEn: 'Hu Sanniang',
   nickname: '一丈青',
   nicknameEn: 'Ten Feet of Blue',
-  star: { cn: '地慧星', pinyin: 'dì huì xīng', en: 'the Wise Star' },
-  weapon: { cn: '日月双刀', pinyin: 'rì yuè shuāng dāo', en: 'twin sabres' },
-  background: { cn: '扈家庄庄主之女', pinyin: 'Hù jiā zhuāng zhuāng zhǔ zhī nǚ', en: 'Daughter of the lord of Hu Family Manor' },
+  star: { cn: '地慧星', pinyin: 'dì huì / xīng', en: 'the Wise Star' },
+  weapon: { cn: '日月双刀', pinyin: 'rì yuè / shuāng dāo', en: 'twin sabres' },
+  background: { cn: '扈家庄庄主之女', pinyin: 'Hù jiā zhuāng / zhuāng zhǔ / zhī / nǚ', en: 'Daughter of the lord of Hu Family Manor' },
   print: printCollect,
   sprite: wuSheet,
   frames: 4,
+  // Placeholder art: the feet stand on row 60 (the bottom three rows are empty).
+  feetRow: 60,
   silhouette: guanSilhouette
 }
 

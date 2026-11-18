@@ -16,10 +16,25 @@ const QUOTE_EN = 'He read books on war as a boy, mastered the martial arts, and 
 const SOURCE_EN = 'Xuan Zan, recommending him to the court'
 const STORY_EN = 'Said to descend from the great general Guan Yu, he was sent to crush Liangshan. Huyan Zhuo pretended to defect'
 const STORY_CN = '关胜相传是关羽后代'
-const QUOTE_PINYIN = 'yòu dú bīng shū shēn tōng wǔ yì yǒu wàn fū bù dāng zhī yǒng'
 const CREDIT_EN = 'Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.'
-const SPRITE_PX = { A: 192, B: 256, C: 128 }
-const SPRITE_SCALE = { A: 3, B: 4, C: 2 }
+const SPRITE_PX = { A: 256, B: 320, C: 128 }
+const SPRITE_SCALE = { A: 4, B: 5, C: 2 }
+// Fixed art heights (rem x 16): full art's figure, and the framed art window (border box).
+const ART_H = { B: 224, A: 192 }
+// Guan Sheng's sprite: the drawn part runs from row 21 to the feet on row 58, and from column 16 to 57 (the glaive).
+const GUAN = { top: 21, left: 16, right: 57 }
+// The words of each Chinese line: the syllables of a word joined are its pop-up text.
+const GUAN_WORDS = {
+  star: [['天勇', 'tiānyǒng'], ['星', 'xīng']],
+  weapon: [['青龙', 'qīnglóng'], ['偃月刀', 'yǎnyuèdāo']],
+  background: [['蒲东', 'Púdōng'], ['巡检', 'xúnjiǎn']]
+}
+const HU_WORDS = {
+  star: [['地慧', 'dìhuì'], ['星', 'xīng']],
+  weapon: [['日月', 'rìyuè'], ['双刀', 'shuāngdāo']],
+  background: [['扈家庄', 'Hùjiāzhuāng'], ['庄主', 'zhuāngzhǔ'], ['之', 'zhī'], ['女', 'nǚ']]
+}
+const QUOTE_WORDS = [['幼', 'yòu'], ['读', 'dú'], ['兵书', 'bīngshū'], ['深通', 'shēntōng'], ['武艺', 'wǔyì'], ['有', 'yǒu'], ['万夫', 'wànfū'], ['不当', 'bùdāng'], ['之', 'zhī'], ['勇', 'yǒng']]
 const ALL_IDS = ['B-flip', 'B-front', 'B-back', 'B-front-imm', 'B-back-imm', 'B-locked', 'B-stress', 'A-front', 'A-front-imm', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-front-imm', 'C-locked', 'C-earthly', 'C-stress']
 const IMM_IDS = ['B-front-imm', 'B-back-imm', 'A-front-imm', 'C-front-imm']
 
@@ -191,13 +206,20 @@ test('full art: the sprite figure sits between the plates, its bottom clear of t
     const bottom = await c.locator('.plate--info').boundingBox()
     const sprite = await c.locator('.sprite').boundingBox()
     // The empty headroom rows may pass behind the name plate; the drawn part may not.
-    const drawnTop = sprite.y + 21 * 4
+    const drawnTop = sprite.y + GUAN.top * 5
     expect(drawnTop).toBeGreaterThanOrEqual(top.y + top.height - 1)
     expect(sprite.y + sprite.height).toBeLessThanOrEqual(bottom.y)
-    // The body is on the centre line (shifted by 3 sprite pixels, 12px).
-    expect(Math.abs(sprite.x + sprite.width / 2 - 12 - (face.x + face.width / 2))).toBeLessThan(1.5)
-    expect(sprite.x).toBeGreaterThanOrEqual(face.x)
-    expect(sprite.x + sprite.width).toBeLessThanOrEqual(face.x + face.width)
+    // The feet (row 58) and the whole foot shadow (to row 60.5) are inside the figure, above the plate.
+    const fig = await c.locator('.figure').boundingBox()
+    expect(fig.height).toBe(ART_H.B)
+    expect(sprite.y + 61 * 5).toBeLessThanOrEqual(fig.y + fig.height)
+    const sh = await c.locator('.shade').boundingBox()
+    expect(sh.y + sh.height).toBeLessThanOrEqual(bottom.y)
+    // The body is on the centre line (shifted by 3 sprite pixels, 15px).
+    expect(Math.abs(sprite.x + sprite.width / 2 - 15 - (face.x + face.width / 2))).toBeLessThan(1.5)
+    // The sprite box may reach past the figure, but what is drawn (glaive included) stays inside the face's border.
+    expect(sprite.x + GUAN.left * 5, id).toBeGreaterThanOrEqual(face.x + 4)
+    expect(sprite.x + (GUAN.right + 1) * 5, id).toBeLessThanOrEqual(face.x + face.width - 4)
   }
 })
 
@@ -327,30 +349,40 @@ test('immersive footers and locked-card text are Chinese (the flip button is not
   }
 })
 
-const PINYIN = { star: 'tiān yǒng xīng', weapon: 'qīng lóng yǎn yuè dāo', background: 'Pú dōng xún jiǎn' }
-const CHARS = { star: 3, weapon: 5, background: 4 }
 
-test('guided cards: each line has a pinyin bubble matching its characters, English is present, and there is no ruby', async ({ page }) => {
+test('guided cards: each line is split into word buttons, each with its own joined pinyin, English is present, and there is no ruby', async ({ page }) => {
   const warnings = []
   page.on('console', (m) => { if (m.type() === 'warning' && /HeroLine/.test(m.text())) warnings.push(m.text()) })
   await open(page)
+  const check = async (scope, words, label) => {
+    const btns = scope.locator('.hl__btn')
+    // Word buttons per line equal the word count in the data.
+    await expect(btns, label).toHaveCount(words.length)
+    for (let i = 0; i < words.length; i++) {
+      const [zh, tip] = words[i]
+      const w = scope.locator('.hl__w').nth(i)
+      await expect(w.locator('.hl__wz'), `${label} ${i}`).toHaveText(zh)
+      await expect(w.locator('.hl__tip'), `${label} ${i}`).toHaveText(tip)
+      expect(tip, `${label} ${i}`).not.toMatch(/\s/)
+      await expect(w.locator('.hl__btn'), `${label} ${i}`).toHaveAttribute('aria-label', `Pinyin for ${zh}`)
+      await expect(w.locator('.hl__wz')).toHaveAttribute('aria-hidden', 'true')
+    }
+  }
   for (const id of ['A-front', 'B-front', 'C-front']) {
     const c = card(page, id)
     await expect(c.locator('rt'), id).toHaveCount(0)
     await expect(c.locator('ruby'), id).toHaveCount(0)
-    for (const key of Object.keys(PINYIN)) {
+    for (const key of Object.keys(GUAN_WORDS)) {
       const row = c.locator(`[data-fact="${key}"]`)
-      await expect(row.locator('.hl__tip'), `${id} ${key}`).toHaveText(PINYIN[key])
-      expect((await row.locator('.hl__tip').textContent()).split(' ').length, `${id} ${key}`).toBe(CHARS[key])
+      await check(row, GUAN_WORDS[key], `${id} ${key}`)
       await expect(row.locator('.hl__en'), `${id} ${key}`).toHaveCount(1)
-      await expect(row.locator('.hl__zh')).toHaveAttribute('aria-hidden', 'true')
       await expect(row.locator('.hl__zh')).toHaveAttribute('lang', 'zh-Hans')
-      await expect(row.locator('.hl__zh')).toHaveText(key === 'star' ? '天勇星' : key === 'weapon' ? '青龙偃月刀' : '蒲东巡检')
+      await expect(row.locator('.hl__wz')).toHaveText(GUAN_WORDS[key].map((w) => w[0]))
     }
     const sr = await c.locator('[data-fact="star"] .sr-only[lang="zh-Hans"]').textContent()
     expect(sr).toBe('天勇星')
-    // The bubble: navy, paper text, the UI font at about 11px, a tail, and out of the flow.
-    const st = await c.locator('[data-fact="star"] .hl__tip').evaluate((el) => {
+    // The pop-up: navy, paper text, the UI font at about 11px, a tail, and out of the flow.
+    const st = await c.locator('[data-fact="star"] .hl__tip').first().evaluate((el) => {
       const cs = getComputedStyle(el), tail = getComputedStyle(el, '::after')
       return { bg: cs.backgroundColor, color: cs.color, size: cs.fontSize, family: cs.fontFamily, pos: cs.position, shadow: cs.boxShadow, tail: tail.borderTopWidth, tailColor: tail.borderTopColor }
     })
@@ -362,19 +394,25 @@ test('guided cards: each line has a pinyin bubble matching its characters, Engli
     expect(st.shadow).not.toBe('none')
     expect(st.tail).toBe('4px')
     expect(st.tailColor).toBe('rgb(27, 33, 64)')
-    // Natural character spacing: three characters take about three characters of width.
-    const w = (await c.locator('[data-fact="star"] .hl__zh').boundingBox()).width
-    const fs = await c.locator('[data-fact="star"] .hl__zh').evaluate((el) => parseFloat(getComputedStyle(el).fontSize))
-    expect(w).toBeLessThan(3 * fs * 1.2)
+    // Natural character spacing, no gaps between words: the whole Chinese line is as wide as its characters.
+    const fs = await c.locator('[data-fact="weapon"] .hl__zh').evaluate((el) => parseFloat(getComputedStyle(el).fontSize))
+    const wb = await c.locator('[data-fact="weapon"] .hl__w').evaluateAll((els) => els.map((e) => e.getBoundingClientRect()))
+    expect(wb[1].left - (wb[0].left + wb[0].width), id).toBeLessThanOrEqual(0.5)
+    expect(wb[1].left + wb[1].width - wb[0].left, id).toBeLessThan(5 * fs * 1.15)
+    // The English sits on the same line as the Chinese unless it must wrap (star, background).
+    const star = await c.locator('[data-fact="star"] .hl__zh').boundingBox()
+    const starEn = await c.locator('[data-fact="star"] .hl__en').boundingBox()
+    if (id !== 'C-front') expect(Math.abs(starEn.y + starEn.height / 2 - (star.y + star.height / 2)), id).toBeLessThan(6)
   }
-  // Hu Sanniang: 3, 4 and 7 characters.
+  // Hu Sanniang: 2, 2 and 4 words.
   const hu = card(page, 'A-earthly')
-  for (const [key, n] of Object.entries({ star: 3, weapon: 4, background: 7 })) expect((await hu.locator(`[data-fact="${key}"] .hl__tip`).textContent()).split(' ').length, key).toBe(n)
-  // The quote: one syllable per character, punctuation takes none.
+  for (const key of Object.keys(HU_WORDS)) await check(hu.locator(`[data-fact="${key}"]`), HU_WORDS[key], `hu ${key}`)
+  // The quote: one word per pop-up, punctuation is plain text between the buttons.
   const q = card(page, 'B-back').locator('blockquote')
-  await expect(q.locator('.hl__tip')).toHaveText(QUOTE_PINYIN)
-  expect((await q.locator('.hl__tip').textContent()).split(' ').length).toBe(15)
-  await expect(q.locator('.hl__zh')).toHaveAttribute('aria-hidden', 'true')
+  await check(q, QUOTE_WORDS, 'quote')
+  await expect(q.locator('.hl__zh')).toContainText('，')
+  expect((await q.locator('.hl__btn').allTextContents()).join('')).not.toContain('，')
+  expect(await q.locator('.hl__zh').evaluate((el) => [...el.children].map((n) => (n.classList.contains('hl__w') ? n.querySelector('.hl__wz') : n).textContent).join(''))).toBe(QUOTE_CN)
   expect(warnings).toEqual([])
 })
 
@@ -397,7 +435,7 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(c.locator('dl.facts dt')).toHaveText(['星宿', '兵器', '出身'])
   await expect(c.locator('dl.facts')).toContainText('the Brave Star')
   await expect(c.locator('dl.facts')).toContainText('Patrol officer of Pudong')
-  await expect(c.locator('[data-fact="star"] .hl__tip')).toHaveText('tiān yǒng xīng')
+  await expect(c.locator('[data-fact="star"] .hl__tip')).toHaveText(['tiānyǒng', 'xīng'])
   const b = card(page, 'B-back')
   await expect(b.locator('.story')).toContainText(STORY_CN)
   await expect(b.locator('blockquote .hl__en')).toHaveText(QUOTE_EN)
@@ -458,7 +496,7 @@ test('there is no plinth bar, and a drop shadow sits under the feet on the centr
     expect(await shade.evaluate((el) => getComputedStyle(el).backgroundColor), id).toBe('rgba(27, 33, 64, 0.45)')
     // Its centre sits at the feet row of the sprite (63 by default; Guan Sheng's is 58).
     const sp = await c.locator('.sprite').boundingBox()
-    const feetRow = id.includes('earthly') ? 63 : 58
+    const feetRow = id.includes('earthly') ? 60 : 58
     const feetY = sp.y + (feetRow + 0.5) * k
     expect(Math.abs(sb.y + sb.height / 2 - feetY), id).toBeLessThanOrEqual(1.5)
   }
@@ -518,7 +556,8 @@ for (const lang of ['en', 'cn']) {
             }
           }
           // Scrollable overflow: nothing hidden behind overflow:hidden.
-          if (face.scrollHeight > face.clientHeight + 1 || face.scrollWidth > face.clientWidth + 1) out.push(`${id} ${face.className} scrolls ${face.scrollWidth}x${face.scrollHeight} vs ${face.clientWidth}x${face.clientHeight}`)
+          // The full-art sprite's 320px box may reach past the face (it is clipped; what is drawn is checked in its own test).
+          if (face.scrollHeight > face.clientHeight + 1 || (!face.querySelector('.figure') && face.scrollWidth > face.clientWidth + 1)) out.push(`${id} ${face.className} scrolls ${face.scrollWidth}x${face.scrollHeight} vs ${face.clientWidth}x${face.clientHeight}`)
         }
       }
       return out
@@ -554,12 +593,12 @@ test('the sprite loops by default, with one step per frame', async ({ page }) =>
   const guan = card(page, 'A-front').locator('.sprite')
   expect(await guan.evaluate((el) => getComputedStyle(el).animationName)).toMatch(/idle/)
   expect(await guan.evaluate((el) => getComputedStyle(el).animationTimingFunction)).toContain('steps(5')
-  expect(await guan.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('960px 192px')
+  expect(await guan.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1280px 256px')
   const hu = card(page, 'A-earthly').locator('.sprite')
   expect(await hu.evaluate((el) => getComputedStyle(el).animationTimingFunction)).toContain('steps(4')
-  expect(await hu.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('768px 192px')
+  expect(await hu.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1024px 256px')
   const big = card(page, 'B-front').locator('.sprite')
-  expect(await big.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1280px 256px')
+  expect(await big.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1600px 320px')
 })
 
 test('a hero with no quote shows no quote block', async ({ page }) => {
@@ -694,23 +733,27 @@ const tipInside = (c, row) => c.evaluate((el, key) => {
   return t.left >= face.left + bw - 0.5 && t.right <= face.right - bw + 0.5 && t.top >= face.top + bw - 0.5 && t.bottom <= face.bottom - bw + 0.5
 }, row)
 
+const word = (c, key, i) => c.locator(`[data-fact="${key}"] .hl__w`).nth(i)
+
 for (const L of LAYOUTS) {
-  test(`${L}: pinyin is hidden by default, a click shows it, a second click hides it, and nothing moves`, async ({ page }) => {
+  test(`${L}: a word's pinyin is hidden by default, a click shows just that word's, a second click hides it, and nothing moves`, async ({ page }) => {
     await open(page)
     const c = card(page, `${L}-front`)
-    const row = c.locator('[data-fact="star"]')
-    const btn = row.getByRole('button', { name: 'Show pinyin: 天勇星' })
+    const row = c.locator('[data-fact="weapon"]')
+    const w = word(c, 'weapon', 1)
+    const btn = row.getByRole('button', { name: 'Pinyin for 偃月刀' })
     await expect(btn).toHaveCount(1)
     await expect(btn).toHaveAttribute('aria-pressed', 'false')
     await expect(btn).not.toHaveAttribute('aria-describedby', /.+/)
     // Its look: text, not a button.
-    const look = await btn.evaluate((el) => { const cs = getComputedStyle(el); return { border: cs.borderTopWidth, bg: cs.backgroundColor, family: cs.fontFamily, parent: getComputedStyle(el.parentElement).fontFamily } })
+    const look = await btn.evaluate((el) => { const cs = getComputedStyle(el); return { border: cs.borderTopWidth, bg: cs.backgroundColor, family: cs.fontFamily, parent: getComputedStyle(el.parentElement).fontFamily, margin: cs.margin, display: cs.display } })
     expect(look.border).toBe('0px')
     expect(look.bg).toBe('rgba(0, 0, 0, 0)')
     expect(look.family).toBe(look.parent)
-    expect(await tipVis(row)).toBe('hidden')
+    expect(look.margin).toBe('0px')
+    expect(await tipVis(w)).toBe('hidden')
     // The dotted underline marks it while hidden.
-    const ul = () => row.locator('.hl__zh').evaluate((el) => { const cs = getComputedStyle(el); return `${cs.textDecorationLine} ${cs.textDecorationStyle} ${cs.textDecorationColor}` })
+    const ul = () => w.locator('.hl__wz').evaluate((el) => { const cs = getComputedStyle(el); return `${cs.textDecorationLine} ${cs.textDecorationStyle} ${cs.textDecorationColor}` })
     expect(await ul()).toBe('underline dotted rgb(95, 98, 118)')
     await page.mouse.move(0, 0)
     const before = await layoutOf(c)
@@ -718,67 +761,70 @@ for (const L of LAYOUTS) {
     await btn.click()
     await page.mouse.move(0, 0)
     await expect(btn).toHaveAttribute('aria-pressed', 'true')
-    expect(await tipVis(row)).toBe('visible')
-    const id = await row.locator('.hl__tip').getAttribute('id')
+    expect(await tipVis(w)).toBe('visible')
+    await expect(w.locator('.hl__tip')).toHaveText('yǎnyuèdāo')
+    const id = await w.locator('.hl__tip').getAttribute('id')
     expect(id).toBeTruthy()
     await expect(btn).toHaveAttribute('aria-describedby', id)
     expect(await ul()).toBe('underline solid rgb(200, 50, 30)')
     expect(await layoutOf(c)).toEqual(before)
-    expect(await tipInside(c, '[data-fact="star"] .hl__tip')).toBe(true)
-    // Left-aligned with the line, just above it.
-    const tb = await row.locator('.hl__tip').boundingBox()
+    expect(await tipInside(c, `[data-fact="weapon"] .hl__w:nth-child(2) .hl__tip`)).toBe(true)
+    // Left-aligned with its word, just above it.
+    const tb = await w.locator('.hl__tip').boundingBox()
     const lb = await btn.boundingBox()
     expect(Math.abs(tb.x - lb.x)).toBeLessThanOrEqual(1)
     expect(tb.y + tb.height).toBeLessThanOrEqual(lb.y + 1)
-    // Only that line: the weapon's pinyin is still hidden.
-    expect(await tipVis(c.locator('[data-fact="weapon"]'))).toBe('hidden')
+    // Only that word: the other words' pinyin is still hidden.
+    expect(await tipVis(word(c, 'weapon', 0))).toBe('hidden')
+    expect(await tipVis(word(c, 'star', 0))).toBe('hidden')
 
     await btn.click()
     await page.mouse.move(0, 0)
     await expect(btn).toHaveAttribute('aria-pressed', 'false')
     await expect(btn).not.toHaveAttribute('aria-describedby', /.+/)
-    expect(await tipVis(row)).toBe('hidden')
+    expect(await tipVis(w)).toBe('hidden')
     expect(await layoutOf(c)).toEqual(before)
   })
 
-  test(`${L}: Tab reaches each line, Enter and Space toggle it, Escape and an outside click close it, focus is visible`, async ({ page }) => {
+  test(`${L}: Tab reaches each word, Enter and Space toggle it, Escape and an outside click close it, focus is visible`, async ({ page }) => {
     await open(page)
     const c = card(page, `${L}-front`)
-    const row = c.locator('[data-fact="weapon"]')
-    const btn = row.getByRole('button')
+    const w = word(c, 'weapon', 0)
+    const btn = w.getByRole('button')
     await btn.focus()
     await page.keyboard.press('Enter')
     await expect(btn).toHaveAttribute('aria-pressed', 'true')
-    expect(await tipVis(row)).toBe('visible')
+    expect(await tipVis(w)).toBe('visible')
     await page.keyboard.press('Space')
     await expect(btn).toHaveAttribute('aria-pressed', 'false')
-    expect(await tipVis(row)).toBe('hidden')
+    expect(await tipVis(w)).toBe('hidden')
     await page.keyboard.press('Enter')
     await expect(btn).toHaveAttribute('aria-pressed', 'true')
     await page.keyboard.press('Escape')
     await expect(btn).toHaveAttribute('aria-pressed', 'false')
-    expect(await tipVis(row)).toBe('hidden')
+    expect(await tipVis(w)).toBe('hidden')
     // Outside click.
     await btn.click()
     await expect(btn).toHaveAttribute('aria-pressed', 'true')
     await page.mouse.click(2, 2)
     await expect(btn).toHaveAttribute('aria-pressed', 'false')
-    // Tab order: star, weapon, background.
-    await c.locator('[data-fact="star"] button').focus()
-    await page.keyboard.press('Tab')
-    await expect(c.locator('[data-fact="weapon"] button')).toBeFocused()
-    await page.keyboard.press('Tab')
-    await expect(c.locator('[data-fact="background"] button')).toBeFocused()
-    const outline = await c.locator('[data-fact="background"] button').evaluate((el) => getComputedStyle(el).outlineStyle + ' ' + getComputedStyle(el).outlineWidth)
+    // Tab order: every word in reading order, star then weapon then background.
+    const all = c.locator('.hl__btn')
+    await all.first().focus()
+    for (let i = 1; i < 6; i++) {
+      await page.keyboard.press('Tab')
+      await expect(all.nth(i)).toBeFocused()
+    }
+    const outline = await all.nth(5).evaluate((el) => getComputedStyle(el).outlineStyle + ' ' + getComputedStyle(el).outlineWidth)
     expect(outline).toBe('solid 2px')
   })
 }
 
-test('only one bubble is open per card, and flipping closes it', async ({ page }) => {
+test('only one pop-up is open per card, and flipping closes it', async ({ page }) => {
   await open(page)
   const c = card(page, 'B-front')
-  const star = c.locator('[data-fact="star"] button')
-  const weapon = c.locator('[data-fact="weapon"] button')
+  const star = c.locator('[data-fact="star"] button').first()
+  const weapon = c.locator('[data-fact="weapon"] button').nth(1)
   await star.click()
   await page.mouse.move(0, 0)
   await weapon.click()
@@ -786,15 +832,21 @@ test('only one bubble is open per card, and flipping closes it', async ({ page }
   await expect(star).toHaveAttribute('aria-pressed', 'false')
   await expect(weapon).toHaveAttribute('aria-pressed', 'true')
   expect(await c.locator('.hl__tip').evaluateAll((els) => els.filter((e) => getComputedStyle(e).visibility === 'visible').length)).toBe(1)
+  // Another word of the same line closes the first.
+  const sibling = c.locator('[data-fact="weapon"] button').first()
+  await sibling.click()
+  await page.mouse.move(0, 0)
+  await expect(weapon).toHaveAttribute('aria-pressed', 'false')
+  await expect(sibling).toHaveAttribute('aria-pressed', 'true')
   // Another card is independent.
-  const other = card(page, 'A-front').locator('[data-fact="star"] button')
+  const other = card(page, 'A-front').locator('[data-fact="star"] button').first()
   await other.click()
   await expect(other).toHaveAttribute('aria-pressed', 'true')
-  await expect(weapon).toHaveAttribute('aria-pressed', 'false')
+  await expect(sibling).toHaveAttribute('aria-pressed', 'false')
 
-  // Flipping closes an open bubble.
+  // Flipping closes an open pop-up.
   const fl = card(page, 'B-flip')
-  const line = fl.locator('.face--front [data-fact="star"] button')
+  const line = fl.locator('.face--front [data-fact="star"] button').first()
   await line.click()
   await expect(line).toHaveAttribute('aria-pressed', 'true')
   await fl.getByRole('button', { name: 'Flip card' }).click()
@@ -803,7 +855,7 @@ test('only one bubble is open per card, and flipping closes it', async ({ page }
   await expect(line).toHaveAttribute('aria-pressed', 'false')
 })
 
-test('every bubble stays inside the face, including the first fact row and the back quote, and moves nothing', async ({ page }) => {
+test('every word pop-up stays inside the face, on every guided lab card, in en and cn, and moves nothing', async ({ page }) => {
   for (const lang of ['en', 'cn']) {
     await open(page, lang)
     for (const id of ['A-front', 'A-earthly', 'A-stress', 'B-front', 'B-stress', 'B-back', 'C-front', 'C-earthly']) {
@@ -829,26 +881,42 @@ test('every bubble stays inside the face, including the first fact row and the b
   }
 })
 
-test('hovering a line shows its pinyin on pointer devices', async ({ page }, testInfo) => {
+test('the pop-up of the last word of the quote (end of a line) stays inside the face and moves nothing', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-back')
+  const last = c.locator('.hl__btn').last()
+  const before = await layoutOf(c)
+  await last.click()
+  const face = await c.locator('.face').boundingBox()
+  const tb = await last.locator('xpath=following-sibling::*[contains(@class,"hl__tip")]').boundingBox()
+  expect(tb.x + tb.width).toBeLessThanOrEqual(face.x + face.width - 2)
+  expect(await layoutOf(c)).toEqual(before)
+})
+
+test('hovering a word shows its pinyin on pointer devices', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'hover needs a pointer')
   await open(page)
   const c = card(page, 'B-front')
-  const row = c.locator('[data-fact="star"]')
+  const w = word(c, 'weapon', 0)
   const before = await layoutOf(c)
-  expect(await tipVis(row)).toBe('hidden')
-  await row.getByRole('button').hover()
-  expect(await tipVis(row)).toBe('visible')
+  expect(await tipVis(w)).toBe('hidden')
+  await w.getByRole('button').hover()
+  expect(await tipVis(w)).toBe('visible')
+  await expect(w.locator('.hl__tip')).toHaveText('qīnglóng')
+  // Only the hovered word: its neighbour stays hidden.
+  expect(await tipVis(word(c, 'weapon', 1))).toBe('hidden')
   expect(await layoutOf(c)).toEqual(before)
   // Hover does not press it.
-  await expect(row.getByRole('button')).toHaveAttribute('aria-pressed', 'false')
+  await expect(w.getByRole('button')).toHaveAttribute('aria-pressed', 'false')
   await page.mouse.move(0, 0)
-  expect(await tipVis(row)).toBe('hidden')
+  expect(await tipVis(w)).toBe('hidden')
 })
 
-test('the pinyin buttons read in Chinese in the cn locale, and the quote line on the back has one too', async ({ page }) => {
+test('the word buttons read in Chinese in the cn locale, and the quote on the back has them too', async ({ page }) => {
   await open(page, 'cn')
-  await expect(card(page, 'B-front').getByRole('button', { name: '显示拼音：天勇星' })).toHaveCount(1)
-  await expect(card(page, 'B-back').locator('blockquote').getByRole('button', { name: `显示拼音：${QUOTE_CN}` })).toHaveCount(1)
+  await expect(card(page, 'B-front').getByRole('button', { name: '天勇的拼音' })).toHaveCount(1)
+  await expect(card(page, 'B-back').locator('blockquote').getByRole('button', { name: '兵书的拼音' })).toHaveCount(1)
+  await expect(card(page, 'B-back').locator('blockquote').getByRole('button')).toHaveCount(QUOTE_WORDS.length)
 })
 
 test('immersive and locked cards have no pinyin buttons', async ({ page }) => {
@@ -862,8 +930,8 @@ test('the hidden face of a flippable card has inert pinyin buttons', async ({ pa
   await open(page)
   const fl = card(page, 'B-flip')
   expect(await fl.locator('.face--back').evaluate((el) => el.inert)).toBe(true)
-  await expect(fl.locator('.face--back .hl__btn')).toHaveCount(1)
-  await expect(fl.getByRole('button', { name: /Show pinyin/ })).toHaveCount(3)
+  await expect(fl.locator('.face--back .hl__btn')).toHaveCount(QUOTE_WORDS.length)
+  await expect(fl.getByRole('button', { name: /^Pinyin for / })).toHaveCount(6)
 })
 
 // Same text-box height in every state ----------------------------------------------
@@ -876,6 +944,10 @@ test('full art: the fact plate is the same height in guided, immersive and locke
     return { plate: r('.plate--info').height, plateTop: r('.plate--info').top - face.top, spriteTop: r('.sprite').top - face.top, figure: r('.figure').height, name: r('.plate--name').height }
   })
   const g = await m('B-front')
+  // A compact plate: about 110px (it was 163), and the figure takes the freed height.
+  expect(g.plate).toBeLessThanOrEqual(115)
+  expect(g.plate).toBeGreaterThanOrEqual(100)
+  expect(g.figure).toBe(ART_H.B)
   for (const id of ['B-front-imm', 'B-locked', 'B-stress']) {
     const o = await m(id)
     expect(Math.abs(o.plate - g.plate), id).toBeLessThanOrEqual(0.5)
@@ -895,6 +967,9 @@ test('framed: the fact panel is the same height in guided, immersive and locked,
     return { panel: r('.panel').height, panelTop: r('.panel').top - face.top, window: r('.window').height, windowTop: r('.window').top - face.top, spriteTop: r('.sprite').top - face.top }
   })
   const g = await m('A-front')
+  // The panel was 168px; the window takes the freed height.
+  expect(g.panel).toBeLessThanOrEqual(112)
+  expect(g.window).toBe(ART_H.A)
   for (const id of ['A-front-imm', 'A-locked', 'A-earthly', 'A-stress']) {
     const o = await m(id)
     expect(Math.abs(o.panel - g.panel), id).toBeLessThanOrEqual(0.5)
@@ -904,6 +979,26 @@ test('framed: the fact panel is the same height in guided, immersive and locked,
     if (id !== 'A-earthly') expect(Math.abs(o.spriteTop - g.spriteTop), id).toBeLessThanOrEqual(0.5)
   }
   await expect(card(page, 'A-locked').locator('.panel')).toContainText('Not yet collected')
+})
+
+test('framed: the 4x sprite fits the window, drawn part, feet and shadow inside it', async ({ page }) => {
+  await open(page)
+  for (const id of ['A-front', 'A-front-imm', 'A-stress', 'A-locked']) {
+    const c = card(page, id)
+    const win = await c.locator('.window').boundingBox()
+    const sp = await c.locator('.sprite').boundingBox()
+    const inner = { top: win.y + 4, bottom: win.y + win.height - 4, left: win.x + 4, right: win.x + win.width - 4 }
+    // Drawn rows start below the top of the window and end at the bottom of the frame.
+    expect(sp.y + GUAN.top * 4, id).toBeGreaterThanOrEqual(inner.top)
+    expect(sp.y + sp.height, id).toBeLessThanOrEqual(inner.bottom + 0.5)
+    expect(sp.x + GUAN.left * 4, id).toBeGreaterThanOrEqual(inner.left)
+    expect(sp.x + (GUAN.right + 1) * 4, id).toBeLessThanOrEqual(inner.right)
+    if (id !== 'A-locked') {
+      const sh = await c.locator('.shade').boundingBox()
+      expect(sh.y + sh.height, id).toBeLessThanOrEqual(inner.bottom)
+      expect(sp.y + 59 * 4, id).toBeLessThanOrEqual(inner.bottom)
+    }
+  }
 })
 
 for (const lang of ['en', 'cn']) {

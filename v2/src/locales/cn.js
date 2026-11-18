@@ -137,7 +137,7 @@ export default {
   "heroCardFlip": "翻转卡片",
   "heroCardShowingFront": "当前显示卡片正面",
   "heroCardShowingBack": "当前显示卡片背面",
-  "heroCardShowPinyin": "显示拼音：{text}",
+  "heroCardWordPinyin": "{text}的拼音",
   "heroCardViewPrint": "查看全图",
   "heroCardClose": "关闭"
 }

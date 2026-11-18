@@ -7,9 +7,9 @@ import HeroLine from './HeroLine.vue'
 //
 //   framed    a bordered card: header strip, framed art window, a small facts
 //             panel (star and weapon) and a footer (trading-card portrait,
-//             63:88, up to 320px wide; sprite at 3x)
+//             63:88, up to 320px wide; sprite at 4x)
 //   full-art  the print fills the card; text sits on solid plates laid over it
-//             (63:88, up to 320px wide; sprite at 4x, 256px frames)
+//             (63:88, up to 320px wide; sprite at 5x, 320px frames)
 //   compact   a landscape card for lists and phones (about 420 x 180; sprite 2x)
 //
 // The card shows no stats, power numbers or abilities: the game rules are not
@@ -19,9 +19,10 @@ import HeroLine from './HeroLine.vue'
 // `hero` fields: rank, tier ('天罡' | '地煞'), name, pinyin, nameEn, nickname,
 // nicknameEn, and three facts, each { cn, en, pinyin }: `star` (星宿), `weapon`
 // (兵器) and `background` (出身, labelled "Background" in English: an occupation or a family position). `pinyin` is
-// space-separated syllables with tone marks, ONE PER CHINESE CHARACTER
-// (punctuation takes none); it is shown in a pop-up bubble over the line. If the counts
-// do not match, the line is shown without pinyin and a warning is logged in dev.
+// syllables with tone marks, ONE PER CHINESE CHARACTER (punctuation takes none),
+// with " / " between words ("bīng shū / shēn tōng"); each word's pinyin is shown in a
+// pop-up over that word (see HeroLine). A string without " / " is one word per syllable.
+// If the counts do not match, the line is shown without pinyin and a warning is logged in dev.
 // Also an optional quote ({ cn, en, pinyin, sourceCn, sourceEn }), an optional
 // story ({ en, cn }) and printCredit ({ en, cn }) for the back of the card (the credit is shown in the print viewer, not on the back face), and
 // the image imports print, sprite (a strip of `frames` 64px frames, so 64*frames
@@ -46,7 +47,7 @@ import HeroLine from './HeroLine.vue'
 //
 // `reading` ('guided' by default, or 'immersive') is how much help the card
 // gives. It is independent of the interface locale (`lang`).
-//   guided     pinyin and English. Pinyin is on demand: each Chinese line is a
+//   guided     pinyin and English. Pinyin is on demand: each Chinese WORD is a
 //              button (see HeroLine) that pops its pinyin up in a small bubble on
 //              hover or click, so nothing in the card ever moves. The subline under the name is the nickname
 //              in curly quotes, then the pinyin, in BOTH locales: “Great Blade”
@@ -71,8 +72,11 @@ import HeroLine from './HeroLine.vue'
 // FIXED height (--art-h; full art also fixes the name plate, --name-h, and framed
 // its header, --head-h) and the fact plate or panel takes the rest of the card, so
 // the plate is the same height whether the card is guided, immersive or locked,
-// and the sprite never moves between modes. The heights are sized so the guided
-// facts of the longest lab hero (Hu Sanniang, whose English wraps) fit at 320px.
+// and the sprite never moves between modes. The plate is compact so the sprite
+// gets the room: each fact is ONE row (label, the Chinese, then the English in
+// muted small type on the same line, wrapping beneath only when it must). The art
+// heights are sized so the guided facts of the longest lab heroes (Guan Sheng's
+// weapon and Hu Sanniang's background wrap their English) fit at 320px.
 //
 // `state`: 'revealed' shows everything; 'locked' swaps the sprite for the
 // silhouette, fades the print, and leaves out the name, nickname, the facts, the
@@ -169,9 +173,10 @@ const closeViewer = () => { viewer.value?.close() }
 const onViewerClick = (e) => { if (e.target === viewer.value) closeViewer() }
 const sideText = computed(() => t(backUp.value ? 'heroCardShowingBack' : 'heroCardShowingFront'))
 
-// Whole-number sprite scale, so the pixel art stays crisp: 4x (256px frames) in
-// full art, 3x framed, 2x compact.
-const scale = computed(() => (props.variant === 'compact' ? 2 : props.variant === 'full-art' ? 4 : 3))
+// Whole-number sprite scale, so the pixel art stays crisp: 5x (320px frames) in
+// full art, 4x framed, 2x compact. A full-art hero needs the empty headroom rows
+// to pull the drawn part up into the 14rem figure (Guan Sheng: 43 drawn rows).
+const scale = computed(() => (props.variant === 'compact' ? 2 : props.variant === 'full-art' ? 5 : 4))
 const spriteStyle = computed(() => ({
   '--k': scale.value,
   '--n': props.hero.frames || 4,
@@ -482,10 +487,11 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .quote__text { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); color: var(--c-ink); --hl-en-size: var(--t-sm); }
 .quote__src { font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
 
-/* Three fact rows: label, then the Chinese with the English beneath. */
-.facts { display: grid; gap: var(--s-1); margin: 0; --hl-en-size: var(--t-sm); }
-.facts div { display: grid; grid-template-columns: 4.5rem 1fr; gap: var(--s-2); align-items: baseline; }
-.facts dt { font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
+/* Three compact fact rows: label, the Chinese, then the English (muted, small)
+ * on the same line; the English wraps beneath only when it must. */
+.facts { display: grid; gap: 3px; margin: 0; --hl-dir: row; --hl-en-size: var(--t-xs); --hl-en-color: var(--c-muted); }
+.facts div { display: grid; grid-template-columns: 4rem 1fr; gap: var(--s-2); align-items: baseline; }
+.facts dt { font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
 .facts dd { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); min-width: 0; }
 
 .line { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); color: var(--c-body); }
@@ -679,12 +685,12 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .card--framed .face, .card--full-art .face { aspect-ratio: 63 / 88; min-height: 0; overflow: hidden; }
 
 /* A: framed ------------------------------------------------------------- */
-.card--framed { max-width: 320px; --name-size: var(--t-xl); --head-h: 4.25rem; --art-h: 8.125rem; }
+.card--framed { max-width: 320px; --name-size: var(--t-xl); --head-h: 4.25rem; --art-h: 12rem; }
 .card--framed .face--front { gap: var(--s-2); padding: var(--s-3); }
 .card--framed .head { flex: none; box-sizing: border-box; height: var(--head-h); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); padding-bottom: var(--s-2); border-bottom: var(--bw-rule) solid var(--c-rule); }
 .card--framed .window { flex: none; box-sizing: border-box; height: var(--art-h); }
-/* The frame's empty bottom rows already clear the shadow, so no extra margin:
- * the 3x figure needs every pixel of the shorter window. */
+/* The frame's empty bottom rows already clear the shadow, so no extra margin.
+ * 12rem holds the 4x figure's 43 drawn rows (172px) inside the 4px frame. */
 .card--framed .window .sprite { margin-bottom: 0; }
 .card--framed .window .shade { --base: 0px; }
 .card--framed .panel { display: flex; flex: 1; min-height: 0; flex-direction: column; justify-content: center; gap: var(--s-3); padding: 6px var(--s-3); background-color: var(--c-ground); border: var(--bw-rule) solid var(--c-rule); }
@@ -693,7 +699,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .card--framed .foot { flex: none; padding-top: var(--s-1); border-top: var(--bw-rule) solid var(--c-rule); }
 
 /* B: full art ----------------------------------------------------------- */
-.card--full-art { max-width: 320px; --name-size: var(--t-lg); --name-h: 4rem; --art-h: 10.75rem; }
+.card--full-art { max-width: 320px; --name-size: var(--t-lg); --name-h: 4rem; --art-h: 14rem; }
 .card--full-art .face { overflow: hidden; background-color: var(--c-ink); border-width: var(--bw-frame); }
 .card--full-art .face--back { background-color: var(--c-panel); }
 .card--full-art .stage { position: absolute; inset: 0; background-color: var(--c-ground); }
