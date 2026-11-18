@@ -16,6 +16,8 @@ const STORY_EN = 'A border patrol officer said to descend from the great general
 const STORY_CN = '关胜相传是关羽的后代'
 const CREDIT_EN = 'Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.'
 const SPRITE_PX = { A: 192, B: 256, C: 128 }
+const SPRITE_SCALE = { A: 3, B: 4, C: 2 }
+const ALL_IDS = ['B-flip', 'B-front', 'B-back', 'B-locked', 'B-stress', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress']
 
 async function open (page, lang = 'en') {
   await mockBackend(page)
@@ -47,9 +49,15 @@ for (const L of LAYOUTS) {
     const c = card(page, `${L}-front`)
     await expect(c.getByRole('heading', { name: '关胜' })).toBeVisible()
     expect(await c.locator('.nick__zh').textContent()).toBe('大刀')
-    await expect(c).toContainText('Great Blade · Guān Shèng')
-    await expect(c).toContainText('天勇星')
-    await expect(c).toContainText('青龙偃月刀')
+    await expect(c.locator('.pinyin')).toHaveText('Guān Shèng, “Great Blade”')
+    if (L === 'C') {
+      await expect(c).toContainText('天勇星')
+      await expect(c).toContainText('青龙偃月刀')
+    } else {
+      // Star and weapon live on the back of the portrait layouts, not the front.
+      expect(await visibleText(c)).not.toMatch(/天勇星|青龙偃月刀/)
+      await expect(c.locator('dl')).toHaveCount(0)
+    }
     await expect(c.locator('blockquote')).toHaveText(QUOTE_CN)
     await expect(c.locator('blockquote')).toHaveAttribute('lang', 'zh-Hans')
     await expect(c.locator('figcaption')).toHaveText(SOURCE_EN)
@@ -78,9 +86,6 @@ for (const L of LAYOUTS) {
       expect(hBox.x + hBox.width).toBeLessThanOrEqual(parent + 1)
       const seal = await c.locator('.seal').first().boundingBox()
       expect(hBox.x + hBox.width).toBeLessThanOrEqual(seal.x)
-      // The nickname is smaller than the name.
-      const sizes = await c.evaluate((el) => [getComputedStyle(el.querySelector('.nick__zh')).fontSize, getComputedStyle(el.querySelector('.name')).fontSize].map(parseFloat))
-      expect(sizes[0]).toBeLessThan(sizes[1])
     })
   }
 
@@ -112,6 +117,22 @@ for (const L of LAYOUTS) {
     const s = await card(page, `${L}-front`).locator('.sprite').boundingBox()
     expect(s.width).toBe(SPRITE_PX[L])
     expect(s.height).toBe(SPRITE_PX[L])
+  })
+
+  test(`${L}: Guan Sheng's sprite is shifted so the body, not the weapon, is centred`, async ({ page }) => {
+    await open(page)
+    const sp = card(page, `${L}-front`).locator('.sprite')
+    const dx = (32 - 29) * SPRITE_SCALE[L]
+    const t = await sp.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41)
+    expect(t).toBe(dx)
+    // The empty headroom rows are pulled up, whole pixels at the sprite scale.
+    expect(await sp.evaluate((el) => parseFloat(getComputedStyle(el).marginTop))).toBe(-21 * SPRITE_SCALE[L])
+    // A hero without the fields (Hu Sanniang, placeholder) stays at the defaults.
+    if (L !== 'B') {
+      const hu = card(page, `${L}-earthly`).locator('.sprite')
+      expect(await hu.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41)).toBe(0)
+      expect(await hu.evaluate((el) => parseFloat(getComputedStyle(el).marginTop))).toBe(0)
+    }
   })
 
   test(`${L}: the front print is washed back, and more so when locked`, async ({ page }) => {
@@ -146,7 +167,7 @@ test('full art has no visible footer, and keeps rank and tier for screen readers
   }
 })
 
-test('full art: the 256px sprite sits between the plates and inside the card', async ({ page }) => {
+test('full art: the sprite figure sits between the plates, its bottom clear of the quote plate', async ({ page }) => {
   await open(page)
   for (const id of ['B-front', 'B-stress']) {
     const c = card(page, id)
@@ -154,10 +175,98 @@ test('full art: the 256px sprite sits between the plates and inside the card', a
     const top = await c.locator('.plate--name').boundingBox()
     const bottom = await c.locator('.plate--info').boundingBox()
     const sprite = await c.locator('.sprite').boundingBox()
-    expect(sprite.y).toBeGreaterThanOrEqual(top.y + top.height)
+    // The empty headroom rows may pass behind the name plate; the drawn part may not.
+    const drawnTop = sprite.y + 21 * 4
+    expect(drawnTop).toBeGreaterThanOrEqual(top.y + top.height - 1)
     expect(sprite.y + sprite.height).toBeLessThanOrEqual(bottom.y)
+    // The body is on the centre line (shifted by 3 sprite pixels, 12px).
+    expect(Math.abs(sprite.x + sprite.width / 2 - 12 - (face.x + face.width / 2))).toBeLessThan(1.5)
     expect(sprite.x).toBeGreaterThanOrEqual(face.x)
     expect(sprite.x + sprite.width).toBeLessThanOrEqual(face.x + face.width)
+  }
+})
+
+test('full art: star and weapon are on the back, one row each', async ({ page }) => {
+  await open(page)
+  const c = card(page, 'B-back')
+  await expect(c.locator('dl.facts > div')).toHaveCount(2)
+  await expect(c.locator('dl.facts')).toContainText('天勇星')
+  await expect(c.locator('dl.facts')).toContainText('青龙偃月刀')
+})
+
+// Proportions and fit --------------------------------------------------------
+
+const FACE_IDS = ['B-flip', 'B-front', 'B-back', 'B-locked', 'B-stress', 'A-front', 'A-locked', 'A-earthly', 'A-stress']
+
+test('full art and framed faces are 63:88 trading cards, front and back the same', async ({ page }) => {
+  await open(page)
+  for (const id of FACE_IDS) {
+    const faces = card(page, id).locator('.face')
+    const n = await faces.count()
+    for (let i = 0; i < n; i++) {
+      const b = await faces.nth(i).boundingBox()
+      expect(Math.abs(b.height - (b.width * 88) / 63), `${id} face ${i}`).toBeLessThanOrEqual(1)
+      expect(b.width, id).toBeLessThanOrEqual(320.5)
+    }
+  }
+  const f = await card(page, 'B-flip').locator('.face--front').boundingBox()
+  const k = await card(page, 'B-flip').locator('.face--back').boundingBox()
+  expect(Math.abs(f.height - k.height)).toBeLessThan(1)
+})
+
+for (const lang of ['en', 'cn']) {
+  test(`${lang}: nothing in any card face overflows the face`, async ({ page }) => {
+    await open(page, lang)
+    // The flippable card's back is checked on its own static copy (B-back); the
+    // hidden face of B-flip is checked too, since it is still laid out.
+    const bad = await page.evaluate((ids) => {
+      const out = []
+      for (const id of ids) {
+        const root = document.querySelector(`[data-lab-id="${id}"]`)
+        for (const face of root.querySelectorAll('.face')) {
+          const fb = face.getBoundingClientRect()
+          // The inside of the border box.
+          const bw = parseFloat(getComputedStyle(face).borderLeftWidth)
+          for (const el of face.querySelectorAll('*')) {
+            if (el.closest('.sr-only') || el.classList.contains('sr-only')) continue
+            // The sprite's own box may hang above its figure (headroom, transparent).
+            if (el.classList.contains('sprite')) continue
+            // Art layers fill the face by design.
+            if (el.closest('.stage, .backprint, .window')) continue
+            const r = el.getBoundingClientRect()
+            if (r.width === 0 && r.height === 0) continue
+            const tol = 0.75
+            if (r.left < fb.left + bw - tol || r.right > fb.right - bw + tol || r.top < fb.top + bw - tol || r.bottom > fb.bottom - bw + tol) {
+              out.push(`${id} ${face.className} <${el.tagName.toLowerCase()} class="${el.className}"> ${Math.round(r.left - fb.left)},${Math.round(r.top - fb.top)} ${Math.round(r.width)}x${Math.round(r.height)} in ${Math.round(fb.width)}x${Math.round(fb.height)}`)
+            }
+          }
+          // Scrollable overflow: nothing hidden behind overflow:hidden.
+          if (face.scrollHeight > face.clientHeight + 1 || face.scrollWidth > face.clientWidth + 1) out.push(`${id} ${face.className} scrolls ${face.scrollWidth}x${face.scrollHeight} vs ${face.clientWidth}x${face.clientHeight}`)
+        }
+      }
+      return out
+    }, ALL_IDS)
+    expect(bad).toEqual([])
+  })
+}
+
+test('the print band on the back keeps at least 6rem', async ({ page }) => {
+  await open(page)
+  for (const lang of ['en', 'cn']) {
+    await page.goto(`/hero-card?lang=${lang}`)
+    const h = await card(page, 'B-back').locator('.backprint').boundingBox()
+    expect(h.height, lang).toBeGreaterThanOrEqual(96)
+  }
+})
+
+test('nickname and name are one title: same size, colour and font', async ({ page }) => {
+  await open(page)
+  for (const id of ['A-front', 'A-stress', 'B-front', 'B-stress', 'B-back', 'C-front', 'C-stress']) {
+    const [a, b] = await card(page, id).evaluate((el) => ['.nick__zh', '.name'].map((q) => {
+      const cs = getComputedStyle(el.querySelector(q))
+      return { size: cs.fontSize, color: cs.color, family: cs.fontFamily }
+    }))
+    expect(a, id).toEqual(b)
   }
 })
 

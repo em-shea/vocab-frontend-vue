@@ -41,6 +41,10 @@ const guan = {
   print: printCollect,
   sprite: guanSheet,
   frames: 5,
+  // The glaive sticks out to the right: the body is centred on column 29, and
+  // the top 21 rows of the frame are empty.
+  bodyX: 29,
+  headroom: 21,
   silhouette: guanSilhouette
 }
 
