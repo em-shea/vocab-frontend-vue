@@ -4,9 +4,9 @@ import { useI18n } from 'vue-i18n'
 
 // The collectible hero card. One component, three layouts:
 //
-//   framed    a bordered card: header strip, framed art window, a small quote
-//             panel and a footer (trading-card portrait, 63:88, up to 320px
-//             wide; sprite at 3x)
+//   framed    a bordered card: header strip, framed art window, a small facts
+//             panel (star and weapon) and a footer (trading-card portrait,
+//             63:88, up to 320px wide; sprite at 3x)
 //   full-art  the print fills the card; text sits on solid plates laid over it
 //             (63:88, up to 320px wide; sprite at 4x, 256px frames)
 //   compact   a landscape card for lists and phones (about 420 x 180; sprite 2x)
@@ -17,52 +17,66 @@ import { useI18n } from 'vue-i18n'
 //
 // `hero` fields: rank, tier ('天罡' | '地煞'), name, pinyin, nameEn, nickname,
 // nicknameEn, star, starEn, weapon, weaponEn, an optional quote
-// ({ cn, en, sourceCn, sourceEn }; a hero without one simply shows no quote),
+// ({ cn, en, sourceCn, sourceEn }; kept as data, shown only with `showQuote`),
 // an optional story ({ en, cn }) and printCredit ({ en, cn }) for the back of
 // the card, and the image imports print, sprite (a strip of `frames` 64px
 // frames, so 64*frames wide and 64 high; `frames` defaults to 4) and
 // silhouette (one 64px frame).
 //
-// Two optional sprite-placement fields, because the art is rarely centred in
+// Three optional sprite-placement fields, because the art is rarely centred in
 // its 64x64 frame: `bodyX`, the column (0 to 63) the body is centred on, not
-// counting a weapon that sticks out to one side (default 32, the middle); and
-// `headroom`, the number of empty rows at the top of the frame (default 0).
-// The sprite is shifted by (32 - bodyX) whole sprite pixels so the body sits on
-// the card's centre line and its plinth, and pulled up by `headroom` rows so the
-// empty rows cost no card height (they pass behind the name plate).
+// counting a weapon that sticks out to one side (default 32, the middle);
+// `headroom`, the number of empty rows at the top of the frame (default 0); and
+// `feetRow`, the frame row (0 to 63) the feet stand on (default 63, the bottom
+// row). The sprite is shifted by (32 - bodyX) whole sprite pixels so the body
+// sits on the card's centre line, and pulled up by `headroom` rows so the empty
+// rows cost no card height (they pass behind the name plate). A flat drop
+// shadow (24 x 4 frame pixels, translucent navy) is drawn under the feet, on
+// the centre line, with its centre at `feetRow`. Locked cards have none.
 //
 // Name line, every layout: the nickname (绰号, the epithet) and the name read as
 // ONE title in the novel's own word order, 大刀关胜: same size, same ink colour,
 // same brush font, a small gap between, on ONE line that never wraps. One shared
 // size per layout (--name-size) is chosen so the worst case, a four-character
 // nickname with a three-character name, fits next to the rank seal. In English
-// the line under it names the nickname plainly: Guān Shèng, “Great Blade”.
-// Chinese shows pinyin only.
+// the line under it gives the nickname in curly quotes first, in the same order
+// as the Chinese: “Great Blade” Guān Shèng. Chinese shows pinyin only.
 //
-// Front faces carry the quote and nothing else: star and weapon are on the back
-// (compact keeps its small star and weapon line).
+// Front faces carry the star and the weapon (framed and full art as a two-row
+// list, compact as its one-line meta) and no quote. The quote stays in the data:
+// the boolean prop `showQuote` (default false) brings it back in its previous
+// place (full art: in the plate under the figure; framed: under the facts in the
+// panel; compact: under the meta line). The back is the print band, the name
+// line, the story and the print's credit.
 //
 // `state`: 'revealed' shows everything; 'locked' swaps the sprite for the
-// silhouette, fades the print, and leaves out the name, nickname, star, weapon
-// and quote. The rank and tier stay: they say where the empty slot is.
+// silhouette, fades the print, and leaves out the name, nickname, star, weapon,
+// quote and the sprite's shadow. The rank and tier stay: they say where the
+// empty slot is.
 //
 // `face`: 'front' (default) or 'back'. The back shows the print at full
-// strength, then a solid plate with the name line, star and weapon, the story
-// and the print's credit. A locked card has no back: `face` and `flippable` are ignored.
+// strength, then a solid plate with the name line, the story and the print's
+// credit. A locked card has no back: `face` and `flippable` are ignored.
 //
 // `flippable`: renders both faces and a real button that turns the card over
 // (3D rotateY, or a plain swap under prefers-reduced-motion). The hidden face
 // is `inert` and `aria-hidden`, so it is neither focusable nor read out. A hero
 // with no story has no back and is not flippable.
 //
-// The two tiers are told apart by colour alone as well as by text: vermilion
-// seal and frame for the 36 Heavenly Spirits, navy for the 72 Earthly Fiends.
+// The two tiers are told apart by colour and by shape as well as by text. The
+// rank seal follows 天圆地方, "heaven is round, earth is square" (the old
+// picture of the cosmos): a ROUND vermilion seal for the 36 Heavenly Spirits
+// (天罡), a SQUARE navy seal for the 72 Earthly Fiends (地煞), the rank number
+// centred on top. Circles are otherwise not used; this is the one exception to
+// the square-corners rule.
 const props = defineProps({
   hero: { type: Object, required: true },
   variant: { type: String, default: 'framed', validator: (v) => ['framed', 'full-art', 'compact'].includes(v) },
   state: { type: String, default: 'revealed', validator: (v) => ['revealed', 'locked'].includes(v) },
   face: { type: String, default: 'front', validator: (v) => ['front', 'back'].includes(v) },
-  flippable: { type: Boolean, default: false }
+  flippable: { type: Boolean, default: false },
+  // Show the hero's quote (when it has one). Off by default: the front carries star and weapon instead.
+  showQuote: { type: Boolean, default: false }
 })
 
 const { t, locale } = useI18n()
@@ -74,11 +88,11 @@ const tierGloss = computed(() => t(heavenly.value ? 'heroCardTierHeavenly' : 'he
 const rankText = computed(() => t('heroCardRank', { n: props.hero.rank }))
 // Full art has no visible footer, so its screen-reader text carries the tier too.
 const rankTierText = computed(() => t('heroCardRankTier', { n: props.hero.rank, tier: tierGloss.value }))
-const quote = computed(() => props.hero.quote || null)
+const quote = computed(() => (props.showQuote && props.hero.quote) || null)
 const quoteSource = computed(() => (quote.value ? (chinese.value ? quote.value.sourceCn : quote.value.sourceEn) : ''))
-// Second line under the name: in English the pinyin then the nickname in curly
-// quotes (Guān Shèng, “Great Blade”); pinyin only in Chinese.
-const subline = computed(() => (chinese.value ? props.hero.pinyin : `${props.hero.pinyin}, \u201C${props.hero.nicknameEn}\u201D`))
+// Second line under the name: in English the nickname in curly quotes, then the
+// pinyin, matching the Chinese order (“Great Blade” Guān Shèng); pinyin only in Chinese.
+const subline = computed(() => (chinese.value ? props.hero.pinyin : `\u201C${props.hero.nicknameEn}\u201D ${props.hero.pinyin}`))
 const artLabel = computed(() =>
   locked.value
     ? t('heroCardArtLocked')
@@ -109,8 +123,11 @@ const spriteStyle = computed(() => ({
   '--n': props.hero.frames || 4,
   '--bx': props.hero.bodyX ?? 32,
   '--hr': props.hero.headroom ?? 0,
+  '--fr': props.hero.feetRow ?? 63,
   backgroundImage: `url("${locked.value ? props.hero.silhouette : props.hero.sprite}")`
 }))
+// The drop shadow under the feet needs only the scale and the feet row.
+const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feetRow ?? 63 }))
 </script>
 
 <template>
@@ -151,11 +168,22 @@ const spriteStyle = computed(() => ({
               </header>
 
               <div class="figure">
+                <i v-if="!locked" class="shade" :style="shadeStyle" aria-hidden="true"></i>
                 <div class="sprite" :class="{ 'sprite--still': locked }" :style="spriteStyle" aria-hidden="true"></div>
               </div>
 
-              <div v-if="locked || quote" class="plate plate--info">
+              <div class="plate plate--info">
                 <template v-if="!locked">
+                  <dl class="facts">
+                    <div>
+                      <dt>{{ t('heroCardStar') }}</dt>
+                      <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
+                    </div>
+                    <div>
+                      <dt>{{ t('heroCardWeapon') }}</dt>
+                      <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
+                    </div>
+                  </dl>
                   <figure v-if="quote" class="quote">
                     <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
                     <p v-if="!chinese" class="quote__en" lang="en">{{ quote.en }}</p>
@@ -172,6 +200,7 @@ const spriteStyle = computed(() => ({
             <div class="window" role="img" :aria-label="artLabel">
               <img class="window__print" :src="hero.print" alt="" />
               <div class="window__halftone" aria-hidden="true"></div>
+              <i v-if="!locked" class="shade" :style="shadeStyle" aria-hidden="true"></i>
               <div class="sprite" :class="{ 'sprite--still': locked }" :style="spriteStyle" aria-hidden="true"></div>
             </div>
 
@@ -226,14 +255,25 @@ const spriteStyle = computed(() => ({
             <div class="window" role="img" :aria-label="artLabel">
               <img class="window__print" :src="hero.print" alt="" />
               <div class="window__halftone" aria-hidden="true"></div>
+              <i v-if="!locked" class="shade" :style="shadeStyle" aria-hidden="true"></i>
               <div class="sprite" :class="{ 'sprite--still': locked }" :style="spriteStyle" aria-hidden="true"></div>
             </div>
 
             <div v-if="locked" class="panel panel--empty">
               <p class="line">{{ t('heroCardLocked') }}</p>
             </div>
-            <div v-else-if="quote" class="panel">
-              <figure class="quote">
+            <div v-else class="panel">
+              <dl class="facts">
+                <div>
+                  <dt>{{ t('heroCardStar') }}</dt>
+                  <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
+                </div>
+                <div>
+                  <dt>{{ t('heroCardWeapon') }}</dt>
+                  <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
+                </div>
+              </dl>
+              <figure v-if="quote" class="quote">
                 <blockquote class="quote__zh hanzi" lang="zh-Hans">{{ quote.cn }}</blockquote>
                 <p v-if="!chinese" class="quote__en" lang="en">{{ quote.en }}</p>
                 <figcaption class="quote__src">{{ quoteSource }}</figcaption>
@@ -268,16 +308,6 @@ const spriteStyle = computed(() => ({
 </div>
 <p v-if="!locked" class="pinyin">{{ subline }}</p>
             </div>
-            <dl class="facts">
-              <div>
-                <dt>{{ t('heroCardStar') }}</dt>
-                <dd><span class="hanzi">{{ hero.star }}</span><span v-if="!chinese">, {{ hero.starEn }}</span></dd>
-              </div>
-              <div>
-                <dt>{{ t('heroCardWeapon') }}</dt>
-                <dd><span class="hanzi">{{ hero.weapon }}</span><span v-if="!chinese">, {{ hero.weaponEn }}</span></dd>
-              </div>
-            </dl>
             <p class="story" :class="{ hanzi: chinese }" :lang="chinese ? 'zh-Hans' : 'en'">{{ story }}</p>
             <p class="credit" :lang="chinese ? 'zh-Hans' : 'en'">{{ printCredit }}</p>
           </div>
@@ -362,13 +392,18 @@ const spriteStyle = computed(() => ({
 .name { margin: 0; font-size: var(--name-size); line-height: var(--lh-tight); font-weight: var(--w-body); color: var(--c-ink); }
 .pinyin { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); }
 
+/* The rank seal encodes the tier with 天圆地方 (heaven round, earth square):
+ * a round vermilion seal for a Heavenly Spirit (天罡), a square navy seal for an
+ * Earthly Fiend (地煞), the rank number centred on top. The circle is the one
+ * allowed exception to the square-corners rule. */
 .seal {
   flex: none;
   display: grid;
   place-items: center;
-  min-width: 2.75rem;
+  width: 2.75rem;
   height: 2.75rem;
-  padding: 0 var(--s-1);
+  padding: 0;
+  border-radius: 0;
   background-color: var(--tier);
   color: var(--on-tier);
   border: var(--bw-hair) solid var(--c-ink-edge);
@@ -379,7 +414,8 @@ const spriteStyle = computed(() => ({
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.seal--small { min-width: 2rem; height: 2rem; font-size: var(--t-body); }
+.card--heavenly .seal { border-radius: 50%; }
+.seal--small { width: 2rem; height: 2rem; font-size: var(--t-body); }
 
 /* Nickname then name, one title (大刀关胜): same size, colour and font, a small
  * gap between, one line, never wraps. */
@@ -396,7 +432,7 @@ const spriteStyle = computed(() => ({
 .facts { display: grid; gap: var(--s-1); margin: 0; }
 .facts div { display: grid; grid-template-columns: 3.5rem 1fr; gap: var(--s-2); align-items: baseline; }
 .facts dt { font-size: var(--t-sm); color: var(--c-muted); }
-.facts dd { margin: 0; font-size: var(--t-base); color: var(--c-ink); }
+.facts dd { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); }
 
 .line { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); color: var(--c-body); }
 .meta { margin: 0; font-size: var(--t-base-sm); line-height: var(--lh-snug); color: var(--c-ink); }
@@ -484,23 +520,28 @@ const spriteStyle = computed(() => ({
   mix-blend-mode: multiply;
 }
 .window .sprite { position: relative; margin-bottom: var(--s-2); }
-.window::after {
-  content: '';
+.window .shade { --base: var(--s-2); }
+/* Drop shadow under the feet: a flat translucent navy ellipse, 24 x 4 frame
+ * pixels, on the card's centre line (the sprite is shifted so the body sits
+ * there), its centre at the feet row. --base is where the sprite's bottom edge
+ * sits above the bottom of the container (set per layout). */
+.shade {
+  --base: 0px;
   position: absolute;
+  z-index: 0;
   left: 50%;
-  bottom: var(--s-2);
-  width: 6rem;
-  height: 0.375rem;
+  bottom: calc(var(--base) + (63 - var(--fr)) * var(--k) * 1px + var(--k) * 0.5px - var(--k) * 2px);
+  width: calc(24px * var(--k));
+  height: calc(4px * var(--k));
   transform: translateX(-50%);
-  background-color: var(--c-gold);
-  border-top: var(--bw-hair) solid var(--c-ink);
-  opacity: 0.9;
+  border-radius: 50%;
+  background-color: rgba(27, 33, 64, 0.45);
+  pointer-events: none;
 }
 .window .sprite { z-index: 1; }
 
 .card--locked .window__print,
 .card--locked .stage__print { opacity: 0.18; filter: saturate(0.4); }
-.card--locked .window::after { display: none; }
 .card--locked .sprite { opacity: 0.9; }
 
 /* Back ------------------------------------------------------------------ */
@@ -515,8 +556,6 @@ const spriteStyle = computed(() => ({
   background-color: var(--c-panel);
   border-top: var(--bw-heavy) solid var(--tier);
 }
-.plate--back .facts { padding-top: var(--s-1); }
-.plate--back .facts dd { font-size: var(--t-base-sm); line-height: var(--lh-snug); }
 .story { margin: 0; max-width: none; font-size: var(--t-base-sm); line-height: 1.5; }
 .story.hanzi { color: var(--c-body); }
 .credit { margin: 0; max-width: none; font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
@@ -531,9 +570,10 @@ const spriteStyle = computed(() => ({
 .card--framed .face--front { gap: var(--s-2); padding: var(--s-3); }
 .card--framed .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); padding-bottom: var(--s-2); border-bottom: var(--bw-rule) solid var(--c-rule); }
 .card--framed .window { flex: 1; min-height: 0; }
-/* The frame's empty bottom rows already clear the plinth, so no extra margin:
+/* The frame's empty bottom rows already clear the shadow, so no extra margin:
  * the 3x figure needs every pixel of the shorter window. */
 .card--framed .window .sprite { margin-bottom: 0; }
+.card--framed .window .shade { --base: 0px; }
 .card--framed .panel { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-3); background-color: var(--c-ground); border: var(--bw-rule) solid var(--c-rule); }
 .card--framed .panel--empty { align-items: center; justify-content: center; }
 .card--framed .foot { margin-top: auto; padding-top: var(--s-2); border-top: var(--bw-rule) solid var(--c-rule); }
@@ -568,19 +608,7 @@ const spriteStyle = computed(() => ({
  * above it, behind the name plate (the plates sit above, z-index 2). */
 .card--full-art .figure { position: relative; flex: 1; display: flex; align-items: flex-end; justify-content: center; min-height: 0; padding-bottom: var(--s-2); }
 .card--full-art .figure .sprite { position: relative; z-index: 1; }
-.card--full-art .figure::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: var(--s-2);
-  width: 8rem;
-  height: 0.375rem;
-  transform: translateX(-50%);
-  background-color: var(--c-gold);
-  border-top: var(--bw-hair) solid var(--c-ink);
-  opacity: 0.9;
-}
-.card--locked .figure::after { display: none; }
+.card--full-art .figure .shade { --base: var(--s-2); }
 .card--full-art .plate--info { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-2) var(--s-3); }
 .card--full-art .pinyin { font-size: var(--t-sm); }
 .card--full-art .plate--back { z-index: auto; }
@@ -589,8 +617,8 @@ const spriteStyle = computed(() => ({
 .card--compact { max-width: 420px; --name-size: var(--t-lead); }
 .card--compact .face--front { min-height: 11.25rem; flex-direction: row; gap: var(--s-3); padding: var(--s-3); }
 .card--compact .window { flex: none; width: 9rem; height: 9rem; align-self: flex-start; border-width: var(--bw-heavy); }
-.card--compact .window::after { width: 4rem; bottom: 0.25rem; }
 .card--compact .window .sprite { margin-bottom: 0.25rem; }
+.card--compact .window .shade { --base: 0.25rem; }
 .card--compact .body { display: flex; flex: 1; flex-direction: column; gap: var(--s-1); min-width: 0; }
 .card--compact .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-2); }
 .card--compact .pinyin { font-size: var(--t-sm); }

@@ -17,7 +17,7 @@ const STORY_CN = '关胜相传是关羽的后代'
 const CREDIT_EN = 'Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.'
 const SPRITE_PX = { A: 192, B: 256, C: 128 }
 const SPRITE_SCALE = { A: 3, B: 4, C: 2 }
-const ALL_IDS = ['B-flip', 'B-front', 'B-back', 'B-locked', 'B-stress', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress']
+const ALL_IDS = ['B-quote', 'B-flip', 'B-front', 'B-back', 'B-locked', 'B-stress', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress']
 
 async function open (page, lang = 'en') {
   await mockBackend(page)
@@ -37,31 +37,32 @@ const visibleText = (c) => c.evaluate((el) => {
 
 test('every lab id is present once', async ({ page }) => {
   await open(page)
-  for (const id of ['B-flip', 'B-front', 'B-back', 'B-locked', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress', 'B-stress']) {
+  for (const id of ['B-flip', 'B-front', 'B-back', 'B-locked', 'B-quote', 'A-front', 'A-locked', 'A-earthly', 'A-stress', 'C-front', 'C-locked', 'C-earthly', 'C-stress', 'B-stress']) {
     await expect(lab(page, id), id).toHaveCount(1)
     await expect(card(page, id), id).toHaveCount(1)
   }
 })
 
 for (const L of LAYOUTS) {
-  test(`${L}: a revealed card shows nickname then name on one line, and the quote`, async ({ page }) => {
+  test(`${L}: a revealed card shows nickname then name, the subline, star and weapon, and no quote`, async ({ page }) => {
     await open(page)
     const c = card(page, `${L}-front`)
     await expect(c.getByRole('heading', { name: '关胜' })).toBeVisible()
     expect(await c.locator('.nick__zh').textContent()).toBe('大刀')
-    await expect(c.locator('.pinyin')).toHaveText('Guān Shèng, “Great Blade”')
-    if (L === 'C') {
-      await expect(c).toContainText('天勇星')
-      await expect(c).toContainText('青龙偃月刀')
-    } else {
-      // Star and weapon live on the back of the portrait layouts, not the front.
-      expect(await visibleText(c)).not.toMatch(/天勇星|青龙偃月刀/)
-      await expect(c.locator('dl')).toHaveCount(0)
+    // English subline: the curly-quoted nickname first, then the pinyin.
+    await expect(c.locator('.pinyin')).toHaveText('“Great Blade” Guān Shèng')
+    expect(await c.locator('.pinyin').textContent()).toMatch(/^\u201CGreat Blade\u201D Guān Shèng$/)
+    // Star and weapon are on every front, and the quote is not.
+    await expect(c).toContainText('天勇星')
+    await expect(c).toContainText('青龙偃月刀')
+    if (L !== 'C') {
+      await expect(c.locator('dl.facts > div')).toHaveCount(2)
+      await expect(c.locator('dl.facts')).toContainText('the Brave Star')
+      await expect(c.locator('dl.facts')).toContainText('Green Dragon Crescent Blade')
     }
-    await expect(c.locator('blockquote')).toHaveText(QUOTE_CN)
-    await expect(c.locator('blockquote')).toHaveAttribute('lang', 'zh-Hans')
-    await expect(c.locator('figcaption')).toHaveText(SOURCE_EN)
-    if (L !== 'C') await expect(c).toContainText(QUOTE_EN)
+    await expect(c.locator('blockquote')).toHaveCount(0)
+    await expect(c.locator('figure')).toHaveCount(0)
+    expect(await visibleText(c)).not.toMatch(/幼读兵书|ten thousand|Xuan Zan/)
   })
 
   for (const [id, name, nick] of [[`${L}-front`, '关胜', '大刀'], [`${L}-stress`, '公孙胜', '神行太保']]) {
@@ -186,12 +187,96 @@ test('full art: the sprite figure sits between the plates, its bottom clear of t
   }
 })
 
-test('full art: star and weapon are on the back, one row each', async ({ page }) => {
+test('star and weapon are on the front and not on the back', async ({ page }) => {
   await open(page)
-  const c = card(page, 'B-back')
-  await expect(c.locator('dl.facts > div')).toHaveCount(2)
-  await expect(c.locator('dl.facts')).toContainText('天勇星')
-  await expect(c.locator('dl.facts')).toContainText('青龙偃月刀')
+  const f = card(page, 'B-front')
+  await expect(f.locator('dl.facts > div')).toHaveCount(2)
+  await expect(f.locator('dl.facts')).toContainText('天勇星')
+  await expect(f.locator('dl.facts')).toContainText('青龙偃月刀')
+  const b = card(page, 'B-back')
+  await expect(b.locator('dl')).toHaveCount(0)
+  expect(await visibleText(b)).not.toMatch(/天勇星|青龙偃月刀|Brave Star|Crescent/)
+  // The flippable card keeps them on its front only.
+  const fl = card(page, 'B-flip')
+  await expect(fl.locator('.face--front dl.facts')).toHaveCount(1)
+  await expect(fl.locator('.face--back dl')).toHaveCount(0)
+  // Locked fronts leak neither.
+  await expect(card(page, 'B-locked').locator('dl')).toHaveCount(0)
+})
+
+test('the quote is off by default and comes back with showQuote', async ({ page }) => {
+  await open(page)
+  for (const id of ['A-front', 'B-front', 'C-front', 'B-flip']) await expect(card(page, id).locator('blockquote'), id).toHaveCount(0)
+  const c = card(page, 'B-quote')
+  await expect(c.locator('blockquote')).toHaveText(QUOTE_CN)
+  await expect(c.locator('figcaption')).toHaveText(SOURCE_EN)
+  await expect(c).toContainText(QUOTE_EN)
+  await expect(c.locator('dl.facts')).toHaveCount(1)
+})
+
+test('the rank seal is round and vermilion for Heavenly Spirits, square and navy for Earthly Fiends', async ({ page }) => {
+  await open(page)
+  const style = (id) => card(page, id).locator('.seal').first().evaluate((el) => {
+    const cs = getComputedStyle(el)
+    const b = el.getBoundingClientRect()
+    return { radius: cs.borderTopLeftRadius, bg: cs.backgroundColor, w: b.width, h: b.height, text: el.textContent.trim() }
+  })
+  for (const id of ['A-front', 'B-front', 'C-front', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
+    const st = await style(id)
+    expect(st.radius, id).toBe('50%')
+    expect(st.bg, id).toBe('rgb(200, 50, 30)')
+    expect(Math.abs(st.w - st.h), id).toBeLessThan(0.5)
+    expect(st.text, id).toMatch(/^(5|6)$/)
+  }
+  for (const id of ['A-earthly', 'C-earthly']) {
+    const st = await style(id)
+    expect(st.radius, id).toBe('0px')
+    expect(st.bg, id).toBe('rgb(27, 33, 64)')
+    expect(Math.abs(st.w - st.h), id).toBeLessThan(0.5)
+    expect(st.text, id).toBe('59')
+  }
+  // Sizes: 2.75rem, and 2rem in compact.
+  expect((await style('A-front')).w).toBe(44)
+  expect((await style('C-front')).w).toBe(32)
+})
+
+// Ground shadow ----------------------------------------------------------------
+
+test('there is no plinth bar, and a drop shadow sits under the feet on the centre line', async ({ page }) => {
+  await open(page)
+  for (const L of LAYOUTS) {
+    const c = card(page, `${L}-front`)
+    for (const sel of ['.window', '.figure']) {
+      if (await c.locator(sel).count()) {
+        expect(await c.locator(sel).evaluate((el) => getComputedStyle(el, '::after').content), `${L} ${sel}`).toMatch(/^(none|normal)$/)
+      }
+    }
+  }
+  for (const id of ['A-front', 'A-earthly', 'B-front', 'B-stress', 'C-front', 'C-earthly']) {
+    const c = card(page, id)
+    const shade = c.locator('.shade')
+    await expect(shade, id).toHaveCount(1)
+    const L = id[0]
+    const k = SPRITE_SCALE[L]
+    const sb = await shade.boundingBox()
+    const face = await c.locator('.face--front').boundingBox()
+    const anchor = L === 'C' ? await c.locator('.window').boundingBox() : face
+    expect(Math.abs(sb.x + sb.width / 2 - (anchor.x + anchor.width / 2)), id).toBeLessThanOrEqual(2)
+    expect(Math.abs(sb.width - 24 * k), id).toBeLessThanOrEqual(1)
+    expect(Math.abs(sb.height - 4 * k), id).toBeLessThanOrEqual(1)
+    expect(await shade.evaluate((el) => getComputedStyle(el).backgroundColor), id).toBe('rgba(27, 33, 64, 0.45)')
+    // Its centre sits at the feet row of the sprite (63 by default; Guan Sheng's is 58).
+    const sp = await c.locator('.sprite').boundingBox()
+    const feetRow = id.includes('earthly') ? 63 : 58
+    const feetY = sp.y + (feetRow + 0.5) * k
+    expect(Math.abs(sb.y + sb.height / 2 - feetY), id).toBeLessThanOrEqual(1.5)
+  }
+  for (const id of ['A-locked', 'B-locked', 'C-locked']) await expect(card(page, id).locator('.shade'), id).toHaveCount(0)
+})
+
+test('the back has no sprite shadow', async ({ page }) => {
+  await open(page)
+  await expect(card(page, 'B-back').locator('.shade')).toHaveCount(0)
 })
 
 // Proportions and fit --------------------------------------------------------
@@ -292,19 +377,22 @@ test('a hero with no quote shows no quote block', async ({ page }) => {
   await expect(hu.getByRole('button')).toHaveCount(0)
 })
 
-test('the Chinese interface shows the Chinese quote and source, pinyin only under the name', async ({ page }) => {
+test('the Chinese interface shows the Chinese quote and source (showQuote), pinyin only under the name', async ({ page }) => {
   await open(page, 'cn')
-  const c = card(page, 'B-front')
+  const c = card(page, 'B-quote')
   await expect(c.locator('blockquote')).toHaveText(QUOTE_CN)
   await expect(c.locator('figcaption')).toHaveText('宣赞荐关胜')
   await expect(c).not.toContainText('ten thousand')
   await expect(c).not.toContainText('Great Blade')
   await expect(c.locator('.pinyin')).toHaveText('Guān Shèng')
+  // Star and weapon: Chinese only, no English gloss.
+  await expect(card(page, 'B-front').locator('dl.facts')).toContainText('天勇星')
+  await expect(card(page, 'B-front').locator('dl.facts')).not.toContainText('Brave Star')
 })
 
 // Back and flip -------------------------------------------------------------
 
-test('the back shows the print at full strength, the name line, the story and the credit', async ({ page }) => {
+test('the back shows the print at full strength, the name line, the story and the credit, and nothing else', async ({ page }) => {
   await open(page)
   const c = card(page, 'B-back')
   await expect(c.locator('.face--front')).toHaveCount(0)
@@ -418,6 +506,6 @@ test.describe('reduced motion', () => {
     await expect(c.getByRole('heading', { name: '关胜' })).toHaveCount(1)
     await btn.click()
     await expect(c.getByRole('paragraph').filter({ hasText: STORY_EN })).toHaveCount(0)
-    await expect(c.locator('blockquote')).toBeVisible()
+    await expect(c.locator('dl.facts')).toBeVisible()
   })
 })

@@ -45,6 +45,8 @@ const guan = {
   // the top 21 rows of the frame are empty.
   bodyX: 29,
   headroom: 21,
+  // The feet stand on row 58: the bottom five rows of the frame are empty.
+  feetRow: 58,
   silhouette: guanSilhouette
 }
 
@@ -113,6 +115,13 @@ const hu = {
         <figure class="slot" data-lab-id="B-locked">
           <HeroCard :hero="guan" variant="full-art" state="locked" />
           <figcaption>Front, locked</figcaption>
+        </figure>
+      </div>
+      <h3 class="lab__sub">With the quote (showQuote)</h3>
+      <div class="option__row">
+        <figure class="slot" data-lab-id="B-quote">
+          <HeroCard :hero="guan" variant="full-art" show-quote />
+          <figcaption>Front with the quote switched on</figcaption>
         </figure>
       </div>
       <h3 class="lab__sub">Layout test: longest nickname and name (fake hero)</h3>
