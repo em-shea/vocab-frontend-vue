@@ -29,7 +29,6 @@ const { t } = useI18n()
       <div class="stage">
         <figure class="mock mock--quiz" :aria-label="t('mockQuizLabel')">
           <div class="mock__body" aria-hidden="true">
-            <p class="mock__prompt">{{ t('mockQuizPrompt') }}</p>
             <p class="hanzi mock__word">爱护</p>
             <p class="pinyin">ài hù</p>
             <ul class="opts">
@@ -169,7 +168,6 @@ const { t } = useI18n()
 .mock__barword { font-size: var(--t-lead); font-weight: var(--w-bold); }
 .mock__title { font-family: var(--f-ui); font-weight: var(--w-semi); color: var(--c-ink); }
 .mock__body { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-4); }
-.mock__prompt { font-size: var(--t-base); color: var(--c-muted); }
 .mock__word { font-size: var(--t-2xl); line-height: var(--lh-tight); font-weight: var(--w-bold); }
 .mock__gloss { color: var(--c-body); font-size: var(--t-base); }
 

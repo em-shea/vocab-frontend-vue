@@ -32,7 +32,6 @@ export default {
   "mockReviewLabel": "复习词表示例",
   "mockSentenceLabel": "造句示例",
   "mockWriteLabel": "汉字练习格示例",
-  "mockQuizPrompt": "这个词是什么意思？",
   "mockOptionB": "比较；对比",
   "mockOptionC": "迟到；延迟",
   "mockOptionD": "借；借出",

@@ -369,10 +369,6 @@ key: mockWriteLabel
 en: Example of a character practice grid
 cn: 汉字练习格示例
 
-key: mockQuizPrompt
-en: What does this word mean?
-cn: 这个词是什么意思？
-
 key: mockOptionB
 en: to compare; to contrast
 cn: 比较；对比

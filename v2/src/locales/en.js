@@ -33,7 +33,6 @@ export default {
   "mockReviewLabel": "Example of the review list",
   "mockSentenceLabel": "Example of writing a sentence",
   "mockWriteLabel": "Example of a character practice grid",
-  "mockQuizPrompt": "What does this word mean?",
   "mockOptionB": "to compare; to contrast",
   "mockOptionC": "to be late; to delay",
   "mockOptionD": "to borrow; to lend",
