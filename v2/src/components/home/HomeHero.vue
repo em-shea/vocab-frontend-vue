@@ -45,6 +45,10 @@ const { t } = useI18n()
 .quest__body { font-size: var(--t-lead); }
 .quest__form { margin-top: var(--s-2); }
 .quest__print { max-width: 420px; width: 100%; justify-self: center; }
+/* On a phone the print is a smaller picture under the form, not a full-width page. */
+@media (max-width: 719px) {
+  .quest__print { max-width: min(60%, 15rem); }
+}
 
 @media (min-width: 720px) {
   .quest { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
