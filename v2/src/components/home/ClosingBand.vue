@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import AppPanel from '../AppPanel.vue'
 import SubscribeForm from '../SubscribeForm.vue'
+import SectionHead from '../SectionHead.vue'
 import SoonNote from './SoonNote.vue'
 import printBoard from '../../assets/prints/heroes-board.jpg'
 
@@ -27,13 +28,17 @@ const { t } = useI18n()
         <img :src="printBoard" alt="Two outlaws of the Water Margin, woodblock print" />
       </figure>
     </AppPanel>
-    <SubscribeForm variant="light" id-prefix="closing" />
+    <div class="signup">
+      <SectionHead :title="t('closingSubscribeHeadline')" />
+      <SubscribeForm variant="light" id-prefix="closing" />
+    </div>
   </section>
 </template>
 
 <style scoped>
 .stack { display: flex; flex-direction: column; gap: var(--s-12); }
 .oath { gap: var(--s-6); }
+.signup { display: flex; flex-direction: column; gap: var(--s-6); }
 .oath__headline { font-size: var(--t-2xl); color: var(--c-on-dark); }
 .oath__body { color: var(--c-on-dark); opacity: 0.85; }
 .oath__board {

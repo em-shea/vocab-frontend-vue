@@ -257,6 +257,10 @@ key: previewHeadline
 en: Coming soon: collect the 108 heroes of Liangshan.
 cn: 即将推出：集齐梁山一百单八将
 
+key: closingSubscribeHeadline
+en: Subscribe to receive today's word.
+cn: 订阅，接收今日一词。
+
 ## 7. Footer
 
 key: footerPrints

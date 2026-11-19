@@ -79,6 +79,7 @@ export default {
   "heroPinyin": "Lǔ Zhìshēn",
   "heroNickname": "花和尚",
   "heroNicknameGloss": "the Flowery Monk",
+  "closingSubscribeHeadline": "Subscribe to receive today's word.",
   "footerPrints": "Woodblock prints: Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.",
   "closeHeadlineA": "Complete quests.",
   "closeHeadlineB": "Unite all 108.",

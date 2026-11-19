@@ -78,6 +78,7 @@ export default {
   "heroPinyin": "Lǔ Zhìshēn",
   "heroNickname": "花和尚",
   "heroNicknameGloss": "绰号",
+  "closingSubscribeHeadline": "订阅，接收今日一词。",
   "footerPrints": "木版画：歌川国芳，《通俗水浒传豪杰百八人之一个》，约 1827–1830 年。公有领域。",
   "closeHeadlineA": "完成任务",
   "closeHeadlineB": "一百单八将聚义梁山",

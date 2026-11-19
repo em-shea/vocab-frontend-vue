@@ -33,7 +33,7 @@ const SECTIONS = [
   ['3. Daily email', ['markHow', 'dailyHeadline', 'dailyBody', 'emailLabel', 'emailSubject', 'emailMeaning', 'defQianMian']],
   ['4. Study', ['studyHeadline', 'quizHeadline', 'quizBody', 'examplesHeadline', 'examplesBody', 'studyReviewHeadline', 'studyReviewBody', 'sentenceHeadline', 'sentenceBody', 'writeHeadline', 'writeBody']],
   ['5. Collect heroes', ['markHeroes', 'collectHeadline', 'collectBody', 'storyBody', 'heroName', 'heroPinyin', 'heroNickname', 'heroNicknameGloss']],
-  ['6. Quests and the closing subscribe', ['markJoin', 'closeHeadlineA', 'closeHeadlineB', 'closeBody', 'previewHeadline', 'boardNote']],
+  ['6. Quests and the closing subscribe', ['markJoin', 'closeHeadlineA', 'closeHeadlineB', 'closeBody', 'previewHeadline', 'closingSubscribeHeadline', 'boardNote']],
   ['7. Footer', ['footerPrints']],
   ['Progress', ['dayStreak', 'wordsSeen', 'heroesGathered', 'weekProgress', 'markDaily', 'markWords']],
   ['FAQ', ['markFaq', 'faq1zhq', 'faq1q', 'faq1a', 'faq2zhq', 'faq2q', 'faq2a',
