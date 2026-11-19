@@ -220,8 +220,8 @@ const { t } = useI18n()
   animation: sweep 6s ease-in-out infinite;
 }
 .hit--latin { background: none; animation: none; font-weight: var(--w-semi); }
-/* The English meaning: red to mark it as the definition, no underline or motion. */
-.hit--plain { background: none; animation: none; }
+/* The English meaning: red and semibold like the pinyin, no underline or motion. */
+.hit--plain { background: none; animation: none; font-weight: var(--w-semi); }
 @keyframes sweep {
   0%, 15% { background-size: 0 2px; }
   35%, 90% { background-size: 100% 2px; }
