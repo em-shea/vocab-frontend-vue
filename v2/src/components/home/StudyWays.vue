@@ -20,10 +20,10 @@ const { t } = useI18n()
   <div class="ways">
     <!-- A thin strip of a print as a break before the practice sections. -->
     <PrintFrame class="strip" ratio="8 / 1" :src="printStory" alt="" />
-    <SectionHead :rule="false" :title="t('studyHeadline')" />
+    <SectionHead :title="t('studyHeadline')" />
     <section class="split">
       <div class="split__text">
-        <SectionHead :rule="false" as="h3" :title="t('quizHeadline')" />
+        <SectionHead as="h3" :title="t('quizHeadline')" />
         <p>{{ t('quizBody') }}</p>
       </div>
       <div class="stage">
@@ -44,7 +44,7 @@ const { t } = useI18n()
     </section>
     <section class="split split--flip">
       <div class="split__text">
-        <SectionHead :rule="false" as="h3">{{ t('examplesHeadline') }}</SectionHead>
+        <SectionHead as="h3">{{ t('examplesHeadline') }}</SectionHead>
         <p>{{ t('examplesBody') }}</p>
       </div>
       <div class="stage">
@@ -66,7 +66,7 @@ const { t } = useI18n()
     <template v-if="heroes">
   <section class="split">
         <div class="split__text">
-          <SectionHead :rule="false" as="h3">{{ t('sentenceHeadline') }}</SectionHead>
+          <SectionHead as="h3">{{ t('sentenceHeadline') }}</SectionHead>
           <SoonNote />
           <p>{{ t('sentenceBody') }}</p>
         </div>
@@ -86,7 +86,7 @@ const { t } = useI18n()
       </section>
   <section class="split split--flip">
         <div class="split__text">
-          <SectionHead :rule="false" as="h3">{{ t('writeHeadline') }}</SectionHead>
+          <SectionHead as="h3">{{ t('writeHeadline') }}</SectionHead>
           <SoonNote />
           <p>{{ t('writeBody') }}</p>
         </div>
@@ -105,7 +105,7 @@ const { t } = useI18n()
     <template v-else>
   <section class="split">
         <div class="split__text">
-          <SectionHead :rule="false" as="h3" :title="t('studyReviewHeadline')" />
+          <SectionHead as="h3" :title="t('studyReviewHeadline')" />
           <p>{{ t('studyReviewBody') }}</p>
         </div>
         <div class="stage">

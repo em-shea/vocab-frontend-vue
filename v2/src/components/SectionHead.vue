@@ -3,8 +3,6 @@
 // optional Chinese title sits beside the heading in the serif face. `label` is
 // still accepted so older callers do not break, but it is no longer rendered.
 defineProps({
-  // The hairline above the title. Off where sections sit close together.
-  rule: { type: Boolean, default: true },
   label: { type: String, default: '' },
   title: { type: String, default: '' },
   hanzi: { type: String, default: '' },
@@ -15,7 +13,7 @@ defineProps({
 
 <template>
   <header class="section-head">
-    <span v-if="rule" class="section-head__rule" aria-hidden="true"></span>
+    <span class="section-head__rule" aria-hidden="true"></span>
     <component :is="as" v-if="title || hanzi || $slots.default" class="section-head__title">
       <span v-if="hanzi" class="hanzi section-head__hanzi">{{ hanzi }}</span>
       <!-- The default slot replaces `title`, for a title that holds a link. -->
