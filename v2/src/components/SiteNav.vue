@@ -3,9 +3,7 @@ import { useI18n } from 'vue-i18n'
 import LanguageMenu from './LanguageMenu.vue'
 import { useAuthStore } from '../stores/auth'
 
-// Home, Quiz, Review, Sign in — replacing the old navBar. Quiz is not ported
-// yet, so it is a plain link that falls through to the current site rather
-// than a dead route.
+// Home, Quiz, Review, Sign in — replacing the old navBar.
 
 const { t } = useI18n()
 const auth = useAuthStore()
@@ -23,7 +21,7 @@ const auth = useAuthStore()
 
     <nav class="nav__links" :aria-label="t('navHome')">
       <RouterLink class="nav__link" exact-active-class="nav__link--current" :to="{ name: 'home' }">{{ t('navHome') }}</RouterLink>
-      <a class="nav__link" href="/quiz">{{ t('navQuiz') }}</a>
+      <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
       <RouterLink class="nav__link nav__link--strong" :to="{ name: 'signin' }">
         {{ auth.signedIn ? auth.email : t('navSignIn') }}

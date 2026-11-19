@@ -37,6 +37,23 @@ export const REVIEW = {
   [HSK2]: [sent(HSK2, '2026-11-12', '帮助', '幫助', 'bāng zhù', 'to help', '2')]
 }
 
+// Enough words for a quiz: two one-character words and six two-character ones,
+// with two that share a definition, the case that once produced two options
+// reading the same.
+export const QUIZ_REVIEW = {
+  [HSK1]: [
+    sent(HSK1, '2026-11-05', '朋友', '朋友', 'péng you', 'friend', '1'),
+    sent(HSK1, '2026-11-06', '学习', '學習', 'xué xí', 'to study', '1'),
+    sent(HSK1, '2026-11-07', '爱护', '愛護', 'ài hù', 'to cherish', '1'),
+    sent(HSK1, '2026-11-08', '帮助', '幫助', 'bāng zhù', 'to help', '1'),
+    sent(HSK1, '2026-11-09', '老师', '老師', 'lǎo shī', 'teacher', '1'),
+    sent(HSK1, '2026-11-10', '喜欢', '喜歡', 'xǐ huan', 'to like', '1'),
+    sent(HSK1, '2026-11-11', '是', '是', 'shì', 'to be', '1'),
+    sent(HSK1, '2026-11-12', '系', '係', 'xì', 'to be', '1')
+  ],
+  [HSK2]: REVIEW[HSK2]
+}
+
 export const USER = {
   email_address: EMAIL,
   character_set_preference: 'simplified',
@@ -63,6 +80,8 @@ export async function mockBackend (page, options = {}) {
     existingUser: options.existingUser ?? false,
     reviewFails: options.reviewFails ?? false,
     reviewEmpty: options.reviewEmpty ?? false,
+    review: options.review ?? REVIEW,
+    saveQuizFails: options.saveQuizFails ?? false,
     cognito: [],   // X-Amz-Target action names, in order
     api: [],       // { method, path, headers, body }
     unexpected: [] // anything else that tried to leave the page
@@ -127,12 +146,16 @@ export async function mockBackend (page, options = {}) {
     if (method === 'GET' && path === '/review') {
       if (state.reviewFails) return json({ message: 'Internal server error' }, 500)
       const listId = new URL(request.url()).searchParams.get('list_id')
-      return json({ [listId]: state.reviewEmpty ? [] : (REVIEW[listId] ?? []) })
+      return json({ [listId]: state.reviewEmpty ? [] : (state.review[listId] ?? []) })
     }
     if (method === 'GET' && path === '/user') return json(USER)
     if (method === 'POST' && path === '/update_login') return json({ success: true })
     if (method === 'POST' && path === '/update_user') return json({ success: true })
     if (method === 'POST' && path === '/set_subs') return json({ success: true })
+    if (method === 'POST' && path === '/quizzes') {
+      if (state.saveQuizFails) return json({ message: 'Failed to put quiz results record.' }, 502)
+      return json({ success: true })
+    }
     return json({ message: `No stand-in for ${method} ${path}` }, 404)
   })
 

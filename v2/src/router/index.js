@@ -10,6 +10,11 @@ export const routes = [
     component: HomeView
   },
   {
+    path: '/quiz',
+    name: 'quiz',
+    component: () => import('../views/QuizView.vue')
+  },
+  {
     path: '/review',
     name: 'review',
     component: () => import('../views/ReviewView.vue')
