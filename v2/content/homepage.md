@@ -52,11 +52,11 @@ en: 替天行道
 cn: 替天行道
 
 key: questHeadlineA
-en: Climb the mountain.
+en: Climb the mountain
 cn: 上梁山
 
 key: questHeadlineB
-en: Unite the 108.
+en: Unite the 108
 cn: 集齐一百单八将
 
 key: questBody
@@ -64,7 +64,7 @@ en: One Chinese word arrives by email each day, with a short quiz after it. Keep
 cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位一位入伙。
 
 key: launchHeadline
-en: One Chinese vocabulary word a day.
+en: One Chinese vocabulary word a day
 cn: 每天一个中文词
 
 key: launchBody
@@ -86,12 +86,12 @@ cn: 订阅
 ## 2. Choose what to study
 
 key: chooseHeadline
-en: Choose what to study.
-cn: 选择学习内容。
+en: Choose what to study
+cn: 选择学习内容
 
 key: levelHeadline
-en: Pick your HSK level.
-cn: 选择你的等级。
+en: Pick your HSK level
+cn: 选择你的等级
 
 key: levelBody
 en: Choose one of the six standardized Hanyu Shuiping Kaoshi (HSK) levels and see sample words.
@@ -102,16 +102,16 @@ en: Launching soon
 cn: 即将推出
 
 key: catalogueHeadline
-en: Choose from a catalogue.
-cn: 从目录中选词表。
+en: Choose from a catalogue
+cn: 从目录中选词表
 
 key: catalogueBody
 en: Pick from ready-made lists on other topics.
 cn: 从其他主题的现成词表中挑选。
 
 key: uploadHeadline
-en: Upload your own list.
-cn: 上传自己的词表。
+en: Upload your own list
+cn: 上传自己的词表
 
 key: uploadBody
 en: Use your own words and the daily email draws from your list.
@@ -140,8 +140,8 @@ cn: 父亲（口语）
 ## 3. Daily email
 
 key: dailyHeadline
-en: Get a Chinese vocabulary word by email every day.
-cn: 每天用邮件收到一个中文词。
+en: Get a Chinese vocabulary word by email every day
+cn: 每天用邮件收到一个中文词
 
 key: dailyBody
 en: Each email has the characters, pinyin and meaning.
@@ -166,44 +166,44 @@ cn: 前边；在前方；上文
 ## 4. Study
 
 key: studyHeadline
-en: Practise and track your progress.
-cn: 练习并跟踪你的进度。
+en: Practise and track your progress
+cn: 练习并跟踪你的进度
 
 key: quizHeadline
-en: Take quizzes.
-cn: 做测验。
+en: Take quizzes
+cn: 做测验
 
 key: quizBody
 en: Check each word with a short quiz.
 cn: 用小测验检验每个词。
 
 key: examplesHeadline
-en: See example sentences.
-cn: 看例句。
+en: See example sentences
+cn: 看例句
 
 key: examplesBody
 en: Find example sentences for every word you have been sent.
 cn: 为每个收到的词查找例句。
 
 key: studyReviewHeadline
-en: Review past words.
-cn: 复习以前的词。
+en: Review past words
+cn: 复习以前的词
 
 key: studyReviewBody
 en: Look back at every word you have been sent, and export the list.
 cn: 回顾收到过的每个词，也可以导出词表。
 
 key: sentenceHeadline
-en: Use words in sentences.
-cn: 用词造句。
+en: Use words in sentences
+cn: 用词造句
 
 key: sentenceBody
 en: Write a sentence of your own with each word.
 cn: 用每个词写一个自己的句子。
 
 key: writeHeadline
-en: Practise writing characters.
-cn: 练习写汉字。
+en: Practise writing characters
+cn: 练习写汉字
 
 key: writeBody
 en: Write on paper or on a tablet or phone, then upload a photo of your handwriting.
@@ -212,8 +212,8 @@ cn: 在纸上，或用平板、手机书写，再上传手写照片。
 ## 5. Collect heroes
 
 key: collectHeadline
-en: Collect heroes.
-cn: 收集好汉。
+en: Collect heroes
+cn: 收集好汉
 
 key: collectBody
 en: New heroes join you every week you keep practising.
@@ -242,11 +242,11 @@ cn: 绰号
 ## 6. Quests and the closing subscribe
 
 key: closeHeadlineA
-en: Complete quests.
+en: Complete quests
 cn: 完成任务
 
 key: closeHeadlineB
-en: Unite all 108.
+en: Unite all 108
 cn: 一百单八将聚义梁山
 
 key: closeBody
@@ -254,12 +254,12 @@ en: Finish the quests and the whole band gathers on Mount Liang.
 cn: 完成任务，一百单八将就在梁山聚齐。
 
 key: previewHeadline
-en: Coming soon: collect the 108 heroes of Liangshan.
+en: Coming soon: collect the 108 heroes of Liangshan
 cn: 即将推出：集齐梁山一百单八将
 
 key: closingSubscribeHeadline
-en: Subscribe to receive today's word.
-cn: 订阅，接收今日一词。
+en: Subscribe to receive today's word
+cn: 订阅，接收今日一词
 
 ## 7. Footer
 
