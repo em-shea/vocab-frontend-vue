@@ -27,7 +27,7 @@ const { t } = useI18n()
           <span>{{ t('heroNicknameGloss') }}</span>
         </p>
       </div>
-      <PrintFrame ratio="480 / 705" :src="printCollect" alt="" :caption="t('printCredit')" />
+      <PrintFrame ratio="480 / 705" :src="printCollect" alt="" />
     </div>
   </section>
 </template>

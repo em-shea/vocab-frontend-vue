@@ -1,10 +1,15 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
+import AudioButton from '../AudioButton.vue'
 
-// An illustration of the daily email, not a real one: the word and sentence are
+// An illustration of the daily email, not a real one: the word is
 // fixed so the example is always correct.
 const { t } = useI18n()
+
+// The Polly recording of 爱护 from the word table ('Audio file key'). Until it is
+// filled in, the button shows in its muted, no-recording state.
+const AIHU_AUDIO = ''
 </script>
 
 <template>
@@ -20,13 +25,11 @@ const { t } = useI18n()
       </div>
       <div class="mail__body">
         <p class="hanzi mail__word">爱护</p>
-        <p class="pinyin mail__pinyin">ài hù</p>
-        <p class="mail__meaning">{{ t('emailMeaning') }}</p>
-        <div class="mail__example">
-          <p class="hanzi mail__sentence">我们要爱护环境。</p>
-          <p class="pinyin">Wǒmen yào àihù huánjìng.</p>
-          <p class="mail__translation">{{ t('emailTranslation') }}</p>
+        <div class="mail__say">
+          <p class="pinyin mail__pinyin">ài hù</p>
+          <AudioButton :src="AIHU_AUDIO" label="爱护" show-when-missing />
         </div>
+        <p class="mail__meaning">{{ t('emailMeaning') }}</p>
       </div>
     </figure>
   </section>
@@ -50,18 +53,9 @@ const { t } = useI18n()
 .mail__subject { font-family: var(--f-ui); font-weight: var(--w-semi); color: var(--c-ink); overflow-wrap: anywhere; }
 .mail__body { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-6); }
 .mail__word { font-size: var(--t-3xl); line-height: var(--lh-tight); font-weight: var(--w-bold); color: var(--c-ink); }
+.mail__say { display: flex; align-items: center; gap: var(--s-3); }
 .mail__pinyin { font-size: var(--t-lead); }
 .mail__meaning { color: var(--c-body); }
-.mail__example {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-1);
-  margin-top: var(--s-3);
-  padding-top: var(--s-3);
-  border-top: var(--bw-hair) solid var(--c-rule);
-}
-.mail__sentence { font-size: var(--t-lg); color: var(--c-ink); }
-.mail__translation { color: var(--c-body); }
 
 @media (min-width: 720px) {
   .split { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); }

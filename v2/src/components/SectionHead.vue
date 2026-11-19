@@ -5,17 +5,20 @@
 defineProps({
   label: { type: String, default: '' },
   title: { type: String, default: '' },
-  hanzi: { type: String, default: '' }
+  hanzi: { type: String, default: '' },
+  // Heading level, so a section nested under another heading can be an h3.
+  as: { type: String, default: 'h2' }
 })
 </script>
 
 <template>
   <header class="section-head">
     <span class="section-head__rule" aria-hidden="true"></span>
-    <h2 v-if="title || hanzi" class="section-head__title">
+    <component :is="as" v-if="title || hanzi || $slots.default" class="section-head__title">
       <span v-if="hanzi" class="hanzi section-head__hanzi">{{ hanzi }}</span>
-      <span v-if="title">{{ title }}</span>
-    </h2>
+      <!-- The default slot replaces `title`, for a title that holds a link. -->
+      <span v-if="title || $slots.default"><slot>{{ title }}</slot></span>
+    </component>
   </header>
 </template>
 

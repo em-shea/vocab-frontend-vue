@@ -64,11 +64,11 @@ en: One Chinese word arrives by email each day, with a short quiz after it. Keep
 cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位一位入伙。
 
 key: launchHeadline
-en: One Chinese word a day.
+en: One Chinese vocabulary word a day.
 cn: 每天一个中文词
 
 key: launchBody
-en: A new word arrives by email each morning, with a short quiz to help it stick.
+en: Expand your Chinese vocabulary with daily words and quizzes.
 cn: 每天早上用邮件收到一个新词，再做个小测验帮你记住。
 
 key: chooseLevel
@@ -90,11 +90,11 @@ en: Choose what to study.
 cn: 选择学习内容。
 
 key: levelHeadline
-en: Pick your level.
+en: Pick your HSK level.
 cn: 选择你的等级。
 
 key: levelBody
-en: Choose one of the six HSK levels and see sample words.
+en: Choose one of the six standardized Hanyu Shuiping Kaoshi (HSK) levels and see sample words.
 cn: 六个 HSK 等级任选一个，查看示例词汇。
 
 key: launchingSoon
@@ -140,28 +140,24 @@ cn: 父亲（口语）
 ## 3. Daily email
 
 key: dailyHeadline
-en: Get a Chinese word by email every day.
+en: Get a Chinese vocabulary word by email every day.
 cn: 每天用邮件收到一个中文词。
 
 key: dailyBody
-en: Each email has the characters, pinyin, meaning and an example sentence.
-cn: 每封邮件有汉字、拼音、释义和例句。
+en: Each email has the characters, pinyin and meaning.
+cn: 每封邮件有汉字、拼音和释义。
 
 key: emailLabel
 en: Example of the daily email
 cn: 每日邮件示例
 
 key: emailSubject
-en: Today's word: 爱护
-cn: 今日一词：爱护
+en: Today's word
+cn: 今日一词
 
 key: emailMeaning
 en: to cherish; to take care of
 cn: 爱惜；保护
-
-key: emailTranslation
-en: We should take care of the environment.
-cn: 我们应该保护环境。
 
 key: defQianMian
 en: ahead; in front; preceding; above
@@ -170,12 +166,8 @@ cn: 前边；在前方；上文
 ## 4. Study
 
 key: studyHeadline
-en: Three ways to study.
-cn: 三种学习方式。
-
-key: studyHeadlineLaunch
-en: Two ways to study.
-cn: 两种学习方式。
+en: Practise and track your progress.
+cn: 练习并跟踪你的进度。
 
 key: quizHeadline
 en: Take quizzes.
@@ -184,6 +176,14 @@ cn: 做测验。
 key: quizBody
 en: Check each word with a short quiz.
 cn: 用小测验检验每个词。
+
+key: examplesHeadline
+en: See example sentences.
+cn: 看例句。
+
+key: examplesBody
+en: Find example sentences for every word you have been sent.
+cn: 为每个收到的词查找例句。
 
 key: studyReviewHeadline
 en: Review past words.
@@ -239,10 +239,6 @@ key: heroNicknameGloss
 en: the Flowery Monk
 cn: 绰号
 
-key: printCredit
-en: Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.
-cn: 歌川国芳，《通俗水浒传豪杰百八人之一个》，约 1827–1830 年。公有领域。
-
 ## 6. Quests and the closing subscribe
 
 key: closeHeadlineA
@@ -261,9 +257,11 @@ key: previewHeadline
 en: Coming soon: collect the 108 heroes of Liangshan.
 cn: 即将推出：集齐梁山一百单八将
 
-key: previewBody
-en: Soon, practising will bring the outlaws of the Water Margin to you one by one.
-cn: 很快，只要坚持练习，水浒好汉就会一位一位入伙。
+## 7. Footer
+
+key: footerPrints
+en: Woodblock prints: Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.
+cn: 木版画：歌川国芳，《通俗水浒传豪杰百八人之一个》，约 1827–1830 年。公有领域。
 
 ## Progress
 
@@ -346,6 +344,86 @@ en: HSK 1 through 6 climb on the same schedule. The words change; the mountain d
 cn: HSK 一到六级，上山的进度相同。词会变，山不变。
 
 ## Other
+
+key: mockQuizLabel
+en: Example of a quiz question
+cn: 测验题示例
+
+key: mockExamplesLabel
+en: Example of a word with an example sentence
+cn: 词语和例句示例
+
+key: mockReviewLabel
+en: Example of the review list
+cn: 复习词表示例
+
+key: mockSentenceLabel
+en: Example of writing a sentence
+cn: 造句示例
+
+key: mockWriteLabel
+en: Example of a character practice grid
+cn: 汉字练习格示例
+
+key: mockQuizPrompt
+en: What does this word mean?
+cn: 这个词是什么意思？
+
+key: mockOptionB
+en: to compare; to contrast
+cn: 比较；对比
+
+key: mockOptionC
+en: to be late; to delay
+cn: 迟到；延迟
+
+key: mockOptionD
+en: to borrow; to lend
+cn: 借；借出
+
+key: mockExampleTranslation
+en: We should {hit} the environment.
+cn: 我们应该{hit}环境。
+
+key: mockExampleHit
+en: take care of
+cn: 保护
+
+key: mockReviewTitle
+en: Past words
+cn: 以前的词
+
+key: mockExport
+en: Export
+cn: 导出
+
+key: mockMeaningAihu
+en: to cherish
+cn: 爱惜；保护
+
+key: mockMeaningXuexi
+en: to study
+cn: 获取知识
+
+key: mockMeaningPengyou
+en: friend
+cn: 友人
+
+key: mockDateA
+en: 18 Nov
+cn: 11月18日
+
+key: mockDateB
+en: 17 Nov
+cn: 11月17日
+
+key: mockDateC
+en: 16 Nov
+cn: 11月16日
+
+key: mockUploadPhoto
+en: Upload photo
+cn: 上传照片
 
 key: signInTitle
 en: Sign in
@@ -490,3 +568,75 @@ cn: {level} 级
 key: reviewCount
 en: {count} words
 cn: {count} 个词
+
+key: heroCardRank
+en: Rank {n} of 108
+cn: 第 {n} 位，共 108 位
+
+key: heroCardRankTier
+en: Rank {n} of 108, {tier}
+cn: 第 {n} 位，共 108 位，{tier}
+
+key: heroCardTierHeavenly
+en: Heavenly Spirit
+cn: 三十六天罡
+
+key: heroCardTierEarthly
+en: Earthly Fiend
+cn: 七十二地煞
+
+key: heroCardStar
+en: Star
+cn: 星宿
+
+key: heroCardWeapon
+en: Weapon
+cn: 兵器
+
+key: heroCardBackground
+en: Background
+cn: 出身
+
+key: heroCardLockedName
+en: ？？？
+cn: ？？？
+
+key: heroCardLocked
+en: Not yet collected
+cn: 尚未收集
+
+key: heroCardArt
+en: Pixel sprite of {name} in front of a woodblock print
+cn: 木刻版画前的{name}像素小人
+
+key: heroCardArtLocked
+en: Dark silhouette of a hero not yet collected, in front of a faded woodblock print
+cn: 尚未收集的好汉：褪色木刻版画前的黑色剪影
+
+key: heroCardPrintArt
+en: Woodblock print of a Water Margin outlaw
+cn: 水浒好汉木刻版画
+
+key: heroCardFlip
+en: Flip card
+cn: 翻转卡片
+
+key: heroCardShowingFront
+en: Showing the front of the card
+cn: 当前显示卡片正面
+
+key: heroCardShowingBack
+en: Showing the back of the card
+cn: 当前显示卡片背面
+
+key: heroCardWordPinyin
+en: Pinyin for {text}
+cn: {text}的拼音
+
+key: heroCardViewPrint
+en: View full print
+cn: 查看全图
+
+key: heroCardClose
+en: Close
+cn: 关闭

@@ -68,21 +68,28 @@ for (const version of VERSIONS) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
   })
 
-  test(`${version.name}: every woodblock print has a source credit`, async ({ page }) => {
+  test(`${version.name}: the prints have no captions, and the footer credits them once`, async ({ page }) => {
     await mockBackend(page)
     await page.goto(version.path)
 
-    const figures = page.locator('figure').filter({ has: page.locator('img') })
-    const count = await figures.count()
-    expect(count).toBeGreaterThanOrEqual(2)
-    for (let i = 0; i < count; i++) {
-      const caption = figures.nth(i).locator('figcaption')
-      await expect(caption).toContainText('Utagawa Kuniyoshi')
-      await expect(caption).toContainText('One Hundred and Eight Heroes of the Popular Water Margin')
-      await expect(caption).toContainText('Public domain')
-    }
-    // No print is left without a figcaption, whatever its source path.
-    expect(await page.locator('img.print__img').count()).toBe(await page.locator('figure.print > figcaption').count())
+    expect(await page.locator('img.print__img').count()).toBeGreaterThanOrEqual(2)
+    await expect(page.locator('figure:has(img) figcaption')).toHaveCount(0)
+
+    const footer = page.locator('footer.site-footer')
+    await expect(footer).toHaveCount(1)
+    await expect(footer).toContainText('Utagawa Kuniyoshi')
+    await expect(footer).toContainText('One Hundred and Eight Heroes of the Popular Water Margin')
+    await expect(footer).toContainText('Public domain')
+  })
+
+  test(`${version.name}: practice has its own heading and a section for each kind`, async ({ page }) => {
+    await mockBackend(page)
+    await page.goto(version.path)
+
+    await expect(page.getByRole('heading', { level: 2, name: 'Practise and track your progress.' })).toBeVisible()
+    await expect(page.getByText(/ways to study/i)).toHaveCount(0)
+    await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes.' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 3, name: 'See example sentences.' })).toBeVisible()
   })
 
   test(`${version.name}: shows an example of the daily email`, async ({ page }) => {
@@ -90,8 +97,8 @@ for (const version of VERSIONS) {
     await page.goto(version.path)
 
     const mail = page.getByRole('figure', { name: 'Example of the daily email' })
-    await expect(mail).toContainText("Today's word: 爱护")
-    await expect(mail).toContainText('我们要爱护环境。')
+    await expect(mail).toContainText("Today's word")
+    await expect(mail).not.toContainText('我们要爱护环境。')
     await expect(mail).toContainText('Wǒmen yào àihù huánjìng.')
     await expect(mail).toContainText('We should take care of the environment.')
   })
@@ -114,22 +121,22 @@ for (const version of VERSIONS) {
 test('the default page is the launch version', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('One Chinese word a day.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('One Chinese vocabulary word a day.')
 })
 
 test('launch: leads with the daily word, has no launching-soon notes, previews the heroes', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/?home=launch')
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('One Chinese word a day.')
-  await expect(page.getByText('A new word arrives by email each morning, with a short quiz to help it stick.')).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('One Chinese vocabulary word a day.')
+  await expect(page.getByText('Expand your Chinese vocabulary with daily words and quizzes.')).toBeVisible()
   await expect(page.getByText('Climb the mountain.')).toHaveCount(0)
   await expect(page.getByText('替天行道')).toHaveCount(0)
   await expect(page.getByText('Launching soon')).toHaveCount(0)
   await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: collect the 108 heroes of Liangshan.' })).toBeVisible()
-  // Study is only what exists: quizzes, and a real link to review.
+  // Study is only what exists: quizzes, example sentences and review. No links for now.
   await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes.' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Review past words.' })).toHaveAttribute('href', '/review')
+  await expect(page.getByRole('heading', { level: 3, name: 'Review past words.' })).toBeVisible()
   await expect(page.getByRole('heading', { name: /catalogue/i })).toHaveCount(0)
 })
 

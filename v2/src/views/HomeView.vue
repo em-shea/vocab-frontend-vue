@@ -9,6 +9,7 @@ import ChooseStudy from '../components/home/ChooseStudy.vue'
 import DailyEmail from '../components/home/DailyEmail.vue'
 import StudyWays from '../components/home/StudyWays.vue'
 import CollectHeroes from '../components/home/CollectHeroes.vue'
+import SiteFooter from '../components/SiteFooter.vue'
 import ClosingBand from '../components/home/ClosingBand.vue'
 
 import { HEROES_LAUNCHED } from '../featureFlags'
@@ -39,9 +40,10 @@ const heroes = computed(() => {
       <HomeHero :heroes="heroes" />
       <ChooseStudy :heroes="heroes" />
       <DailyEmail />
-      <StudyWays :heroes="heroes" :class="{ 'study--two': !heroes }" />
+      <StudyWays :heroes="heroes" />
       <CollectHeroes v-if="heroes" />
       <ClosingBand :heroes="heroes" />
+      <SiteFooter />
     </div>
 
     <ScrollRods position="bottom" />
@@ -60,9 +62,6 @@ const heroes = computed(() => {
   margin: 0 auto;
   padding: 0 var(--s-4);
 }
-
-/* Two study items instead of three. */
-.study--two { --study-cols: 2; }
 
 @media (min-width: 720px) {
   .page__inner { padding: 0 var(--s-14); }

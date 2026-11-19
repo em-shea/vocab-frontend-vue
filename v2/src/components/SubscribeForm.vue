@@ -6,12 +6,15 @@ import { useVocabListsStore } from '../stores/vocabLists'
 import { usePreferencesStore } from '../stores/preferences'
 import { signUp } from '../api/signup'
 
-// The subscribe band. Appears twice on the page — once under the quest, once in
-// the closing oath — so it is a component rather than markup repeated twice.
+// The subscribe band. Appears twice on the page — once under the headline, once
+// below the closing band — so it is a component rather than markup repeated twice.
 
-defineProps({
-  variant: { type: String, default: 'light' } // light | band
+const props = defineProps({
+  variant: { type: String, default: 'light' }, // light | band
+  // Keeps label/field ids unique when two forms of the same variant share a page.
+  idPrefix: { type: String, default: '' }
 })
+const uid = computed(() => props.idPrefix || props.variant)
 
 const { t } = useI18n()
 const lists = useVocabListsStore()
@@ -53,8 +56,8 @@ async function submit () {
 <template>
   <form class="sub" :class="`sub--${variant}`" @submit.prevent="submit">
     <div class="sub__field">
-      <label class="label" :for="`level-${variant}`">{{ t('chooseLevel') }}</label>
-      <select :id="`level-${variant}`" v-model="listId" class="sub__select" :disabled="busy">
+      <label class="label" :for="`level-${uid}`">{{ t('chooseLevel') }}</label>
+      <select :id="`level-${uid}`" v-model="listId" class="sub__select" :disabled="busy">
         <option v-for="list in lists.all" :key="list.list_id" :value="list.list_id">
           {{ list.list_name }}
         </option>
@@ -62,9 +65,9 @@ async function submit () {
     </div>
 
     <div class="sub__field">
-      <label class="label" :for="`email-${variant}`">{{ t('email') }}</label>
+      <label class="label" :for="`email-${uid}`">{{ t('email') }}</label>
       <input
-        :id="`email-${variant}`"
+        :id="`email-${uid}`"
         v-model="email"
         class="sub__input"
         type="email"

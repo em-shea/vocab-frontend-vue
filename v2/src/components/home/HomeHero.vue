@@ -33,7 +33,6 @@ const { t } = useI18n()
       class="quest__print"
       :src="printQuest"
       alt="Woodblock print of a bearded warrior in patterned robes, a long weapon held to his mouth"
-      :caption="t('printCredit')"
     />
   </section>
 </template>
