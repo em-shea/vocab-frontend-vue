@@ -140,5 +140,6 @@ export default {
   "heroCardShowingBack": "Showing the back of the card",
   "heroCardWordPinyin": "Pinyin for {text}",
   "heroCardViewPrint": "View full print",
+  "heroCardIconCredit": "Tier symbols: Lorc, {site} ({licence})",
   "heroCardClose": "Close"
 }

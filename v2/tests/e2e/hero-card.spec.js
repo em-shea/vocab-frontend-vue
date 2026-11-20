@@ -110,11 +110,11 @@ for (const L of LAYOUTS) {
       expect(rowBox.height).toBeLessThan(hBox.height * 1.5)
       expect(nBox.x + nBox.width).toBeLessThanOrEqual(hBox.x + 1)
       expect(Math.abs((nBox.y + nBox.height / 2) - (hBox.y + hBox.height / 2))).toBeLessThan(hBox.height / 2)
-      // Nothing spills: the row fits its container, the name ends before the seal.
+      // Nothing spills: the row fits its container, the name ends before the emblem.
       expect(await row.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
       const parent = await row.evaluate((el) => el.parentElement.getBoundingClientRect().right)
       expect(hBox.x + hBox.width).toBeLessThanOrEqual(parent + 1)
-      const seal = await c.locator('.seal').first().boundingBox()
+      const seal = await c.locator('[data-tier]').first().boundingBox()
       expect(hBox.x + hBox.width).toBeLessThanOrEqual(seal.x)
     })
   }
@@ -317,7 +317,7 @@ for (const lang of ['en', 'cn']) {
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
         for (let n = walker.nextNode(); n; n = walker.nextNode()) {
           const el = n.parentElement
-          if (el.closest('.sr-only, .flipbtn')) continue
+          if (el.closest('.sr-only, .flipbtn, .viewer__credit-icons')) continue // the icon credit's names and licence are Latin by requirement
           if (/[A-Za-z]/.test(n.textContent)) out.push(`<${el.tagName.toLowerCase()} class="${el.className}"> ${n.textContent.trim()}`)
         }
         // Nothing Latin in the card's own accessible names either.
@@ -443,30 +443,82 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
-test('the rank seal is round and vermilion for Heavenly Spirits, square and navy for Earthly Fiends', async ({ page }) => {
+test('tier emblems: cloud ring for Heavenly Spirits, peaks for Earthly Fiends, with the rank on top', async ({ page }) => {
   await open(page)
-  const style = (id) => card(page, id).locator('.seal').first().evaluate((el) => {
-    const cs = getComputedStyle(el)
+  const info = (id) => card(page, id).locator('svg[data-tier]').first().evaluate((el) => {
     const b = el.getBoundingClientRect()
-    return { radius: cs.borderTopLeftRadius, bg: cs.backgroundColor, w: b.width, h: b.height, text: el.textContent.trim() }
+    const t = el.querySelector('text')
+    const cs = getComputedStyle(t)
+    return {
+      tier: el.dataset.tier, icon: el.dataset.icon, w: b.width, h: b.height,
+      hidden: el.getAttribute('aria-hidden'), text: t.textContent.trim(),
+      weight: cs.fontWeight, paint: cs.paintOrder, tabular: cs.fontVariantNumeric
+    }
   })
   for (const id of ['A-front', 'B-front', 'C-front', 'A-front-imm', 'B-front-imm', 'C-front-imm', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
-    const st = await style(id)
-    expect(st.radius, id).toBe('50%')
-    expect(st.bg, id).toBe('rgb(200, 50, 30)')
-    expect(Math.abs(st.w - st.h), id).toBeLessThan(0.5)
+    const st = await info(id)
+    expect(st.tier, id).toBe('heavenly')
+    expect(st.icon, id).toBe('cloud-ring')
     expect(st.text, id).toMatch(/^(5|6)$/)
+    expect(st.hidden, id).toBe('true')
+    expect(st.weight, id).toBe('800')
+    expect(st.paint, id).toMatch(/^stroke/)
+    expect(st.tabular, id).toContain('tabular-nums')
   }
   for (const id of ['A-earthly', 'C-earthly']) {
-    const st = await style(id)
-    expect(st.radius, id).toBe('0px')
-    expect(st.bg, id).toBe('rgb(27, 33, 64)')
-    expect(Math.abs(st.w - st.h), id).toBeLessThan(0.5)
+    const st = await info(id)
+    expect(st.tier, id).toBe('earthly')
+    expect(st.icon, id).toBe('peaks')
     expect(st.text, id).toBe('59')
   }
+  // The emblem's rank text is visible, in the viewport box of the emblem.
+  await expect(card(page, 'B-front').locator('svg[data-tier] text')).toBeVisible()
   // Sizes: 2.75rem, and 2rem in compact.
-  expect((await style('A-front')).w).toBe(44)
-  expect((await style('C-front')).w).toBe(32)
+  expect((await info('A-front')).w).toBe(44)
+  expect((await info('A-front')).h).toBe(44)
+  expect((await info('B-front')).w).toBe(44)
+  expect((await info('C-front')).w).toBe(32)
+  expect((await info('C-front')).h).toBe(32)
+})
+
+test('tier emblem gradient and filter ids are unique across the page', async ({ page }) => {
+  await open(page)
+  const ids = await page.evaluate(() => [...document.querySelectorAll('svg[data-tier] [id]')].map((el) => el.id))
+  const n = await page.locator('svg[data-tier]').count()
+  expect(n).toBeGreaterThan(10)
+  expect(ids.length).toBe(n * 2)
+  expect(new Set(ids).size).toBe(ids.length)
+  const all = await page.evaluate(() => [...document.querySelectorAll('[id]')].map((el) => el.id))
+  expect(new Set(all).size).toBe(all.length)
+  // Each emblem's gradient exists and is referenced by its own path.
+  const ok = await page.evaluate(() => [...document.querySelectorAll('svg[data-tier]')].every((svg) => {
+    const m = /url\(#(.+)\)/.exec(svg.querySelector('path').getAttribute('fill'))
+    return m && svg.querySelector(`linearGradient[id="${m[1]}"]`)
+  }))
+  expect(ok).toBe(true)
+})
+
+test('the print viewer credits the tier symbols, with links, and in Chinese when immersive', async ({ page }) => {
+  await open(page)
+  await card(page, 'B-back').getByRole('button', { name: 'View full print' }).click()
+  const dlg = page.getByRole('dialog')
+  const line = dlg.locator('.viewer__credit-icons')
+  await expect(line).toHaveText('Tier symbols: Lorc, game-icons.net (CC BY 3.0)')
+  const site = line.getByRole('link', { name: 'game-icons.net' })
+  const lic = line.getByRole('link', { name: 'CC BY 3.0' })
+  await expect(site).toHaveAttribute('href', 'https://game-icons.net')
+  await expect(site).toHaveAttribute('target', '_blank')
+  await expect(site).toHaveAttribute('rel', /noopener/)
+  await expect(lic).toHaveAttribute('href', 'https://creativecommons.org/licenses/by/3.0/')
+  await expect(lic).toHaveAttribute('target', '_blank')
+  await expect(lic).toHaveAttribute('rel', /noopener/)
+  // Second, smaller line under the print credit.
+  const sizes = await dlg.evaluate((el) => [...el.querySelectorAll('.viewer__credit, .viewer__credit-icons')].map((p) => parseFloat(getComputedStyle(p).fontSize)))
+  expect(sizes[1]).toBeLessThan(sizes[0])
+  await page.keyboard.press('Escape')
+  await open(page, 'en')
+  await card(page, 'B-back-imm').getByRole('button', { name: 'View full print' }).click()
+  await expect(page.getByRole('dialog').locator('.viewer__credit-icons')).toHaveText('等级图标：Lorc，game-icons.net（CC BY 3.0）')
 })
 
 // Ground shadow ----------------------------------------------------------------

@@ -139,5 +139,6 @@ export default {
   "heroCardShowingBack": "当前显示卡片背面",
   "heroCardWordPinyin": "{text}的拼音",
   "heroCardViewPrint": "查看全图",
+  "heroCardIconCredit": "等级图标：Lorc，{site}（{licence}）",
   "heroCardClose": "关闭"
 }

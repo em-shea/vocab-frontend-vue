@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HeroLine from './HeroLine.vue'
+import TierSymbol from './TierSymbol.vue'
 
 // The collectible hero card. One component, three layouts:
 //
@@ -43,7 +44,7 @@ import HeroLine from './HeroLine.vue'
 // ONE title in the novel's own word order, 大刀关胜: same size, same ink colour,
 // same brush font, a small gap between, on ONE line that never wraps. One shared
 // size per layout (--name-size) is chosen so the worst case, a four-character
-// nickname with a three-character name, fits next to the rank seal.
+// nickname with a three-character name, fits next to the tier emblem.
 //
 // `reading` ('guided' by default, or 'immersive') is how much help the card
 // gives. It is independent of the interface locale (`lang`).
@@ -91,12 +92,12 @@ import HeroLine from './HeroLine.vue'
 // is `inert` and `aria-hidden`, so it is neither focusable nor read out. A hero
 // with no story has no back and is not flippable.
 //
-// The two tiers are told apart by colour and by shape as well as by text. The
-// rank seal follows 天圆地方, "heaven is round, earth is square" (the old
-// picture of the cosmos): a ROUND vermilion seal for the 36 Heavenly Spirits
-// (天罡), a SQUARE navy seal for the 72 Earthly Fiends (地煞), the rank number
-// centred on top. Circles are otherwise not used; this is the one exception to
-// the square-corners rule.
+// The two tiers are told apart by emblem, colour and text. The tier emblem
+// (TierSymbol) is an MTG-set-symbol-style badge with the rank number on it: a
+// cloud ring in gold-to-vermilion for the 36 Heavenly Spirits (天罡), peaks in
+// silver-to-navy for the 72 Earthly Fiends (地煞). The icons are "Cloud ring" and
+// "Peaks" by Lorc, game-icons.net, CC BY 3.0; the credit is in the print viewer
+// and in v2/CREDITS.md. 2.75rem, 2rem in compact; locked cards keep theirs.
 const props = defineProps({
   hero: { type: Object, required: true },
   variant: { type: String, default: 'framed', validator: (v) => ['framed', 'full-art', 'compact'].includes(v) },
@@ -225,7 +226,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                   <p v-if="showSub" class="pinyin">{{ subline }}</p>
                 </div>
                 <span class="sr-only">{{ rankTierText }}</span>
-                <span class="seal" aria-hidden="true">{{ hero.rank }}</span>
+                <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" />
               </header>
 
               <div class="figure">
@@ -265,7 +266,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                   </div>
                   <p v-if="showSub" class="pinyin">{{ subline }}</p>
                 </div>
-                <span class="seal seal--small" aria-hidden="true">{{ hero.rank }}</span>
+                <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" size="sm" />
               </header>
 
               <p v-if="!locked" class="meta">
@@ -294,7 +295,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                 </div>
                 <p v-if="showSub" class="pinyin">{{ subline }}</p>
               </div>
-              <span class="seal" aria-hidden="true">{{ hero.rank }}</span>
+              <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" />
             </header>
 
             <div class="window" role="img" :aria-label="artLabel">
@@ -364,6 +365,12 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
             <div class="viewer__body">
               <img class="viewer__img" :src="hero.print" alt="" />
               <p v-if="printCredit" class="viewer__credit" :lang="zh ? 'zh-Hans' : 'en'">{{ printCredit }}</p>
+              <p class="viewer__credit-icons" :lang="zh ? 'zh-Hans' : 'en'">
+                <i18n-t keypath="heroCardIconCredit" tag="span" scope="global" :locale="zh ? 'cn' : 'en'">
+                  <template #site><a href="https://game-icons.net" target="_blank" rel="noopener">game-icons.net</a></template>
+                  <template #licence><a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a></template>
+                </i18n-t>
+              </p>
             </div>
             <button type="button" class="viewer__close" :aria-label="t('heroCardClose')" @click="closeViewer">
               <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" aria-hidden="true" focusable="false"><path d="M3 3l10 10M13 3 3 13" /></svg>
@@ -381,12 +388,12 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 </template>
 
 <style scoped>
-/* Tier colour: one variable the frame, seal and tick all read. */
+/* Tier colour: one variable the frame and tick read. */
 .card {
   --tier: var(--c-red-solid);
   --on-tier: var(--c-on-red);
   /* Name line size, shared by nickname and name. Chosen so four plus three
-   * characters fit beside the seal at each layout's width (set per layout). */
+   * characters fit beside the emblem at each layout's width (set per layout). */
   --name-size: var(--t-xl);
   position: relative;
   display: flex;
@@ -449,31 +456,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 /* Shared pieces ------------------------------------------------------- */
 .name { margin: 0; font-size: var(--name-size); line-height: var(--lh-tight); font-weight: var(--w-body); color: var(--c-ink); }
 .pinyin { margin: 0; font-size: var(--t-base); line-height: var(--lh-snug); }
-
-/* The rank seal encodes the tier with 天圆地方 (heaven round, earth square):
- * a round vermilion seal for a Heavenly Spirit (天罡), a square navy seal for an
- * Earthly Fiend (地煞), the rank number centred on top. The circle is the one
- * allowed exception to the square-corners rule. */
-.seal {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  border-radius: 0;
-  background-color: var(--tier);
-  color: var(--on-tier);
-  border: var(--bw-hair) solid var(--c-ink-edge);
-  box-shadow: 2px 2px 0 var(--c-ink);
-  font-family: var(--f-display);
-  font-size: var(--t-lead);
-  font-weight: var(--w-black);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-.card--heavenly .seal { border-radius: 50%; }
-.seal--small { width: 2rem; height: 2rem; font-size: var(--t-body); }
 
 /* Nickname then name, one title (大刀关胜): same size, colour and font, a small
  * gap between, one line, never wraps. */
@@ -662,6 +644,8 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .viewer__body { display: flex; flex: 1; flex-direction: column; gap: var(--s-3); min-height: 0; padding: var(--s-3); }
 .viewer__img { flex: 1; width: 100%; min-height: 0; object-fit: contain; background-color: var(--c-sunk); }
 .viewer__credit { margin: 0; max-width: none; padding-right: 3rem; font-size: var(--t-sm); line-height: var(--lh-snug); color: var(--c-muted); }
+.viewer__credit-icons { margin: calc(var(--s-3) * -0.5) 0 0; max-width: none; padding-right: 3rem; font-size: var(--t-xs); line-height: var(--lh-snug); color: var(--c-muted); }
+.viewer__credit-icons a { color: inherit; text-decoration: underline; }
 .viewer__close {
   position: absolute;
   right: var(--s-3);
