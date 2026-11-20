@@ -20,8 +20,9 @@ test('a new visitor subscribes to a level', async ({ page }) => {
   await form.getByRole('textbox').fill('new@example.com')
   await form.getByRole('button').click()
 
-  await expect(form.getByRole('status')).toContainText('Check your inbox')
-  expect(backend.cognito).toEqual(['SignUp'])
+  // Then emails a sign-in link and moves on to /subscribed (see subscribed.spec.js).
+  await expect(page).toHaveURL(/\/subscribed/)
+  expect(backend.cognito).toEqual(['SignUp', 'InitiateAuth'])
   const call = backend.api.find((c) => c.path === '/set_subs')
   expect(call.body).toMatchObject({
     cognito_id: 'sub-new',

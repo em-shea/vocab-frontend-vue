@@ -63,6 +63,25 @@ export const routes = [
     path: '/hero-card',
     name: 'hero-card',
     component: () => import('../views/HeroCardLabView.vue')
+  },
+  // --- lists, unsubscribe, subscribed ---
+  {
+    // Signed in: which lists and character sets the daily email carries.
+    path: '/manage-lists',
+    name: 'manage-lists',
+    component: () => import('../views/ManageListsView.vue')
+  },
+  {
+    // Every daily email links here with ?list=…&char=…&email=…; see UnsubscribeView.
+    path: '/unsub',
+    name: 'unsub',
+    component: () => import('../views/UnsubscribeView.vue')
+  },
+  {
+    // Where the subscribe form leads once it has worked.
+    path: '/subscribed',
+    name: 'subscribed',
+    component: () => import('../views/SubscribedView.vue')
   }
 ]
 

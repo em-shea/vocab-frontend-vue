@@ -134,6 +134,10 @@ export async function mockBackend (page, options = {}) {
     unexpected: [] // anything else that tried to leave the page
   }
 
+  // --- lists, unsubscribe and subscribed screens ---
+  state.subscriptionsFail = options.subscriptionsFail ?? false
+  state.unsubFails = options.unsubFails ?? false
+
   await page.route(/^https:\/\/cognito-idp\.[a-z0-9-]+\.amazonaws\.com\//, async (route) => {
     const request = route.request()
     const action = (request.headers()['x-amz-target'] ?? '').split('.').pop()
@@ -207,6 +211,16 @@ export async function mockBackend (page, options = {}) {
     if (method === 'GET' && path === '/user' && state.userFails) return json({ message: 'Internal server error' }, 500)
     if (method === 'GET' && path === '/user' && state.user) return json(state.user)
     if (method === 'POST' && path === '/update_user' && state.updateUserFails) return json({ success: false }, 502)
+    // --- lists, unsubscribe and subscribed screens ---
+    // Shapes from vocab: get_user_data, update_subscriptions and unsubscribe.
+    if (method === 'POST' && path === '/subscriptions') {
+      if (state.subscriptionsFail) return json({ success: false, message: 'Failed to update subscriptions.', data: null }, 502)
+      return json({ success: true, message: 'Successfully updated subscriptions.', data: null })
+    }
+    if (method === 'POST' && path === '/unsub') {
+      if (state.unsubFails) return json({ success: false }, 502)
+      return json({ success: true })
+    }
     if (method === 'GET' && path === '/user') return json(USER)
     if (method === 'POST' && path === '/update_login') return json({ success: true })
     if (method === 'POST' && path === '/update_user') return json({ success: true })

@@ -28,7 +28,12 @@ const SCREENS = [
   },
   // Profile screens: signed in, so they show themselves rather than sign-in.
   { name: 'profile', path: '/profile', before: async (page) => (await import('./support/backend')).signedIn(page) },
-  { name: 'profile settings', path: '/profile-settings', before: async (page) => (await import('./support/backend')).signedIn(page) }
+  { name: 'profile settings', path: '/profile-settings', before: async (page) => (await import('./support/backend')).signedIn(page) },
+  // --- lists, unsubscribe, subscribed ---
+  { name: 'manage lists', path: '/manage-lists', before: async (page) => (await import('./support/backend')).signedIn(page) },
+  { name: 'manage lists, signed out', path: '/manage-lists' },
+  { name: 'unsubscribe from an email link', path: '/unsub?list=1ebcad3f-adc0-6f42-b8b1-acde48001122&char=simplified&email=learner%40example.com' },
+  { name: 'subscribed', path: '/subscribed' }
 ]
 
 for (const screen of SCREENS) {
