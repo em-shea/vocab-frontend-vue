@@ -257,5 +257,21 @@ export default {
   "subscribedSentTo": "We have emailed a sign-in link to {email}. Sign in to see your profile, change your lists and keep your quiz results.",
   "subscribedSent": "We have emailed you a sign-in link. Sign in to see your profile, change your lists and keep your quiz results.",
   "subscribedExpiry": "The link expires after 3 minutes.",
-  "subscribedNewLink": "Get a new link"
+  "subscribedNewLink": "Get a new link",
+  "sentencesTitle": "Practice sentences",
+  "sentencesLoading": "Loading your words…",
+  "sentencesSignIn": "Sign in to write sentences with your daily words.",
+  "sentencesError": "We could not load your words and sentences. Check your connection and try again.",
+  "sentencesRetry": "Try again",
+  "sentencesToday": "Today's words",
+  "sentencesNoWords": "No new words for you today.",
+  "sentencesField": "A sentence with {word}",
+  "sentencesSave": "Save",
+  "sentencesSaving": "Saving…",
+  "sentencesSaved": "Saved.",
+  "sentencesSaveFailed": "We could not save your sentence. Try again.",
+  "sentencesEmpty": "Write a sentence first.",
+  "sentencesWritten": "Your sentences",
+  "sentencesNone": "You have not written any sentences yet.",
+  "sentencesMore": "Show more"
 }

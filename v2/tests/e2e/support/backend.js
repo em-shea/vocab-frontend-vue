@@ -54,6 +54,55 @@ export const QUIZ_REVIEW = {
   [HSK2]: REVIEW[HSK2]
 }
 
+// Practice sentences (/sentences): what GET /user_activity and GET /sentences
+// return. The newest date is the server's today; one of today's words already
+// has a sentence, and one sentence is from before the 10 days the activity
+// covers, so its word is not known.
+const activityWord = (id, simplified, traditional, pinyin, definition) => ({
+  list_id: HSK1,
+  word: { word_id: id, simplified, traditional, pinyin, definition, audio_file_key: '', difficulty_level: 'Beginner', hsk_level: '1' }
+})
+const written = (id, sentence, date) => ({ sentence_id: id, sentence, character_set: 'simplified', date_created: date })
+const studyWord = activityWord('w-study', '学习', '學習', 'xué xí', 'to study; to learn')
+export const ACTIVITY = {
+  '2026-11-20': {
+    review_words: [
+      { ...activityWord('w-friend', '朋友', '朋友', 'péng you', 'friend'), date_sent: '2026-11-20' },
+      {
+        ...activityWord('w-cherish', '爱护', '愛護', 'ài hù', 'to cherish'),
+        date_sent: '2026-11-20',
+        sentence: { ...written('s-today', '请爱护你的书。', '2026-11-20'), list_id: HSK1, word: {} }
+      }
+    ]
+  },
+  '2026-11-19': {
+    review_words: [{
+      ...studyWord,
+      date_sent: '2026-11-19',
+      sentence: { ...written('s-yesterday', '我每天学习汉语。', '2026-11-19'), list_id: HSK1, word: studyWord.word }
+    }]
+  },
+  '2026-11-18': { review_words: [] }
+}
+export const SENTENCES = [
+  written('s-old', '中文很好听。', '2025-03-02'),
+  written('s-yesterday', '我每天学习汉语。', '2026-11-19'),
+  written('s-today', '请爱护你的书。', '2026-11-20')
+]
+
+/**
+ * Switches SENTENCES_ENABLED on for one page, by rewriting the flags module as
+ * the dev server sends it. The build itself is untouched, so the flag stays
+ * off everywhere else.
+ */
+export async function sentencesSwitchedOn (page) {
+  await page.route(/\/src\/featureFlags\.js(\?.*)?$/, async (route) => {
+    const response = await route.fetch()
+    const body = (await response.text()).replace('SENTENCES_ENABLED = false', 'SENTENCES_ENABLED = true')
+    await route.fulfill({ response, body })
+  })
+}
+
 export const USER = {
   email_address: EMAIL,
   character_set_preference: 'simplified',
@@ -129,6 +178,12 @@ export async function mockBackend (page, options = {}) {
     quizzes: options.quizzes ?? [],
     quizzesFails: options.quizzesFails ?? false,
     updateUserFails: options.updateUserFails ?? false,
+    // Practice sentences (/sentences)
+    activity: options.activity ?? null, // sentences: just the activity map; wrapped in USER
+    activityFails: options.activityFails ?? false,
+    sentences: options.sentences ?? SENTENCES,
+    sentencesFails: options.sentencesFails ?? false,
+    saveSentenceFails: options.saveSentenceFails ?? false,
     cognito: [],   // X-Amz-Target action names, in order
     api: [],       // { method, path, headers, body }
     unexpected: [] // anything else that tried to leave the page
@@ -201,8 +256,10 @@ export async function mockBackend (page, options = {}) {
     }
     // Profile (/profile, /profile-settings)
     if (method === 'GET' && path === '/user_activity') {
-      if (state.userActivityFails) return json({ message: 'Internal server error' }, 500)
-      return json(state.userActivity ?? userActivity())
+      // Shared by /profile and /sentences: a whole record (userActivity), or
+      // just the activity map (activity), or the profile's default.
+      if (state.userActivityFails || state.activityFails) return json({ message: 'Internal server error' }, 500)
+      return json(state.userActivity ?? (state.activity ? { ...USER, activity: state.activity } : userActivity()))
     }
     if (method === 'GET' && path === '/quizzes') {
       if (state.quizzesFails) return json({ success: false, message: 'Failed to retrieve quiz results', data: null }, 502)
@@ -228,6 +285,16 @@ export async function mockBackend (page, options = {}) {
     if (method === 'POST' && path === '/quizzes') {
       if (state.saveQuizFails) return json({ message: 'Failed to put quiz results record.' }, 502)
       return json({ success: true })
+    }
+    // Practice sentences (/sentences). /sentences wraps its answer as
+    // { success, message, data }; /user_activity is handled above.
+    if (method === 'GET' && path === '/sentences') {
+      if (state.sentencesFails) return json({ success: false, message: 'Failed to retrieve user sentences.', data: null }, 502)
+      return json({ success: true, message: 'Successfully retrieved user sentences.', data: { sentences: state.sentences } })
+    }
+    if (method === 'POST' && path === '/sentences') {
+      if (state.saveSentenceFails) return json({ success: false, message: 'Failed to save sentence.', data: null }, 502)
+      return json({ success: true, message: 'Successfully saved sentence.', data: null })
     }
     return json({ message: `No stand-in for ${method} ${path}` }, 404)
   })

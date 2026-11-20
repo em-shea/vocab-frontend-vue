@@ -256,5 +256,21 @@ export default {
   "subscribedSentTo": "我们已向 {email} 发送登录链接。登录后可查看个人主页、更改词表并保存测验成绩。",
   "subscribedSent": "我们已向你的邮箱发送登录链接。登录后可查看个人主页、更改词表并保存测验成绩。",
   "subscribedExpiry": "链接 3 分钟后失效。",
-  "subscribedNewLink": "重新获取链接"
+  "subscribedNewLink": "重新获取链接",
+  "sentencesTitle": "练习造句",
+  "sentencesLoading": "正在加载词语…",
+  "sentencesSignIn": "登录后即可用每日词语造句。",
+  "sentencesError": "无法加载词语和句子，请检查网络后重试。",
+  "sentencesRetry": "重试",
+  "sentencesToday": "今日词语",
+  "sentencesNoWords": "今天没有新词。",
+  "sentencesField": "用“{word}”造句",
+  "sentencesSave": "保存",
+  "sentencesSaving": "正在保存…",
+  "sentencesSaved": "已保存。",
+  "sentencesSaveFailed": "无法保存句子，请重试。",
+  "sentencesEmpty": "请先写一个句子。",
+  "sentencesWritten": "我的句子",
+  "sentencesNone": "你还没有写过句子。",
+  "sentencesMore": "显示更多"
 }

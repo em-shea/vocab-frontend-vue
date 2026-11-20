@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { SENTENCES_ENABLED } from '../featureFlags'
 
 // Routes are ported from the Vue 2 app one at a time in Phase 4. What is still
 // outstanding is listed in ./legacy.js, and a test holds this file to it.
@@ -82,6 +83,16 @@ export const routes = [
     path: '/subscribed',
     name: 'subscribed',
     component: () => import('../views/SubscribedView.vue')
+  },
+  {
+    // Practice sentences, held back by SENTENCES_ENABLED as in the old app.
+    // Switched off, the path still resolves so old links never 404: it leads
+    // to the profile, as the old app's did.
+    path: '/sentences',
+    name: 'sentences',
+    ...(SENTENCES_ENABLED
+      ? { component: () => import('../views/SentencesView.vue') }
+      : { redirect: (to) => ({ path: '/profile', query: to.query }) })
   }
 ]
 

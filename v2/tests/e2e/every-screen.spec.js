@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { mockBackend, watchForErrors, overflowsSideways, QUIZ_REVIEW } from './support/backend'
+import { mockBackend, watchForErrors, overflowsSideways, QUIZ_REVIEW, signedIn, sentencesSwitchedOn } from './support/backend'
 
 // The baseline every screen must meet, in both languages, on a phone and on a
 // desktop (the two projects in playwright.config.js):
@@ -19,6 +19,8 @@ const SCREENS = [
   { name: 'review', path: '/review' },
   { name: 'quiz', path: '/quiz', backend: { review: QUIZ_REVIEW } },
   { name: 'hero card lab', path: '/hero-card' },
+  { name: 'sentences (switched off)', path: '/sentences' },
+  { name: 'sentences', path: '/sentences', before: async (page) => { await signedIn(page); await sentencesSwitchedOn(page) } },
   {
     name: 'check your email',
     path: '/verification',
@@ -51,7 +53,7 @@ for (const screen of SCREENS) {
       // vue-i18n renders the key itself when a translation is missing. Keys are
       // camelCase with no spaces; real copy in either language is not.
       const text = await page.locator('body').innerText()
-      expect(text.match(/\b(signIn|verify|review|quiz|nav|quest|story|faq)[A-Z]\w+\b/g) ?? []).toEqual([])
+      expect(text.match(/\b(signIn|verify|review|quiz|profile|lists|unsub|subscribed|sentences|nav|quest|story|faq)[A-Z]\w+\b/g) ?? []).toEqual([])
 
       expect(await overflowsSideways(page), 'page scrolls sideways').toBe(false)
       expect(problems).toEqual([])

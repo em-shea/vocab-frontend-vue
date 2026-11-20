@@ -8,3 +8,12 @@
 // Both versions are kept and tested. `/?home=heroes` and `/?home=launch` show
 // one or the other regardless of this flag, for preview and for tests.
 export const HEROES_LAUNCHED = false
+
+// SENTENCES_ENABLED holds back practice sentences (/sentences), as the old
+// app's flag of the same name does. The backend (GET and POST /sentences) is
+// live, but the feature is not ready to announce.
+//   false  /sentences still resolves, so old links do not 404, but it leads to
+//          the profile (home until the profile is ported), as the old app did.
+//   true   the screen itself: write sentences with today's words, and read back
+//          the ones written before.
+export const SENTENCES_ENABLED = false
