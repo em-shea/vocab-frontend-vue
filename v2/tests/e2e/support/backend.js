@@ -61,6 +61,45 @@ export const USER = {
   subscriptions: [{ list_id: HSK1, list_name: 'HSK Level 1', character_set: 'simplified', status: 'subscribed' }]
 }
 
+// --- Profile (/profile, /profile-settings) ---------------------------------
+
+// Dates as the backend keys them: UTC, counted back from today.
+export const daysAgo = (n) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10)
+
+// What GET /user_activity returns: the user record, subscriptions, and ten
+// days of activity keyed by date (vocab: get_user_activity/app.py).
+export function userActivity ({ quizToday = false, subscriptions = USER.subscriptions, alias = '小安', aliasPinyin = 'xiǎo ān' } = {}) {
+  const activity = {}
+  for (let n = 0; n < 10; n++) activity[daysAgo(n)] = { review_words: [] }
+  activity[daysAgo(1)].review_words = [
+    sent(HSK1, daysAgo(1), '学习', '學習', 'xué xí', 'to study; to learn', '1'),
+    sent(HSK2, daysAgo(1), '帮助', '幫助', 'bāng zhù', 'to help', '2')
+  ]
+  activity[daysAgo(0)].review_words = [sent(HSK1, daysAgo(0), '爱护', '愛護', 'ài hù', 'to cherish', '1')]
+  if (quizToday) activity[daysAgo(0)].quiz = profileQuiz('q-today', daysAgo(0), 8, 10)
+  return {
+    ...USER,
+    user_id: 'sub-123',
+    user_alias: alias,
+    user_alias_pinyin: aliasPinyin,
+    user_alias_emoji: 'Not set',
+    date_created: '2021-06-16T23:07:11.623880',
+    subscriptions,
+    activity
+  }
+}
+
+// One saved quiz as GET /quizzes returns it (models.Quiz).
+export const profileQuiz = (id, date, correct, total, listId = HSK1) => ({
+  quiz_id: id,
+  date_created: date,
+  list_id: listId,
+  character_set: 'simplified',
+  question_quantity: total,
+  correct_answers: correct,
+  quiz_data: []
+})
+
 // The Cognito SDK decodes tokens but cannot verify signatures, so an unsigned
 // token with the right claims is enough to look signed in.
 const b64 = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url')
@@ -82,6 +121,14 @@ export async function mockBackend (page, options = {}) {
     reviewEmpty: options.reviewEmpty ?? false,
     review: options.review ?? REVIEW,
     saveQuizFails: options.saveQuizFails ?? false,
+    // Profile (/profile, /profile-settings)
+    userActivity: options.userActivity ?? null,
+    userActivityFails: options.userActivityFails ?? false,
+    user: options.user ?? null,
+    userFails: options.userFails ?? false,
+    quizzes: options.quizzes ?? [],
+    quizzesFails: options.quizzesFails ?? false,
+    updateUserFails: options.updateUserFails ?? false,
     cognito: [],   // X-Amz-Target action names, in order
     api: [],       // { method, path, headers, body }
     unexpected: [] // anything else that tried to leave the page
@@ -148,6 +195,18 @@ export async function mockBackend (page, options = {}) {
       const listId = new URL(request.url()).searchParams.get('list_id')
       return json({ [listId]: state.reviewEmpty ? [] : (state.review[listId] ?? []) })
     }
+    // Profile (/profile, /profile-settings)
+    if (method === 'GET' && path === '/user_activity') {
+      if (state.userActivityFails) return json({ message: 'Internal server error' }, 500)
+      return json(state.userActivity ?? userActivity())
+    }
+    if (method === 'GET' && path === '/quizzes') {
+      if (state.quizzesFails) return json({ success: false, message: 'Failed to retrieve quiz results', data: null }, 502)
+      return json({ success: true, message: 'Successfully retrieved quiz results', data: state.quizzes })
+    }
+    if (method === 'GET' && path === '/user' && state.userFails) return json({ message: 'Internal server error' }, 500)
+    if (method === 'GET' && path === '/user' && state.user) return json(state.user)
+    if (method === 'POST' && path === '/update_user' && state.updateUserFails) return json({ success: false }, 502)
     if (method === 'GET' && path === '/user') return json(USER)
     if (method === 'POST' && path === '/update_login') return json({ success: true })
     if (method === 'POST' && path === '/update_user') return json({ success: true })

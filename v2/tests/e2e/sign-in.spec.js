@@ -23,8 +23,9 @@ test('a subscriber signs in with the emailed link', async ({ page }) => {
   // The email link is a fresh page load, as it is from a mail client.
   await page.goto('/verification?code=good-code')
 
-  await expect(page).toHaveURL((url) => url.pathname === '/')
-  await expect(page.getByRole('link', { name: EMAIL })).toBeVisible()
+  // Sign-in has always led to the profile.
+  await expect(page).toHaveURL((url) => url.pathname === '/profile')
+  await expect(page.getByRole('link', { name: EMAIL })).toHaveAttribute('href', '/profile')
 
   // The API authorizer wants the raw token. "Bearer …" is rejected with a 401,
   // which would sign everyone out of everything, so pin it here.

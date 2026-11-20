@@ -23,7 +23,7 @@ const auth = useAuthStore()
       <RouterLink class="nav__link" exact-active-class="nav__link--current" :to="{ name: 'home' }">{{ t('navHome') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
-      <RouterLink class="nav__link nav__link--strong" :to="{ name: 'signin' }">
+      <RouterLink class="nav__link nav__link--strong" :to="{ name: auth.signedIn ? 'profile' : 'signin' }">
         {{ auth.signedIn ? auth.email : t('navSignIn') }}
       </RouterLink>
     </nav>

@@ -25,7 +25,10 @@ const SCREENS = [
     // Only reachable with a sign-in in progress.
     before: (page) => page.addInitScript(() =>
       window.localStorage.setItem('localSessionData', JSON.stringify({ username: 'learner@example.com', session: 's' })))
-  }
+  },
+  // Profile screens: signed in, so they show themselves rather than sign-in.
+  { name: 'profile', path: '/profile', before: async (page) => (await import('./support/backend')).signedIn(page) },
+  { name: 'profile settings', path: '/profile-settings', before: async (page) => (await import('./support/backend')).signedIn(page) }
 ]
 
 for (const screen of SCREENS) {

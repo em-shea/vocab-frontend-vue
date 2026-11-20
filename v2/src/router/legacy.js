@@ -28,11 +28,8 @@ export const LEGACY_PATHS = [
 ]
 
 export const NOT_YET_PORTED = [
-  '/profile',
-  '/profile-settings',
   '/manage-lists',
   '/sentences',
   '/unsub',
-  '/subscribed',
-  '/my-quizzes'
+  '/subscribed'
 ]

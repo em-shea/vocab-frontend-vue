@@ -37,6 +37,22 @@ export const routes = [
     component: () => import('../views/VerificationView.vue')
   },
   {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/ProfileView.vue')
+  },
+  {
+    path: '/profile-settings',
+    name: 'profile-settings',
+    component: () => import('../views/ProfileSettingsView.vue')
+  },
+  {
+    // The old site's /my-quizzes was an unfinished stub. Quiz history now
+    // lives on the profile, so the path goes there, keeping ?lang= and ?char=.
+    path: '/my-quizzes',
+    redirect: (to) => ({ name: 'profile', query: to.query })
+  },
+  {
     // The tokens and primitives page, kept for design review.
     path: '/styleguide',
     name: 'styleguide',
