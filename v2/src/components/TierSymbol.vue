@@ -6,7 +6,7 @@ let nextId = 0
 import { computed } from 'vue'
 
 // The tier emblem on a hero card, drawn like a Magic: The Gathering set symbol:
-// a metallic vertical gradient inside a crisp navy outline, a hard 2px 2px navy
+// a metallic vertical gradient with no outline, a light hard 2px 2px navy
 // offset shadow (the house hard-shadow style), and the hero's rank on top in
 // paper with a navy halo. Heavenly Spirits (天罡) get a cloud ring, in gold
 // fading to vermilion; Earthly Fiends (地煞) get peaks, in silver fading to navy.
@@ -45,7 +45,7 @@ const icon = computed(() => ICONS[props.tier])
 
 // Geometry in CSS px, converted to 512-box units (u per px) so the outline and
 // shadow come out as whole device-friendly widths whatever the size.
-const OUTLINE = 1.5
+const OUTLINE = 0 // outline removed 2026-11-21; kept as a knob
 const SHADOW = 2
 const px = computed(() => (props.size === 'sm' ? 32 : 44))
 const iconPx = computed(() => px.value - 2 * OUTLINE - SHADOW)
@@ -75,13 +75,12 @@ const ty = computed(() => icon.value.cy + font.value * 0.36)
         <stop offset="1" :stop-color="icon.stops[2]" />
       </linearGradient>
       <filter :id="`${uid}-f`" filterUnits="userSpaceOnUse" x="-100" y="-100" :width="512 + 200 + 2 * u" :height="512 + 200 + 2 * u" color-interpolation-filters="sRGB">
-        <feMorphology in="SourceAlpha" operator="dilate" :radius="OUTLINE * u" result="grown" />
-        <feFlood flood-color="#1B2140" />
-        <feComposite in2="grown" operator="in" result="outline" />
-        <feOffset in="outline" :dx="SHADOW * u" :dy="SHADOW * u" result="shadow" />
+        <!-- No outline (Emily, 2026-11-21): just a light hard offset shadow under the shape. -->
+        <feFlood flood-color="#1B2140" flood-opacity="0.35" />
+        <feComposite in2="SourceAlpha" operator="in" result="tint" />
+        <feOffset in="tint" :dx="SHADOW * u" :dy="SHADOW * u" result="shadow" />
         <feMerge>
           <feMergeNode in="shadow" />
-          <feMergeNode in="outline" />
           <feMergeNode in="SourceGraphic" />
         </feMerge>
       </filter>
