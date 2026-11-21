@@ -130,3 +130,17 @@ export function savePayload ({ entry, text, sentenceId, characterSet }) {
     word: storedWord(entry.word)
   }
 }
+
+/**
+ * Where to find example sentences for a word: the same sites as the daily
+ * email's "Example sentences" link (vocab: send_daily_email/app.py). HSK 1–3
+ * go to YellowBridge's sentence search, everything else to Baidu Translate.
+ * The email decides by list name; the level each word carries is the same thing.
+ */
+export function exampleLink (word, characters) {
+  const text = encodeURIComponent(characters || word?.simplified || '')
+  if (!text) return null
+  return ['1', '2', '3'].includes(String(word?.hsk_level ?? ''))
+    ? `https://www.yellowbridge.com/chinese/sentsearch.php?word=${text}`
+    : `https://fanyi.baidu.com/#zh/en/${text}`
+}

@@ -272,5 +272,7 @@ export default {
   "sentencesEmpty": "请先写一个句子。",
   "sentencesWritten": "我的句子",
   "sentencesNone": "你还没有写过句子。",
-  "sentencesMore": "显示更多"
+  "sentencesMore": "显示更多",
+  "sentencesExamples": "查看例句",
+  "sentencesNewTab": "（在新标签页中打开）"
 }

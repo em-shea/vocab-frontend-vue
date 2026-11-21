@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  todayKey, todaysWords, wordsBySentenceId, sentencesFrom, activityFrom, newestFirst, upsert,
+  todayKey, todaysWords, wordsBySentenceId, sentencesFrom, activityFrom, newestFirst, upsert, exampleLink,
   clean, newSentenceId, storedWord, savePayload
 } from '../../src/lib/sentences'
 
@@ -124,5 +124,21 @@ describe('saving', () => {
       word: storedWord(word('a', '朋友'))
     })
     expect(savePayload({ entry: sent('L1', 'd', word('a', 'x')), text: 'x', sentenceId: 'i', characterSet: 'nonsense' }).character_set).toBe('simplified')
+  })
+})
+
+describe('exampleLink', () => {
+  it('sends HSK 1–3 words to YellowBridge, like the daily email', () => {
+    expect(exampleLink({ hsk_level: '1' }, '朋友')).toBe('https://www.yellowbridge.com/chinese/sentsearch.php?word=%E6%9C%8B%E5%8F%8B')
+    expect(exampleLink({ hsk_level: 3 }, '學習')).toBe('https://www.yellowbridge.com/chinese/sentsearch.php?word=%E5%AD%B8%E7%BF%92')
+  })
+
+  it('sends other levels to Baidu Translate', () => {
+    expect(exampleLink({ hsk_level: '4' }, '环境')).toBe('https://fanyi.baidu.com/#zh/en/%E7%8E%AF%E5%A2%83')
+    expect(exampleLink({}, '环境')).toBe('https://fanyi.baidu.com/#zh/en/%E7%8E%AF%E5%A2%83')
+  })
+
+  it('gives no link without a word', () => {
+    expect(exampleLink({}, '')).toBeNull()
   })
 })

@@ -123,7 +123,7 @@ const quizLink = computed(() =>
 </template>
 
 <style scoped>
-.profile { display: flex; flex-direction: column; gap: var(--s-12); max-width: 52rem; }
+.profile { display: flex; flex-direction: column; gap: var(--s-12); width: 100%; max-width: 52rem; margin-inline: auto; }
 
 .profile__state {
   display: flex;

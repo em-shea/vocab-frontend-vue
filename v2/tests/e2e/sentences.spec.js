@@ -46,6 +46,10 @@ test.describe('switched on', () => {
     await expect(today.getByLabel('A sentence with 朋友')).toHaveValue('')
     // Written earlier today: there to edit.
     await expect(today.getByLabel('A sentence with 爱护')).toHaveValue('请爱护你的书。')
+    // Ideas for a sentence, from the same site as the daily email (HSK 1 → YellowBridge).
+    const examples = today.getByRole('link', { name: /Example sentences/ }).first()
+    await expect(examples).toHaveAttribute('href', /^https:\/\/www\.yellowbridge\.com\/chinese\/sentsearch\.php\?word=/)
+    await expect(examples).toHaveAttribute('target', '_blank')
     // The label is for screen readers only; the word above the field says it on screen.
     const label = await today.locator('label', { hasText: 'A sentence with 朋友' }).boundingBox()
     expect(label.width * label.height).toBeLessThanOrEqual(1)

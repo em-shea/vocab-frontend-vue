@@ -273,5 +273,7 @@ export default {
   "sentencesEmpty": "Write a sentence first.",
   "sentencesWritten": "Your sentences",
   "sentencesNone": "You have not written any sentences yet.",
-  "sentencesMore": "Show more"
+  "sentencesMore": "Show more",
+  "sentencesExamples": "Example sentences",
+  "sentencesNewTab": "(opens in a new tab)"
 }

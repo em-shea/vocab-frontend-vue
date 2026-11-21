@@ -224,7 +224,7 @@ const reviewLink = computed(() => ({ name: 'review', query: { list_id: listId.va
 </template>
 
 <style scoped>
-.quiz { display: flex; flex-direction: column; gap: var(--s-6); max-width: 46rem; }
+.quiz { display: flex; flex-direction: column; gap: var(--s-6); width: 100%; max-width: 46rem; margin-inline: auto; }
 
 .quiz__intro { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); }
 .quiz__title { font-size: var(--t-xl); }
