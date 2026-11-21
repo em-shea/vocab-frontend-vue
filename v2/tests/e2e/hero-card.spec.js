@@ -443,16 +443,18 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
-test('tier emblems: cloud ring for Heavenly Spirits, peaks for Earthly Fiends, with the rank on top', async ({ page }) => {
+test('tier emblems: cloud ring for Heavenly Spirits, peaks for Earthly Fiends, rank beside the icon', async ({ page }) => {
   await open(page)
-  const info = (id) => card(page, id).locator('svg[data-tier]').first().evaluate((el) => {
-    const b = el.getBoundingClientRect()
-    const t = el.querySelector('text')
-    const cs = getComputedStyle(t)
+  const info = (id) => card(page, id).locator('[data-tier]').first().evaluate((el) => {
+    const svg = el.querySelector('svg').getBoundingClientRect()
+    const num = el.querySelector('.tier-symbol__rank')
+    const nb = num.getBoundingClientRect()
+    const cs = getComputedStyle(num)
     return {
-      tier: el.dataset.tier, icon: el.dataset.icon, w: b.width, h: b.height,
-      hidden: el.getAttribute('aria-hidden'), text: t.textContent.trim(),
-      weight: cs.fontWeight, paint: cs.paintOrder, tabular: cs.fontVariantNumeric
+      tier: el.dataset.tier, icon: el.dataset.icon, w: svg.width, h: svg.height,
+      hidden: el.getAttribute('aria-hidden'), text: num.textContent.trim(),
+      beside: nb.left >= svg.right, font: cs.fontFamily, tabular: cs.fontVariantNumeric,
+      svgText: el.querySelectorAll('svg text').length
     }
   })
   for (const id of ['A-front', 'B-front', 'C-front', 'A-front-imm', 'B-front-imm', 'C-front-imm', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
@@ -461,8 +463,9 @@ test('tier emblems: cloud ring for Heavenly Spirits, peaks for Earthly Fiends, w
     expect(st.icon, id).toBe('cloud-ring')
     expect(st.text, id).toMatch(/^(5|6)$/)
     expect(st.hidden, id).toBe('true')
-    expect(st.weight, id).toBe('800')
-    expect(st.paint, id).toMatch(/^stroke/)
+    expect(st.beside, id).toBe(true)
+    expect(st.svgText, id).toBe(0)
+    expect(st.font, id).toContain('Instrument Sans')
     expect(st.tabular, id).toContain('tabular-nums')
   }
   for (const id of ['A-earthly', 'C-earthly']) {
@@ -471,27 +474,21 @@ test('tier emblems: cloud ring for Heavenly Spirits, peaks for Earthly Fiends, w
     expect(st.icon, id).toBe('peaks')
     expect(st.text, id).toBe('59')
   }
-  // The emblem's rank text is visible, in the viewport box of the emblem.
-  await expect(card(page, 'B-front').locator('svg[data-tier] text')).toBeVisible()
-  // Sizes: 2.75rem, and 2rem in compact.
-  expect((await info('A-front')).w).toBe(44)
-  expect((await info('A-front')).h).toBe(44)
-  expect((await info('B-front')).w).toBe(44)
-  expect((await info('C-front')).w).toBe(32)
-  expect((await info('C-front')).h).toBe(32)
+  // Sizes: 1.5rem icon, and 1.125rem in compact.
+  expect((await info('A-front')).w).toBe(24)
+  expect((await info('B-front')).h).toBe(24)
+  expect((await info('C-front')).w).toBe(18)
 })
 
-test('tier emblem gradient and filter ids are unique across the page', async ({ page }) => {
+test('tier emblem gradient ids are unique across the page', async ({ page }) => {
   await open(page)
-  const ids = await page.evaluate(() => [...document.querySelectorAll('svg[data-tier] [id]')].map((el) => el.id))
-  const n = await page.locator('svg[data-tier]').count()
+  const ids = await page.evaluate(() => [...document.querySelectorAll('[data-tier] svg [id]')].map((el) => el.id))
+  const n = await page.locator('[data-tier] svg').count()
   expect(n).toBeGreaterThan(10)
-  expect(ids.length).toBe(n * 2)
-  expect(new Set(ids).size).toBe(ids.length)
+  expect(ids.length).toBe(n)
   const all = await page.evaluate(() => [...document.querySelectorAll('[id]')].map((el) => el.id))
   expect(new Set(all).size).toBe(all.length)
-  // Each emblem's gradient exists and is referenced by its own path.
-  const ok = await page.evaluate(() => [...document.querySelectorAll('svg[data-tier]')].every((svg) => {
+  const ok = await page.evaluate(() => [...document.querySelectorAll('[data-tier] svg')].every((svg) => {
     const m = /url\(#(.+)\)/.exec(svg.querySelector('path').getAttribute('fill'))
     return m && svg.querySelector(`linearGradient[id="${m[1]}"]`)
   }))

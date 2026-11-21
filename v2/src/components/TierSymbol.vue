@@ -6,19 +6,17 @@ let nextId = 0
 import { computed } from 'vue'
 
 // The tier emblem on a hero card, drawn like a Magic: The Gathering set symbol:
-// a metallic vertical gradient with no outline and no shadow, and the hero's rank on top in
-// paper with a navy halo. Heavenly Spirits (天罡) get a cloud ring, in gold
-// fading to vermilion; Earthly Fiends (地煞) get peaks, in silver fading to navy.
+// a small metallic icon (no outline, no shadow) with the hero's rank beside it
+// in the plain UI face. Heavenly Spirits (天罡) get a cloud ring, in gold fading
+// to vermilion; Earthly Fiends (地煞) get peaks, in silver fading to navy.
 //
 // Icons: "Cloud ring" and "Peaks" by Lorc, https://game-icons.net, CC BY 3.0
 // (credited in the print viewer and in CREDITS.md). The paths are inlined from
 // the 512 x 512 originals.
 //
-// `size` 'md' is 2.75rem (44px), 'sm' is 2rem (32px). The SVG is the whole
-// footprint: the outline and the shadow are drawn inside it, so nothing is
-// clipped and the layout box is the same as the old round/square seal. It is
-// decorative (aria-hidden); the card carries the rank and tier in screen-reader
-// text.
+// `size` 'md' is a 1.5rem icon with 16px number; 'sm' a 1.125rem icon with 14px
+// number. Decorative (aria-hidden); the card carries the rank and tier in
+// screen-reader text.
 const props = defineProps({
   tier: { type: String, required: true, validator: (v) => ['heavenly', 'earthly'].includes(v) },
   rank: { type: Number, required: true },
@@ -41,72 +39,39 @@ const ICONS = {
 
 const uid = `ts${nextId++}`
 const icon = computed(() => ICONS[props.tier])
-
-// Geometry in CSS px, converted to 512-box units (u per px) so the outline and
-// shadow come out as whole device-friendly widths whatever the size.
-const OUTLINE = 0 // outline removed 2026-11-21; kept as a knob
-const SHADOW = 0 // shadow removed 2026-11-21 (Emily); filter kept unused for a quick revert
-const px = computed(() => (props.size === 'sm' ? 32 : 44))
-const iconPx = computed(() => px.value - 2 * OUTLINE - SHADOW)
-const u = computed(() => 512 / iconPx.value)
-const viewBox = computed(() => `${-OUTLINE * u.value} ${-OUTLINE * u.value} ${px.value * u.value} ${px.value * u.value}`)
-const digits = computed(() => String(props.rank).length)
-const fontPx = computed(() => iconPx.value * (digits.value >= 3 ? 0.36 : digits.value === 2 ? 0.46 : 0.52))
-const font = computed(() => fontPx.value * u.value)
-// Optical centre: the middle of the cap height sits on the mass centre.
-const ty = computed(() => icon.value.cy + font.value * 0.36)
 </script>
 
 <template>
-  <svg
+  <!-- Decorative: the card's screen-reader text already gives rank and tier. -->
+  <span
     class="tier-symbol"
     :class="`tier-symbol--${size}`"
     :data-tier="tier"
     :data-icon="tier === 'heavenly' ? 'cloud-ring' : 'peaks'"
-    :viewBox="viewBox"
     aria-hidden="true"
-    focusable="false"
   >
-    <defs>
-      <linearGradient :id="`${uid}-g`" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" :stop-color="icon.stops[0]" />
-        <stop offset="0.5" :stop-color="icon.stops[1]" />
-        <stop offset="1" :stop-color="icon.stops[2]" />
-      </linearGradient>
-      <filter :id="`${uid}-f`" filterUnits="userSpaceOnUse" x="-100" y="-100" :width="512 + 200 + 2 * u" :height="512 + 200 + 2 * u" color-interpolation-filters="sRGB">
-        <!-- No outline (Emily, 2026-11-21): just a light hard offset shadow under the shape. -->
-        <feFlood flood-color="#1B2140" flood-opacity="0.35" />
-        <feComposite in2="SourceAlpha" operator="in" result="tint" />
-        <feOffset in="tint" :dx="SHADOW * u" :dy="SHADOW * u" result="shadow" />
-        <feMerge>
-          <feMergeNode in="shadow" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-    <path :d="icon.d" :fill="`url(#${uid}-g)`" />
-    <text
-      class="tier-symbol__rank"
-      :x="icon.cx"
-      :y="ty"
-      text-anchor="middle"
-      :font-size="font"
-      :stroke-width="font * 0.17"
-    >{{ rank }}</text>
-  </svg>
+    <svg class="tier-symbol__icon" viewBox="0 0 512 512" focusable="false">
+      <defs>
+        <linearGradient :id="`${uid}-g`" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" :stop-color="icon.stops[0]" />
+          <stop offset="0.5" :stop-color="icon.stops[1]" />
+          <stop offset="1" :stop-color="icon.stops[2]" />
+        </linearGradient>
+      </defs>
+      <path :d="icon.d" :fill="`url(#${uid}-g)`" />
+    </svg>
+    <span class="tier-symbol__rank">{{ rank }}</span>
+  </span>
 </template>
 
 <style scoped>
-.tier-symbol { flex: none; display: block; overflow: visible; }
-.tier-symbol--md { width: 2.75rem; height: 2.75rem; }
-.tier-symbol--sm { width: 2rem; height: 2rem; }
-.tier-symbol__rank {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  fill: var(--c-ground);
-  stroke: var(--c-ink);
-  stroke-linejoin: round;
-  paint-order: stroke fill;
-}
+/* Rank sits beside the symbol in the plain UI face (2026-11-21: Emily didn't
+ * like the number overlaid on the shape), like a set symbol and its number. */
+.tier-symbol { flex: none; display: inline-flex; align-items: center; gap: 0.25rem; color: var(--c-ink); }
+.tier-symbol__icon { display: block; flex: none; }
+.tier-symbol__rank { font-family: var(--f-ui); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
+.tier-symbol--md .tier-symbol__icon { width: 1.5rem; height: 1.5rem; }
+.tier-symbol--md .tier-symbol__rank { font-size: var(--t-body-lg); }
+.tier-symbol--sm .tier-symbol__icon { width: 1.125rem; height: 1.125rem; }
+.tier-symbol--sm .tier-symbol__rank { font-size: var(--t-base); }
 </style>
