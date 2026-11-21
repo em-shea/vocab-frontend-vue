@@ -1,6 +1,8 @@
 <script setup>
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { signInRoute } from '../lib/signInReturn'
 
 import PageShell from '../components/PageShell.vue'
 import AppButton from '../components/AppButton.vue'
@@ -22,6 +24,7 @@ import {
 // lib/sentences.js; this file loads, saves and keeps the page in step.
 
 const { t } = useI18n()
+const route = useRoute()
 const prefs = usePreferencesStore()
 
 const status = ref('loading') // loading | signed-out | error | ready
@@ -117,7 +120,7 @@ const hasWords = computed(() => words.value.length > 0)
 
     <div v-else-if="status === 'signed-out'" class="sentences__state">
       <p>{{ t('sentencesSignIn') }}</p>
-      <AppButton as="RouterLink" :to="{ name: 'signin' }" variant="seal">{{ t('navSignIn') }}</AppButton>
+      <AppButton as="RouterLink" :to="signInRoute(route.fullPath)" variant="seal">{{ t('navSignIn') }}</AppButton>
     </div>
 
     <div v-else-if="status === 'error'" class="sentences__state" role="alert">

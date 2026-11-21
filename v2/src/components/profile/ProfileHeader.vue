@@ -2,13 +2,13 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppButton from '../AppButton.vue'
-import { profileName, rubyPairs, sealCharacter } from '../../lib/profile'
+import { profileName, rubyPairs } from '../../lib/profile'
 
 // Who is signed in: their chosen name (or their email until they pick one),
 // when they started, and the ways to their settings and lists.
 //
-// The old screen showed an emoji avatar. The site uses no emoji now, so the
-// name's surname is set as a seal instead, the way the nav's 好 is.
+// No profile picture for now (Emily, 2026-11-20): the old emoji avatar and its
+// picker are gone. Something hero-related may take its place once heroes launch.
 
 const props = defineProps({
   user: { type: Object, required: true }
@@ -18,7 +18,6 @@ const { t, locale } = useI18n()
 
 const name = computed(() => profileName(props.user))
 const ruby = computed(() => (name.value ? rubyPairs(name.value.name, name.value.pinyin) : null))
-const seal = computed(() => sealCharacter(props.user))
 
 const since = computed(() => {
   const date = new Date(props.user.date_created ?? '')
@@ -30,8 +29,6 @@ const since = computed(() => {
 <template>
   <section class="head">
     <div class="head__who">
-      <span v-if="seal" class="hanzi head__seal" aria-hidden="true">{{ seal }}</span>
-
       <div class="head__names">
         <h1 v-if="name" class="head__title" lang="zh">
           <ruby v-if="ruby" class="hanzi"><template v-for="pair in ruby" :key="pair.char">{{ pair.char }}<rt class="pinyin"><span>{{ pair.pinyin }}</span></rt></template></ruby>
@@ -78,17 +75,6 @@ const since = computed(() => {
 
 .head__who { display: flex; align-items: center; gap: var(--s-4); min-width: 0; }
 
-.head__seal {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 4rem;
-  height: 4rem;
-  background-color: var(--c-seal);
-  color: var(--c-on-red);
-  font-size: var(--t-2xl);
-  line-height: 1;
-}
 
 .head__names { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); min-width: 0; }
 

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { signInRoute } from '../lib/signInReturn'
 import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
@@ -26,6 +27,7 @@ import { latestWords, todaysQuiz, quizHistory } from '../lib/profile'
 // The rules are in lib/profile.js; this file only loads and lays out.
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const prefs = usePreferencesStore()
@@ -64,7 +66,7 @@ onMounted(async () => {
   // As the old screen did, a signed-out visitor is sent to sign in, which
   // brings them back here once the emailed link is followed.
   if (!(await getSession())) {
-    router.replace({ name: 'signin' })
+    router.replace(signInRoute(route.fullPath))
     return
   }
   lists.load()

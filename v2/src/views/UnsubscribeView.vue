@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { signInRoute } from '../lib/signInReturn'
 
 import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
@@ -43,7 +44,7 @@ const chosen = computed(() => options.value.find((o) => o.unique_list_id === cho
 const setName = (list) => t(list.character_set === 'traditional' ? 'listsTraditional' : 'listsSimplified')
 const optionLabel = (list) => `${list.list_name || t('unsubEmailedList')} · ${setName(list)}`
 const farewell = computed(() => (prefs.isTraditional ? '希望我們後會有期！' : '希望我们后会有期！'))
-const manageLink = computed(() => (auth.signedIn ? { name: 'manage-lists' } : { name: 'signin' }))
+const manageLink = computed(() => (auth.signedIn ? { name: 'manage-lists' } : signInRoute('/manage-lists')))
 
 onMounted(() => {
   const { email: address, list } = readUnsubLink(route.query)

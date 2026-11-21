@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { signInRoute } from '../lib/signInReturn'
 import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
@@ -21,6 +22,7 @@ import { nameOptions, namePayload, profileName, NOT_SET } from '../lib/profile'
 // untouched, because only the name fields are sent.
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
@@ -45,7 +47,7 @@ async function load () {
 
 onMounted(async () => {
   if (!(await getSession())) {
-    router.replace({ name: 'signin' })
+    router.replace(signInRoute(route.fullPath))
     return
   }
   await load()

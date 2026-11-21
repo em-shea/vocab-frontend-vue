@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { signInRoute } from '../lib/signInReturn'
 import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
@@ -23,6 +24,7 @@ import { catalogue, subscribed, available, adding, removing, subscriptionsPayloa
 // FIX: signed out, the old screen threw and showed an empty page.
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const prefs = usePreferencesStore()
@@ -102,7 +104,7 @@ onMounted(load)
 
       <div v-else-if="status === 'signed-out'" class="lists__state">
         <p>{{ t('listsSignedOut') }}</p>
-        <AppButton as="RouterLink" variant="seal" :to="{ name: 'signin' }">{{ t('navSignIn') }}</AppButton>
+        <AppButton as="RouterLink" variant="seal" :to="signInRoute(route.fullPath)">{{ t('navSignIn') }}</AppButton>
       </div>
 
       <div v-else-if="status === 'error'" class="lists__state" role="alert">

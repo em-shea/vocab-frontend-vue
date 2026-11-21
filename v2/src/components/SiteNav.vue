@@ -1,5 +1,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { signInRoute } from '../lib/signInReturn'
 import LanguageMenu from './LanguageMenu.vue'
 import { useAuthStore } from '../stores/auth'
 
@@ -7,6 +9,7 @@ import { useAuthStore } from '../stores/auth'
 
 const { t } = useI18n()
 const auth = useAuthStore()
+const route = useRoute()
 </script>
 
 <template>
@@ -23,7 +26,7 @@ const auth = useAuthStore()
       <RouterLink class="nav__link" exact-active-class="nav__link--current" :to="{ name: 'home' }">{{ t('navHome') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
-      <RouterLink class="nav__link nav__link--strong" :to="{ name: auth.signedIn ? 'profile' : 'signin' }">
+      <RouterLink class="nav__link nav__link--strong" :to="auth.signedIn ? { name: 'profile' } : signInRoute(route.fullPath)">
         {{ auth.signedIn ? auth.email : t('navSignIn') }}
       </RouterLink>
     </nav>

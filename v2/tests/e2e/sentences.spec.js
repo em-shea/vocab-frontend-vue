@@ -46,6 +46,9 @@ test.describe('switched on', () => {
     await expect(today.getByLabel('A sentence with 朋友')).toHaveValue('')
     // Written earlier today: there to edit.
     await expect(today.getByLabel('A sentence with 爱护')).toHaveValue('请爱护你的书。')
+    // The label is for screen readers only; the word above the field says it on screen.
+    const label = await today.locator('label', { hasText: 'A sentence with 朋友' }).boundingBox()
+    expect(label.width * label.height).toBeLessThanOrEqual(1)
     // Yesterday's word is not offered: a sentence is always filed under today.
     await expect(today.getByText('学习')).toHaveCount(0)
 

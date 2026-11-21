@@ -50,7 +50,8 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
     <p v-if="word.definition" class="write__definition">{{ word.definition }}</p>
 
     <form class="write__form" novalidate @submit.prevent="submit">
-      <label class="label" :for="id">{{ t('sentencesField', { word: characters }) }}</label>
+      <!-- Not shown (Emily, 2026-11-20): the word sits right above the field. -->
+      <label class="sr-only" :for="id">{{ t('sentencesField', { word: characters }) }}</label>
       <div class="write__row">
         <input
           :id="id"

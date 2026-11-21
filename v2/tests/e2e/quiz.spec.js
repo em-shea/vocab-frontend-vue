@@ -212,7 +212,7 @@ test('a failed load offers a retry that works once the API is back', async ({ pa
 test('reads in Chinese', async ({ page }) => {
   await mockBackend(page, { review: QUIZ_REVIEW })
   await page.goto('/quiz?lang=cn&ques=5')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('HSK Level 1测验')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('HSK Level 1 测验')
   await expect(page.getByText('第 1 题，共 5 题')).toBeVisible()
   await expect(page.getByText(/^选择(词义|拼音|汉字)$/)).toBeAttached()
 })

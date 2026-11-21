@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  NOT_SET, PROFILE_NAMES, isSet, profileName, rubyPairs, sealCharacter, namePayload, nameOptions,
+  NOT_SET, PROFILE_NAMES, isSet, profileName, rubyPairs, namePayload, nameOptions,
   todayKey, todaysQuiz, latestWords, quizHistory, scorePercent
 } from '../../src/lib/profile'
 
@@ -23,11 +23,6 @@ describe('profile name', () => {
     expect(rubyPairs('小安', 'xiǎo ān')).toEqual([{ char: '小', pinyin: 'xiǎo' }, { char: '安', pinyin: 'ān' }])
     expect(rubyPairs('小安', 'xiǎoān')).toBeNull()
     expect(rubyPairs('小安', '')).toBeNull()
-  })
-
-  it('sets the surname as the seal', () => {
-    expect(sealCharacter({ user_alias: '小安' })).toBe('安')
-    expect(sealCharacter({ user_alias: NOT_SET })).toBeNull()
   })
 
   it('writes the old screen\'s fields, clearing with "Not set"', () => {

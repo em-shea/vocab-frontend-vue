@@ -61,7 +61,7 @@ cn: 集齐一百单八将
 
 key: questBody
 en: One Chinese word arrives by email each day, with a short quiz after it. Keep practising and the 108 outlaws of Liangshan join you one by one.
-cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位一位入伙。
+cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位接一位入伙。
 
 key: launchHeadline
 en: One Chinese vocabulary word a day
@@ -69,7 +69,7 @@ cn: 每天一个中文词
 
 key: launchBody
 en: Expand your Chinese vocabulary with daily words and quizzes.
-cn: 每天早上用邮件收到一个新词，再做个小测验帮你记住。
+cn: 每天学一个新词，做个小测验，扩大你的中文词汇量。
 
 key: chooseLevel
 en: Choose an HSK Level
@@ -95,7 +95,7 @@ cn: 选择你的等级
 
 key: levelBody
 en: Choose one of the six standardized Hanyu Shuiping Kaoshi (HSK) levels and see sample words.
-cn: 六个 HSK 等级任选一个，查看示例词汇。
+cn: 汉语水平考试（HSK）共六个等级，任选一级，看看示例词汇。
 
 key: launchingSoon
 en: Launching soon
@@ -167,7 +167,7 @@ cn: 前边；在前方；上文
 
 key: studyHeadline
 en: Practise and track your progress
-cn: 练习并跟踪你的进度
+cn: 练习并查看学习进度
 
 key: quizHeadline
 en: Take quizzes
@@ -183,7 +183,7 @@ cn: 看例句
 
 key: examplesBody
 en: Find example sentences for every word you have been sent.
-cn: 为每个收到的词查找例句。
+cn: 收到的每个词都有例句可查。
 
 key: studyReviewHeadline
 en: Review past words
@@ -221,7 +221,7 @@ cn: 只要坚持练习，每周都有新的好汉入伙。
 
 key: storyBody
 en: The 108 outlaws of Mount Liang defied the court and swore brotherhood in the marshes below the mountain. Their story, Shuihuzhuan (The Water Margin), is one of the four great classic novels of Chinese literature.
-cn: 梁山上的一百零八位好汉对抗朝廷，在梁山泊结为兄弟。他们的故事就是《水浒传》，中国四大名著之一。
+cn: 梁山泊一百单八将反抗朝廷，聚义结为兄弟。他们的故事就是《水浒传》，中国古典四大名著之一。
 
 key: heroName
 en: 鲁智深
@@ -403,7 +403,7 @@ cn: 爱惜；保护
 
 key: mockMeaningXuexi
 en: to study
-cn: 获取知识
+cn: 学；学知识
 
 key: mockMeaningPengyou
 en: friend
@@ -459,7 +459,7 @@ cn: 还没有注册？
 
 key: signInNoAccountLink
 en: Choose a level on the home page and subscribe.
-cn: 在首页选择级别并订阅。
+cn: 在首页选择等级并订阅。
 
 key: verifyTitle
 en: Sign-in link sent
@@ -640,3 +640,455 @@ cn: 查看全图
 key: heroCardClose
 en: Close
 cn: 关闭
+
+key: quizTitle
+en: {list} quiz
+cn: {list} 测验
+
+key: quizChange
+en: Change quiz
+cn: 更改测验
+
+key: quizList
+en: Vocab list
+cn: 词表
+
+key: quizRange
+en: Words sent in
+cn: 发送时间
+
+key: quizRangeDays
+en: Past {days} days
+cn: 过去 {days} 天
+
+key: quizLength
+en: Questions
+cn: 题数
+
+key: quizStart
+en: Start quiz
+cn: 开始测验
+
+key: quizCancel
+en: Cancel
+cn: 取消
+
+key: quizProgress
+en: Question {n} of {total}
+cn: 第 {n} 题，共 {total} 题
+
+key: quizChooseDefinition
+en: Choose the meaning
+cn: 选择词义
+
+key: quizChoosePinyin
+en: Choose the pinyin
+cn: 选择拼音
+
+key: quizChooseCharacters
+en: Choose the characters
+cn: 选择汉字
+
+key: quizCorrect
+en: Correct.
+cn: 答对了。
+
+key: quizWrong
+en: Not quite. The answer is {answer}.
+cn: 不对。正确答案是{answer}。
+
+key: quizNext
+en: Next question
+cn: 下一题
+
+key: quizFinish
+en: See your score
+cn: 查看成绩
+
+key: quizShowWords
+en: Show answers
+cn: 显示答案
+
+key: quizHideWords
+en: Hide answers
+cn: 隐藏答案
+
+key: quizLoading
+en: Loading words…
+cn: 正在加载词语…
+
+key: quizError
+en: We could not load the words. Check your connection and try again.
+cn: 无法加载词语，请检查网络后重试。
+
+key: quizRetry
+en: Try again
+cn: 重试
+
+key: quizTooFew
+en: There are not enough words in that time for a quiz. Try a longer period.
+cn: 这段时间内的词语太少，无法组成测验。请选择更长的时间。
+
+key: quizScoreTitle
+en: Quiz complete
+cn: 测验完成
+
+key: quizScore
+en: You got {correct} of {total} right ({percent}).
+cn: 答对 {correct} 题，共 {total} 题（{percent}）。
+
+key: quizAgain
+en: Another quiz
+cn: 再测一次
+
+key: quizReviewWords
+en: Review these words
+cn: 复习这些词
+
+key: quizSaving
+en: Saving your results…
+cn: 正在保存成绩…
+
+key: quizSaved
+en: Your results are saved.
+cn: 成绩已保存。
+
+key: quizSaveFailed
+en: We could not save your results.
+cn: 无法保存成绩。
+
+key: quizSaveRetry
+en: Try saving again
+cn: 重新保存
+
+key: quizSignIn
+en: Sign in to keep your quiz results.
+cn: 登录后可保存测验成绩。
+
+key: profileTitle
+en: Your profile
+cn: 个人主页
+
+key: profileLoading
+en: Loading your profile…
+cn: 正在加载你的个人主页…
+
+key: profileError
+en: We could not load your profile. Check your connection and try again.
+cn: 无法加载你的个人主页。请检查网络后重试。
+
+key: profileRetry
+en: Try again
+cn: 重试
+
+key: profileSince
+en: Studying since
+cn: 开始学习于
+
+key: profileSetName
+en: Choose a profile name
+cn: 设置昵称
+
+key: profileSettings
+en: Profile settings
+cn: 个人设置
+
+key: profileManageLists
+en: Manage lists
+cn: 管理词表
+
+key: profileSignOut
+en: Sign out
+cn: 退出登录
+
+key: profileWordsTitle
+en: Today's word | Today's words
+cn: 今日词语 | 今日词语
+
+key: profileNoLists
+en: You are not subscribed to any lists.
+cn: 你还没有订阅任何词表。
+
+key: profileQuiz
+en: Quiz
+cn: 测验
+
+key: profileReview
+en: Review
+cn: 复习
+
+key: profileQuizzesTitle
+en: Quizzes
+cn: 测验
+
+key: profileQuizDone
+en: Today's quiz is done: {correct} of {total} right.
+cn: 今天的测验已完成：答对 {correct} / {total} 题。
+
+key: profileQuizTake
+en: Take today's quiz
+cn: 做今天的测验
+
+key: profileHistoryCaption
+en: Quizzes in the past week
+cn: 过去一周的测验
+
+key: profileHistoryDate
+en: Date
+cn: 日期
+
+key: profileHistoryList
+en: List
+cn: 词表
+
+key: profileHistoryScore
+en: Score
+cn: 得分
+
+key: profileHistoryScoreValue
+en: {correct} of {total} ({percent})
+cn: {correct} / {total}（{percent}）
+
+key: profileHistoryEmpty
+en: No quizzes in the past week.
+cn: 过去一周没有测验记录。
+
+key: profileHistoryError
+en: We could not load your past quizzes.
+cn: 无法加载你过去的测验。
+
+key: profileListFallback
+en: Vocab list
+cn: 词表
+
+key: profileSettingsTitle
+en: Profile settings
+cn: 个人设置
+
+key: profileBack
+en: Back to your profile
+cn: 返回个人主页
+
+key: profileName
+en: Profile name
+cn: 昵称
+
+key: profileNameNone
+en: No name
+cn: 不设昵称
+
+key: profileSaving
+en: Saving…
+cn: 正在保存…
+
+key: profileSaved
+en: Saved.
+cn: 已保存。
+
+key: profileSaveFailed
+en: We could not save your profile name.
+cn: 无法保存你的昵称。
+
+key: profileSaveRetry
+en: Try again
+cn: 重试
+
+key: listsTitle
+en: Your lists
+cn: 我的词表
+
+key: listsBack
+en: Back to your profile
+cn: 返回个人主页
+
+key: listsLoading
+en: Loading your lists…
+cn: 正在加载词表…
+
+key: listsSignedOut
+en: Sign in to choose which lists you get.
+cn: 登录后即可选择订阅哪些词表。
+
+key: listsError
+en: We could not load your lists. Check your connection and try again.
+cn: 无法加载词表，请检查网络后重试。
+
+key: listsRetry
+en: Try again
+cn: 重试
+
+key: listsMine
+en: Subscribed
+cn: 已订阅
+
+key: listsNone
+en: You are not subscribed to any lists.
+cn: 你还没有订阅任何词表。
+
+key: listsMore
+en: More lists
+cn: 更多词表
+
+key: listsSimplified
+en: Simplified
+cn: 简体
+
+key: listsTraditional
+en: Traditional
+cn: 繁体
+
+key: listsUnnamed
+en: Your own list
+cn: 自建词表
+
+key: listsSubscribe
+en: Subscribe
+cn: 订阅
+
+key: listsUnsubscribe
+en: Unsubscribe
+cn: 退订
+
+key: listsSubscribeTo
+en: Subscribe to {list}, {set}
+cn: 订阅 {list}（{set}）
+
+key: listsUnsubscribeFrom
+en: Unsubscribe from {list}, {set}
+cn: 退订 {list}（{set}）
+
+key: listsAdded
+en: Subscribed to {list}, {set}.
+cn: 已订阅 {list}（{set}）。
+
+key: listsRemoved
+en: Unsubscribed from {list}, {set}.
+cn: 已退订 {list}（{set}）。
+
+key: listsSaveFailed
+en: We could not save that change. Please try again.
+cn: 未能保存更改，请重试。
+
+key: unsubTitle
+en: Unsubscribe
+cn: 退订
+
+key: unsubList
+en: List
+cn: 词表
+
+key: unsubAll
+en: Unsubscribe from all lists
+cn: 退订所有词表
+
+key: unsubSubmit
+en: Unsubscribe
+cn: 退订
+
+key: unsubSending
+en: Unsubscribing…
+cn: 正在退订…
+
+key: unsubInvalid
+en: Enter a valid email address.
+cn: 请输入有效的邮箱地址。
+
+key: unsubError
+en: Something went wrong. Please try again, or write to {address}.
+cn: 出了点问题。请重试，或发邮件至 {address}。
+
+key: unsubDone
+en: You are unsubscribed.
+cn: 已退订。
+
+key: unsubManage
+en: Change which lists you get
+cn: 更改订阅的词表
+
+key: unsubEmailedList
+en: The list in your email
+cn: 邮件中的词表
+
+key: subscribedTitle
+en: You're subscribed
+cn: 订阅成功
+
+key: subscribedSentTo
+en: We have emailed a sign-in link to {email}. Sign in to see your profile, change your lists and keep your quiz results.
+cn: 我们已向 {email} 发送登录链接。登录后可查看个人主页、更改词表并保存测验成绩。
+
+key: subscribedSent
+en: We have emailed you a sign-in link. Sign in to see your profile, change your lists and keep your quiz results.
+cn: 我们已向你的邮箱发送登录链接。登录后可查看个人主页、更改词表并保存测验成绩。
+
+key: subscribedExpiry
+en: The link expires after 3 minutes.
+cn: 链接 3 分钟后失效。
+
+key: subscribedNewLink
+en: Get a new link
+cn: 重新获取链接
+
+key: sentencesTitle
+en: Practice sentences
+cn: 练习造句
+
+key: sentencesLoading
+en: Loading your words…
+cn: 正在加载词语…
+
+key: sentencesSignIn
+en: Sign in to write sentences with your daily words.
+cn: 登录后即可用每日词语造句。
+
+key: sentencesError
+en: We could not load your words and sentences. Check your connection and try again.
+cn: 无法加载词语和句子，请检查网络后重试。
+
+key: sentencesRetry
+en: Try again
+cn: 重试
+
+key: sentencesToday
+en: Today's words
+cn: 今日词语
+
+key: sentencesNoWords
+en: No new words for you today.
+cn: 今天没有新词。
+
+key: sentencesField
+en: A sentence with {word}
+cn: 用“{word}”造句
+
+key: sentencesSave
+en: Save
+cn: 保存
+
+key: sentencesSaving
+en: Saving…
+cn: 正在保存…
+
+key: sentencesSaved
+en: Saved.
+cn: 已保存。
+
+key: sentencesSaveFailed
+en: We could not save your sentence. Try again.
+cn: 无法保存句子，请重试。
+
+key: sentencesEmpty
+en: Write a sentence first.
+cn: 请先写一个句子。
+
+key: sentencesWritten
+en: Your sentences
+cn: 我的句子
+
+key: sentencesNone
+en: You have not written any sentences yet.
+cn: 你还没有写过句子。
+
+key: sentencesMore
+en: Show more
+cn: 显示更多

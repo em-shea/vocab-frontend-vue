@@ -23,7 +23,7 @@ test('a subscriber signs in with the emailed link', async ({ page }) => {
   // The email link is a fresh page load, as it is from a mail client.
   await page.goto('/verification?code=good-code')
 
-  // Sign-in has always led to the profile.
+  // From the home page, sign-in leads to the profile, as it always has.
   await expect(page).toHaveURL((url) => url.pathname === '/profile')
   await expect(page.getByRole('link', { name: EMAIL })).toHaveAttribute('href', '/profile')
 
@@ -33,6 +33,41 @@ test('a subscriber signs in with the emailed link', async ({ page }) => {
   expect(userCall.headers.authorization).toMatch(/^eyJ/)
   expect(backend.api.some((c) => c.method === 'POST' && c.path === '/update_login')).toBe(true)
   expect(problems).toEqual([])
+})
+
+test('signing in brings you back to the page you were on', async ({ page }) => {
+  await mockBackend(page)
+  await page.goto('/review?list_id=1ebcad3f-5dfd-6bfe-bda4-acde48001122')
+  await page.getByRole('navigation').getByRole('link', { name: 'Sign in' }).click()
+  await expect(page).toHaveURL(/\/signin\?next=/)
+
+  await page.getByLabel('Email address').fill(EMAIL)
+  await page.getByRole('button', { name: 'Send sign-in link' }).click()
+  await expect(page).toHaveURL(/\/verification/)
+
+  // The emailed link carries no return address; this browser remembers it.
+  await page.goto('/verification?code=good-code')
+  await expect(page).toHaveURL((url) => url.pathname === '/review' && url.searchParams.get('list_id') === '1ebcad3f-5dfd-6bfe-bda4-acde48001122')
+  await expect(page.getByRole('navigation').getByRole('link', { name: EMAIL })).toBeVisible()
+})
+
+test('signed-out visitors sent to sign in from a signed-in page come back to it', async ({ page }) => {
+  await mockBackend(page)
+  await page.goto('/profile-settings')
+  await expect(page).toHaveURL((url) => url.pathname === "/signin" && url.searchParams.get("next") === "/profile-settings")
+  await page.getByLabel('Email address').fill(EMAIL)
+  await page.getByRole('button', { name: 'Send sign-in link' }).click()
+  await page.goto('/verification?code=good-code')
+  await expect(page).toHaveURL((url) => url.pathname === '/profile-settings')
+})
+
+test('a return address that leads off the site is ignored', async ({ page }) => {
+  await mockBackend(page)
+  await page.goto('/signin?next=' + encodeURIComponent('//evil.example/steal'))
+  await page.getByLabel('Email address').fill(EMAIL)
+  await page.getByRole('button', { name: 'Send sign-in link' }).click()
+  await page.goto('/verification?code=good-code')
+  await expect(page).toHaveURL((url) => url.pathname === '/profile' && url.host.startsWith('localhost'))
 })
 
 test('the sign-in survives a reload', async ({ page }) => {

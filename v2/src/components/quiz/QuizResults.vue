@@ -1,5 +1,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { signInRoute } from '../../lib/signInReturn'
 import AppButton from '../AppButton.vue'
 import { percent } from '../../lib/quiz'
 
@@ -14,6 +16,7 @@ defineProps({
 })
 const emit = defineEmits(['again', 'retry-save'])
 const { t } = useI18n()
+const route = useRoute()
 </script>
 
 <template>
@@ -25,7 +28,7 @@ const { t } = useI18n()
       <template v-if="save === 'saving'">{{ t('quizSaving') }}</template>
       <template v-else-if="save === 'saved'">{{ t('quizSaved') }}</template>
       <template v-else-if="save === 'failed'">{{ t('quizSaveFailed') }}</template>
-      <RouterLink v-else :to="{ name: 'signin' }">{{ t('quizSignIn') }}</RouterLink>
+      <RouterLink v-else :to="signInRoute(route.fullPath)">{{ t('quizSignIn') }}</RouterLink>
     </p>
 
     <div class="results__actions">

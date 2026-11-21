@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
+import { rememberNext } from '../lib/signInReturn'
 import { useAuthStore } from '../stores/auth'
 
 // Step one of passwordless sign-in: ask for an address, email a one-time link.
@@ -37,6 +38,8 @@ async function submit () {
   status.value = 'sending'
   try {
     await auth.requestSignInLink(email.value)
+    // Where to go once the emailed link is opened (see lib/signInReturn.js).
+    rememberNext(route.query.next)
     router.push({ name: 'verification', query: route.query.lang ? { lang: route.query.lang } : {} })
   } catch (err) {
     // An address with no account is the one failure the visitor can act on.

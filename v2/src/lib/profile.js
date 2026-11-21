@@ -35,15 +35,6 @@ export function rubyPairs (name, pinyin) {
 }
 
 /**
- * The name's seal: its last character, the surname in 小安. Null when no name
- * is set. Replaces the old emoji avatar.
- */
-export const sealCharacter = (user) => {
-  const name = profileName(user)?.name
-  return name ? [...name].at(-1) : null
-}
-
-/**
  * What POST /update_user expects to set or clear the name. Field names and the
  * 'Not set' convention match the old screen (vocab: set_user_data/app.py).
  * Only these two fields are sent: the endpoint updates whatever is present, so

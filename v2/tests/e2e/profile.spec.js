@@ -21,12 +21,12 @@ test.describe('profile', () => {
     const problems = watchForErrors(page)
     await page.goto('/profile')
 
-    // The name, read with its pinyin, and the surname as a seal.
+    // The name, read with its pinyin. No profile picture for now.
     const heading = page.getByRole('heading', { level: 1 })
     await expect(heading).toContainText('小')
     await expect(heading).toContainText('安')
     await expect(heading.locator('rt')).toHaveText(['xiǎo', 'ān'])
-    await expect(page.locator('.head__seal')).toHaveText('安')
+    await expect(page.locator('.head__seal')).toHaveCount(0)
     await expect(page.getByText('June 2021')).toBeVisible()
     await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
 

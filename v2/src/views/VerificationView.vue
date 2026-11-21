@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
+import { takeNext } from '../lib/signInReturn'
 import { useAuthStore } from '../stores/auth'
 import { usePreferencesStore } from '../stores/preferences'
 
@@ -29,9 +30,9 @@ const status = ref('waiting')
 const sentTo = ref(null)
 const resending = ref(false)
 
-// Profile is where sign-in has always led. Until that screen is ported the
-// route does not exist here, so fall back to home rather than a blank page.
-const afterSignIn = () => (router.hasRoute('profile') ? { name: 'profile' } : { name: 'home' })
+// Back to the page the visitor signed in from, or the profile, where sign-in
+// has always led.
+const afterSignIn = () => takeNext() ?? { name: 'profile' }
 
 onMounted(async () => {
   sentTo.value = auth.pendingEmail()

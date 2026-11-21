@@ -175,19 +175,8 @@ defineExpose({ focusPrompt: () => prompt.value?.focus() })
 
 .option__mark { font-size: var(--t-lg); font-weight: var(--w-bold); flex: none; }
 
-/* Instruction and result are read out but not shown: the options and the
-   ✓/✗ marks say the same thing on screen. */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
+/* Instruction and result use the global .sr-only: read out but not shown,
+   since the options and the ✓/✗ marks say the same thing on screen. */
 
 .question__after { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
 
