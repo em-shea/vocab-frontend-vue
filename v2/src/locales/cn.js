@@ -274,5 +274,8 @@ export default {
   "sentencesNone": "你还没有写过句子。",
   "sentencesMore": "显示更多",
   "sentencesExamples": "查看例句",
-  "sentencesNewTab": "（在新标签页中打开）"
+  "sentencesNewTab": "（在新标签页中打开）",
+  "profileSinceLine": "{date}开始学习",
+  "profilePastWeek": "过去一周",
+  "profileAccount": "账户"
 }

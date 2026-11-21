@@ -50,7 +50,8 @@ const { t } = useI18n()
 
 .words__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  /* One word fills the column; two or more share it. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   gap: var(--s-4);
   margin: 0;
   padding: 0;

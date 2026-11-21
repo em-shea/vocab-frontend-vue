@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 import PageShell from '../components/PageShell.vue'
 import AppButton from '../components/AppButton.vue'
 import ProfileHeader from '../components/profile/ProfileHeader.vue'
+import ProfileActions from '../components/profile/ProfileActions.vue'
 import ProfileWords from '../components/profile/ProfileWords.vue'
 import ProfileQuizzes from '../components/profile/ProfileQuizzes.vue'
 import { api } from '../api/client'
@@ -96,7 +97,7 @@ const quizLink = computed(() =>
 </script>
 
 <template>
-  <PageShell>
+  <PageShell width="wide">
     <div class="profile">
       <p v-if="status === 'loading'" class="profile__state" role="status">{{ t('profileLoading') }}</p>
 
@@ -107,9 +108,11 @@ const quizLink = computed(() =>
       </div>
 
       <template v-else>
-        <ProfileHeader :user="user" @sign-out="signOut" />
-        <ProfileWords :words="words" :has-lists="subscriptions.length > 0" :list-name="listName" />
+        <ProfileHeader class="profile__head" :user="user" />
+        <ProfileActions class="profile__actions" @sign-out="signOut" />
+        <ProfileWords class="profile__words" :words="words" :has-lists="subscriptions.length > 0" :list-name="listName" />
         <ProfileQuizzes
+          class="profile__quizzes"
           :today="today"
           :history="quizzes"
           :status="quizStatus"
@@ -123,7 +126,36 @@ const quizLink = computed(() =>
 </template>
 
 <style scoped>
-.profile { display: flex; flex-direction: column; gap: var(--s-12); }
+/* Phone: name, today's words, quizzes, then the account links.
+   Wide: name with the account links beside it, then words and quizzes side by side. */
+.profile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'head' 'words' 'quizzes' 'actions';
+  gap: var(--s-12);
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+}
+.profile__head { grid-area: head; }
+.profile__actions { grid-area: actions; padding-top: var(--s-6); border-top: var(--bw-hair) solid var(--c-rule); }
+.profile__words { grid-area: words; }
+.profile__quizzes { grid-area: quizzes; }
+
+@media (min-width: 860px) {
+  .profile {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    grid-template-areas: 'head actions' 'words quizzes';
+    column-gap: var(--s-8);
+    row-gap: var(--s-8);
+  }
+  .profile__actions {
+    align-self: end;
+    justify-content: flex-end;
+    padding: 0;
+    border-top: 0;
+  }
+}
 
 .profile__state {
   display: flex;

@@ -42,39 +42,43 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
       <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span>
     </SectionHead>
 
-    <p v-if="today" class="quizzes__today">
-      {{ t('profileQuizDone', { correct: today.correct_answers, total: today.question_quantity }) }}
-    </p>
-    <div v-else>
-      <AppButton as="RouterLink" :to="quizLink" variant="seal">{{ t('profileQuizTake') }}</AppButton>
+    <div class="quizzes__box">
+      <p v-if="today" class="quizzes__today">
+        {{ t('profileQuizDone', { correct: today.correct_answers, total: today.question_quantity }) }}
+      </p>
+      <div v-else>
+        <AppButton as="RouterLink" :to="quizLink" variant="seal">{{ t('profileQuizTake') }}</AppButton>
+      </div>
+
+      <h3 class="label quizzes__week">{{ t('profilePastWeek') }}</h3>
+
+      <p v-if="status === 'loading'" class="quizzes__state" role="status">{{ t('profileLoading') }}</p>
+
+      <div v-else-if="status === 'error'" class="quizzes__state" role="alert">
+        <p>{{ t('profileHistoryError') }}</p>
+        <AppButton variant="quiet" shape="sm" @click="emit('retry')">{{ t('profileRetry') }}</AppButton>
+      </div>
+
+      <p v-else-if="!history.length" class="quizzes__state">{{ t('profileHistoryEmpty') }}</p>
+
+      <table v-else class="history">
+        <caption class="sr-only">{{ t('profileHistoryCaption') }}</caption>
+        <thead class="sr-only">
+          <tr>
+            <th scope="col">{{ t('profileHistoryDate') }}</th>
+            <th scope="col">{{ t('profileHistoryList') }}</th>
+            <th scope="col">{{ t('profileHistoryScore') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="quiz in history" :key="quiz.quiz_id || `${quiz.date_created}-${quiz.list_id}`">
+            <td class="mono history__date">{{ shortDate(quiz.date_created) }}</td>
+            <td>{{ nameOf(quiz) }}</td>
+            <td class="history__score">{{ score(quiz) }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <p v-if="status === 'loading'" class="quizzes__state" role="status">{{ t('profileLoading') }}</p>
-
-    <div v-else-if="status === 'error'" class="quizzes__state" role="alert">
-      <p>{{ t('profileHistoryError') }}</p>
-      <AppButton variant="quiet" shape="sm" @click="emit('retry')">{{ t('profileRetry') }}</AppButton>
-    </div>
-
-    <p v-else-if="!history.length" class="quizzes__state">{{ t('profileHistoryEmpty') }}</p>
-
-    <table v-else class="history">
-      <caption class="sr-only">{{ t('profileHistoryCaption') }}</caption>
-      <thead>
-        <tr>
-          <th scope="col" class="label">{{ t('profileHistoryDate') }}</th>
-          <th scope="col" class="label">{{ t('profileHistoryList') }}</th>
-          <th scope="col" class="label history__score">{{ t('profileHistoryScore') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="quiz in history" :key="quiz.quiz_id || `${quiz.date_created}-${quiz.list_id}`">
-          <td class="mono history__date">{{ shortDate(quiz.date_created) }}</td>
-          <td>{{ nameOf(quiz) }}</td>
-          <td class="history__score">{{ score(quiz) }}</td>
-        </tr>
-      </tbody>
-    </table>
   </section>
 </template>
 
@@ -91,29 +95,24 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
   color: var(--c-body);
 }
 
-.history {
-  width: 100%;
-  border-collapse: collapse;
+.quizzes__box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-6);
   background-color: var(--c-panel);
   border: var(--bw-heavy) solid var(--c-ink);
   box-shadow: var(--shadow-hard);
 }
-.history th,
-.history td {
-  padding: var(--s-3) var(--s-4);
-  text-align: left;
-  vertical-align: baseline;
-}
-.history th { border-bottom: var(--bw-rule) solid var(--c-ink); }
+.quizzes__week { margin: 0; padding-top: var(--s-4); border-top: var(--bw-hair) solid var(--c-rule); }
+
+.history { width: 100%; border-collapse: collapse; }
+.history td { padding: var(--s-2) 0; text-align: left; vertical-align: baseline; color: var(--c-ink); }
+.history td + td { padding-left: var(--s-4); }
 .history tbody tr + tr td { border-top: var(--bw-hair) solid var(--c-rule); }
-.history td { color: var(--c-ink); }
 .history__date { white-space: nowrap; font-size: var(--t-base); }
 .history .history__score { text-align: right; }
 
-@media (max-width: 479px) {
-  .history th,
-  .history td { padding: var(--s-3) var(--s-2); }
-}
 
 .sr-only {
   position: absolute;

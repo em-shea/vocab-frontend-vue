@@ -275,5 +275,8 @@ export default {
   "sentencesNone": "You have not written any sentences yet.",
   "sentencesMore": "Show more",
   "sentencesExamples": "Example sentences",
-  "sentencesNewTab": "(opens in a new tab)"
+  "sentencesNewTab": "(opens in a new tab)",
+  "profileSinceLine": "Studying since {date}",
+  "profilePastWeek": "Past week",
+  "profileAccount": "Account"
 }
