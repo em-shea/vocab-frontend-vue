@@ -128,7 +128,10 @@ const wordId = (entry) => entry?.word?.word_id ?? entry?.word?.simplified
 export function wordProgress (words = [], quizzes = [], activity = {}) {
   return words.map((entry) => ({
     entry,
-    quiz: (quizzes ?? []).some((q) => q?.list_id === entry.list_id && String(q.date_created) >= String(entry.date_sent)),
+    // The newest quiz for the word's list since it was sent (truthy), or null.
+    quiz: [...(quizzes ?? [])]
+      .filter((q) => q?.list_id === entry.list_id && String(q.date_created) >= String(entry.date_sent))
+      .sort((a, b) => String(b.date_created).localeCompare(String(a.date_created)))[0] ?? null,
     // The sentence itself (truthy), or null.
     sentence: (activity?.[entry.date_sent]?.review_words ?? []).find((e) =>
       e?.list_id === entry.list_id && wordId(e) === wordId(entry) && e.sentence?.sentence)?.sentence ?? null

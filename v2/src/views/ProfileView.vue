@@ -100,11 +100,6 @@ function listName (id) {
     t('profileListFallback')
 }
 
-// The box's quiz button goes to the first word still waiting for a quiz.
-const quizLink = computed(() => {
-  const next = progress.value.find((p) => !p.quiz)?.entry.list_id ?? subscriptions.value[0]?.list_id
-  return next ? { name: 'quiz', query: { list_id: next } } : { name: 'quiz' }
-})
 </script>
 
 <template>
@@ -127,7 +122,7 @@ const quizLink = computed(() => {
             :count="quizCount"
             :history="quizzes"
             :status="quizStatus"
-            :quiz-link="quizLink"
+            :progress="progress"
             :list-name="listName"
             @retry="loadQuizzes"
           />

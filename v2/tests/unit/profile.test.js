@@ -107,7 +107,7 @@ describe('wordProgress', () => {
       { list_id: 'L2', date_created: '2026-11-19' }
     ]
     const p = wordProgress(words, quizzes, {})
-    expect(p.map((x) => x.quiz)).toEqual([true, false])
+    expect(p.map((x) => Boolean(x.quiz))).toEqual([true, false])
     expect(progressCount(p, 'quiz')).toEqual({ done: 1, total: 2 })
   })
 
