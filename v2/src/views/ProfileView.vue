@@ -96,7 +96,7 @@ const quizLink = computed(() =>
 </script>
 
 <template>
-  <PageShell width="wide">
+  <PageShell>
     <div class="profile">
       <p v-if="status === 'loading'" class="profile__state" role="status">{{ t('profileLoading') }}</p>
 
@@ -123,7 +123,7 @@ const quizLink = computed(() =>
 </template>
 
 <style scoped>
-.profile { display: flex; flex-direction: column; gap: var(--s-12); width: 100%; max-width: 52rem; margin-inline: auto; }
+.profile { display: flex; flex-direction: column; gap: var(--s-12); }
 
 .profile__state {
   display: flex;
