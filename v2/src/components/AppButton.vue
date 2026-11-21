@@ -53,7 +53,7 @@ defineProps({
 .btn--pill { border-radius: var(--r-pill); }
 .btn--sm { border-radius: var(--r-sm); }
 
-.btn--primary { background-color: var(--c-button); }
+.btn--primary { background-color: var(--c-button); color: var(--c-on-button); }
 .btn--seal { background-color: var(--c-seal); color: var(--c-on-red); }
 .btn--solid { background-color: var(--c-red-solid); color: var(--c-on-red); }
 .btn--quiet { background-color: transparent; }

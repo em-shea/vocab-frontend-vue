@@ -48,6 +48,9 @@ const characters = computed(() =>
     </div>
 
     <p v-if="definition" class="word__definition" :title="definition">{{ definition }}</p>
+
+    <!-- Anything a screen wants under the word: a link, a status, an action. -->
+    <slot />
   </article>
 </template>
 

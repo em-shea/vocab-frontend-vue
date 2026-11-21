@@ -1,0 +1,58 @@
+name: v2 checks
+
+# Runs the new app's tests on every change to it. Nothing here deploys; the
+# point is that a change which breaks signing in, subscribing or a translated
+# screen is caught on the pull request rather than by a subscriber.
+
+on:
+  pull_request:
+    paths:
+      - 'v2/**'
+      - '.github/workflows/v2-checks.yml'
+  push:
+    branches: [master, staging]
+    paths:
+      - 'v2/**'
+      - '.github/workflows/v2-checks.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: v2
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: v2/package-lock.json
+
+      - run: npm ci
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Build
+        run: npm run build:staging
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: User-journey tests
+        run: npm run test:e2e
+
+      - name: Installable-app checks (production build, service worker, offline)
+        run: npm run test:pwa
+
+      - name: Keep the report when a journey fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: v2/playwright-report
+          retention-days: 7

@@ -19,6 +19,14 @@
  *
  * Ma Shan Zheng is display-only and stays a single small file — re-run this
  * after adding a Chinese character to brush copy, or it falls back to the serif.
+ *
+ * LXGW WenKai, the study face, is not on Google Fonts in its simplified form, so
+ * it is fetched from its own repository (SIL Open Font License 1.1).
+ *
+ *   node scripts/build-fonts.mjs --only LXGWWenKai
+ *
+ * rebuilds one family and leaves the rest as they are, which also means a
+ * family can be rebuilt on a machine that cannot reach the others' source.
  */
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -48,6 +56,23 @@ const CJK = [
 ]
 const DISPLAY = ['MaShanZheng', 'Ma+Shan+Zheng']
 
+// CJK faces taken straight from their upstream repository rather than Google.
+// `weight` is what the @font-face rule declares. The Medium cut claims 500-900
+// so that a bold request is answered by a real cut instead of the browser
+// smearing the Regular: synthetic bold wrecks the brush-like strokes of a Kai.
+const WENKAI = 'https://raw.githubusercontent.com/lxgw/LxgwWenKai/main/fonts/TTF'
+const CJK_DIRECT = [
+  ['LXGWWenKai', [
+    { label: '400', weight: '400', url: `${WENKAI}/LXGWWenKai-Regular.ttf` },
+    { label: '500', weight: '500 900', url: `${WENKAI}/LXGWWenKai-Medium.ttf` }
+  ]]
+]
+
+// --only <Family> rebuilds that family alone.
+const onlyAt = process.argv.indexOf('--only')
+const ONLY = onlyAt === -1 ? null : process.argv[onlyAt + 1]
+const wanted = (name) => !ONLY || ONLY === name
+
 const CSS_FAMILY = {
   Archivo: 'Archivo',
   InstrumentSans: 'Instrument Sans',
@@ -56,7 +81,8 @@ const CSS_FAMILY = {
   DMMono: 'DM Mono',
   NotoSansSC: 'Noto Sans SC',
   NotoSerifSC: 'Noto Serif SC',
-  MaShanZheng: 'Ma Shan Zheng'
+  MaShanZheng: 'Ma Shan Zheng',
+  LXGWWenKai: 'LXGW WenKai'
 }
 
 mkdirSync(CACHE, { recursive: true })
@@ -98,15 +124,19 @@ function subset (ttf, charsFile, out) {
   ], { stdio: ['ignore', 'ignore', 'inherit'] })
 }
 
-// Start clean so removed weights do not linger.
+// Start clean so removed weights do not linger. With --only, clear just that
+// family and carry every other face over from the last build's manifest.
+const MANIFEST = join(FONT_DIR, 'manifest.json')
+const faces = ONLY && existsSync(MANIFEST)
+  ? JSON.parse(readFileSync(MANIFEST, 'utf8')).filter((f) => f.family !== ONLY)
+  : []
 for (const f of readdirSync(FONT_DIR)) {
-  if (f.endsWith('.woff2') || f === 'manifest.json') unlinkSync(join(FONT_DIR, f))
+  if (!f.endsWith('.woff2')) continue
+  if (!ONLY || f.startsWith(`${ONLY}-`)) unlinkSync(join(FONT_DIR, f))
 }
 
-const faces = []
-
 // ---- Latin ---------------------------------------------------------------
-for (const [name, family] of LATIN) {
+for (const [name, family] of LATIN.filter(([n]) => wanted(n))) {
   const css = await fetchText(`https://fonts.googleapis.com/css2?family=${family}&display=swap`, UA_MODERN)
   let i = 0
   for (const block of css.match(/@font-face\s*{[^}]+}/g) ?? []) {
@@ -128,7 +158,7 @@ for (const tier of tiers) {
   writeFileSync(join(CACHE, `tier-${tier.name}.txt`), tier.chars)
 }
 
-for (const [name, family] of CJK) {
+for (const [name, family] of CJK.filter(([n]) => wanted(n))) {
   const css = await fetchText(`https://fonts.googleapis.com/css2?family=${family}`, UA_LEGACY)
   for (const block of css.match(/@font-face\s*{[^}]+}/g) ?? []) {
     const url = block.match(/url\((https:\/\/[^)]+\.ttf)\)/)?.[1]
@@ -149,13 +179,34 @@ for (const [name, family] of CJK) {
   }
 }
 
+// ---- CJK from upstream, same tiers -----------------------------------------
+for (const [name, cuts] of CJK_DIRECT.filter(([n]) => wanted(n))) {
+  for (const cut of cuts) {
+    const ttf = join(CACHE, `${name}-${cut.label}.ttf`)
+    if (!existsSync(ttf)) writeFileSync(ttf, await fetchBinary(cut.url, UA_MODERN))
+
+    let total = 0
+    for (const tier of tiers) {
+      const file = `${name}-${cut.label}-${tier.name}.woff2`
+      subset(ttf, join(CACHE, `tier-${tier.name}.txt`), join(FONT_DIR, file))
+      total += readFileSync(join(FONT_DIR, file)).length
+      faces.push({ family: name, file, weight: cut.weight, style: 'normal', range: unicodeRange(tier.chars) })
+    }
+    console.log(`${name} ${cut.label}: ${tiers.length} tiers, ${(total / 1024).toFixed(0)} KB total`)
+  }
+}
+
 // ---- Display face --------------------------------------------------------
-{
+if (wanted(DISPLAY[0])) {
   const [name, family] = DISPLAY
-  const css = await fetchText(`https://fonts.googleapis.com/css2?family=${family}`, UA_LEGACY)
-  const url = css.match(/url\((https:\/\/[^)]+\.ttf)\)/)?.[1]
   const ttf = join(CACHE, `${name}-400.ttf`)
-  if (!existsSync(ttf)) writeFileSync(ttf, await fetchBinary(url, UA_LEGACY))
+  // Only ask Google when the file is not already cached, so the brush subset
+  // can be rebuilt offline after a copy change.
+  if (!existsSync(ttf)) {
+    const css = await fetchText(`https://fonts.googleapis.com/css2?family=${family}`, UA_LEGACY)
+    const url = css.match(/url\((https:\/\/[^)]+\.ttf)\)/)?.[1]
+    writeFileSync(ttf, await fetchBinary(url, UA_LEGACY))
+  }
   // Display copy only, so the ui tier alone is enough.
   const uiTier = tiers.find((t) => t.name === 'ui')
   const file = `${name}-400.woff2`
@@ -168,8 +219,6 @@ for (const [name, family] of CJK) {
 const header = `/* Self-hosted typefaces — the site must not depend on a font CDN.
  *
  * GENERATED by scripts/build-fonts.mjs. Do not edit by hand.
- *
- * Families and weights match the design file's own Google Fonts request.
  *
  * Latin faces keep Google's unicode-range split. The CJK faces are subset
  * locally and split along the tiers in cjk-tiers.json — interface text, then

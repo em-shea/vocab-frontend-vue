@@ -7,7 +7,11 @@ on:
       - staging
 
 jobs:
+  # Production (master) still builds and serves the Vue 2 app until cutover.
+  # Staging builds the new app in v2/ (since 2026-11-21) so it can be tested
+  # against the staging backend. At cutover, point master at the v2 job too.
   build:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
@@ -94,3 +98,79 @@ jobs:
         run: |
           aws s3 cp dist s3://staging.haohaotiantian.com --grant read=uri=http://acs.amazonaws.com/groups/global/AllUsers --recursive
           aws cloudfront create-invalidation --distribution-id E14R2YU4CYXBZG --paths /index.html /app.js
+
+  build-v2:
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: v2
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: v2/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The full font build needs Google Fonts and the upstream font repos,
+      # which GitHub can reach. It rebuilds every subset so all characters used
+      # in copy (and cjk-tiers.json) are covered. Output is used for this build
+      # only, not committed.
+      - name: Set up Python for the font build
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Build fonts
+        run: |
+          pip install "fonttools[woff]" brotli
+          node scripts/build-fonts.mjs
+
+      - name: Build
+        run: npx vite build --mode staging
+
+      # Same guard as the Vue 2 job: the bundle must point at the staging
+      # Cognito pool and API, never production's.
+      - name: Verify the build targets staging
+        run: |
+          set -euo pipefail
+          scan() { grep -rqF --include='*.js' "$1" dist/assets/; }
+          scan us-east-1_5Ivj5CJ6z || { echo "::error::bundle is missing the staging Cognito pool"; exit 1; }
+          ! scan us-east-1_yRxMUcgpm || { echo "::error::bundle contains the PRODUCTION Cognito pool"; exit 1; }
+          scan https://api.staging.haohaotiantian.com || { echo "::error::bundle is missing the staging API URL"; exit 1; }
+          ! scan https://api.haohaotiantian.com || { echo "::error::bundle contains the PRODUCTION API URL"; exit 1; }
+          echo "bundle verified: staging pool and API"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Copies only; nothing in the bucket is deleted (old Vue 2 files stay,
+      # unused). Hashed files cache for a year. The files that name the current
+      # version (index.html, the service worker, its registration and the
+      # manifest) are never cached, so browsers pick up each deploy.
+      - name: Copy files to S3 (staging)
+        run: |
+          set -euo pipefail
+          BUCKET=s3://staging.haohaotiantian.com
+          GRANT="read=uri=http://acs.amazonaws.com/groups/global/AllUsers"
+          aws s3 cp dist "$BUCKET" --recursive --grants "$GRANT" \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude index.html --exclude sw.js --exclude registerSW.js --exclude manifest.webmanifest --exclude "workbox-*.js"
+          for f in index.html sw.js registerSW.js manifest.webmanifest; do
+            aws s3 cp "dist/$f" "$BUCKET/$f" --grants "$GRANT" --cache-control "no-cache"
+          done
+          for f in dist/workbox-*.js; do
+            aws s3 cp "$f" "$BUCKET/$(basename "$f")" --grants "$GRANT" --cache-control "no-cache"
+          done
+          aws cloudfront create-invalidation --distribution-id E14R2YU4CYXBZG --paths "/*"

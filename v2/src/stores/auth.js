@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia'
 import { api } from '../api/client'
-import { getSession, signOut as cognitoSignOut } from '../api/session'
+import {
+  getSession,
+  startSignIn,
+  answerSignInChallenge,
+  loadPendingSignIn,
+  signOut as cognitoSignOut
+} from '../api/session'
 
 // Replaces shared.js getSignedInUser / getUserData / signOut, which each rebuilt
 // a Cognito pool object and returned bare promises that views handled
@@ -45,6 +51,26 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.loading = false
       }
+    },
+
+    /** Emails a one-time sign-in link to this address. */
+    async requestSignInLink (email) {
+      await startSignIn(email.trim())
+    },
+
+    /** The address a sign-in link was last sent to, or null. */
+    pendingEmail () {
+      return loadPendingSignIn()?.username ?? null
+    },
+
+    /** Completes sign-in with the code from the emailed link. */
+    async completeSignIn (code) {
+      await answerSignInChallenge(code)
+      this.signedIn = true
+      await this.loadUser()
+      // Recording the login is bookkeeping. If it fails the user is still
+      // signed in, so it must never turn a successful sign-in into an error.
+      api.updateLastLogin(null).catch(() => {})
     },
 
     signOut () {

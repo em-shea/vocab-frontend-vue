@@ -1,13 +1,16 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { signInRoute } from '../lib/signInReturn'
+import { SENTENCES_ENABLED } from '../featureFlags'
 import LanguageMenu from './LanguageMenu.vue'
 import { useAuthStore } from '../stores/auth'
 
-// Home, Quiz, Review, Sign in — replacing the old navBar. Quiz and Review are
-// not ported yet, so they point at the current site rather than at dead routes.
+// Home, Quiz, Review, Sentences (while switched on), Sign in — replacing the old navBar.
 
 const { t } = useI18n()
 const auth = useAuthStore()
+const route = useRoute()
 </script>
 
 <template>
@@ -21,12 +24,13 @@ const auth = useAuthStore()
     </a>
 
     <nav class="nav__links" :aria-label="t('navHome')">
-      <a class="nav__link nav__link--current" href="/">{{ t('navHome') }}</a>
-      <a class="nav__link" href="/quiz">{{ t('navQuiz') }}</a>
-      <a class="nav__link" href="/review">{{ t('navReview') }}</a>
-      <a class="nav__link nav__link--strong" href="/signin">
+      <RouterLink class="nav__link" exact-active-class="nav__link--current" :to="{ name: 'home' }">{{ t('navHome') }}</RouterLink>
+      <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
+      <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
+      <RouterLink v-if="SENTENCES_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
+      <RouterLink class="nav__link nav__link--strong" :to="auth.signedIn ? { name: 'profile' } : signInRoute(route.fullPath)">
         {{ auth.signedIn ? auth.email : t('navSignIn') }}
-      </a>
+      </RouterLink>
     </nav>
 
     <div class="nav__prefs">

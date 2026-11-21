@@ -1,25 +1,32 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AppButton from './AppButton.vue'
 import { useVocabListsStore } from '../stores/vocabLists'
 import { usePreferencesStore } from '../stores/preferences'
+import { useAuthStore } from '../stores/auth'
 import { signUp } from '../api/signup'
 
-// The subscribe band. Appears twice on the page — once under the quest, once in
-// the closing oath — so it is a component rather than markup repeated twice.
+// The subscribe band. Appears twice on the page — once under the headline, once
+// below the closing band — so it is a component rather than markup repeated twice.
 
-defineProps({
-  variant: { type: String, default: 'light' } // light | band
+const props = defineProps({
+  variant: { type: String, default: 'light' }, // light | band
+  // Keeps label/field ids unique when two forms of the same variant share a page.
+  idPrefix: { type: String, default: '' }
 })
+const uid = computed(() => props.idPrefix || props.variant)
 
 const { t } = useI18n()
 const lists = useVocabListsStore()
 const prefs = usePreferencesStore()
+const auth = useAuthStore()
+const router = useRouter()
 
 const email = ref('')
 const listId = ref('')
-const status = ref('idle') // idle | sending | done | exists | error
+const status = ref('idle') // idle | sending | exists | error
 
 // The lists arrive asynchronously, so the select starts empty. Without this it
 // stays empty and the form submits with nothing chosen.
@@ -41,20 +48,28 @@ async function submit () {
       list: chosen.value ?? lists.all[0],
       characterSet: prefs.characterSet
     })
-    status.value = 'done'
   } catch (err) {
     // Cognito reports an existing account by name; everything else is a genuine
     // failure and should not be dressed up as one.
     status.value = err?.code === 'UsernameExistsException' ? 'exists' : 'error'
+    return
   }
+  // As on the old site, subscribing also emails a sign-in link, which is the
+  // email /subscribed tells the reader to look for. The subscription has
+  // already worked, so a failure here must not be reported as a failure to
+  // subscribe; the sign-in page can always send another link.
+  try {
+    await auth.requestSignInLink(email.value)
+  } catch {}
+  router.push({ name: 'subscribed', query: prefs.language !== 'en' ? { lang: prefs.language } : {} })
 }
 </script>
 
 <template>
   <form class="sub" :class="`sub--${variant}`" @submit.prevent="submit">
     <div class="sub__field">
-      <label class="label" :for="`level-${variant}`">{{ t('chooseLevel') }}</label>
-      <select :id="`level-${variant}`" v-model="listId" class="sub__select" :disabled="busy">
+      <label class="label" :for="`level-${uid}`">{{ t('chooseLevel') }}</label>
+      <select :id="`level-${uid}`" v-model="listId" class="sub__select" :disabled="busy">
         <option v-for="list in lists.all" :key="list.list_id" :value="list.list_id">
           {{ list.list_name }}
         </option>
@@ -62,9 +77,9 @@ async function submit () {
     </div>
 
     <div class="sub__field">
-      <label class="label" :for="`email-${variant}`">{{ t('email') }}</label>
+      <label class="label" :for="`email-${uid}`">{{ t('email') }}</label>
       <input
-        :id="`email-${variant}`"
+        :id="`email-${uid}`"
         v-model="email"
         class="sub__input"
         type="email"
@@ -84,13 +99,8 @@ async function submit () {
       {{ busy ? '…' : t('subscribe') }}
     </AppButton>
 
-    <p class="sub__note">{{ t('subNote') }}</p>
-
     <!-- Outcomes say what happened and what to do next, rather than just failing. -->
-    <p v-if="status === 'done'" class="sub__msg sub__msg--ok" role="status">
-      {{ t('questNote') }} Check your inbox to confirm.
-    </p>
-    <p v-else-if="status === 'exists'" class="sub__msg" role="status">
+    <p v-if="status === 'exists'" class="sub__msg" role="status">
       That address is already subscribed. <a href="/signin">Sign in</a> to change your lists.
     </p>
     <p v-else-if="status === 'error'" class="sub__msg sub__msg--bad" role="alert">
@@ -121,23 +131,21 @@ async function submit () {
   min-width: 0;
 }
 
-.sub__note {
-  grid-column: 1 / -1;
-  font-size: var(--t-sm);
-  color: var(--c-muted);
-}
-
 .sub__msg { grid-column: 1 / -1; font-size: var(--t-base); }
-.sub__msg--ok { color: var(--c-seal); font-weight: var(--w-semi); }
 .sub__msg--bad { color: var(--c-red); }
 
 /* On the dark band the fields keep their light ground so they stay legible. */
-.sub--band .label,
-.sub--band .sub__note { color: var(--c-on-dark); opacity: 0.8; }
-.sub--band .sub__msg--ok { color: var(--c-gold); }
+.sub--band .label { color: var(--c-on-dark); opacity: 0.8; }
+/* The secondary button is navy, which vanishes on the navy band. Here it takes
+ * the print ochre instead, with a light edge so the hard shadow still reads. */
+.sub--band :deep(.btn--primary) {
+  background-color: var(--c-gold);
+  color: var(--c-ink-deep);
+  border-color: var(--c-on-dark);
+  box-shadow: var(--shadow-hard-on-dark);
+}
 
 @media (min-width: 720px) {
   .sub { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto; }
-  .sub__note { grid-column: 1 / -1; }
 }
 </style>

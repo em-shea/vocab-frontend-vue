@@ -53,8 +53,8 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
-/* Chinese has two faces: a serif for study content, a sans for interface text.
- * Using one for both flattens a distinction the design makes deliberately. */
+/* Chinese has three faces: a Kai for study content, a sans for interface text
+ * and a brush script for accents. Study text must stay the plain, legible one. */
 .hanzi {
   font-family: var(--f-hanzi);
   color: var(--c-ink);
@@ -102,4 +102,18 @@ button:focus-visible,
  * sideways. */
 .scroll-x {
   overflow-x: auto;
+}
+
+/* Read out by screen readers, not shown: for labels and messages that the
+   page already makes plain on screen. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

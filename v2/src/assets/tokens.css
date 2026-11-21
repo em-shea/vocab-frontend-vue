@@ -1,8 +1,15 @@
 /* Design tokens for the 水浒传 redesign.
  *
- * Reconciled against v2/design/Haohaotiantian Redesign.dc.html, not the written
- * brief. Where the two disagreed the design file won, and the three places they
- * disagreed are called out below — they are the reason this pass existed.
+ * The scale (type sizes, spacing, weights) comes from
+ * v2/design/Haohaotiantian Redesign.dc.html. The look on top of it was reworked
+ * on 2026-11-13 into "navy and vermilion": warm white paper, navy ink in place
+ * of brown-black, one red-orange accent, an ochre sampled from the woodblock
+ * prints, square corners, and a Kai face for study text. The decision and the
+ * style tiles it was chosen from are linked in the project status doc.
+ *
+ * Light mode only for now. A dark mode on the navy ground is planned but needs
+ * --c-ink split into separate text and fill tokens first: today it is both the
+ * text colour and the fill behind light text, so it cannot simply be inverted.
  *
  * Components reference tokens, never raw hex.
  */
@@ -11,51 +18,53 @@
   /* ---------------------------------------------------------------------
    * Surfaces, lightest to darkest
    * ------------------------------------------------------------------- */
-  --c-raised: #FFFCF3;        /* lightest card, sits above panel */
-  --c-panel: #F6EFDC;         /* standard panel */
-  --c-ground: #EDE4D0;        /* page background */
-  --c-sunk: #E3D8BD;          /* recessed / inactive surface */
+  --c-raised: #FFFFFF;        /* lightest card, sits above panel */
+  --c-panel: #FFFDF7;         /* standard panel */
+  --c-ground: #FAF5EA;        /* page background */
+  --c-sunk: #EFE8D8;          /* recessed / inactive surface */
 
   /* ---------------------------------------------------------------------
    * Ink. Four darks, not one: borders sit darker than fills, and the band
    * ground is darker still than body ink.
    * ------------------------------------------------------------------- */
-  --c-ink: #2A2318;           /* primary ink: text, borders, most dark fills */
-  --c-ink-deep: #241D12;      /* dark band ground */
-  --c-ink-deeper: #1A1614;    /* deepest fills and highest-contrast text */
-  --c-ink-edge: #17120F;      /* border on dark surfaces */
+  --c-ink: #1B2140;  /* navy. Primary ink: text, borders, most dark fills */
+  --c-ink-deep: #14182B;  /* dark band ground, and the ground a dark mode would use */
+  --c-ink-deeper: #0F1222;    /* deepest fills and highest-contrast text */
+  --c-ink-edge: #0B0E1A;      /* border on dark surfaces */
 
   /* ---------------------------------------------------------------------
    * Text
    * ------------------------------------------------------------------- */
-  --c-body: #5C5342;          /* running text */
-  --c-muted: #8A7F68;         /* captions and metadata - the most used text colour */
-  --c-muted-warm: #8A8579;    /* muted on warmer surfaces */
+  --c-body: #3E4257;          /* running text */
+  --c-muted: #5F6276;  /* captions and metadata. 4.5:1 or better on ground and panel */
+  --c-muted-warm: #5F6276;    /* muted on warmer surfaces */
   --c-on-dark: #F6EFDC;       /* text on the dark band */
   --c-on-dark-soft: #EFE6D2;
-  --c-on-red: #FFF6E4;        /* text on a solid red fill */
+  --c-on-red: #FFFFFF;        /* text on a solid red fill */
 
   /* ---------------------------------------------------------------------
    * Rules and borders, heaviest to lightest
    * ------------------------------------------------------------------- */
-  --c-rule: #C9BB9C;          /* standard hairline */
-  --c-rule-light: #E0C89A;    /* lighter hairline, usually 1.5px */
-  --c-rule-faint: #E2DDD4;    /* faintest, on raised cards */
+  --c-rule: #D9D2C2;          /* standard hairline */
+  --c-rule-light: #E3DCCB;    /* lighter hairline, usually 1.5px */
+  --c-rule-faint: #ECE7DB;    /* faintest, on raised cards */
   --c-rule-gold: #B79A5E;     /* gold-tinted rule in the dark band */
 
   /* ---------------------------------------------------------------------
-   * Accents. Four reds, each with a job — collapsing them loses the design's
-   * distinction between a printed seal and an alert.
+   * Accents. The seal, text and solid reds are one vermilion now. The three
+   * names are kept because components choose between them by job, and they
+   * may be pulled apart again.
    * ------------------------------------------------------------------- */
-  --c-seal: #B03A2B;          /* seal red: brush marks, printed emphasis */
-  --c-red: #C4171C;           /* bright red text, used on light surfaces */
-  --c-red-solid: #D7261E;     /* solid red fill, takes --c-on-red text */
+  --c-seal: #C8321E;          /* seal red: brush marks, printed emphasis */
+  --c-red: #C8321E;           /* bright red text, used on light surfaces */
+  --c-red-solid: #C8321E;     /* solid red fill, takes --c-on-red text */
   --c-vermilion: #F04E23;     /* hottest accent, sparingly */
 
-  --c-button: #8DB6C6;        /* button blue, takes ink text */
+  --c-button: #1B2140;  /* secondary action fill, takes --c-on-button text */
+  --c-on-button: #FAF5EA;     /* text on --c-button */
   --c-pinyin: #2C4A6B;        /* pronunciation */
-  --c-gold: #E0A93B;          /* gold - legible on dark only */
-  --c-gold-light: #E8B23A;
+  --c-gold: #DEB373;  /* ochre sampled from the woodblock prints. Legible on dark only */
+  --c-gold-light: #E6C28E;
 
   /* ---------------------------------------------------------------------
    * Type. The design uses a hand-tuned px scale rather than a modular one,
@@ -69,9 +78,15 @@
   --f-display: 'Archivo', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
   --f-ui: 'Instrument Sans', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
   --f-serif: 'Instrument Serif', 'Noto Serif SC', Georgia, serif; /* editorial display serif */
-  --f-hanzi: 'Noto Serif SC', 'Songti SC', serif;  /* study content */
+  /* Study content: a Kai (regular script) face, the handwritten-style form
+   * textbooks use, so characters look the way a learner will write them. The
+   * Latin face sits second so pinyin or English mixed into a study line does
+   * not drop to a system serif: the Kai files carry Chinese only. */
+  --f-hanzi: 'LXGW WenKai', 'Instrument Sans', 'Kaiti SC', 'KaiTi', 'Noto Serif SC', serif;
   --f-hanzi-ui: 'Noto Sans SC', 'PingFang SC', sans-serif; /* Chinese interface text */
-  --f-brush: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
+  /* Accent text and the logo. Ma Shan Zheng has no traditional characters, so
+   * a traditional string set in it falls back to the study face below. */
+  --f-brush: 'Ma Shan Zheng', 'LXGW WenKai', 'Noto Serif SC', cursive;
   --f-mono: 'DM Mono', 'Noto Sans SC', ui-monospace, Menlo, monospace;
   --f-label: 'Outfit', 'Noto Sans SC', 'Instrument Sans', sans-serif;
 
@@ -113,18 +128,18 @@
   --ls-widest: 0.18em;
 
   /* ---------------------------------------------------------------------
-   * Radius. The brief said zero radius everywhere; the design does not — it
-   * uses a full scale, and pills and circles throughout. Setting radius to 0
-   * globally was wrong and is not done here.
+   * Radius. Square everywhere, decided 2026-11-13. The scale is kept, at zero,
+   * so components keep saying which size they mean and it can be reopened in
+   * one place. Circles stay circles: dots and round icon buttons.
    * ------------------------------------------------------------------- */
-  --r-xs: 6px;
-  --r-sm: 8px;         /* most common */
-  --r-md: 10px;
-  --r-lg: 14px;
-  --r-xl: 16px;
-  --r-2xl: 18px;
-  --r-3xl: 28px;
-  --r-pill: 999px;
+  --r-xs: 0;
+  --r-sm: 0;
+  --r-md: 0;
+  --r-lg: 0;
+  --r-xl: 0;
+  --r-2xl: 0;
+  --r-3xl: 0;
+  --r-pill: 0;
   --r-circle: 50%;
 
   /* ---------------------------------------------------------------------
@@ -143,10 +158,10 @@
    * described the hard one.
    * ------------------------------------------------------------------- */
   --shadow-hard: 3px 3px 0 var(--c-ink);
-  --shadow-hard-soft: 8px 8px 0 rgba(28, 26, 22, 0.18);
+  --shadow-hard-soft: 8px 8px 0 rgba(27, 33, 64, 0.18);
   --shadow-hard-on-dark: 3px 3px 0 rgba(239, 230, 210, 0.35);
-  --shadow-lift: 0 24px 60px -20px rgba(42, 35, 24, 0.34);
-  --shadow-lift-strong: 0 20px 50px -22px rgba(42, 35, 24, 0.4);
+  --shadow-lift: 0 24px 60px -20px rgba(27, 33, 64, 0.30);
+  --shadow-lift-strong: 0 20px 50px -22px rgba(27, 33, 64, 0.36);
   --shadow-hairline: 0 2px 0 rgba(26, 22, 20, 0.05);
 
   /* ---------------------------------------------------------------------
