@@ -84,6 +84,8 @@ onBeforeUnmount(stop)
 </template>
 
 <style scoped>
+/* A bare icon: no circle or fill (Emily, 2026-11-20). The button keeps a
+   34px square so it is still easy to tap. */
 .audio {
   display: inline-flex;
   align-items: center;
@@ -91,21 +93,17 @@ onBeforeUnmount(stop)
   width: 34px;
   height: 34px;
   padding: 0;
-  background-color: var(--c-raised);
-  border: var(--bw-rule) solid var(--c-rule);
-  border-radius: var(--r-circle);
+  background: none;
+  border: 0;
   color: var(--c-ink);
   cursor: pointer;
-  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  transition: color 120ms ease-out;
 }
 
-.audio:hover:not(:disabled) {
-  background-color: var(--c-button);
-  border-color: var(--c-ink);
-  color: var(--c-on-button);
-}
+.audio:hover:not(:disabled) { color: var(--c-red); }
+.audio:focus-visible { outline: 2px solid var(--c-red); outline-offset: 2px; }
 
-.audio svg { width: 17px; height: 17px; }
+.audio svg { width: 20px; height: 20px; }
 .audio svg path { fill: currentColor; }
 
 .audio__wave {
@@ -115,12 +113,8 @@ onBeforeUnmount(stop)
   stroke-linecap: round;
 }
 
-/* Playing: the far wave pulses, so the state is visible without colour alone. */
-.audio--playing {
-  background-color: var(--c-button);
-  border-color: var(--c-ink);
-  color: var(--c-on-button);
-}
+/* Playing: vermilion, and the far wave pulses, so the state is visible without colour alone. */
+.audio--playing { color: var(--c-red); }
 
 .audio--playing .audio__wave--far {
   animation: audio-pulse 900ms ease-in-out infinite;
@@ -137,10 +131,9 @@ onBeforeUnmount(stop)
 .audio--muted {
   color: var(--c-muted);
   cursor: not-allowed;
-  background-color: transparent;
 }
 
-.audio--muted:hover { background-color: transparent; border-color: var(--c-rule); }
+.audio--muted:hover { color: var(--c-muted); }
 
 @media (prefers-reduced-motion: reduce) {
   .audio--playing .audio__wave--far { animation: none; }
