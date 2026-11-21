@@ -6,8 +6,7 @@ let nextId = 0
 import { computed } from 'vue'
 
 // The tier emblem on a hero card, drawn like a Magic: The Gathering set symbol:
-// a metallic vertical gradient with no outline, a light hard 2px 2px navy
-// offset shadow (the house hard-shadow style), and the hero's rank on top in
+// a metallic vertical gradient with no outline and no shadow, and the hero's rank on top in
 // paper with a navy halo. Heavenly Spirits (天罡) get a cloud ring, in gold
 // fading to vermilion; Earthly Fiends (地煞) get peaks, in silver fading to navy.
 //
@@ -46,7 +45,7 @@ const icon = computed(() => ICONS[props.tier])
 // Geometry in CSS px, converted to 512-box units (u per px) so the outline and
 // shadow come out as whole device-friendly widths whatever the size.
 const OUTLINE = 0 // outline removed 2026-11-21; kept as a knob
-const SHADOW = 2
+const SHADOW = 0 // shadow removed 2026-11-21 (Emily); filter kept unused for a quick revert
 const px = computed(() => (props.size === 'sm' ? 32 : 44))
 const iconPx = computed(() => px.value - 2 * OUTLINE - SHADOW)
 const u = computed(() => 512 / iconPx.value)
@@ -85,7 +84,7 @@ const ty = computed(() => icon.value.cy + font.value * 0.36)
         </feMerge>
       </filter>
     </defs>
-    <path :d="icon.d" :fill="`url(#${uid}-g)`" :filter="`url(#${uid}-f)`" />
+    <path :d="icon.d" :fill="`url(#${uid}-g)`" />
     <text
       class="tier-symbol__rank"
       :x="icon.cx"
