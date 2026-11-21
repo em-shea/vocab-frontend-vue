@@ -110,15 +110,15 @@ for (const L of LAYOUTS) {
       expect(rowBox.height).toBeLessThan(hBox.height * 1.5)
       expect(nBox.x + nBox.width).toBeLessThanOrEqual(hBox.x + 1)
       expect(Math.abs((nBox.y + nBox.height / 2) - (hBox.y + hBox.height / 2))).toBeLessThan(hBox.height / 2)
-      // Nothing spills: the row fits its container. On full art the rank and icon
-      // sit before the name in the plate's top-left corner.
+      // Nothing spills: the row fits its container. On full art the name ends
+      // before the tier icon and rank in the plate's top-right corner.
       expect(await row.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
       const parent = await row.evaluate((el) => el.parentElement.getBoundingClientRect().right)
       expect(hBox.x + hBox.width).toBeLessThanOrEqual(parent + 1)
-      const seal = c.locator('.plate--name [data-tier]')
+      const seal = c.locator('.plate--name .plate__tier')
       if (await seal.count()) {
         const sb = await seal.boundingBox()
-        expect(nBox.x).toBeGreaterThanOrEqual(sb.x + sb.width)
+        expect(hBox.x + hBox.width).toBeLessThanOrEqual(sb.x)
       }
     })
   }
@@ -188,12 +188,12 @@ test('A and C keep the footer: rank, then the tier icon', async ({ page }) => {
   }
 })
 
-test('full art has no visible footer, and keeps rank and tier for screen readers', async ({ page }) => {
+test('full art has no footer: rank shows under the tier icon, tier name for screen readers only', async ({ page }) => {
   await open(page)
   for (const id of ['B-front', 'B-locked']) {
     const c = card(page, id)
     const text = await visibleText(c)
-    expect(text).not.toContain('5 / 108')
+    expect(text).toContain('5 / 108')
     expect(text).not.toContain('Heavenly Spirit')
     expect(text).not.toContain('天罡')
     await expect(c.locator('footer')).toHaveCount(0)
@@ -447,7 +447,7 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
-test('tier emblems: rank then icon top-left on full art; icon alone in framed and compact footers', async ({ page }) => {
+test('tier emblems: icon top-right with rank below on full art; icon alone in framed and compact footers', async ({ page }) => {
   await open(page)
   const info = (id) => card(page, id).locator('[data-tier]').first().evaluate((el) => {
     const svg = el.querySelector('svg').getBoundingClientRect()
@@ -467,13 +467,17 @@ test('tier emblems: rank then icon top-left on full art; icon alone in framed an
     const st = await info(id)
     expect(st.tier, id).toBe('heavenly')
     expect(st.icon, id).toBe('cloud-ring')
-    expect(st.text, id).toMatch(/^(5|6)$/)
-    expect(st.before, id).toBe(true)
+    expect(st.text, id).toBeNull()
     expect(st.inPlate, id).toBe(true)
-    expect(st.font, id).toContain('Instrument Sans')
-    expect(st.left, id).toBeLessThan(60)
+    expect(st.left, id).toBeGreaterThan(250)
     expect(st.top, id).toBeLessThan(30)
-    expect(st.hidden, id).toBe('true')
+    const tier = card(page, id).locator('.plate__tier')
+    await expect(tier).toHaveAttribute('aria-hidden', 'true')
+    await expect(tier.locator('.plate__rank')).toHaveText(/^(5|6) \/ 108$/)
+    const ib = await tier.locator('svg').boundingBox()
+    const rb = await tier.locator('.plate__rank').boundingBox()
+    expect(rb.y).toBeGreaterThanOrEqual(ib.y + ib.height - 0.5)
+    expect(Math.abs((rb.x + rb.width) - (ib.x + ib.width))).toBeLessThan(1.5)
   }
   for (const id of ['A-front', 'C-front', 'A-front-imm', 'C-front-imm', 'A-locked', 'C-locked']) {
     const st = await info(id)
