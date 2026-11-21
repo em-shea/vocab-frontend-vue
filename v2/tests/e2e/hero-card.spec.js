@@ -110,12 +110,16 @@ for (const L of LAYOUTS) {
       expect(rowBox.height).toBeLessThan(hBox.height * 1.5)
       expect(nBox.x + nBox.width).toBeLessThanOrEqual(hBox.x + 1)
       expect(Math.abs((nBox.y + nBox.height / 2) - (hBox.y + hBox.height / 2))).toBeLessThan(hBox.height / 2)
-      // Nothing spills: the row fits its container, the name ends before the emblem.
+      // Nothing spills: the row fits its container. On full art the rank and icon
+      // sit before the name in the plate's top-left corner.
       expect(await row.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
       const parent = await row.evaluate((el) => el.parentElement.getBoundingClientRect().right)
       expect(hBox.x + hBox.width).toBeLessThanOrEqual(parent + 1)
-      const seal = await c.locator('[data-tier]').first().boundingBox()
-      expect(hBox.x + hBox.width).toBeLessThanOrEqual(seal.x)
+      const seal = c.locator('.plate--name [data-tier]')
+      if (await seal.count()) {
+        const sb = await seal.boundingBox()
+        expect(nBox.x).toBeGreaterThanOrEqual(sb.x + sb.width)
+      }
     })
   }
 
@@ -174,13 +178,13 @@ for (const L of LAYOUTS) {
   })
 }
 
-test('A and C keep the footer with rank and tier', async ({ page }) => {
+test('A and C keep the footer: rank, then the tier icon', async ({ page }) => {
   await open(page)
   for (const L of ['A', 'C']) {
     const c = card(page, `${L}-front`)
     await expect(c).toContainText('5 / 108')
-    await expect(c).toContainText('天罡')
-    await expect(c).toContainText('Heavenly Spirit')
+    await expect(c.locator('.foot [data-icon="cloud-ring"]')).toHaveCount(1)
+    await expect(c.locator('.foot .sr-only')).toHaveText('Rank 5 of 108, Heavenly Spirit')
   }
 })
 
@@ -443,41 +447,49 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
-test('tier emblems: cloud ring for Heavenly Spirits, peaks for Earthly Fiends, rank beside the icon', async ({ page }) => {
+test('tier emblems: rank then icon top-left on full art; icon alone in framed and compact footers', async ({ page }) => {
   await open(page)
   const info = (id) => card(page, id).locator('[data-tier]').first().evaluate((el) => {
     const svg = el.querySelector('svg').getBoundingClientRect()
     const num = el.querySelector('.tier-symbol__rank')
-    const nb = num.getBoundingClientRect()
-    const cs = getComputedStyle(num)
+    const box = el.closest('.face').getBoundingClientRect()
     return {
-      tier: el.dataset.tier, icon: el.dataset.icon, w: svg.width, h: svg.height,
-      hidden: el.getAttribute('aria-hidden'), text: num.textContent.trim(),
-      beside: nb.left >= svg.right, font: cs.fontFamily, tabular: cs.fontVariantNumeric,
-      svgText: el.querySelectorAll('svg text').length
+      tier: el.dataset.tier, icon: el.dataset.icon, w: svg.width,
+      hidden: el.getAttribute('aria-hidden'),
+      text: num ? num.textContent.trim() : null,
+      before: num ? num.getBoundingClientRect().right <= svg.left : null,
+      font: num ? getComputedStyle(num).fontFamily : null,
+      inFoot: !!el.closest('.foot'), inPlate: !!el.closest('.plate--name'),
+      left: svg.left - box.left, top: svg.top - box.top
     }
   })
-  for (const id of ['A-front', 'B-front', 'C-front', 'A-front-imm', 'B-front-imm', 'C-front-imm', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
+  for (const id of ['B-front', 'B-front-imm', 'B-locked', 'B-stress']) {
     const st = await info(id)
     expect(st.tier, id).toBe('heavenly')
     expect(st.icon, id).toBe('cloud-ring')
     expect(st.text, id).toMatch(/^(5|6)$/)
-    expect(st.hidden, id).toBe('true')
-    expect(st.beside, id).toBe(true)
-    expect(st.svgText, id).toBe(0)
+    expect(st.before, id).toBe(true)
+    expect(st.inPlate, id).toBe(true)
     expect(st.font, id).toContain('Instrument Sans')
-    expect(st.tabular, id).toContain('tabular-nums')
+    expect(st.left, id).toBeLessThan(60)
+    expect(st.top, id).toBeLessThan(30)
+    expect(st.hidden, id).toBe('true')
+  }
+  for (const id of ['A-front', 'C-front', 'A-front-imm', 'C-front-imm', 'A-locked', 'C-locked']) {
+    const st = await info(id)
+    expect(st.icon, id).toBe('cloud-ring')
+    expect(st.inFoot, id).toBe(true)
+    expect(st.text, id).toBeNull()
+    await expect(card(page, id).locator('.tick')).toHaveCount(0)
   }
   for (const id of ['A-earthly', 'C-earthly']) {
     const st = await info(id)
     expect(st.tier, id).toBe('earthly')
     expect(st.icon, id).toBe('peaks')
-    expect(st.text, id).toBe('59')
+    expect(st.inFoot, id).toBe(true)
   }
-  // Sizes: 1.5rem icon, and 1.125rem in compact.
-  expect((await info('A-front')).w).toBe(24)
-  expect((await info('B-front')).h).toBe(24)
-  expect((await info('C-front')).w).toBe(18)
+  expect((await info('B-front')).w).toBe(18)
+  expect((await info('A-front')).w).toBe(18)
 })
 
 test('tier emblem gradient ids are unique across the page', async ({ page }) => {
@@ -655,7 +667,7 @@ test('a hero with no quote shows no quote block', async ({ page }) => {
   const hu = card(page, 'A-earthly')
   await expect(hu.getByRole('heading', { name: '扈三娘' })).toBeVisible()
   await expect(hu.locator('figure')).toHaveCount(0)
-  await expect(hu).toContainText('地煞')
+  await expect(hu.locator('.foot [data-icon="peaks"]')).toHaveCount(1)
   await expect(hu.getByRole('button', { name: 'Flip card' })).toHaveCount(0)
 })
 

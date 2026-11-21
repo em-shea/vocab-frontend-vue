@@ -6,8 +6,8 @@ let nextId = 0
 import { computed } from 'vue'
 
 // The tier emblem on a hero card, drawn like a Magic: The Gathering set symbol:
-// a small metallic icon (no outline, no shadow) with the hero's rank beside it
-// in the plain UI face. Heavenly Spirits (天罡) get a cloud ring, in gold fading
+// the hero's rank in the plain UI face, then a small metallic icon (no outline,
+// no shadow); `showRank: false` gives the icon alone. Heavenly Spirits (天罡) get a cloud ring, in gold fading
 // to vermilion; Earthly Fiends (地煞) get peaks, in silver fading to navy.
 //
 // Icons: "Cloud ring" and "Peaks" by Lorc, https://game-icons.net, CC BY 3.0
@@ -20,7 +20,8 @@ import { computed } from 'vue'
 const props = defineProps({
   tier: { type: String, required: true, validator: (v) => ['heavenly', 'earthly'].includes(v) },
   rank: { type: Number, required: true },
-  size: { type: String, default: 'md', validator: (v) => ['md', 'sm'].includes(v) }
+  size: { type: String, default: 'md', validator: (v) => ['md', 'sm'].includes(v) },
+  showRank: { type: Boolean, default: true }
 })
 
 const ICONS = {
@@ -50,6 +51,7 @@ const icon = computed(() => ICONS[props.tier])
     :data-icon="tier === 'heavenly' ? 'cloud-ring' : 'peaks'"
     aria-hidden="true"
   >
+    <span v-if="showRank" class="tier-symbol__rank">{{ rank }}</span>
     <svg class="tier-symbol__icon" viewBox="0 0 512 512" focusable="false">
       <defs>
         <linearGradient :id="`${uid}-g`" x1="0" y1="0" x2="0" y2="1">
@@ -60,7 +62,6 @@ const icon = computed(() => ICONS[props.tier])
       </defs>
       <path :d="icon.d" :fill="`url(#${uid}-g)`" />
     </svg>
-    <span class="tier-symbol__rank">{{ rank }}</span>
   </span>
 </template>
 

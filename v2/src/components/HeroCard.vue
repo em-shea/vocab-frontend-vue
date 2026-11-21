@@ -93,11 +93,13 @@ import TierSymbol from './TierSymbol.vue'
 // with no story has no back and is not flippable.
 //
 // The two tiers are told apart by emblem, colour and text. The tier emblem
-// (TierSymbol) is an MTG-set-symbol-style badge with the rank number on it: a
-// cloud ring in gold-to-vermilion for the 36 Heavenly Spirits (天罡), peaks in
-// silver-to-navy for the 72 Earthly Fiends (地煞). The icons are "Cloud ring" and
-// "Peaks" by Lorc, game-icons.net, CC BY 3.0; the credit is in the print viewer
-// and in v2/CREDITS.md. 2.75rem, 2rem in compact; locked cards keep theirs.
+// (TierSymbol) is the rank in the plain UI face followed by a small MTG-style
+// icon: a cloud ring in gold-to-vermilion for the 36 Heavenly Spirits (天罡),
+// peaks in silver-to-navy for the 72 Earthly Fiends (地煞). Full art shows rank
+// and icon in the name plate's top-left corner; framed and compact show the icon
+// alone at the right of the footer, after "5 / 108". The icons are "Cloud ring"
+// and "Peaks" by Lorc, game-icons.net, CC BY 3.0; the credit is in the print
+// viewer and in v2/CREDITS.md. Locked cards keep theirs.
 const props = defineProps({
   hero: { type: Object, required: true },
   variant: { type: String, default: 'framed', validator: (v) => ['framed', 'full-art', 'compact'].includes(v) },
@@ -118,7 +120,6 @@ const zh = computed(() => immersive.value || locale.value === 'cn')
 const msg = (key, named = {}) => (immersive.value ? t(key, named, { locale: 'cn' }) : t(key, named))
 const heavenly = computed(() => props.hero.tier === '天罡')
 const tierGloss = computed(() => msg(heavenly.value ? 'heroCardTierHeavenly' : 'heroCardTierEarthly'))
-const rankText = computed(() => msg('heroCardRank', { n: props.hero.rank }))
 // Full art has no visible footer, so its screen-reader text carries the tier too.
 const rankTierText = computed(() => msg('heroCardRankTier', { n: props.hero.rank, tier: tierGloss.value }))
 const lockedText = computed(() => msg('heroCardLocked'))
@@ -218,6 +219,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 
             <div class="flow">
               <header class="plate plate--name">
+                <TierSymbol class="plate__tier" :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" size="sm" />
                 <div class="plate__text">
                   <div class="namerow">
                     <span v-if="!locked" class="nick__zh brush">{{ hero.nickname }}</span>
@@ -226,7 +228,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                   <p v-if="showSub" class="pinyin">{{ subline }}</p>
                 </div>
                 <span class="sr-only">{{ rankTierText }}</span>
-                <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" />
               </header>
 
               <div class="figure">
@@ -266,7 +267,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                   </div>
                   <p v-if="showSub" class="pinyin">{{ subline }}</p>
                 </div>
-                <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" size="sm" />
               </header>
 
               <p v-if="!locked" class="meta">
@@ -278,9 +278,9 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
               <p v-else class="line">{{ lockedText }}</p>
 
               <footer class="foot">
-                <span class="sr-only">{{ rankText }}</span>
+                <span class="sr-only">{{ rankTierText }}</span>
                 <span class="foot__rank mono" aria-hidden="true">{{ hero.rank }} / 108</span>
-                <span class="foot__tier"><i class="tick" aria-hidden="true"></i><span class="brush">{{ hero.tier }}</span> {{ tierGloss }}</span>
+                <TierSymbol class="foot__tier" :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" size="sm" :show-rank="false" />
               </footer>
             </div>
           </template>
@@ -295,7 +295,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                 </div>
                 <p v-if="showSub" class="pinyin">{{ subline }}</p>
               </div>
-              <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" />
             </header>
 
             <div class="window" role="img" :aria-label="artLabel">
@@ -318,9 +317,9 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
             </div>
 
             <footer class="foot">
-              <span class="sr-only">{{ rankText }}</span>
+              <span class="sr-only">{{ rankTierText }}</span>
               <span class="foot__rank mono" aria-hidden="true">{{ hero.rank }} / 108</span>
-              <span class="foot__tier"><i class="tick" aria-hidden="true"></i><span class="brush">{{ hero.tier }}</span> {{ tierGloss }}</span>
+              <TierSymbol class="foot__tier" :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" size="sm" :show-rank="false" />
             </footer>
           </template>
         </div>
@@ -489,9 +488,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
   color: var(--c-ink);
 }
 .foot__rank { font-weight: var(--w-semi); }
-.foot__tier { display: inline-flex; align-items: center; gap: var(--s-1); }
-.foot__tier .brush { font-size: var(--t-body); }
-.tick { display: inline-block; width: 0.625rem; height: 0.625rem; background-color: var(--tier); border: var(--bw-hair) solid var(--c-ink); }
 
 .sr-only {
   position: absolute;
@@ -705,7 +701,9 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
   box-shadow: var(--shadow-hard);
 }
 .card--full-art .plate--back { border: 0; border-top: var(--bw-heavy) solid var(--tier); box-shadow: none; }
-.card--full-art .plate--name { flex: none; box-sizing: border-box; height: var(--name-h); display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: 6px var(--s-3); }
+.card--full-art .plate--name { flex: none; box-sizing: border-box; height: var(--name-h); display: flex; align-items: center; justify-content: flex-start; gap: var(--s-2); padding: 6px var(--s-3); }
+/* Rank and tier icon in the plate's top-left corner, before the name (2026-11-21). */
+.card--full-art .plate__tier { align-self: flex-start; }
 .card--full-art .plate__text { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
 .plate--back .plate__text { display: flex; flex-direction: column; gap: var(--s-1); }
 /* The figure takes what the plates leave. The sprite's empty headroom rows hang
