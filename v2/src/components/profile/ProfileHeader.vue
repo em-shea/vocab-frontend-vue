@@ -12,22 +12,14 @@ import { profileName, rubyPairs } from '../../lib/profile'
 const props = defineProps({
   user: { type: Object, required: true }
 })
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 const name = computed(() => profileName(props.user))
 const ruby = computed(() => (name.value ? rubyPairs(name.value.name, name.value.pinyin) : null))
 
-// Email (when the name is the heading) and how long they have studied, on one line.
-const meta = computed(() => [
-  name.value && props.user.email_address,
-  since.value && t('profileSinceLine', { date: since.value })
-].filter(Boolean))
+// The email, when the name is the heading.
+const meta = computed(() => [name.value && props.user.email_address].filter(Boolean))
 
-const since = computed(() => {
-  const date = new Date(props.user.date_created ?? '')
-  if (Number.isNaN(date.getTime())) return ''
-  return new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-GB', { month: 'long', year: 'numeric' }).format(date)
-})
 </script>
 
 <template>
@@ -60,7 +52,6 @@ const since = computed(() => {
 .head__pinyin { margin-left: var(--s-3); font-size: var(--t-body); }
 .head__title--email { font-size: var(--t-lg); overflow-wrap: anywhere; }
 
-/* No separator: the two facts sit apart, and wrap onto two lines on a phone. */
 .head__meta { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-6); color: var(--c-body); font-size: var(--t-base); overflow-wrap: anywhere; }
 .head__set-name { font-size: var(--t-base); }
 </style>
