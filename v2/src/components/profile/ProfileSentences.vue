@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import DoneCount from './DoneCount.vue'
 import PencilIcon from '../PencilIcon.vue'
+import AppButton from '../AppButton.vue'
 import { usePreferencesStore } from '../../stores/preferences'
 
 // Today's sentences at a glance: each of today's words with the sentence
@@ -44,10 +45,11 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
             :aria-label="t('profileSentenceEdit', { word: characters(entry.word) })">
             <PencilIcon />
           </RouterLink>
-          <RouterLink v-else class="sentences__write" :to="{ name: 'sentences' }"
+          <AppButton v-else as="RouterLink" variant="seal" shape="sm" class="sentences__write"
+            :to="{ name: 'sentences' }"
             :aria-label="t('profileSentenceWriteFor', { word: characters(entry.word) })">
-            <PencilIcon />{{ t('profileSentencesWrite') }}
-          </RouterLink>
+            {{ t('profileSentencesWrite') }}
+          </AppButton>
         </li>
       </ul>
 
@@ -90,7 +92,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
   color: var(--c-ink);
   overflow-wrap: anywhere;
 }
-.sentences__write { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-base); }
+.sentences__write { margin-left: auto; }
 .sentences__edit {
   display: grid;
   place-items: center;

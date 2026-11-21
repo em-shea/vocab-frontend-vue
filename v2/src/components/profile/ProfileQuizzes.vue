@@ -5,6 +5,7 @@ import SectionHead from '../SectionHead.vue'
 import AppButton from '../AppButton.vue'
 import { scorePercent } from '../../lib/profile'
 import DoneCount from './DoneCount.vue'
+import TaskBox from '../TaskBox.vue'
 
 // One slot per subscribed list for today's word: a button to take that list's
 // quiz, or a tick and the score once done. Then every quiz saved in the past
@@ -50,8 +51,7 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
           <span class="slot__list">{{ listName(entry.list_id) }}</span>
           <span v-if="quiz" class="slot__done">
             <span class="slot__score">{{ score(quiz) }}</span>
-            <span class="slot__check" aria-hidden="true">✓</span>
-            <span class="sr-only">{{ t('profileDone') }}</span>
+            <TaskBox done />
           </span>
           <AppButton v-else as="RouterLink" variant="seal" shape="sm"
             :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }"
@@ -109,7 +109,6 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
 .slot__list { color: var(--c-ink); font-weight: 600; }
 .slot__done { display: flex; align-items: center; gap: var(--s-3); color: var(--c-ink); }
 .slot__score { font-size: var(--t-base); }
-.slot__check { font-weight: 700; }
 
 .quizzes__state {
   display: flex;

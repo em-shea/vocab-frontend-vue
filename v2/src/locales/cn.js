@@ -210,6 +210,7 @@ export default {
   "profileSentenceEdit": "修改 {word} 的句子",
   "profileSentenceWriteFor": "用 {word} 写一个句子",
   "profileDone": "已完成",
+  "profileNotDone": "未完成",
   "profileDoneCount": "已完成 {done} / {total}",
   "profileHistoryCaption": "过去一周的测验",
   "profileHistoryDate": "日期",

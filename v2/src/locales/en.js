@@ -211,6 +211,7 @@ export default {
   "profileSentenceEdit": "Edit your sentence for {word}",
   "profileSentenceWriteFor": "Write a sentence for {word}",
   "profileDone": "done",
+  "profileNotDone": "not done yet",
   "profileDoneCount": "{done} of {total} done",
   "profileHistoryCaption": "Quizzes in the past week",
   "profileHistoryDate": "Date",

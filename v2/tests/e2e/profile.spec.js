@@ -43,7 +43,7 @@ test.describe('profile', () => {
     await expect(cards.nth(0).getByRole('link', { name: 'Sentences' })).toHaveAttribute('href', '/sentences')
     await expect(cards.nth(0).getByRole('link', { name: 'Review' })).toHaveCount(0)
     // Yesterday's quiz doesn't count for today's word.
-    await expect(cards.nth(0).getByText('done')).toHaveCount(0)
+    await expect(cards.nth(0).getByText('done', { exact: true })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: /Quizzes/ })).toContainText('0/2')
 
     // Not yet done today, so the way to today's quiz; then the week, newest first.
@@ -73,13 +73,13 @@ test.describe('profile', () => {
     await mockBackend(page, { userActivity: userActivity(), quizzes: [profileQuiz('q-today', daysAgo(0), 8, 10)] })
     await page.goto('/profile')
     const card = page.getByRole('article').first()
-    await expect(card.getByText('done')).toHaveCount(1)
-    await expect(card.locator('.words__check')).toHaveText('✓')
+    await expect(card.getByText('done', { exact: true })).toHaveCount(1)
+    await expect(card.locator('.taskbox--done')).toHaveCount(1)
     await expect(page.getByRole('heading', { name: /Quizzes/ })).toContainText('1/1')
     // The slot swaps its button for the score and a tick.
     const slot = page.locator('.slot').first()
     await expect(slot).toContainText('8 of 10')
-    await expect(slot.locator('.slot__check')).toHaveText('✓')
+    await expect(slot.locator('.taskbox--done')).toHaveCount(1)
     await expect(page.getByRole('link', { name: /^Take the .* quiz$/ })).toHaveCount(0)
   })
 
@@ -262,7 +262,7 @@ test.describe('daily sentences on the profile', () => {
     const box = page.locator('section', { has: page.getByRole('heading', { name: /Sentences/ }) })
     await expect(box).toContainText('请爱护你的书。')
     await expect(box).toContainText('1/1')
-    await expect(page.getByRole('article').first().getByText('done')).toHaveCount(1)
+    await expect(page.getByRole('article').first().getByText('done', { exact: true })).toHaveCount(1)
     await expect(box.getByRole('link', { name: /^Write a sentence/ })).toHaveCount(0)
     await expect(box.getByRole('link', { name: 'Edit your sentence for 爱护' })).toHaveAttribute('href', '/sentences')
   })

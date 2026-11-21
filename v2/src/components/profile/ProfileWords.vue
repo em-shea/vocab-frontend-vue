@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import WordCard from '../WordCard.vue'
+import TaskBox from '../TaskBox.vue'
 import { SENTENCES_ENABLED } from '../../featureFlags'
 
 // The newest word from each list the learner takes, with the way to quiz on
@@ -34,13 +35,11 @@ const { t } = useI18n()
             <RouterLink :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }">
               {{ t('profileQuiz') }}
             </RouterLink>
-            <span v-if="quiz" class="words__check" aria-hidden="true">✓</span>
-            <span v-if="quiz" class="sr-only">{{ t('profileDone') }}</span>
+            <TaskBox :done="Boolean(quiz)" />
           </div>
           <div v-if="SENTENCES_ENABLED" class="words__links">
             <RouterLink :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
-            <span v-if="sentence" class="words__check" aria-hidden="true">✓</span>
-            <span v-if="sentence" class="sr-only">{{ t('profileDone') }}</span>
+            <TaskBox :done="Boolean(sentence)" />
           </div>
         </WordCard>
       </li>
@@ -76,5 +75,5 @@ const { t } = useI18n()
 }
 /* The first row sits at the foot of the card; the second follows it. */
 .words__links:first-of-type { margin-top: auto; }
-.words__check { color: var(--c-ink); font-weight: 700; }
+
 </style>
