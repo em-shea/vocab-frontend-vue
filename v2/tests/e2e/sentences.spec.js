@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { mockBackend as mockAll, signedIn, watchForErrors, sentencesSwitchedOn, HSK1, USER, ACTIVITY } from './support/backend'
+import { mockBackend as mockAll, signedIn, watchForErrors, sentencesSwitchedOn, HSK1, USER, ACTIVITY, audioFor } from './support/backend'
 
 // These tests use the fixed ACTIVITY days unless they give their own.
 const mockBackend = (page, options = {}) => mockAll(page, { activity: ACTIVITY, ...options })
@@ -96,7 +96,7 @@ test.describe('switched on', () => {
         Traditional: '朋友',
         Pinyin: 'péng you',
         Definition: 'friend',
-        'Audio file key': '',
+        'Audio file key': audioFor('朋友'),
         'Difficulty level': 'Beginner',
         'HSK Level': '1'
       }

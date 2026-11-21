@@ -8,9 +8,13 @@ export const EMAIL = 'learner@example.com'
 export const HSK1 = '1ebcad3f-5dfd-6bfe-bda4-acde48001122'
 export const HSK2 = '1ebcad3f-adc0-6f42-b8b1-acde48001122'
 
+// Stand-in recording links, shaped like the real S3 ones. Nothing fetches them
+// unless a test presses play.
+export const audioFor = (simplified) => `https://vocab-static.s3.amazonaws.com/audio/test-${encodeURIComponent(simplified)}.mp3`
+
 const word = (id, simplified, traditional, pinyin, definition) => ({
   word_id: id,
-  word: { simplified, traditional, pinyin, definition, audio_file_key: '' }
+  word: { simplified, traditional, pinyin, definition, audio_file_key: audioFor(simplified) }
 })
 
 export const SAMPLE_VOCAB = {
@@ -22,7 +26,7 @@ export const SAMPLE_VOCAB = {
 }
 
 // What GET /review returns: oldest first, keyed by list id.
-const sent = (listId, date, simplified, traditional, pinyin, definition, level, audio = '') => ({
+const sent = (listId, date, simplified, traditional, pinyin, definition, level, audio = audioFor(simplified)) => ({
   list_id: listId,
   date_sent: date,
   word: { simplified, traditional, pinyin, definition, audio_file_key: audio, difficulty_level: 'Beginner', hsk_level: level }
@@ -60,7 +64,7 @@ export const QUIZ_REVIEW = {
 // covers, so its word is not known.
 const activityWord = (id, simplified, traditional, pinyin, definition) => ({
   list_id: HSK1,
-  word: { word_id: id, simplified, traditional, pinyin, definition, audio_file_key: '', difficulty_level: 'Beginner', hsk_level: '1' }
+  word: { word_id: id, simplified, traditional, pinyin, definition, audio_file_key: audioFor(simplified), difficulty_level: 'Beginner', hsk_level: '1' }
 })
 const written = (id, sentence, date) => ({ sentence_id: id, sentence, character_set: 'simplified', date_created: date })
 const studyWord = activityWord('w-study', '学习', '學習', 'xué xí', 'to study; to learn')
