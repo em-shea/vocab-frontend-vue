@@ -12,7 +12,7 @@ import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { usePreferencesStore } from '../stores/preferences'
 import {
-  todaysWords, wordsBySentenceId, activityFrom, sentencesFrom, newestFirst, upsert,
+  recentDays, wordsBySentenceId, activityFrom, sentencesFrom, newestFirst, upsert,
   clean, newSentenceId, savePayload, todayKey
 } from '../lib/sentences'
 
@@ -20,16 +20,17 @@ import {
 // back the ones written before. Signed-in only. Held behind SENTENCES_ENABLED
 // (see featureFlags.js and the router).
 //
-// The rules, and why only today's words can be written for, are in
-// lib/sentences.js; this file loads, saves and keeps the page in step.
+// Words from the last 10 days, today first, can each be given a sentence. The
+// rules are in lib/sentences.js; this file loads, saves and keeps the page in
+// step.
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const prefs = usePreferencesStore()
 
 const status = ref('loading') // loading | signed-out | error | ready
 const today = ref(null)
-const words = ref([])
+const days = ref([])
 const sentences = ref([])
 const sentenceWords = ref({})
 // Per word, keyed like the cards: the saved text and its id, and how the
@@ -40,7 +41,7 @@ const saving = reactive({})
 // so a retry after a failed save cannot file the same sentence twice.
 const ids = {}
 
-const keyOf = (entry) => `${entry.list_id}|${entry.word.word_id ?? entry.word.simplified}`
+const keyOf = (entry) => `${entry.date_sent}|${entry.list_id}|${entry.word.word_id ?? entry.word.simplified}`
 const heading = ref(null)
 
 async function load () {
@@ -55,10 +56,10 @@ async function load () {
     const [activityRes, sentencesRes] = await Promise.all([api.userActivity(), api.sentences()])
     const activity = activityFrom(activityRes.data)
     today.value = todayKey(activity)
-    words.value = todaysWords(activity)
+    days.value = recentDays(activity)
     sentenceWords.value = wordsBySentenceId(activity)
     sentences.value = newestFirst(sentencesFrom(sentencesRes.data))
-    for (const entry of words.value) {
+    for (const entry of days.value.flatMap((day) => day.words)) {
       const key = keyOf(entry)
       saved[key] = entry.sentence
         ? { id: entry.sentence.sentence_id, text: entry.sentence.sentence }
@@ -93,12 +94,12 @@ async function save (entry, text) {
     const payload = savePayload({ entry, text, sentenceId: id, characterSet: prefs.characterSet })
     await api.saveSentence(payload)
     saved[key] = { id, text: payload.sentence }
-    // The server files it under its own today, the newest day in the activity.
+    // Filed under the word's own date (set_sentence takes it from the payload).
     sentences.value = upsert(sentences.value, {
       sentence_id: id,
       sentence: payload.sentence,
       character_set: payload.character_set,
-      date_created: today.value
+      date_created: payload.date || today.value
     })
     sentenceWords.value = { ...sentenceWords.value, [id]: entry.word }
     saving[key] = 'saved'
@@ -109,7 +110,15 @@ async function save (entry, text) {
 
 onMounted(load)
 
-const hasWords = computed(() => words.value.length > 0)
+const hasWords = computed(() => days.value.length > 0)
+
+// "Today", then each earlier day by its date, in the reader's language.
+const dayLabel = (date) => {
+  if (date === today.value) return t('sentencesToday')
+  const [y, m, d] = date.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(locale.value === 'cn' ? 'zh-CN' : 'en-GB',
+    { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })
+}
 </script>
 
 <template>
@@ -129,10 +138,17 @@ const hasWords = computed(() => words.value.length > 0)
     </div>
 
     <template v-else>
-      <section class="sentences__section" aria-labelledby="sentences-today">
-        <h2 id="sentences-today" class="sentences__heading">{{ t('sentencesToday') }}</h2>
-        <ul v-if="hasWords" class="sentences__words">
-          <li v-for="entry in words" :key="keyOf(entry)">
+      <p v-if="!hasWords" class="sentences__empty">{{ t('sentencesNoWords') }}</p>
+
+      <section
+        v-for="day in days"
+        :key="day.date"
+        class="sentences__section"
+        :aria-labelledby="`sentences-${day.date}`"
+      >
+        <h2 :id="`sentences-${day.date}`" class="sentences__heading">{{ dayLabel(day.date) }}</h2>
+        <ul class="sentences__words">
+          <li v-for="entry in day.words" :key="keyOf(entry)">
             <SentenceWrite
               :entry="entry"
               :saved="saved[keyOf(entry)].text"
@@ -142,7 +158,6 @@ const hasWords = computed(() => words.value.length > 0)
             />
           </li>
         </ul>
-        <p v-else class="sentences__empty">{{ t('sentencesNoWords') }}</p>
       </section>
 
       <section class="sentences__section" aria-labelledby="sentences-written">

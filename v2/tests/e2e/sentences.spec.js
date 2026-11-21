@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { mockBackend as mockAll, signedIn, watchForErrors, sentencesSwitchedOn, HSK1, USER, ACTIVITY, audioFor } from './support/backend'
+import { mockBackend as mockAll, signedIn, watchForErrors, sentencesSwitchedOn, sentencesSwitchedOff, HSK1, USER, ACTIVITY, audioFor } from './support/backend'
 
 // These tests use the fixed ACTIVITY days unless they give their own.
 const mockBackend = (page, options = {}) => mockAll(page, { activity: ACTIVITY, ...options })
@@ -22,6 +22,7 @@ async function accountPrefers (page, settings) {
 
 test.describe('switched off', () => {
   test('/sentences leads on rather than 404ing, keeping the language', async ({ page }) => {
+    await sentencesSwitchedOff(page)
     const backend = await mockBackend(page)
     await page.goto('/sentences?lang=cn')
     // To the profile, which sends a signed-out visitor on to sign in.
@@ -86,6 +87,8 @@ test.describe('switched on', () => {
     const first = saves()[0]
     expect(first.headers.authorization).toBeTruthy()
     expect(first.body).toEqual({
+      // The word's own date: set_sentence files the sentence under it.
+      date: '2026-11-20',
       sentence_id: expect.stringMatching(/\S/),
       sentence: '他是我的好朋友。',
       list_id: HSK1,
@@ -131,6 +134,27 @@ test.describe('switched on', () => {
     const call = backend.api.find((c) => c.method === 'POST' && c.path === '/sentences')
     expect(call.body).toMatchObject({ sentence_id: 's-today', sentence: '請愛護環境。', character_set: 'traditional' })
     await expect(page.getByRole('region', { name: 'Your sentences' }).getByRole('listitem')).toHaveCount(3)
+  })
+
+  test('earlier days\' words can be written for, filed under their own date', async ({ page }) => {
+    await signedIn(page)
+    const backend = await mockBackend(page)
+    await page.goto('/sentences')
+
+    // Today first, then each earlier day with words, by its date.
+    const headings = page.getByRole('heading', { level: 2 })
+    await expect(headings.nth(0)).toHaveText("Today's words")
+    await expect(headings.nth(1)).toHaveText('Thursday 19 November')
+
+    const yesterday = page.locator('section', { has: page.getByRole('heading', { name: 'Thursday 19 November' }) })
+    const field = yesterday.getByLabel('A sentence with 学习')
+    await expect(field).toHaveValue('我每天学习汉语。')
+    await field.fill('我喜欢学习。')
+    await field.press('Enter')
+    await expect(yesterday.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible()
+
+    const save = backend.api.find((c) => c.method === 'POST' && c.path === '/sentences')
+    expect(save.body).toMatchObject({ date: '2026-11-19', sentence_id: 's-yesterday', sentence: '我喜欢学习。' })
   })
 
   test('an empty sentence is not sent', async ({ page }) => {

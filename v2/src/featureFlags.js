@@ -9,11 +9,11 @@
 // one or the other regardless of this flag, for preview and for tests.
 export const HEROES_LAUNCHED = false
 
-// SENTENCES_ENABLED holds back practice sentences (/sentences), as the old
-// app's flag of the same name does. The backend (GET and POST /sentences) is
-// live, but the feature is not ready to announce.
+// SENTENCES_ENABLED switches practice sentences (/sentences and the profile's
+// Sentences box). On since 2026-11-21 (Emily: include sentences at launch).
+// Needs the set_sentence change that files a sentence under its word's date.
 //   false  /sentences still resolves, so old links do not 404, but it leads to
-//          the profile (home until the profile is ported), as the old app did.
-//   true   the screen itself: write sentences with today's words, and read back
-//          the ones written before.
-export const SENTENCES_ENABLED = false
+//          the profile, as the old app did; the profile box is hidden.
+//   true   write sentences for the last 10 days of words, and read back the
+//          ones written before.
+export const SENTENCES_ENABLED = true

@@ -90,7 +90,9 @@ for (const version of VERSIONS) {
     await expect(page.getByRole('heading', { level: 2, name: 'Practise and track your progress' })).toBeVisible()
     await expect(page.getByText(/ways to study/i)).toHaveCount(0)
     await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes' })).toBeVisible()
-    await expect(page.getByRole('heading', { level: 3, name: 'See example sentences' })).toBeVisible()
+    // Practice sentences replaced example sentences in both versions (2026-11-21).
+    await expect(page.getByRole('heading', { level: 3, name: 'Use words in sentences' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 3, name: 'See example sentences' })).toHaveCount(0)
   })
 
   test(`${version.name}: shows an example of the daily email`, async ({ page }) => {
@@ -141,14 +143,14 @@ test('launch: leads with the daily word, has no launching-soon notes, previews t
   await expect(page.getByRole('heading', { name: /catalogue/i })).toHaveCount(0)
 })
 
-test('heroes: the full page, with five launching-soon notes', async ({ page }) => {
+test('heroes: the full page, with four launching-soon notes', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/?home=heroes')
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Climb the mountain')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Unite the 108')
-  // Catalogue, upload, sentences, writing and quests.
-  await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(5)
+  // Catalogue, upload, writing and quests. Sentences are live.
+  await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(4)
   await expect(page.getByRole('heading', { name: 'Choose from a catalogue' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Upload your own list' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Collect heroes' })).toBeVisible()

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  todayKey, todaysWords, wordsBySentenceId, sentencesFrom, activityFrom, newestFirst, upsert, exampleLink,
+  todayKey, todaysWords, wordsBySentenceId, sentencesFrom, activityFrom, newestFirst, upsert, exampleLink, recentDays,
   clean, newSentenceId, storedWord, savePayload
 } from '../../src/lib/sentences'
 
@@ -117,6 +117,8 @@ describe('saving', () => {
   it('builds the body set_sentence reads', () => {
     const body = savePayload({ entry: sent('L1', '2026-11-20', word('a', '朋友')), text: ' 朋友好。', sentenceId: 'id1', characterSet: 'traditional' })
     expect(body).toEqual({
+      // The word's own date: set_sentence files the sentence under it.
+      date: '2026-11-20',
       sentence_id: 'id1',
       sentence: '朋友好。',
       list_id: 'L1',
@@ -140,5 +142,17 @@ describe('exampleLink', () => {
 
   it('gives no link without a word', () => {
     expect(exampleLink({}, '')).toBeNull()
+  })
+})
+
+describe('recentDays', () => {
+  it('lists each day with words, newest first, skipping empty days', () => {
+    const activity = {
+      '2026-11-18': { review_words: [] },
+      '2026-11-19': { review_words: [{ list_id: 'L', date_sent: '2026-11-19', word: { word_id: 'b' } }] },
+      '2026-11-20': { review_words: [{ list_id: 'L', date_sent: '2026-11-20', word: { word_id: 'a' } }] }
+    }
+    expect(recentDays(activity).map((d) => [d.date, d.words.map((w) => w.word.word_id)]))
+      .toEqual([['2026-11-20', ['a']], ['2026-11-19', ['b']]])
   })
 })

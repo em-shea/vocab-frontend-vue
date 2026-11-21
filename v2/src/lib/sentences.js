@@ -36,20 +36,34 @@ export function todayKey (activity = {}) {
 const wordKey = (entry) => `${entry?.list_id}|${entry?.word?.word_id ?? entry?.word?.simplified}`
 
 /**
- * The words sent today, once each. Someone subscribed to one list in both
+ * The words sent on one day, once each. Someone subscribed to one list in both
  * character sets is sent the same word twice; one sentence covers both.
  */
-export function todaysWords (activity = {}) {
-  const today = todayKey(activity)
-  if (!today) return []
+export function wordsOn (activity = {}, date) {
+  if (!date) return []
   const seen = new Map()
-  for (const entry of activity[today]?.review_words ?? []) {
+  for (const entry of activity?.[date]?.review_words ?? []) {
     if (!entry?.word) continue
     const key = wordKey(entry)
     // Keep the copy that already has a sentence, if either does.
     if (!seen.has(key) || (!seen.get(key).sentence && entry.sentence)) seen.set(key, entry)
   }
   return [...seen.values()]
+}
+
+/** The words sent today, once each. */
+export const todaysWords = (activity = {}) => wordsOn(activity, todayKey(activity))
+
+/**
+ * Every day in the activity (the last 10) that has words, newest first, each
+ * with its words. Sentences can be written for any of them: set_sentence files
+ * a sentence under the date sent with it (savePayload), so it pairs with its
+ * word in /user_activity.
+ */
+export function recentDays (activity = {}) {
+  return Object.keys(activity ?? {}).sort().reverse()
+    .map((date) => ({ date, words: wordsOn(activity, date) }))
+    .filter((day) => day.words.length > 0)
 }
 
 /** For each sentence written in the activity's 10 days, the word it was for. */
@@ -120,9 +134,13 @@ export function storedWord (word = {}) {
   }
 }
 
-/** The POST /sentences body. */
+/**
+ * The POST /sentences body. `date` is the day the word was sent: set_sentence
+ * files the sentence under it, and accepts today back to 30 days ago.
+ */
 export function savePayload ({ entry, text, sentenceId, characterSet }) {
   return {
+    date: entry.date_sent,
     sentence_id: sentenceId,
     sentence: clean(text),
     list_id: entry.list_id,

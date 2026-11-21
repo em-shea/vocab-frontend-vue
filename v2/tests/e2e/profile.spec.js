@@ -27,7 +27,8 @@ test.describe('profile', () => {
     await expect(heading).toContainText('安')
     await expect(heading.locator('rt')).toHaveText(['xiǎo', 'ān'])
     await expect(page.locator('.head__seal')).toHaveCount(0)
-    await expect(page.getByText('June 2021')).toBeVisible()
+    // No "Studying since" (Emily, 2026-11-20).
+    await expect(page.getByText('June 2021')).toHaveCount(0)
     await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
 
     // The newest word from each list, linked to its quiz and review.
@@ -229,8 +230,9 @@ test.describe('profile settings', () => {
 
 test.describe('daily sentences on the profile', () => {
   test('hidden while practice sentences is switched off', async ({ page }) => {
-    const { signedIn: signIn, mockBackend: mock } = await import('./support/backend')
+    const { signedIn: signIn, mockBackend: mock, sentencesSwitchedOff } = await import('./support/backend')
     await signIn(page)
+    await sentencesSwitchedOff(page)
     await mock(page)
     await page.goto('/profile')
     await expect(page.getByRole('heading', { name: 'Quizzes' })).toBeVisible()

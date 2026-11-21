@@ -95,17 +95,19 @@ export const SENTENCES = [
 ]
 
 /**
- * Switches SENTENCES_ENABLED on for one page, by rewriting the flags module as
- * the dev server sends it. The build itself is untouched, so the flag stays
- * off everywhere else.
+ * Sets SENTENCES_ENABLED for one page, by rewriting the flags module as the dev
+ * server sends it. The build itself is untouched. The flag is on in the code
+ * since 2026-11-21; switching it off checks old links still resolve.
  */
-export async function sentencesSwitchedOn (page) {
+async function sentencesSwitched (page, on) {
   await page.route(/\/src\/featureFlags\.js(\?.*)?$/, async (route) => {
     const response = await route.fetch()
-    const body = (await response.text()).replace('SENTENCES_ENABLED = false', 'SENTENCES_ENABLED = true')
+    const body = (await response.text()).replace(/SENTENCES_ENABLED = (true|false)/, `SENTENCES_ENABLED = ${on}`)
     await route.fulfill({ response, body })
   })
 }
+export const sentencesSwitchedOn = (page) => sentencesSwitched(page, true)
+export const sentencesSwitchedOff = (page) => sentencesSwitched(page, false)
 
 export const USER = {
   email_address: EMAIL,

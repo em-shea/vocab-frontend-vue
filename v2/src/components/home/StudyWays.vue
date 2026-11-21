@@ -41,32 +41,12 @@ const { t } = useI18n()
         </figure>
       </div>
     </section>
+    <!-- Practice sentences: in both versions since sentences went live (2026-11-21),
+         in place of the example-sentences section; the sentences page links to
+         example sentences for ideas. -->
     <section class="split split--flip">
-      <div class="split__text">
-        <SectionHead as="h3">{{ t('examplesHeadline') }}</SectionHead>
-        <p>{{ t('examplesBody') }}</p>
-      </div>
-      <div class="stage">
-        <figure class="mock mock--examples" :aria-label="t('mockExamplesLabel')">
-          <div class="mock__bar" aria-hidden="true">
-            <span class="hanzi mock__barword">爱护</span>
-            <span class="pinyin">ài hù</span>
-          </div>
-          <div class="mock__body" aria-hidden="true">
-            <p class="hanzi mock__sentence">我们要<mark class="hit">爱护</mark>环境。</p>
-            <p class="pinyin">Wǒmen yào <mark class="hit hit--latin">àihù</mark> huánjìng.</p>
-            <i18n-t keypath="mockExampleTranslation" tag="p" class="mock__gloss">
-              <template #hit><mark class="hit hit--plain">{{ t('mockExampleHit') }}</mark></template>
-            </i18n-t>
-          </div>
-        </figure>
-      </div>
-    </section>
-    <template v-if="heroes">
-  <section class="split">
         <div class="split__text">
           <SectionHead as="h3">{{ t('sentenceHeadline') }}</SectionHead>
-          <SoonNote />
           <p>{{ t('sentenceBody') }}</p>
         </div>
         <div class="stage">
@@ -83,7 +63,8 @@ const { t } = useI18n()
           </figure>
         </div>
       </section>
-  <section class="split split--flip">
+    <template v-if="heroes">
+  <section class="split">
         <div class="split__text">
           <SectionHead as="h3">{{ t('writeHeadline') }}</SectionHead>
           <SoonNote />
