@@ -277,5 +277,9 @@ export default {
   "sentencesNewTab": "（在新标签页中打开）",
   "profileSinceLine": "{date}开始学习",
   "profilePastWeek": "过去一周",
-  "profileAccount": "账户"
+  "profileAccount": "账户",
+  "profileSentencesTitle": "造句",
+  "profileSentencesWrite": "写一个句子",
+  "profileSentencesAll": "我的句子",
+  "profileSentencesNone": "今天还没有新词。"
 }

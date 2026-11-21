@@ -42,7 +42,7 @@ const since = computed(() => {
     <h1 v-else class="head__title head__title--email">{{ user.email_address }}</h1>
 
     <p v-if="meta.length" class="head__meta">
-      <template v-for="(part, i) in meta" :key="i"><span v-if="i" aria-hidden="true"> · </span>{{ part }}</template>
+      <span v-for="part in meta" :key="part">{{ part }}</span>
     </p>
     <RouterLink v-if="!name" class="head__set-name" :to="{ name: 'profile-settings' }">{{ t('profileSetName') }}</RouterLink>
   </section>
@@ -60,6 +60,7 @@ const since = computed(() => {
 .head__pinyin { margin-left: var(--s-3); font-size: var(--t-body); }
 .head__title--email { font-size: var(--t-lg); overflow-wrap: anywhere; }
 
-.head__meta { color: var(--c-body); font-size: var(--t-base); overflow-wrap: anywhere; }
+/* No separator: the two facts sit apart, and wrap onto two lines on a phone. */
+.head__meta { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-6); color: var(--c-body); font-size: var(--t-base); overflow-wrap: anywhere; }
 .head__set-name { font-size: var(--t-base); }
 </style>

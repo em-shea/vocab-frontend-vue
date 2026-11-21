@@ -226,3 +226,26 @@ test.describe('profile settings', () => {
     await expect(page).toHaveURL(/\/profile$/)
   })
 })
+
+test.describe('daily sentences on the profile', () => {
+  test('hidden while practice sentences is switched off', async ({ page }) => {
+    const { signedIn: signIn, mockBackend: mock } = await import('./support/backend')
+    await signIn(page)
+    await mock(page)
+    await page.goto('/profile')
+    await expect(page.getByRole('heading', { name: 'Quizzes' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Sentences' })).toHaveCount(0)
+  })
+
+  test('switched on, lists today\'s words with their sentences', async ({ page }) => {
+    const { signedIn: signIn, mockBackend: mock, sentencesSwitchedOn, ACTIVITY } = await import('./support/backend')
+    await signIn(page)
+    await sentencesSwitchedOn(page)
+    await mock(page, { activity: ACTIVITY })
+    await page.goto('/profile')
+    const box = page.locator('section', { has: page.getByRole('heading', { name: 'Sentences' }) })
+    await expect(box).toContainText('请爱护你的书。')
+    await expect(box.getByRole('link', { name: 'Write a sentence' })).toHaveAttribute('href', '/sentences')
+    await expect(box.getByRole('link', { name: 'Your sentences' })).toHaveAttribute('href', '/sentences')
+  })
+})

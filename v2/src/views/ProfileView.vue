@@ -10,6 +10,8 @@ import ProfileHeader from '../components/profile/ProfileHeader.vue'
 import ProfileActions from '../components/profile/ProfileActions.vue'
 import ProfileWords from '../components/profile/ProfileWords.vue'
 import ProfileQuizzes from '../components/profile/ProfileQuizzes.vue'
+import ProfileSentences from '../components/profile/ProfileSentences.vue'
+import { SENTENCES_ENABLED } from '../featureFlags'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { useAuthStore } from '../stores/auth'
@@ -82,6 +84,9 @@ function signOut () {
 }
 
 const subscriptions = computed(() => user.value?.subscriptions ?? [])
+// Daily sentences show on the profile only while the feature is switched on.
+const sentencesOn = SENTENCES_ENABLED
+
 const words = computed(() => latestWords(user.value?.activity, subscriptions.value))
 const today = computed(() => todaysQuiz(user.value?.activity))
 
@@ -111,15 +116,17 @@ const quizLink = computed(() =>
         <ProfileHeader class="profile__head" :user="user" />
         <ProfileActions class="profile__actions" @sign-out="signOut" />
         <ProfileWords class="profile__words" :words="words" :has-lists="subscriptions.length > 0" :list-name="listName" />
-        <ProfileQuizzes
-          class="profile__quizzes"
-          :today="today"
-          :history="quizzes"
-          :status="quizStatus"
-          :quiz-link="quizLink"
-          :list-name="listName"
-          @retry="loadQuizzes"
-        />
+        <div class="profile__side">
+          <ProfileQuizzes
+            :today="today"
+            :history="quizzes"
+            :status="quizStatus"
+            :quiz-link="quizLink"
+            :list-name="listName"
+            @retry="loadQuizzes"
+          />
+          <ProfileSentences v-if="sentencesOn" :activity="user?.activity" />
+        </div>
       </template>
     </div>
   </PageShell>
@@ -131,7 +138,7 @@ const quizLink = computed(() =>
 .profile {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'head' 'words' 'quizzes' 'actions';
+  grid-template-areas: 'head' 'words' 'side' 'actions';
   gap: var(--s-12);
   width: 100%;
   max-width: 64rem;
@@ -140,12 +147,12 @@ const quizLink = computed(() =>
 .profile__head { grid-area: head; }
 .profile__actions { grid-area: actions; padding-top: var(--s-6); border-top: var(--bw-hair) solid var(--c-rule); }
 .profile__words { grid-area: words; }
-.profile__quizzes { grid-area: quizzes; }
+.profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
   .profile {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    grid-template-areas: 'head actions' 'words quizzes';
+    grid-template-areas: 'head actions' 'words side';
     column-gap: var(--s-8);
     row-gap: var(--s-8);
   }

@@ -278,5 +278,9 @@ export default {
   "sentencesNewTab": "(opens in a new tab)",
   "profileSinceLine": "Studying since {date}",
   "profilePastWeek": "Past week",
-  "profileAccount": "Account"
+  "profileAccount": "Account",
+  "profileSentencesTitle": "Sentences",
+  "profileSentencesWrite": "Write a sentence",
+  "profileSentencesAll": "Your sentences",
+  "profileSentencesNone": "No words today yet."
 }
