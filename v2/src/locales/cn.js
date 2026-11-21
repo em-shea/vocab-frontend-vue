@@ -8,6 +8,7 @@ export default {
   "tagline": "中文学习",
   "navHome": "首页",
   "navQuiz": "测验",
+  "navSentences": "造句",
   "navReview": "复习",
   "navSignIn": "登录",
   "simplified": "简体字",

@@ -9,6 +9,7 @@ export default {
   "tagline": "chinese language learning",
   "navHome": "Home",
   "navQuiz": "Quiz",
+  "navSentences": "Sentences",
   "navReview": "Review",
   "navSignIn": "Sign in",
   "simplified": "Simplified (简体字)",
