@@ -17,10 +17,10 @@ const SOURCE_EN = 'Xuan Zan, recommending him to the court'
 const STORY_EN = 'Said to descend from the great general Guan Yu, he was sent to crush Liangshan. Huyan Zhuo pretended to defect'
 const STORY_CN = '关胜相传是关羽后代'
 const CREDIT_EN = 'Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.'
-const SPRITE_PX = { A: 256, B: 320, C: 128 }
-const SPRITE_SCALE = { A: 4, B: 5, C: 2 }
+const SPRITE_PX = { A: 256, B: 256, C: 128 }
+const SPRITE_SCALE = { A: 4, B: 4, C: 2 }
 // Fixed art heights (rem x 16): full art's figure, and the framed art window (border box).
-const ART_H = { B: 224, A: 192 }
+const ART_H = { B: 208, A: 192 }
 // Guan Sheng's sprite: the drawn part runs from row 21 to the feet on row 58, and from column 16 to 57 (the glaive).
 const GUAN = { top: 21, left: 16, right: 57 }
 // The words of each Chinese line: the syllables of a word joined are its pop-up text.
@@ -210,20 +210,20 @@ test('full art: the sprite figure sits between the plates, its bottom clear of t
     const bottom = await c.locator('.plate--info').boundingBox()
     const sprite = await c.locator('.sprite').boundingBox()
     // The empty headroom rows may pass behind the name plate; the drawn part may not.
-    const drawnTop = sprite.y + GUAN.top * 5
+    const drawnTop = sprite.y + GUAN.top * 4
     expect(drawnTop).toBeGreaterThanOrEqual(top.y + top.height - 1)
     expect(sprite.y + sprite.height).toBeLessThanOrEqual(bottom.y)
     // The feet (row 58) and the whole foot shadow (to row 60.5) are inside the figure, above the plate.
     const fig = await c.locator('.figure').boundingBox()
     expect(fig.height).toBe(ART_H.B)
-    expect(sprite.y + 61 * 5).toBeLessThanOrEqual(fig.y + fig.height)
+    expect(sprite.y + 61 * 4).toBeLessThanOrEqual(fig.y + fig.height)
     const sh = await c.locator('.shade').boundingBox()
     expect(sh.y + sh.height).toBeLessThanOrEqual(bottom.y)
-    // The body is on the centre line (shifted by 3 sprite pixels, 15px).
-    expect(Math.abs(sprite.x + sprite.width / 2 - 15 - (face.x + face.width / 2))).toBeLessThan(1.5)
+    // The body is on the centre line (shifted by 3 sprite pixels, 12px).
+    expect(Math.abs(sprite.x + sprite.width / 2 - 12 - (face.x + face.width / 2))).toBeLessThan(1.5)
     // The sprite box may reach past the figure, but what is drawn (glaive included) stays inside the face's border.
-    expect(sprite.x + GUAN.left * 5, id).toBeGreaterThanOrEqual(face.x + 4)
-    expect(sprite.x + (GUAN.right + 1) * 5, id).toBeLessThanOrEqual(face.x + face.width - 4)
+    expect(sprite.x + GUAN.left * 4, id).toBeGreaterThanOrEqual(face.x + 4)
+    expect(sprite.x + (GUAN.right + 1) * 4, id).toBeLessThanOrEqual(face.x + face.width - 4)
   }
 })
 
@@ -447,7 +447,7 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
-test('tier emblems: icon top-right with rank below on full art; icon alone in framed and compact footers', async ({ page }) => {
+test('tier emblems: icon top-right and rank bottom-right on full art; icon alone in framed and compact footers', async ({ page }) => {
   await open(page)
   const info = (id) => card(page, id).locator('[data-tier]').first().evaluate((el) => {
     const svg = el.querySelector('svg').getBoundingClientRect()
@@ -473,11 +473,17 @@ test('tier emblems: icon top-right with rank below on full art; icon alone in fr
     expect(st.top, id).toBeLessThan(30)
     const tier = card(page, id).locator('.plate__tier')
     await expect(tier).toHaveAttribute('aria-hidden', 'true')
-    await expect(tier.locator('.plate__rank')).toHaveText(/^(5|6) \/ 108$/)
-    const ib = await tier.locator('svg').boundingBox()
-    const rb = await tier.locator('.plate__rank').boundingBox()
-    expect(rb.y).toBeGreaterThanOrEqual(ib.y + ib.height - 0.5)
-    expect(Math.abs((rb.x + rb.width) - (ib.x + ib.width))).toBeLessThan(1.5)
+    // '5 / 108' sits in the fact plate's bottom-right corner, clear of the facts.
+    const plate = card(page, id).locator('.plate--info')
+    const rank = plate.locator('.plate__rank')
+    await expect(rank).toHaveText(/^(5|6) \/ 108$/)
+    const pb = await plate.boundingBox()
+    const rb = await rank.boundingBox()
+    expect(pb.x + pb.width - (rb.x + rb.width)).toBeLessThan(20)
+    expect(pb.y + pb.height - (rb.y + rb.height)).toBeLessThan(14)
+    const facts = plate.locator('.facts, .line').first()
+    const fb = await facts.boundingBox()
+    expect(rb.y).toBeGreaterThanOrEqual(fb.y + fb.height - 0.5)
   }
   for (const id of ['A-front', 'C-front', 'A-front-imm', 'C-front-imm', 'A-locked', 'C-locked']) {
     const st = await info(id)
@@ -663,7 +669,7 @@ test('the sprite loops by default, with one step per frame', async ({ page }) =>
   expect(await hu.evaluate((el) => getComputedStyle(el).animationTimingFunction)).toContain('steps(4')
   expect(await hu.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1024px 256px')
   const big = card(page, 'B-front').locator('.sprite')
-  expect(await big.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1600px 320px')
+  expect(await big.evaluate((el) => getComputedStyle(el).backgroundSize)).toBe('1280px 256px')
 })
 
 test('a hero with no quote shows no quote block', async ({ page }) => {
@@ -1009,9 +1015,9 @@ test('full art: the fact plate is the same height in guided, immersive and locke
     return { plate: r('.plate--info').height, plateTop: r('.plate--info').top - face.top, spriteTop: r('.sprite').top - face.top, figure: r('.figure').height, name: r('.plate--name').height }
   })
   const g = await m('B-front')
-  // A compact plate: about 110px (it was 163), and the figure takes the freed height.
-  expect(g.plate).toBeLessThanOrEqual(115)
-  expect(g.plate).toBeGreaterThanOrEqual(100)
+  // A compact plate: about 127px (163 before 2026-11-18, 111 until the 4x sprite on 2026-11-21).
+  expect(g.plate).toBeLessThanOrEqual(130)
+  expect(g.plate).toBeGreaterThanOrEqual(120)
   expect(g.figure).toBe(ART_H.B)
   for (const id of ['B-front-imm', 'B-locked', 'B-stress']) {
     const o = await m(id)
