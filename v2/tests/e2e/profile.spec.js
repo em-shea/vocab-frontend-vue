@@ -126,7 +126,7 @@ test.describe('profile', () => {
 
     await signedIn(page)
     await page.goto('/review')
-    await page.getByRole('link', { name: EMAIL }).click()
+    await page.getByRole('link', { name: 'Profile', exact: true }).click()
     await expect(page).toHaveURL(/\/profile$/)
   })
 

@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
+import SubscribeForm from '../components/SubscribeForm.vue'
 import { rememberNext } from '../lib/signInReturn'
 import { useAuthStore } from '../stores/auth'
 
@@ -42,8 +43,15 @@ async function submit () {
     rememberNext(route.query.next)
     router.push({ name: 'verification', query: route.query.lang ? { lang: route.query.lang } : {} })
   } catch (err) {
-    // An address with no account is the one failure the visitor can act on.
-    status.value = err?.code === 'UserNotFoundException' ? 'unknown' : 'error'
+    // An address with no account is the one failure the visitor can act on:
+    // the page offers to create one. Subscribing also emails a sign-in link,
+    // so keep where to return to for when it is opened.
+    if (err?.code === 'UserNotFoundException') {
+      rememberNext(route.query.next)
+      status.value = 'unknown'
+    } else {
+      status.value = 'error'
+    }
   }
 }
 </script>
@@ -79,7 +87,10 @@ async function submit () {
         <template v-else-if="status === 'error'">{{ t('signInError') }}</template>
       </p>
 
-      <p class="signin__aside">
+      <!-- No account for that address: offer to make one here, with the
+           address filled in, rather than sending the visitor to the home page. -->
+      <SubscribeForm v-if="status === 'unknown'" :key="email" id-prefix="signin" :initial-email="email.trim()" stacked hide-email />
+      <p v-else class="signin__aside">
         {{ t('signInNoAccount') }}
         <RouterLink :to="{ name: 'home' }">{{ t('signInNoAccountLink') }}</RouterLink>
       </p>

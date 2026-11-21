@@ -44,6 +44,11 @@ describe('todaysWords', () => {
     expect(todaysWords({})).toEqual([])
     expect(todaysWords({ '2026-11-20': {} })).toEqual([])
   })
+
+  it('skips a newest day with no words yet, like the word card does', () => {
+    const words = todaysWords({ '2026-11-21': { review_words: [] }, ...ACTIVITY })
+    expect(words.map((e) => `${e.list_id}:${e.word.word_id}`)).toEqual(['L1:a', 'L1:b', 'L2:a'])
+  })
 })
 
 describe('wordsBySentenceId', () => {

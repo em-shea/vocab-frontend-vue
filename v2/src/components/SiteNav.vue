@@ -29,7 +29,7 @@ const route = useRoute()
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
       <RouterLink v-if="SENTENCES_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
       <RouterLink class="nav__link nav__link--strong" :to="auth.signedIn ? { name: 'profile' } : signInRoute(route.fullPath)">
-        {{ auth.signedIn ? auth.email : t('navSignIn') }}
+        {{ auth.signedIn ? t('navProfile') : t('navSignIn') }}
       </RouterLink>
     </nav>
 

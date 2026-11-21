@@ -51,8 +51,13 @@ export function wordsOn (activity = {}, date) {
   return [...seen.values()]
 }
 
-/** The words sent today, once each. */
-export const todaysWords = (activity = {}) => wordsOn(activity, todayKey(activity))
+/**
+ * The newest day's words, once each: the words on the profile's "Today's
+ * words" card. The backend adds an empty entry for its (UTC) today before
+ * that day's word is sent, so the newest date can have no words yet; this
+ * skips to the newest day that has some, as the word card does.
+ */
+export const todaysWords = (activity = {}) => recentDays(activity)[0]?.words ?? []
 
 /**
  * Every day in the activity (the last 10) that has words, newest first, each

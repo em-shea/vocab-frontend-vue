@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import WordCard from '../WordCard.vue'
+import { SENTENCES_ENABLED } from '../../featureFlags'
 
 // The newest word from each list the learner takes, with the way to quiz on
 // or review that list. The links keep the old screen's settings: a 14-day,
@@ -35,6 +36,9 @@ const { t } = useI18n()
             </RouterLink>
             <RouterLink :to="{ name: 'review', query: { list_id: entry.list_id, date_range: '30' } }">
               {{ t('profileReview') }}
+            </RouterLink>
+            <RouterLink v-if="SENTENCES_ENABLED" :to="{ name: 'sentences' }">
+              {{ t('navSentences') }}
             </RouterLink>
           </div>
         </WordCard>
