@@ -23,8 +23,8 @@ const pwa = VitePWA({
   injectRegister: 'auto',
   manifest: {
     name: 'Haohaotiantian',
-    short_name: 'Haohaotiantian',
-    description: 'A Chinese word a day, with quizzes and review.',
+    short_name: 'HHTT',
+    description: 'A Chinese vocabulary word a day, with quizzes and practice sentences.',
     lang: 'en',
     start_url: '/',
     scope: '/',
