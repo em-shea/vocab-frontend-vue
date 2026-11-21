@@ -4,12 +4,13 @@ import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import AppButton from '../AppButton.vue'
 import { scorePercent } from '../../lib/profile'
+import DoneCount from './DoneCount.vue'
 
 // Today's quiz, and every quiz saved in the past week (GET /quizzes). This
 // replaces the old /my-quizzes page, which was never finished.
 
 const props = defineProps({
-  today: { type: Object, default: null },       // today's saved quiz, or null
+  count: { type: Object, required: true },      // { done, total } over today's words
   history: { type: Array, default: () => [] },  // lib/profile quizHistory
   status: { type: String, default: 'loading' }, // loading | ready | error
   quizLink: { type: Object, required: true },
@@ -39,12 +40,12 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
 <template>
   <section class="quizzes" aria-labelledby="profile-quizzes">
     <SectionHead>
-      <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span>
+      <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span><DoneCount :count="count" />
     </SectionHead>
 
     <div class="quizzes__box">
-      <p v-if="today" class="quizzes__today">
-        {{ t('profileQuizDone', { correct: today.correct_answers, total: today.question_quantity }) }}
+      <p v-if="count.total && count.done === count.total" class="quizzes__today">
+        {{ t('profileQuizzesAllDone') }}
       </p>
       <div v-else>
         <AppButton as="RouterLink" :to="quizLink" variant="seal">{{ t('profileQuizTake') }}</AppButton>

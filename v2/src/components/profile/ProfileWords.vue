@@ -9,7 +9,7 @@ import { SENTENCES_ENABLED } from '../../featureFlags'
 // ten-question quiz and the past 30 days of words.
 
 defineProps({
-  words: { type: Array, required: true }, // review-word entries from lib/profile latestWords
+  progress: { type: Array, required: true }, // lib/profile wordProgress: { entry, quiz, sentence }
   hasLists: { type: Boolean, required: true },
   listName: { type: Function, required: true }
 })
@@ -19,7 +19,7 @@ const { t } = useI18n()
 <template>
   <section class="words" aria-labelledby="profile-words">
     <SectionHead>
-      <span id="profile-words">{{ t('profileWordsTitle', Math.max(words.length, 1)) }}</span>
+      <span id="profile-words">{{ t('profileWordsTitle', Math.max(progress.length, 1)) }}</span>
     </SectionHead>
 
     <p v-if="!hasLists" class="words__empty">
@@ -28,18 +28,19 @@ const { t } = useI18n()
     </p>
 
     <ul v-else class="words__grid">
-      <li v-for="entry in words" :key="entry.list_id">
+      <li v-for="{ entry, quiz, sentence } in progress" :key="entry.list_id">
         <WordCard :word="entry.word" :level="listName(entry.list_id)">
           <div class="words__links">
             <RouterLink :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }">
               {{ t('profileQuiz') }}
             </RouterLink>
-            <RouterLink :to="{ name: 'review', query: { list_id: entry.list_id, date_range: '30' } }">
-              {{ t('profileReview') }}
-            </RouterLink>
-            <RouterLink v-if="SENTENCES_ENABLED" :to="{ name: 'sentences' }">
-              {{ t('navSentences') }}
-            </RouterLink>
+            <span v-if="quiz" class="words__check" aria-hidden="true">✓</span>
+            <span v-if="quiz" class="sr-only">{{ t('profileDone') }}</span>
+          </div>
+          <div v-if="SENTENCES_ENABLED" class="words__links">
+            <RouterLink :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
+            <span v-if="sentence" class="words__check" aria-hidden="true">✓</span>
+            <span v-if="sentence" class="sr-only">{{ t('profileDone') }}</span>
           </div>
         </WordCard>
       </li>
@@ -67,10 +68,13 @@ const { t } = useI18n()
 .words__links {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: var(--s-4);
-  margin-top: auto;
   padding-top: var(--s-3);
   border-top: var(--bw-hair) solid var(--c-rule);
   font-size: var(--t-base);
 }
+/* The first row sits at the foot of the card; the second follows it. */
+.words__links:first-of-type { margin-top: auto; }
+.words__check { color: var(--c-ink); font-weight: 700; }
 </style>
