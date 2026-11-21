@@ -280,5 +280,6 @@ export default {
   "profileSentencesTitle": "Sentences",
   "profileSentencesWrite": "Write a sentence",
   "profileSentencesAll": "Your sentences",
-  "profileSentencesNone": "No words today yet."
+  "profileSentencesNone": "No words today yet.",
+  "offlineNotice": "You're offline. Your words will load when you're back online."
 }

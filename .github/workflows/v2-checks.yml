@@ -46,6 +46,9 @@ jobs:
       - name: User-journey tests
         run: npm run test:e2e
 
+      - name: Installable-app checks (production build, service worker, offline)
+        run: npm run test:pwa
+
       - name: Keep the report when a journey fails
         if: failure()
         uses: actions/upload-artifact@v4

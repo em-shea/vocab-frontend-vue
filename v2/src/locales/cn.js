@@ -279,5 +279,6 @@ export default {
   "profileSentencesTitle": "造句",
   "profileSentencesWrite": "写一个句子",
   "profileSentencesAll": "我的句子",
-  "profileSentencesNone": "今天还没有新词。"
+  "profileSentencesNone": "今天还没有新词。",
+  "offlineNotice": "你目前处于离线状态。恢复网络后即可加载词语。"
 }

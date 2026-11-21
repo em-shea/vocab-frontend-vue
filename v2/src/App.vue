@@ -3,6 +3,7 @@ import { onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePreferencesStore } from './stores/preferences'
 import { useAuthStore } from './stores/auth'
+import OfflineNotice from './components/OfflineNotice.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -38,5 +39,6 @@ watch(
 </script>
 
 <template>
+  <OfflineNotice />
   <RouterView />
 </template>
