@@ -20,7 +20,7 @@ const CREDIT_EN = 'Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popula
 const SPRITE_PX = { A: 256, B: 256, C: 128 }
 const SPRITE_SCALE = { A: 4, B: 4, C: 2 }
 // Fixed art heights (rem x 16): full art's figure, and the framed art window (border box).
-const ART_H = { B: 208, A: 192 }
+const ART_H = { B: 224, A: 192 }
 // Guan Sheng's sprite: the drawn part runs from row 21 to the feet on row 58, and from column 16 to 57 (the glaive).
 const GUAN = { top: 21, left: 16, right: 57 }
 // The words of each Chinese line: the syllables of a word joined are its pop-up text.
@@ -447,7 +447,7 @@ test('guided cn: English glosses and the curly-quoted subline are still there; l
   await expect(b.locator('.viewer__credit')).toContainText('歌川国芳')
 })
 
-test('tier emblems: icon top-right and rank bottom-right on full art; icon alone in framed and compact footers', async ({ page }) => {
+test('tier emblems: icon top-right and rank bottom-right of the full-art name plate; icon alone in framed and compact footers', async ({ page }) => {
   await open(page)
   const info = (id) => card(page, id).locator('[data-tier]').first().evaluate((el) => {
     const svg = el.querySelector('svg').getBoundingClientRect()
@@ -473,17 +473,16 @@ test('tier emblems: icon top-right and rank bottom-right on full art; icon alone
     expect(st.top, id).toBeLessThan(30)
     const tier = card(page, id).locator('.plate__tier')
     await expect(tier).toHaveAttribute('aria-hidden', 'true')
-    // '5 / 108' sits in the fact plate's bottom-right corner, clear of the facts.
-    const plate = card(page, id).locator('.plate--info')
-    const rank = plate.locator('.plate__rank')
+    // '5 / 108' sits in the name plate's bottom-right corner, under the icon.
+    const plate = card(page, id).locator('.plate--name')
+    const rank = tier.locator('.plate__rank')
     await expect(rank).toHaveText(/^(5|6) \/ 108$/)
     const pb = await plate.boundingBox()
     const rb = await rank.boundingBox()
+    const ib = await tier.locator('svg').boundingBox()
     expect(pb.x + pb.width - (rb.x + rb.width)).toBeLessThan(20)
     expect(pb.y + pb.height - (rb.y + rb.height)).toBeLessThan(14)
-    const facts = plate.locator('.facts, .line').first()
-    const fb = await facts.boundingBox()
-    expect(rb.y).toBeGreaterThanOrEqual(fb.y + fb.height - 0.5)
+    expect(rb.y).toBeGreaterThan(ib.y + ib.height)
   }
   for (const id of ['A-front', 'C-front', 'A-front-imm', 'C-front-imm', 'A-locked', 'C-locked']) {
     const st = await info(id)
@@ -1015,9 +1014,9 @@ test('full art: the fact plate is the same height in guided, immersive and locke
     return { plate: r('.plate--info').height, plateTop: r('.plate--info').top - face.top, spriteTop: r('.sprite').top - face.top, figure: r('.figure').height, name: r('.plate--name').height }
   })
   const g = await m('B-front')
-  // A compact plate: about 127px (163 before 2026-11-18, 111 until the 4x sprite on 2026-11-21).
-  expect(g.plate).toBeLessThanOrEqual(130)
-  expect(g.plate).toBeGreaterThanOrEqual(120)
+  // A compact plate: about 111px (it was 163).
+  expect(g.plate).toBeLessThanOrEqual(115)
+  expect(g.plate).toBeGreaterThanOrEqual(100)
   expect(g.figure).toBe(ART_H.B)
   for (const id of ['B-front-imm', 'B-locked', 'B-stress']) {
     const o = await m(id)

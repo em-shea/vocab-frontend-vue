@@ -96,8 +96,8 @@ import TierSymbol from './TierSymbol.vue'
 // (TierSymbol) is the rank in the plain UI face followed by a small MTG-style
 // icon: a cloud ring in gold-to-vermilion for the 36 Heavenly Spirits (天罡),
 // peaks in silver-to-navy for the 72 Earthly Fiends (地煞). Full art shows the
-// icon in the name plate's top-right corner and "5 / 108" in the fact plate's
-// bottom-right corner; framed and compact show the icon
+// icon in the name plate's top-right corner and "5 / 108" in its bottom-right
+// corner; framed and compact show the icon
 // alone at the right of the footer, after "5 / 108". The icons are "Cloud ring"
 // and "Peaks" by Lorc, game-icons.net, CC BY 3.0; the credit is in the print
 // viewer and in v2/CREDITS.md. Locked cards keep theirs.
@@ -230,6 +230,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                 <span class="sr-only">{{ rankTierText }}</span>
                 <div class="plate__tier" aria-hidden="true">
                   <TierSymbol :tier="heavenly ? 'heavenly' : 'earthly'" :rank="hero.rank" size="sm" :show-rank="false" />
+                  <span class="plate__rank mono">{{ hero.rank }} / 108</span>
                 </div>
               </header>
 
@@ -248,7 +249,6 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
                   </dl>
                 </template>
                 <p v-else class="line">{{ lockedText }}</p>
-                <span class="plate__rank mono" aria-hidden="true">{{ hero.rank }} / 108</span>
               </div>
             </div>
           </template>
@@ -683,7 +683,7 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 .card--framed .foot { flex: none; padding-top: var(--s-1); border-top: var(--bw-rule) solid var(--c-rule); }
 
 /* B: full art ----------------------------------------------------------- */
-.card--full-art { max-width: 320px; --name-size: var(--t-lg); --name-h: 4rem; --art-h: 13rem; }
+.card--full-art { max-width: 320px; --name-size: var(--t-lg); --name-h: 4rem; --art-h: 14rem; }
 .card--full-art .face { overflow: hidden; background-color: var(--c-ink); border-width: var(--bw-frame); }
 .card--full-art .face--back { background-color: var(--c-panel); }
 .card--full-art .stage { position: absolute; inset: 0; background-color: var(--c-ground); }
@@ -706,11 +706,9 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 }
 .card--full-art .plate--back { border: 0; border-top: var(--bw-heavy) solid var(--tier); box-shadow: none; }
 .card--full-art .plate--name { flex: none; box-sizing: border-box; height: var(--name-h); display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: 6px var(--s-3); }
-/* Tier icon in the name plate's top-right corner (2026-11-21). */
-.card--full-art .plate__tier { align-self: flex-start; flex: none; display: flex; }
-/* '5 / 108' in the fact plate's bottom-right corner (2026-11-21). */
-.card--full-art .plate--info { position: relative; padding-bottom: calc(var(--s-2) + 0.875rem); }
-.card--full-art .plate__rank { position: absolute; right: var(--s-3); bottom: var(--s-2); font-size: var(--t-sm); font-weight: var(--w-semi); line-height: 1; white-space: nowrap; }
+/* Name plate corners (2026-11-21): tier icon top right, '5 / 108' bottom right. */
+.card--full-art .plate__tier { align-self: stretch; flex: none; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
+.card--full-art .plate__rank { font-size: var(--t-sm); font-weight: var(--w-semi); line-height: 1; white-space: nowrap; }
 .card--full-art .plate__text { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
 .plate--back .plate__text { display: flex; flex-direction: column; gap: var(--s-1); }
 /* The figure takes what the plates leave. The sprite's empty headroom rows hang
