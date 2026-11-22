@@ -1,6 +1,7 @@
 <script setup>
 import ScrollRods from './ScrollRods.vue'
 import SiteNav from './SiteNav.vue'
+import SiteFooter from './SiteFooter.vue'
 
 // The frame every ported screen sits in: scroll rods top and bottom, the nav,
 // then the screen's own content. Home predates this and lays out its own page
@@ -20,6 +21,7 @@ defineProps({
       <main class="shell__main" :class="`shell__main--${width}`">
         <slot />
       </main>
+      <SiteFooter class="shell__footer" />
     </div>
     <ScrollRods position="bottom" />
   </div>
@@ -42,4 +44,5 @@ defineProps({
 .shell__main { display: flex; flex-direction: column; gap: var(--s-6); width: 100%; margin: 0 auto; }
 .shell__main--narrow { max-width: 34rem; }
 .shell__main--wide { max-width: none; }
+.shell__footer { margin-top: var(--s-16); }
 </style>

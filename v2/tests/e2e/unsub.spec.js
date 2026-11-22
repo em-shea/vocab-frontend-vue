@@ -103,7 +103,7 @@ test('in Chinese', async ({ page }) => {
   await mockBackend(page)
   await page.goto(`/unsub?list=${HSK1}&char=simplified&email=me%40example.com&lang=cn`)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('退订')
-  await expect(page.getByLabel('词表', { exact: true }).locator('option:checked')).toHaveText('HSK Level 1 · 简体')
+  await expect(page.getByLabel('词表', { exact: true }).locator('option:checked')).toHaveText('HSK 1级 · 简体')
   await page.getByRole('button', { name: '退订', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('已退订。')
   // The language survives the link's own parameters being tidied away.

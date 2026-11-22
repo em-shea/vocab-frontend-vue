@@ -7,6 +7,7 @@ import ScrollRods from '../components/ScrollRods.vue'
 import HomeHero from '../components/home/HomeHero.vue'
 import ChooseStudy from '../components/home/ChooseStudy.vue'
 import DailyEmail from '../components/home/DailyEmail.vue'
+import ReadYourWay from '../components/home/ReadYourWay.vue'
 import StudyWays from '../components/home/StudyWays.vue'
 import CollectHeroes from '../components/home/CollectHeroes.vue'
 import SiteFooter from '../components/SiteFooter.vue'
@@ -40,6 +41,7 @@ const heroes = computed(() => {
       <HomeHero :heroes="heroes" />
       <ChooseStudy :heroes="heroes" />
       <DailyEmail />
+      <ReadYourWay />
       <StudyWays :heroes="heroes" />
       <CollectHeroes v-if="heroes" />
       <ClosingBand :heroes="heroes" />

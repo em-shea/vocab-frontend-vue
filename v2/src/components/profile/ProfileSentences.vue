@@ -6,6 +6,7 @@ import DoneCount from './DoneCount.vue'
 import PencilIcon from '../PencilIcon.vue'
 import AppButton from '../AppButton.vue'
 import { usePreferencesStore } from '../../stores/preferences'
+import { recentDays } from '../../lib/sentences'
 
 // Today's sentences at a glance: each of today's words with the sentence
 // written for it, or a way to write one. Writing happens on /sentences.
@@ -17,12 +18,25 @@ import { usePreferencesStore } from '../../stores/preferences'
 const props = defineProps({
   // The same words as the word cards: lib/profile wordProgress.
   progress: { type: Array, default: () => [] },
-  count: { type: Object, default: () => ({ done: 0, total: 0 }) } // { done, total } over today's words
+  count: { type: Object, default: () => ({ done: 0, total: 0 }) }, // { done, total } over today's words
+  activity: { type: Object, default: () => ({}) } // for past sentences
 })
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const prefs = usePreferencesStore()
 
 const rows = computed(() => props.progress)
+
+// Past sentences, laid out like the quizzes box's past week: every sentence
+// written for an earlier day's word in the activity (its last 10 days).
+const todayDate = computed(() => props.progress[0]?.entry.date_sent)
+const past = computed(() => recentDays(props.activity)
+  .filter((day) => day.date !== todayDate.value)
+  .flatMap((day) => day.words.filter((e) => e.sentence?.sentence).map((e) => ({ date: day.date, entry: e }))))
+const shortDate = (date) => {
+  const [y, m, d] = String(date).split('-').map(Number)
+  return new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+    .format(new Date(Date.UTC(y, m - 1, d)))
+}
 const characters = (word) => (prefs.isTraditional ? word.traditional : word.simplified) || word.simplified
 </script>
 
@@ -52,6 +66,19 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
           </AppButton>
         </li>
       </ul>
+
+      <h3 class="label sentences__past-title">{{ t('profileSentencesPast') }}</h3>
+      <p v-if="!past.length" class="sentences__empty">{{ t('profileSentencesPastEmpty') }}</p>
+      <table v-else class="past">
+        <caption class="sr-only">{{ t('profileSentencesPast') }}</caption>
+        <tbody>
+          <tr v-for="row in past" :key="`${row.date}|${row.entry.list_id}|${row.entry.word.word_id ?? row.entry.word.simplified}`">
+            <td class="mono past__date">{{ shortDate(row.date) }}</td>
+            <td class="hanzi past__word" lang="zh">{{ characters(row.entry.word) }}</td>
+            <td class="hanzi past__text" lang="zh">{{ row.entry.sentence.sentence }}</td>
+          </tr>
+        </tbody>
+      </table>
 
       <RouterLink class="sentences__all" :to="{ name: 'sentences' }">{{ t('profileSentencesAll') }}</RouterLink>
     </div>
@@ -108,4 +135,12 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
   padding-top: var(--s-4);
   font-size: var(--t-base);
 }
+.sentences__past-title { margin: 0; padding-top: var(--s-4); border-top: var(--bw-hair) solid var(--c-rule); }
+.past { width: 100%; border-collapse: collapse; }
+.past td { padding: var(--s-2) 0; text-align: left; vertical-align: baseline; color: var(--c-ink); }
+.past td + td { padding-left: var(--s-4); }
+.past tbody tr + tr td { border-top: var(--bw-hair) solid var(--c-rule); }
+.past__date { white-space: nowrap; font-size: var(--t-base); }
+.past__word { white-space: nowrap; }
+.past__text { overflow-wrap: anywhere; }
 </style>

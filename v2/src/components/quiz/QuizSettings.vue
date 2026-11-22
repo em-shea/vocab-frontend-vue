@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../../lib/listLabel'
 import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppButton from '../AppButton.vue'
@@ -18,6 +19,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['start', 'cancel'])
 const { t } = useI18n()
+const listLabel = useListLabel()
 
 const draft = reactive({ listId: props.listId, range: props.range, length: props.length })
 </script>
@@ -27,7 +29,7 @@ const draft = reactive({ listId: props.listId, range: props.range, length: props
     <div class="settings__field">
       <label class="label" for="quiz-list">{{ t('quizList') }}</label>
       <select id="quiz-list" v-model="draft.listId" class="settings__select">
-        <option v-for="list in lists" :key="list.list_id" :value="list.list_id">{{ list.list_name }}</option>
+        <option v-for="list in lists" :key="list.list_id" :value="list.list_id">{{ listLabel(list.list_name) }}</option>
       </select>
     </div>
 

@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -23,6 +24,7 @@ import { RANGES, LENGTHS, DEFAULTS, uniqueWords, canQuiz, makeQuestion, resultsP
 // The question rules are in lib/quiz.js; this file only runs the session.
 
 const { t } = useI18n()
+const listLabel = useListLabel()
 const route = useRoute()
 const router = useRouter()
 const lists = useVocabListsStore()
@@ -144,7 +146,7 @@ onMounted(async () => {
   await load()
 })
 
-const listName = computed(() => lists.byId(listId.value)?.list_name ?? '')
+const listName = computed(() => listLabel(lists.byId(listId.value)?.list_name ?? ''))
 const correctCount = computed(() => answers.value.filter((a) => a.correct).length)
 // Fills as questions are answered, so the last answer completes the bar.
 const progress = computed(() => Math.round((answers.value.length / length.value) * 100))

@@ -27,8 +27,8 @@ test.describe('profile', () => {
     await expect(heading).toContainText('安')
     await expect(heading.locator('rt')).toHaveText(['xiǎo', 'ān'])
     await expect(page.locator('.head__seal')).toHaveCount(0)
-    // No "Studying since" (Emily, 2026-11-20).
-    await expect(page.getByText('June 2021')).toHaveCount(0)
+    // When they started, under the email (Emily, 2026-11-22).
+    await expect(page.getByText('Studying since June 2021')).toBeVisible()
     await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
 
     // The newest word from each list, inviting a quiz and a sentence (no review).
@@ -38,9 +38,11 @@ test.describe('profile', () => {
     await expect(cards.nth(0)).toContainText('爱护')
     await expect(cards.nth(0)).toContainText('HSK Level 1')
     await expect(cards.nth(1)).toContainText('帮助')
-    await expect(cards.nth(0).getByRole('link', { name: 'Quiz' }))
+    // Not done yet: each task is a button (Emily, 2026-11-22).
+    await expect(cards.nth(0).getByRole('link', { name: 'Take quiz' }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
-    await expect(cards.nth(0).getByRole('link', { name: 'Sentences' })).toHaveAttribute('href', '/sentences')
+    await expect(cards.nth(0).getByRole('link', { name: 'Write a sentence' })).toHaveAttribute('href', '/sentences')
+    await expect(cards.nth(0).locator('.taskbox')).toHaveCount(0)
     await expect(cards.nth(0).getByRole('link', { name: 'Review' })).toHaveCount(0)
     // Yesterday's quiz doesn't count for today's word.
     await expect(cards.nth(0).getByText('done', { exact: true })).toHaveCount(0)

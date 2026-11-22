@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../lib/listLabel'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -26,6 +27,7 @@ const props = defineProps({
 const uid = computed(() => props.idPrefix || props.variant)
 
 const { t } = useI18n()
+const listLabel = useListLabel()
 const lists = useVocabListsStore()
 const prefs = usePreferencesStore()
 const auth = useAuthStore()
@@ -82,7 +84,7 @@ async function submit () {
       <label class="label" :for="`level-${uid}`">{{ t('chooseLevel') }}</label>
       <select :id="`level-${uid}`" v-model="listId" class="sub__select" :disabled="busy">
         <option v-for="list in lists.all" :key="list.list_id" :value="list.list_id">
-          {{ list.list_name }}
+          {{ listLabel(list.list_name) }}
         </option>
       </select>
     </div>

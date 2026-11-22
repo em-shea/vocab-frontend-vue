@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../../lib/listLabel'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppButton from '../AppButton.vue'
@@ -15,10 +16,11 @@ const props = defineProps({
 })
 defineEmits(['act'])
 const { t } = useI18n()
+const listLabel = useListLabel()
 
 const traditional = computed(() => props.list.character_set === 'traditional')
 const setName = computed(() => t(traditional.value ? 'listsTraditional' : 'listsSimplified'))
-const name = computed(() => props.list.list_name || t('listsUnnamed'))
+const name = computed(() => listLabel(props.list.list_name) || t('listsUnnamed'))
 </script>
 
 <template>

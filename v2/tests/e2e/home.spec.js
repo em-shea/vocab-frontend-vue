@@ -136,7 +136,7 @@ test('launch: leads with the daily word, has no launching-soon notes, previews t
   await expect(page.getByText('Climb the mountain')).toHaveCount(0)
   await expect(page.getByText('替天行道')).toHaveCount(0)
   await expect(page.getByText('Launching soon')).toHaveCount(0)
-  await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: collect the 108 heroes of Liangshan' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: practise daily to unlock the 108 heroes of the Water Margin' })).toBeVisible()
   // Study is only what exists: quizzes, example sentences and review. No links for now.
   await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes' })).toBeVisible()
   await expect(page.getByRole('heading', { level: 3, name: 'Review past words' })).toBeVisible()

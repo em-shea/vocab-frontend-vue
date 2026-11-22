@@ -29,7 +29,7 @@ const { t } = useI18n()
       <SubscribeForm variant="light" class="quest__form" />
     </div>
     <PrintFrame
-      ratio="4 / 5"
+      ratio="auto"
       class="quest__print"
       :src="printQuest"
       alt="Woodblock print of a bearded warrior in patterned robes, a long weapon held to his mouth"
@@ -38,20 +38,24 @@ const { t } = useI18n()
 </template>
 
 <style scoped>
-.quest { display: grid; gap: var(--s-6); align-items: center; }
+.quest { display: grid; gap: var(--s-6); align-items: stretch; }
 .quest__text { display: flex; flex-direction: column; gap: var(--s-4); min-width: 0; }
 .quest__kicker { font-family: var(--f-brush); font-weight: var(--w-body); font-size: var(--t-md); letter-spacing: 0.02em; color: var(--c-seal); }
 .quest__headline { font-size: var(--t-xl); }
 .quest__body { font-size: var(--t-lead); }
 .quest__form { margin-top: var(--s-2); }
-.quest__print { max-width: 420px; width: 100%; justify-self: center; }
-/* On a phone the print is a smaller picture under the form, not a full-width page. */
-@media (max-width: 719px) {
-  .quest__print { max-width: min(60%, 15rem); }
-}
+/* The print is cropped to fit (Emily, 2026-11-22): on a phone it is as wide as
+   the Subscribe button above it, in a landscape crop on the warrior's face;
+   on a wide screen it is as tall as the headline and form beside it. */
+.quest__print { width: 100%; }
+.quest__print :deep(.print__frame) { aspect-ratio: 3 / 2; }
+.quest__print :deep(.print__img) { object-position: 50% 22%; }
 
 @media (min-width: 720px) {
   .quest { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
+  .quest__print { height: 100%; }
+  .quest__print :deep(.print__frame) { aspect-ratio: auto; height: 100%; }
+  .quest__print :deep(.print__img) { position: absolute; inset: 0; object-position: 50% 30%; }
   .quest__headline { font-size: var(--t-4xl); }
 }
 </style>

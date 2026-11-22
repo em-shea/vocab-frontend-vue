@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../lib/listLabel'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -18,6 +19,7 @@ import { toCsv, downloadCsv } from '../lib/csv'
 // character set rides alongside as ?char=…, handled by the preferences store.
 
 const { t, locale } = useI18n()
+const listLabel = useListLabel()
 const route = useRoute()
 const router = useRouter()
 const lists = useVocabListsStore()
@@ -78,7 +80,7 @@ onMounted(async () => {
   watch([listId, range], () => { syncUrl(); load() })
 })
 
-const listName = computed(() => lists.byId(listId.value)?.list_name ?? '')
+const listName = computed(() => listLabel(lists.byId(listId.value)?.list_name ?? ''))
 
 const dateFormat = computed(() =>
   new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
@@ -123,7 +125,7 @@ function exportWords () {
       <div class="review__field">
         <label class="label" for="review-list">{{ t('reviewList') }}</label>
         <select id="review-list" v-model="listId" class="review__select">
-          <option v-for="list in lists.all" :key="list.list_id" :value="list.list_id">{{ list.list_name }}</option>
+          <option v-for="list in lists.all" :key="list.list_id" :value="list.list_id">{{ listLabel(list.list_name) }}</option>
         </select>
       </div>
 

@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import WordCard from '../WordCard.vue'
 import TaskBox from '../TaskBox.vue'
+import AppButton from '../AppButton.vue'
 import { SENTENCES_ENABLED } from '../../featureFlags'
 
 // The newest word from each list the learner takes, with the way to quiz on
@@ -15,6 +16,7 @@ defineProps({
   listName: { type: Function, required: true }
 })
 const { t } = useI18n()
+const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } })
 </script>
 
 <template>
@@ -31,15 +33,25 @@ const { t } = useI18n()
     <ul v-else class="words__grid">
       <li v-for="{ entry, quiz, sentence } in progress" :key="entry.list_id">
         <WordCard :word="entry.word" :level="listName(entry.list_id)">
+          <!-- Each task is a button until it is done, then a ticked line that
+               still links back to it. -->
           <div class="words__links">
-            <RouterLink :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }">
-              {{ t('profileQuiz') }}
-            </RouterLink>
-            <TaskBox :done="Boolean(quiz)" />
+            <template v-if="quiz">
+              <RouterLink :to="quizRoute(entry)">{{ t('profileQuiz') }}</RouterLink>
+              <TaskBox done />
+            </template>
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="quizRoute(entry)">
+              {{ t('profileQuizTakeShort') }}
+            </AppButton>
           </div>
           <div v-if="SENTENCES_ENABLED" class="words__links">
-            <RouterLink :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
-            <TaskBox :done="Boolean(sentence)" />
+            <template v-if="sentence">
+              <RouterLink :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
+              <TaskBox done />
+            </template>
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'sentences' }">
+              {{ t('profileSentencesWrite') }}
+            </AppButton>
           </div>
         </WordCard>
       </li>

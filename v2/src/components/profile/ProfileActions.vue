@@ -17,11 +17,11 @@ const { t } = useI18n()
 
 <style scoped>
 .actions { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); font-size: var(--t-base); }
-.actions a { color: var(--c-ink); }
+.actions a { color: inherit; }
 .actions__sign-out {
   padding: 0;
   font: inherit;
-  color: var(--c-ink);
+  color: inherit;
   background: none;
   border: 0;
   text-decoration: underline;

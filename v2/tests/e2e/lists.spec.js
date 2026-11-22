@@ -113,5 +113,5 @@ test('in Chinese', async ({ page }) => {
   await page.goto('/manage-lists?lang=cn')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('我的词表')
   await expect(page.getByRole('region', { name: '已订阅' })).toContainText('简体')
-  await expect(page.getByRole('button', { name: '订阅 HSK Level 1（繁体）' })).toBeVisible()
+  await expect(page.getByRole('button', { name: '订阅 HSK 1级（繁体）' })).toBeVisible()
 })
