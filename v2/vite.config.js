@@ -18,12 +18,15 @@ import { VitePWA } from 'vite-plugin-pwa'
 // New versions install in the background and take over on the next visit
 // (registerType 'autoUpdate'). Deploys must serve sw.js and index.html
 // uncached so browsers notice them (see deploy notes in the project status).
-const pwa = VitePWA({
+// Staging builds (vite build --mode staging) install as a separate-looking app:
+// "HHTT Staging" with the navy icon set, so it can't be mistaken for prod on a
+// phone. Both icon sets come from scripts/build-icons.mjs.
+const pwa = (staging) => VitePWA({
   registerType: 'autoUpdate',
   injectRegister: 'auto',
   manifest: {
-    name: 'Haohaotiantian',
-    short_name: 'HHTT',
+    name: staging ? 'Haohaotiantian Staging' : 'Haohaotiantian',
+    short_name: staging ? 'HHTT Staging' : 'HHTT',
     description: 'A Chinese vocabulary word a day, with quizzes and practice sentences.',
     lang: 'en',
     start_url: '/',
@@ -32,13 +35,13 @@ const pwa = VitePWA({
     background_color: '#FAF5EA',
     theme_color: '#1B2140',
     icons: [
-      { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-      { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      { src: `/icons/${staging ? 'staging/' : ''}icon-192.png`, sizes: '192x192', type: 'image/png' },
+      { src: `/icons/${staging ? 'staging/' : ''}icon-512.png`, sizes: '512x512', type: 'image/png' },
+      { src: `/icons/${staging ? 'staging/' : ''}icon-maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
     ]
   },
   workbox: {
-    globPatterns: ['**/*.{html,js,css}', 'icons/*.png'],
+    globPatterns: ['**/*.{html,js,css}', staging ? 'icons/staging/*.png' : 'icons/*.png'],
     navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
     runtimeCaching: [
@@ -59,8 +62,14 @@ const pwa = VitePWA({
 })
 
 
-export default defineConfig({
-  plugins: [vue(), pwa],
+// Points the favicon and apple-touch-icon in index.html at the staging set.
+const stagingHtmlIcons = {
+  name: 'staging-html-icons',
+  transformIndexHtml: (html) => html.replaceAll('/icons/', '/icons/staging/')
+}
+
+export default defineConfig(({ mode }) => ({
+  plugins: [vue(), pwa(mode === 'staging'), ...(mode === 'staging' ? [stagingHtmlIcons] : [])],
   // amazon-cognito-identity-js pulls in the `buffer` package, which expects
   // Node's `global`. Webpack shimmed that automatically, so the Vue 2 app never
   // needed this; Vite does not, and without it the SDK throws
@@ -101,4 +110,4 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.js'],
     restoreMocks: true
   }
-})
+}))

@@ -3,16 +3,20 @@ import { mockBackend } from '../e2e/support/backend'
 
 // The site as an installable app: manifest, icons, service worker, offline.
 
+// This suite runs on a staging build (see playwright.pwa.config.js), which
+// installs as "HHTT Staging" with the navy icon set; prod uses the plain name
+// and public/icons/ directly.
 test('has a manifest an app can be installed from', async ({ page, request }) => {
   await page.goto('/')
   const href = await page.locator('link[rel="manifest"]').getAttribute('href')
   const manifest = await (await request.get(href)).json()
-  expect(manifest).toMatchObject({ name: 'Haohaotiantian', display: 'standalone', start_url: '/', theme_color: '#1B2140' })
+  expect(manifest).toMatchObject({ name: 'Haohaotiantian Staging', short_name: 'HHTT Staging', display: 'standalone', start_url: '/', theme_color: '#1B2140' })
   const sizes = manifest.icons.map((i) => i.sizes)
   expect(sizes).toEqual(expect.arrayContaining(['192x192', '512x512']))
   expect(manifest.icons.some((i) => i.purpose === 'maskable')).toBe(true)
+  for (const icon of manifest.icons) expect(icon.src).toMatch(/^\/icons\/staging\//)
   for (const icon of manifest.icons) expect((await request.get(icon.src)).ok(), icon.src).toBe(true)
-  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/icons/apple-touch-icon.png')
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/icons/staging/apple-touch-icon.png')
 })
 
 test('a service worker takes charge of the site', async ({ page }) => {
