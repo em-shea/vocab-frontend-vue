@@ -35,7 +35,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
         <WordCard :word="entry.word" :level="listName(entry.list_id)">
           <!-- Each task: its name on the left in plain text; on the right a
                button until it is done, then a ticked box (Emily, 2026-11-22). -->
-          <div class="words__links">
+          <div class="words__links words__links--first">
             <span>{{ t('profileQuiz') }}</span>
             <TaskBox v-if="quiz" done />
             <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="quizRoute(entry)"
@@ -83,7 +83,8 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
   border-top: var(--bw-hair) solid var(--c-rule);
   font-size: var(--t-base);
 }
-/* The first row sits at the foot of the card; the second follows it. */
-.words__links:first-of-type { margin-top: auto; }
+/* A heavier ink line between the word and its tasks, so they read as two
+   parts; the line between the two tasks stays a hairline. */
+.words__links--first { margin-top: auto; border-top: var(--bw-heavy) solid var(--c-ink); }
 
 </style>

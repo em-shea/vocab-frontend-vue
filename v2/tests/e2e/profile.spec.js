@@ -27,9 +27,9 @@ test.describe('profile', () => {
     await expect(heading).toContainText('安')
     await expect(heading.locator('rt')).toHaveText(['xiǎo', 'ān'])
     await expect(page.locator('.head__seal')).toHaveCount(0)
-    // When they started, under the email (Emily, 2026-11-22).
+    // When they started; the email is only on the settings page (Emily, 2026-11-22).
     await expect(page.getByText('Studying since June 2021')).toBeVisible()
-    await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
+    await expect(page.getByRole('main').getByText(EMAIL)).toHaveCount(0)
 
     // The newest word from each list, inviting a quiz and a sentence (no review).
     await expect(page.getByRole('heading', { name: 'Today\'s words' })).toBeVisible()
@@ -85,11 +85,12 @@ test.describe('profile', () => {
     await expect(page.getByRole('link', { name: /^Take the .* quiz$/ })).toHaveCount(0)
   })
 
-  test('with no name set, the email stands in and a name can be chosen', async ({ page }) => {
+  test('with no name set, a plain heading stands in (not the email) and a name can be chosen', async ({ page }) => {
     await signedIn(page)
     await mockBackend(page, { userActivity: userActivity({ alias: 'Not set', aliasPinyin: 'Not set' }) })
     await page.goto('/profile')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(EMAIL)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your profile')
+    await expect(page.getByRole('main').getByText(EMAIL)).toHaveCount(0)
     await expect(page.locator('.head__seal')).toHaveCount(0)
     await page.getByRole('link', { name: 'Choose a profile name' }).click()
     await expect(page).toHaveURL(/\/profile-settings/)
@@ -174,7 +175,7 @@ test.describe('profile settings', () => {
     await page.goto('/profile-settings')
 
     await expect(page.getByRole('heading', { name: 'Profile settings' })).toBeVisible()
-    await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
+    await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible() // settings keeps the email
     const select = page.getByLabel('Profile name')
     await expect(select).toHaveValue('小安')
 

@@ -19,15 +19,13 @@ const { t, locale } = useI18n()
 const name = computed(() => profileName(props.user))
 const ruby = computed(() => (name.value ? rubyPairs(name.value.name, name.value.pinyin) : null))
 
-// The email (when the name is the heading), then when they started, each on
-// its own line.
+// When they started. The email is only on the settings page (Emily, 2026-11-22).
 const since = computed(() => {
   const date = new Date(props.user.date_created ?? '')
   if (Number.isNaN(date.getTime())) return ''
   return new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-GB', { month: 'long', year: 'numeric' }).format(date)
 })
 const meta = computed(() => [
-  name.value && props.user.email_address,
   since.value && t('profileSinceLine', { date: since.value })
 ].filter(Boolean))
 
@@ -45,7 +43,7 @@ const meta = computed(() => [
         <span v-if="name.pinyin" class="pinyin head__pinyin">{{ name.pinyin }}</span>
       </template>
     </h1>
-    <h1 v-else class="head__title head__title--email">{{ user.email_address }}</h1>
+    <h1 v-else class="head__title">{{ t('profileUntitled') }}</h1>
 
     <p v-if="meta.length" class="head__meta">
       <span v-for="part in meta" :key="part">{{ part }}</span>
@@ -79,7 +77,6 @@ const meta = computed(() => [
 .head__title rt > span { display: inline-block; }
 .head__title rt { font-size: var(--t-base); font-weight: var(--w-medium); color: var(--c-ground); }
 .head__pinyin { margin-left: var(--s-3); font-size: var(--t-body); }
-.head__title--email { font-size: var(--t-lg); overflow-wrap: anywhere; }
 
 .head__meta { display: flex; flex-direction: column; gap: var(--s-1); font-size: var(--t-base); overflow-wrap: anywhere; opacity: 0.85; }
 .head__set-name, .head :deep(a), .head :deep(button) { color: var(--c-ground); }

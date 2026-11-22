@@ -203,6 +203,7 @@ export default {
   "profileError": "We could not load your profile. Check your connection and try again.",
   "profileRetry": "Try again",
   "profileSetName": "Choose a profile name",
+  "profileUntitled": "Your profile",
   "profileSinceLine": "Studying since {date}",
   "profileSettings": "Profile settings",
   "profileManageLists": "Manage lists",

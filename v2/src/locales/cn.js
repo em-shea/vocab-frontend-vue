@@ -202,6 +202,7 @@ export default {
   "profileError": "无法加载你的个人主页。请检查网络后重试。",
   "profileRetry": "重试",
   "profileSetName": "设置昵称",
+  "profileUntitled": "我的主页",
   "profileSinceLine": "{date}开始学习",
   "profileSettings": "个人设置",
   "profileManageLists": "管理词表",
