@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import AppButton from '../AppButton.vue'
 import WordCard from '../WordCard.vue'
 import { fieldText } from '../../lib/quiz'
+import { useDefinition } from '../../lib/cnDefinitions'
 import { usePreferencesStore } from '../../stores/preferences'
 
 // One question: a prompt, four options, then the marks and the way on.
@@ -24,7 +25,10 @@ const showWords = ref(false)
 const prompt = ref(null)
 const nextButton = ref(null)
 
-const text = (entry, field) => fieldText(entry, field, prefs.characterSet)
+// Definitions follow 中文 mode, like the word cards. Which options are offered
+// is still decided on the English (lib/quiz), so this only changes the text.
+const definitionOf = useDefinition()
+const text = (entry, field) => field === 'definition' ? definitionOf(entry?.word) : fieldText(entry, field, prefs.characterSet)
 const promptText = computed(() => text(props.question.answer, props.question.type.question))
 
 const CHOOSE = { definition: 'quizChooseDefinition', pinyin: 'quizChoosePinyin', characters: 'quizChooseCharacters' }

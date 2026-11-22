@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import AudioButton from './AudioButton.vue'
 import { usePreferencesStore } from '../stores/preferences'
+import { useDefinition } from '../lib/cnDefinitions'
 
 // The 每日一词 card. Renders whichever character form the reader has chosen, with
 // pinyin, definition and pronunciation.
@@ -24,7 +25,9 @@ const pick = (a, b) => props.word?.[a] ?? props.word?.[b] ?? ''
 const simplified = computed(() => pick('simplified', 'Simplified'))
 const traditional = computed(() => pick('traditional', 'Traditional'))
 const pinyin = computed(() => pick('pinyin', 'Pinyin'))
-const definition = computed(() => pick('definition', 'Definition'))
+// In 中文 mode, the Chinese definition where there is one.
+const definitionOf = useDefinition()
+const definition = computed(() => definitionOf(props.word))
 const audio = computed(() => pick('audio_file_key', 'Audio file key'))
 
 // Traditional is not always recorded; fall back rather than render nothing.

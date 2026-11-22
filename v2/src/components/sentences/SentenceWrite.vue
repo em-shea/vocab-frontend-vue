@@ -5,6 +5,7 @@ import AppButton from '../AppButton.vue'
 import AudioButton from '../AudioButton.vue'
 import { usePreferencesStore } from '../../stores/preferences'
 import { MAX_LENGTH, exampleLink } from '../../lib/sentences'
+import { useDefinition } from '../../lib/cnDefinitions'
 
 // One of today's words, with a field for a sentence that uses it. The screen
 // does the saving; this holds the draft and says how the save went.
@@ -23,6 +24,7 @@ const draft = ref(props.saved)
 const field = ref(null)
 const id = computed(() => `sentence-${props.entry.list_id}-${props.entry.word.word_id ?? props.entry.word.simplified}`)
 const word = computed(() => props.entry.word)
+const definitionOf = useDefinition()
 // Traditional is not always recorded; fall back rather than render nothing.
 const characters = computed(() =>
   (prefs.isTraditional ? word.value.traditional : word.value.simplified) || word.value.simplified
@@ -50,7 +52,7 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
       <p class="pinyin write__pinyin">{{ word.pinyin }}</p>
       <AudioButton :src="word.audio_file_key" :label="characters" />
     </div>
-    <p v-if="word.definition" class="write__definition">{{ word.definition }}</p>
+    <p v-if="word.definition" class="write__definition">{{ definitionOf(word) }}</p>
     <a v-if="examples" class="write__examples" :href="examples" target="_blank" rel="noopener noreferrer">
       {{ t('sentencesExamples') }}<span class="sr-only"> {{ t('sentencesNewTab') }}</span>
     </a>
