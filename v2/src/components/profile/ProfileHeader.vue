@@ -1,4 +1,5 @@
 <script setup>
+import AvatarSlot from './AvatarSlot.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { profileName, rubyPairs } from '../../lib/profile'
@@ -34,6 +35,8 @@ const meta = computed(() => [
 
 <template>
   <section class="head">
+    <div class="head__id">
+    <AvatarSlot />
     <div class="head__who">
     <h1 v-if="name" class="head__title" lang="zh">
       <ruby v-if="ruby" class="hanzi"><template v-for="pair in ruby" :key="pair.char">{{ pair.char }}<rt class="pinyin"><span>{{ pair.pinyin }}</span></rt></template></ruby>
@@ -48,6 +51,7 @@ const meta = computed(() => [
       <span v-for="part in meta" :key="part">{{ part }}</span>
     </p>
     <RouterLink v-if="!name" class="head__set-name" :to="{ name: 'profile-settings' }">{{ t('profileSetName') }}</RouterLink>
+    </div>
     </div>
     <slot />
   </section>
@@ -64,6 +68,7 @@ const meta = computed(() => [
   color: var(--c-ground);
   background-color: var(--c-ink);
 }
+.head__id { display: flex; align-items: center; gap: var(--s-6); min-width: 0; }
 .head__who { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); min-width: 0; }
 
 .head__title { font-size: var(--t-2xl); line-height: var(--lh-tight); color: var(--c-ground); }

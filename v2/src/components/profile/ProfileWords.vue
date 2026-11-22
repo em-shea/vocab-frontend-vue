@@ -33,24 +33,22 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
     <ul v-else class="words__grid">
       <li v-for="{ entry, quiz, sentence } in progress" :key="entry.list_id">
         <WordCard :word="entry.word" :level="listName(entry.list_id)">
-          <!-- Each task is a button until it is done, then a ticked line that
-               still links back to it. -->
+          <!-- Each task: its name on the left in plain text; on the right a
+               button until it is done, then a ticked box (Emily, 2026-11-22). -->
           <div class="words__links">
-            <template v-if="quiz">
-              <RouterLink :to="quizRoute(entry)">{{ t('profileQuiz') }}</RouterLink>
-              <TaskBox done />
-            </template>
-            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="quizRoute(entry)">
+            <span>{{ t('profileQuiz') }}</span>
+            <TaskBox v-if="quiz" done />
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="quizRoute(entry)"
+              :aria-label="t('profileQuizTakeFor', { list: listName(entry.list_id) })">
               {{ t('profileQuizTakeShort') }}
             </AppButton>
           </div>
           <div v-if="SENTENCES_ENABLED" class="words__links">
-            <template v-if="sentence">
-              <RouterLink :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
-              <TaskBox done />
-            </template>
-            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'sentences' }">
-              {{ t('profileSentencesWrite') }}
+            <span>{{ t('profileSentence') }}</span>
+            <TaskBox v-if="sentence" done />
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'sentences' }"
+              :aria-label="t('profileSentenceWriteFor', { word: entry.word.simplified })">
+              {{ t('profileSentenceWriteShort') }}
             </AppButton>
           </div>
         </WordCard>

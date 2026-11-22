@@ -39,7 +39,7 @@ test.describe('profile', () => {
     await expect(cards.nth(0)).toContainText('HSK Level 1')
     await expect(cards.nth(1)).toContainText('帮助')
     // Not done yet: each task is a button (Emily, 2026-11-22).
-    await expect(cards.nth(0).getByRole('link', { name: 'Take quiz' }))
+    await expect(cards.nth(0).getByRole('link', { name: 'Take the HSK Level 1 quiz' }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
     await expect(cards.nth(0).getByRole('link', { name: 'Write a sentence' })).toHaveAttribute('href', '/sentences')
     await expect(cards.nth(0).locator('.taskbox')).toHaveCount(0)
@@ -50,7 +50,7 @@ test.describe('profile', () => {
 
     // Not yet done today, so the way to today's quiz; then the week, newest first.
     // One quiz slot per list, each a button until that list's quiz is done.
-    await expect(page.getByRole('link', { name: 'Take the HSK Level 1 quiz' }))
+    await expect(page.locator('.slot').getByRole('link', { name: 'Take the HSK Level 1 quiz' }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
     await expect(page.getByRole('link', { name: 'Take the HSK Level 2 quiz' })).toBeVisible()
     const rows = page.getByRole('table').locator('tbody tr')
@@ -140,7 +140,7 @@ test.describe('profile', () => {
 
     await signedIn(page)
     await page.goto('/review')
-    await page.getByRole('link', { name: 'Profile', exact: true }).click()
+    await page.getByRole('link', { name: 'Home', exact: true }).click()
     await expect(page).toHaveURL(/\/profile$/)
   })
 

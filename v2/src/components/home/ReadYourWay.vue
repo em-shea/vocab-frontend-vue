@@ -55,5 +55,7 @@ const { t } = useI18n()
 
 @media (min-width: 720px) {
   .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-12); align-items: center; }
+  /* Cards on the left, so the pictures alternate sides down the page. */
+  .pair { order: -1; }
 }
 </style>

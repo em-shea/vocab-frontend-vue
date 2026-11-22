@@ -24,12 +24,14 @@ const route = useRoute()
     </a>
 
     <nav class="nav__links" :aria-label="t('navHome')">
-      <RouterLink class="nav__link" exact-active-class="nav__link--current" :to="{ name: 'home' }">{{ t('navHome') }}</RouterLink>
+      <!-- The title is the way to the home page. Signed in, "Home" is the
+           profile, the reader's own starting point (Emily, 2026-11-22). -->
+      <RouterLink v-if="auth.signedIn" class="nav__link" active-class="nav__link--current" :to="{ name: 'profile' }">{{ t('navHome') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
       <RouterLink v-if="SENTENCES_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
-      <RouterLink class="nav__link nav__link--strong" :to="auth.signedIn ? { name: 'profile' } : signInRoute(route.fullPath)">
-        {{ auth.signedIn ? t('navProfile') : t('navSignIn') }}
+      <RouterLink v-if="!auth.signedIn" class="nav__link nav__link--strong" :to="signInRoute(route.fullPath)">
+        {{ t('navSignIn') }}
       </RouterLink>
     </nav>
 
