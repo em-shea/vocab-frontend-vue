@@ -72,6 +72,17 @@ function addTier (name, chars) {
 addTier('ui', [...UI_CHARS, ...PUNCT].filter((c) => isHan(c) || PUNCT.includes(c)))
 for (const level of [...byLevel.keys()].sort()) addTier(`hsk${level}`, [...byLevel.get(level)])
 
+// Chinese definitions shown in 中文 mode (src/data/cn-definitions.json, both
+// character sets). Mostly HSK characters already; the rest load only on pages
+// that show a definition using them.
+const DEFS = join(HERE, '..', 'src', 'data', 'cn-definitions.json')
+try {
+  const defs = Object.values(JSON.parse(readFileSync(DEFS, 'utf8'))).flat().join('')
+  addTier('defs', [...defs].filter(isHan))
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err
+}
+
 
 const total = tiers.reduce((n, t) => n + [...t.chars].length, 0)
 writeFileSync(OUT, JSON.stringify({ generated: new Date().toISOString().slice(0, 10), tiers }, null, 2))
