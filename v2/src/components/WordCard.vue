@@ -15,7 +15,11 @@ const props = defineProps({
   word: { type: Object, required: true },
   date: { type: String, default: '' },
   level: { type: String, default: '' },
-  compact: { type: Boolean, default: false }
+  compact: { type: Boolean, default: false },
+  // 'simplified' or 'traditional' to show the word in that set whatever the
+  // site setting, e.g. a profile card for a list taken in one set. Empty:
+  // follow the globe menu.
+  characterSet: { type: String, default: '' }
 })
 
 const prefs = usePreferencesStore()
@@ -31,8 +35,10 @@ const definition = computed(() => definitionOf(props.word))
 const audio = computed(() => pick('audio_file_key', 'Audio file key'))
 
 // Traditional is not always recorded; fall back rather than render nothing.
+const showTraditional = computed(() =>
+  props.characterSet ? props.characterSet === 'traditional' : prefs.isTraditional)
 const characters = computed(() =>
-  prefs.isTraditional ? (traditional.value || simplified.value) : simplified.value
+  showTraditional.value ? (traditional.value || simplified.value) : simplified.value
 )
 </script>
 

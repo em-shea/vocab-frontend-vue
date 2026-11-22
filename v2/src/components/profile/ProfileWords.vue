@@ -13,7 +13,9 @@ import { SENTENCES_ENABLED } from '../../featureFlags'
 defineProps({
   progress: { type: Array, required: true }, // lib/profile wordProgress: { entry, quiz, sentence }
   hasLists: { type: Boolean, required: true },
-  listName: { type: Function, required: true }
+  listName: { type: Function, required: true },
+  // The character set a list is taken in ('' if both): its card follows it.
+  setFor: { type: Function, default: () => '' }
 })
 const { t } = useI18n()
 const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } })
@@ -32,7 +34,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
 
     <ul v-else class="words__grid">
       <li v-for="{ entry, quiz, sentence } in progress" :key="entry.list_id">
-        <WordCard :word="entry.word" :level="listName(entry.list_id)">
+        <WordCard :word="entry.word" :level="listName(entry.list_id)" :character-set="setFor(entry.list_id)">
           <!-- Each task: its name on the left in plain text; on the right a
                button until it is done, then a ticked box (Emily, 2026-11-22). -->
           <div class="words__links words__links--first">

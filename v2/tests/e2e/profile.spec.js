@@ -37,7 +37,7 @@ test.describe('profile', () => {
     await expect(cards).toHaveCount(2)
     await expect(cards.nth(0)).toContainText('爱护')
     await expect(cards.nth(0)).toContainText('HSK Level 1')
-    await expect(cards.nth(1)).toContainText('帮助')
+    await expect(cards.nth(1)).toContainText('幫助') // HSK 2 is taken in traditional
     // Not done yet: each task is a button (Emily, 2026-11-22).
     await expect(cards.nth(0).getByRole('link', { name: 'Take the HSK Level 1 quiz' }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
@@ -83,6 +83,18 @@ test.describe('profile', () => {
     await expect(slot).toContainText('8 of 10')
     await expect(slot.locator('.taskbox--done')).toHaveCount(1)
     await expect(page.getByRole('link', { name: /^Take the .* quiz$/ })).toHaveCount(0)
+  })
+
+  test('each word card follows its list\'s character set, and names say which', async ({ page }) => {
+    await signedIn(page)
+    const ua = userActivity({ subscriptions: [...USER.subscriptions, { list_id: HSK2, list_name: 'HSK Level 2', character_set: 'traditional', status: 'subscribed' }] })
+    await mockBackend(page, { userActivity: ua })
+    await page.goto('/profile?char=simplified')
+    const cards = page.getByRole('article')
+    await expect(cards.nth(0)).toContainText('HSK LEVEL 1 简', { ignoreCase: true })
+    await expect(cards.nth(1)).toContainText('HSK LEVEL 2 繁', { ignoreCase: true })
+    await expect(cards.nth(1).locator('.hanzi').first()).toHaveText('幫助')
+    await expect(cards.nth(0).locator('.hanzi').first()).toHaveText('爱护')
   })
 
   test('with no name set, a plain heading stands in (not the email) and a name can be chosen', async ({ page }) => {

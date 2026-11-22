@@ -105,6 +105,10 @@ const setsOf = (id) => ['simplified', 'traditional']
 const bothSets = computed(() =>
   new Set(subscriptions.value.map((s) => s.character_set).filter((set) => SET_MARK[set])).size > 1)
 
+// A card follows its list's character set, not the globe menu (Emily,
+// 2026-11-22); a list taken in both sets follows the menu.
+const setFor = (id) => { const sets = setsOf(id); return sets.length === 1 ? sets[0] : '' }
+
 function listName (id) {
   const name = listLabel(rawListName(id))
   if (!bothSets.value) return name
@@ -135,7 +139,7 @@ function rawListName (id) {
         <ProfileHeader class="profile__head" :user="user">
           <ProfileActions @sign-out="signOut" />
         </ProfileHeader>
-        <ProfileWords class="profile__words" :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" />
+        <ProfileWords class="profile__words" :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" :set-for="setFor" />
         <div class="profile__side">
           <ProfileQuizzes
             :count="quizCount"
