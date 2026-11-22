@@ -96,8 +96,20 @@ const progress = computed(() => wordProgress(words.value, quizzes.value, user.va
 const quizCount = computed(() => progressCount(progress.value, 'quiz'))
 const sentenceCount = computed(() => progressCount(progress.value, 'sentence'))
 
+// When someone's lists are in both character sets, each list name says which
+// it is in: "HSK Level 1 简", "HSK Level 3 繁", or "简 繁" for a list taken in
+// both (Emily, 2026-11-22). With only one set in use, names stay plain.
+const SET_MARK = { simplified: '简', traditional: '繁' }
+const setsOf = (id) => ['simplified', 'traditional']
+  .filter((set) => subscriptions.value.some((s) => s.list_id === id && s.character_set === set))
+const bothSets = computed(() =>
+  new Set(subscriptions.value.map((s) => s.character_set).filter((set) => SET_MARK[set])).size > 1)
+
 function listName (id) {
-  return listLabel(rawListName(id))
+  const name = listLabel(rawListName(id))
+  if (!bothSets.value) return name
+  const marks = setsOf(id).map((set) => SET_MARK[set]).join(' ')
+  return marks ? `${name} ${marks}` : name
 }
 
 function rawListName (id) {
