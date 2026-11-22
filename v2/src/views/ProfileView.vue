@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { signInRoute } from '../lib/signInReturn'
@@ -30,6 +31,7 @@ import { latestWords, quizHistory, wordProgress, progressCount } from '../lib/pr
 // The rules are in lib/profile.js; this file only loads and lays out.
 
 const { t } = useI18n()
+const listLabel = useListLabel()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
@@ -94,7 +96,27 @@ const progress = computed(() => wordProgress(words.value, quizzes.value, user.va
 const quizCount = computed(() => progressCount(progress.value, 'quiz'))
 const sentenceCount = computed(() => progressCount(progress.value, 'sentence'))
 
+// When someone's lists are in both character sets, each list name says which
+// it is in: "HSK Level 1 简", "HSK Level 3 繁", or "简 繁" for a list taken in
+// both (Emily, 2026-11-22). With only one set in use, names stay plain.
+const SET_MARK = { simplified: '简', traditional: '繁' }
+const setsOf = (id) => ['simplified', 'traditional']
+  .filter((set) => subscriptions.value.some((s) => s.list_id === id && s.character_set === set))
+const bothSets = computed(() =>
+  new Set(subscriptions.value.map((s) => s.character_set).filter((set) => SET_MARK[set])).size > 1)
+
+// A card follows its list's character set, not the globe menu (Emily,
+// 2026-11-22); a list taken in both sets follows the menu.
+const setFor = (id) => { const sets = setsOf(id); return sets.length === 1 ? sets[0] : '' }
+
 function listName (id) {
+  const name = listLabel(rawListName(id))
+  if (!bothSets.value) return name
+  const marks = setsOf(id).map((set) => SET_MARK[set]).join(' ')
+  return marks ? `${name} ${marks}` : name
+}
+
+function rawListName (id) {
   return lists.byId(id)?.list_name ??
     subscriptions.value.find((s) => s.list_id === id)?.list_name ??
     t('profileListFallback')
@@ -114,9 +136,10 @@ function listName (id) {
       </div>
 
       <template v-else>
-        <ProfileHeader class="profile__head" :user="user" />
-        <ProfileActions class="profile__actions" @sign-out="signOut" />
-        <ProfileWords class="profile__words" :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" />
+        <ProfileHeader class="profile__head" :user="user">
+          <ProfileActions @sign-out="signOut" />
+        </ProfileHeader>
+        <ProfileWords class="profile__words" :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" :set-for="setFor" />
         <div class="profile__side">
           <ProfileQuizzes
             :count="quizCount"
@@ -126,7 +149,7 @@ function listName (id) {
             :list-name="listName"
             @retry="loadQuizzes"
           />
-          <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" />
+          <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" :activity="user?.activity" />
         </div>
       </template>
     </div>
@@ -134,34 +157,27 @@ function listName (id) {
 </template>
 
 <style scoped>
-/* Phone: name, today's words, quizzes, then the account links.
-   Wide: name with the account links beside it, then words and quizzes side by side. */
+/* The name card (with the account links) on top; then, on a phone, words and
+   the side boxes in turn, and on a wide screen side by side. */
 .profile {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'head' 'words' 'side' 'actions';
+  grid-template-areas: 'head' 'words' 'side';
   gap: var(--s-12);
   width: 100%;
   max-width: 64rem;
   margin-inline: auto;
 }
 .profile__head { grid-area: head; }
-.profile__actions { grid-area: actions; padding-top: var(--s-6); border-top: var(--bw-hair) solid var(--c-rule); }
 .profile__words { grid-area: words; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
   .profile {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    grid-template-areas: 'head actions' 'words side';
+    grid-template-areas: 'head head' 'words side';
     column-gap: var(--s-8);
     row-gap: var(--s-8);
-  }
-  .profile__actions {
-    align-self: end;
-    justify-content: flex-end;
-    padding: 0;
-    border-top: 0;
   }
 }
 

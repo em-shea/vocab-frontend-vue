@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import WordCard from '../WordCard.vue'
 import TaskBox from '../TaskBox.vue'
+import AppButton from '../AppButton.vue'
 import { SENTENCES_ENABLED } from '../../featureFlags'
 
 // The newest word from each list the learner takes, with the way to quiz on
@@ -12,9 +13,12 @@ import { SENTENCES_ENABLED } from '../../featureFlags'
 defineProps({
   progress: { type: Array, required: true }, // lib/profile wordProgress: { entry, quiz, sentence }
   hasLists: { type: Boolean, required: true },
-  listName: { type: Function, required: true }
+  listName: { type: Function, required: true },
+  // The character set a list is taken in ('' if both): its card follows it.
+  setFor: { type: Function, default: () => '' }
 })
 const { t } = useI18n()
+const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } })
 </script>
 
 <template>
@@ -30,16 +34,24 @@ const { t } = useI18n()
 
     <ul v-else class="words__grid">
       <li v-for="{ entry, quiz, sentence } in progress" :key="entry.list_id">
-        <WordCard :word="entry.word" :level="listName(entry.list_id)">
-          <div class="words__links">
-            <RouterLink :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }">
-              {{ t('profileQuiz') }}
-            </RouterLink>
-            <TaskBox :done="Boolean(quiz)" />
+        <WordCard :word="entry.word" :level="listName(entry.list_id)" :character-set="setFor(entry.list_id)">
+          <!-- Each task: its name on the left in plain text; on the right a
+               button until it is done, then a ticked box (Emily, 2026-11-22). -->
+          <div class="words__links words__links--first">
+            <span>{{ t('profileQuiz') }}</span>
+            <TaskBox v-if="quiz" done />
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="quizRoute(entry)"
+              :aria-label="t('profileQuizTakeFor', { list: listName(entry.list_id) })">
+              {{ t('profileQuizTakeShort') }}
+            </AppButton>
           </div>
           <div v-if="SENTENCES_ENABLED" class="words__links">
-            <RouterLink :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
-            <TaskBox :done="Boolean(sentence)" />
+            <span>{{ t('profileSentence') }}</span>
+            <TaskBox v-if="sentence" done />
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'sentences' }"
+              :aria-label="t('profileSentenceWriteFor', { word: entry.word.simplified })">
+              {{ t('profileSentenceWriteShort') }}
+            </AppButton>
           </div>
         </WordCard>
       </li>
@@ -73,7 +85,8 @@ const { t } = useI18n()
   border-top: var(--bw-hair) solid var(--c-rule);
   font-size: var(--t-base);
 }
-/* The first row sits at the foot of the card; the second follows it. */
-.words__links:first-of-type { margin-top: auto; }
+/* A heavier ink line between the word and its tasks, so they read as two
+   parts; the line between the two tasks stays a hairline. */
+.words__links--first { margin-top: auto; border-top: var(--bw-heavy) solid var(--c-ink); }
 
 </style>

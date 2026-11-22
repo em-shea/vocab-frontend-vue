@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -24,6 +25,7 @@ import { catalogue, readUnsubLink, looksLikeEmail, unsubPayload, uniqueId } from
 // subscribed at that address, so this screen cannot and does not say which.
 
 const { t } = useI18n()
+const listLabel = useListLabel()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
@@ -42,7 +44,7 @@ const options = computed(() => {
 })
 const chosen = computed(() => options.value.find((o) => o.unique_list_id === choice.value) ?? null)
 const setName = (list) => t(list.character_set === 'traditional' ? 'listsTraditional' : 'listsSimplified')
-const optionLabel = (list) => `${list.list_name || t('unsubEmailedList')} · ${setName(list)}`
+const optionLabel = (list) => `${listLabel(list.list_name) || t('unsubEmailedList')} · ${setName(list)}`
 const farewell = computed(() => (prefs.isTraditional ? '希望我們後會有期！' : '希望我们后会有期！'))
 const manageLink = computed(() => (auth.signedIn ? { name: 'manage-lists' } : signInRoute('/manage-lists')))
 

@@ -10,14 +10,14 @@
 defineProps({
   src: { type: String, default: '' },
   alt: { type: String, default: '' },
-  ratio: { type: String, default: '4 / 5' },
+  ratio: { type: String, default: '4 / 5' }, // 'auto': the page's CSS sizes it
   caption: { type: String, default: '' }
 })
 </script>
 
 <template>
   <figure class="print">
-    <div class="print__frame" :style="{ aspectRatio: ratio }">
+    <div class="print__frame" :style="ratio === 'auto' ? null : { aspectRatio: ratio }">
       <img v-if="src" class="print__img" :src="src" :alt="alt" />
       <div v-else class="print__placeholder" aria-hidden="true">
         <span class="brush">印</span>

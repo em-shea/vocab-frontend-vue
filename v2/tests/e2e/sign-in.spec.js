@@ -25,7 +25,7 @@ test('a subscriber signs in with the emailed link', async ({ page }) => {
 
   // From the home page, sign-in leads to the profile, as it always has.
   await expect(page).toHaveURL((url) => url.pathname === '/profile')
-  await expect(page.getByRole('link', { name: 'Profile', exact: true })).toHaveAttribute('href', '/profile')
+  await expect(page.getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('href', '/profile')
 
   // The API authorizer wants the raw token. "Bearer …" is rejected with a 401,
   // which would sign everyone out of everything, so pin it here.
@@ -48,7 +48,7 @@ test('signing in brings you back to the page you were on', async ({ page }) => {
   // The emailed link carries no return address; this browser remembers it.
   await page.goto('/verification?code=good-code')
   await expect(page).toHaveURL((url) => url.pathname === '/review' && url.searchParams.get('list_id') === '1ebcad3f-5dfd-6bfe-bda4-acde48001122')
-  await expect(page.getByRole('navigation').getByRole('link', { name: 'Profile', exact: true })).toBeVisible()
+  await expect(page.getByRole('navigation').getByRole('link', { name: 'Home', exact: true })).toBeVisible()
 })
 
 test('signed-out visitors sent to sign in from a signed-in page come back to it', async ({ page }) => {
@@ -74,9 +74,9 @@ test('the sign-in survives a reload', async ({ page }) => {
   await mockBackend(page)
   await signedIn(page)
   await page.goto('/')
-  await expect(page.getByRole('link', { name: 'Profile', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Home', exact: true })).toBeVisible()
   await page.reload()
-  await expect(page.getByRole('link', { name: 'Profile', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Home', exact: true })).toBeVisible()
 })
 
 test('an address that is not an email is caught before anything is sent', async ({ page }) => {

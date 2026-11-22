@@ -1,4 +1,5 @@
 <script setup>
+import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { signInRoute } from '../lib/signInReturn'
@@ -24,6 +25,7 @@ import { catalogue, subscribed, available, adding, removing, subscriptionsPayloa
 // FIX: signed out, the old screen threw and showed an empty page.
 
 const { t } = useI18n()
+const listLabel = useListLabel()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
@@ -85,7 +87,7 @@ const setName = (list) => t(list.character_set === 'traditional' ? 'listsTraditi
 const message = computed(() => {
   if (!outcome.value) return ''
   const { kind, list } = outcome.value
-  const vars = { list: list.list_name || t('listsUnnamed'), set: setName(list) }
+  const vars = { list: listLabel(list.list_name) || t('listsUnnamed'), set: setName(list) }
   if (kind === 'added') return t('listsAdded', vars)
   if (kind === 'removed') return t('listsRemoved', vars)
   return t('listsSaveFailed')

@@ -27,9 +27,9 @@ test.describe('profile', () => {
     await expect(heading).toContainText('安')
     await expect(heading.locator('rt')).toHaveText(['xiǎo', 'ān'])
     await expect(page.locator('.head__seal')).toHaveCount(0)
-    // No "Studying since" (Emily, 2026-11-20).
-    await expect(page.getByText('June 2021')).toHaveCount(0)
-    await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
+    // When they started; the email is only on the settings page (Emily, 2026-11-22).
+    await expect(page.getByText('Studying since June 2021')).toBeVisible()
+    await expect(page.getByRole('main').getByText(EMAIL)).toHaveCount(0)
 
     // The newest word from each list, inviting a quiz and a sentence (no review).
     await expect(page.getByRole('heading', { name: 'Today\'s words' })).toBeVisible()
@@ -37,10 +37,12 @@ test.describe('profile', () => {
     await expect(cards).toHaveCount(2)
     await expect(cards.nth(0)).toContainText('爱护')
     await expect(cards.nth(0)).toContainText('HSK Level 1')
-    await expect(cards.nth(1)).toContainText('帮助')
-    await expect(cards.nth(0).getByRole('link', { name: 'Quiz' }))
+    await expect(cards.nth(1)).toContainText('幫助') // HSK 2 is taken in traditional
+    // Not done yet: each task is a button (Emily, 2026-11-22).
+    await expect(cards.nth(0).getByRole('link', { name: /^Take the HSK Level 1( 简)? quiz$/ }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
-    await expect(cards.nth(0).getByRole('link', { name: 'Sentences' })).toHaveAttribute('href', '/sentences')
+    await expect(cards.nth(0).getByRole('link', { name: 'Write a sentence' })).toHaveAttribute('href', '/sentences')
+    await expect(cards.nth(0).locator('.taskbox')).toHaveCount(0)
     await expect(cards.nth(0).getByRole('link', { name: 'Review' })).toHaveCount(0)
     // Yesterday's quiz doesn't count for today's word.
     await expect(cards.nth(0).getByText('done', { exact: true })).toHaveCount(0)
@@ -48,9 +50,9 @@ test.describe('profile', () => {
 
     // Not yet done today, so the way to today's quiz; then the week, newest first.
     // One quiz slot per list, each a button until that list's quiz is done.
-    await expect(page.getByRole('link', { name: 'Take the HSK Level 1 quiz' }))
+    await expect(page.locator('.slot').getByRole('link', { name: /^Take the HSK Level 1( 简)? quiz$/ }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
-    await expect(page.getByRole('link', { name: 'Take the HSK Level 2 quiz' })).toBeVisible()
+    await expect(page.locator('.slot').getByRole('link', { name: /^Take the HSK Level 2( 繁)? quiz$/ })).toBeVisible()
     const rows = page.getByRole('table').locator('tbody tr')
     await expect(rows).toHaveCount(2)
     await expect(rows.nth(0)).toContainText('HSK Level 1')
@@ -83,11 +85,24 @@ test.describe('profile', () => {
     await expect(page.getByRole('link', { name: /^Take the .* quiz$/ })).toHaveCount(0)
   })
 
-  test('with no name set, the email stands in and a name can be chosen', async ({ page }) => {
+  test('each word card follows its list\'s character set, and names say which', async ({ page }) => {
+    await signedIn(page)
+    const ua = userActivity({ subscriptions: [...USER.subscriptions, { list_id: HSK2, list_name: 'HSK Level 2', character_set: 'traditional', status: 'subscribed' }] })
+    await mockBackend(page, { userActivity: ua })
+    await page.goto('/profile?char=simplified')
+    const cards = page.getByRole('article')
+    await expect(cards.nth(0)).toContainText('HSK LEVEL 1 简', { ignoreCase: true })
+    await expect(cards.nth(1)).toContainText('HSK LEVEL 2 繁', { ignoreCase: true })
+    await expect(cards.nth(1).locator('.hanzi').first()).toHaveText('幫助')
+    await expect(cards.nth(0).locator('.hanzi').first()).toHaveText('爱护')
+  })
+
+  test('with no name set, a plain heading stands in (not the email) and a name can be chosen', async ({ page }) => {
     await signedIn(page)
     await mockBackend(page, { userActivity: userActivity({ alias: 'Not set', aliasPinyin: 'Not set' }) })
     await page.goto('/profile')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(EMAIL)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your profile')
+    await expect(page.getByRole('main').getByText(EMAIL)).toHaveCount(0)
     await expect(page.locator('.head__seal')).toHaveCount(0)
     await page.getByRole('link', { name: 'Choose a profile name' }).click()
     await expect(page).toHaveURL(/\/profile-settings/)
@@ -138,7 +153,7 @@ test.describe('profile', () => {
 
     await signedIn(page)
     await page.goto('/review')
-    await page.getByRole('link', { name: 'Profile', exact: true }).click()
+    await page.getByRole('link', { name: 'Home', exact: true }).click()
     await expect(page).toHaveURL(/\/profile$/)
   })
 
@@ -172,7 +187,7 @@ test.describe('profile settings', () => {
     await page.goto('/profile-settings')
 
     await expect(page.getByRole('heading', { name: 'Profile settings' })).toBeVisible()
-    await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
+    await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible() // settings keeps the email
     const select = page.getByLabel('Profile name')
     await expect(select).toHaveValue('小安')
 
