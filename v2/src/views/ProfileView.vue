@@ -17,7 +17,7 @@ import { getSession } from '../api/session'
 import { useAuthStore } from '../stores/auth'
 import { usePreferencesStore } from '../stores/preferences'
 import { useVocabListsStore } from '../stores/vocabLists'
-import { latestWords, todaysQuiz, quizHistory } from '../lib/profile'
+import { latestWords, quizHistory, wordProgress, progressCount } from '../lib/profile'
 
 // The signed-in learner's page: who they are, today's word from each list
 // they take, and their quizzes. Where sign-in lands.
@@ -88,7 +88,11 @@ const subscriptions = computed(() => user.value?.subscriptions ?? [])
 const sentencesOn = SENTENCES_ENABLED
 
 const words = computed(() => latestWords(user.value?.activity, subscriptions.value))
-const today = computed(() => todaysQuiz(user.value?.activity))
+// Each word invites a quiz and a sentence; the cards tick them off and the
+// side boxes count them.
+const progress = computed(() => wordProgress(words.value, quizzes.value, user.value?.activity))
+const quizCount = computed(() => progressCount(progress.value, 'quiz'))
+const sentenceCount = computed(() => progressCount(progress.value, 'sentence'))
 
 function listName (id) {
   return lists.byId(id)?.list_name ??
@@ -96,9 +100,6 @@ function listName (id) {
     t('profileListFallback')
 }
 
-const quizLink = computed(() =>
-  subscriptions.value.length ? { name: 'quiz', query: { list_id: subscriptions.value[0].list_id } } : { name: 'quiz' }
-)
 </script>
 
 <template>
@@ -115,17 +116,17 @@ const quizLink = computed(() =>
       <template v-else>
         <ProfileHeader class="profile__head" :user="user" />
         <ProfileActions class="profile__actions" @sign-out="signOut" />
-        <ProfileWords class="profile__words" :words="words" :has-lists="subscriptions.length > 0" :list-name="listName" />
+        <ProfileWords class="profile__words" :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" />
         <div class="profile__side">
           <ProfileQuizzes
-            :today="today"
+            :count="quizCount"
             :history="quizzes"
             :status="quizStatus"
-            :quiz-link="quizLink"
+            :progress="progress"
             :list-name="listName"
             @retry="loadQuizzes"
           />
-          <ProfileSentences v-if="sentencesOn" :activity="user?.activity" />
+          <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" />
         </div>
       </template>
     </div>

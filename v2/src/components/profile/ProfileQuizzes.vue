@@ -4,15 +4,18 @@ import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import AppButton from '../AppButton.vue'
 import { scorePercent } from '../../lib/profile'
+import DoneCount from './DoneCount.vue'
+import TaskBox from '../TaskBox.vue'
 
-// Today's quiz, and every quiz saved in the past week (GET /quizzes). This
-// replaces the old /my-quizzes page, which was never finished.
+// One slot per subscribed list for today's word: a button to take that list's
+// quiz, or a tick and the score once done. Then every quiz saved in the past
+// week (GET /quizzes). Replaces the old /my-quizzes page, never finished.
 
 const props = defineProps({
-  today: { type: Object, default: null },       // today's saved quiz, or null
+  count: { type: Object, required: true },      // { done, total } over today's words
   history: { type: Array, default: () => [] },  // lib/profile quizHistory
   status: { type: String, default: 'loading' }, // loading | ready | error
-  quizLink: { type: Object, required: true },
+  progress: { type: Array, default: () => [] }, // lib/profile wordProgress, one per list
   listName: { type: Function, required: true }
 })
 const emit = defineEmits(['retry'])
@@ -39,16 +42,24 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
 <template>
   <section class="quizzes" aria-labelledby="profile-quizzes">
     <SectionHead>
-      <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span>
+      <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span><DoneCount :count="count" />
     </SectionHead>
 
     <div class="quizzes__box">
-      <p v-if="today" class="quizzes__today">
-        {{ t('profileQuizDone', { correct: today.correct_answers, total: today.question_quantity }) }}
-      </p>
-      <div v-else>
-        <AppButton as="RouterLink" :to="quizLink" variant="seal">{{ t('profileQuizTake') }}</AppButton>
-      </div>
+      <ul v-if="progress.length" class="slots">
+        <li v-for="{ entry, quiz } in progress" :key="entry.list_id" class="slot">
+          <span class="slot__list">{{ listName(entry.list_id) }}</span>
+          <span v-if="quiz" class="slot__done">
+            <span class="slot__score">{{ score(quiz) }}</span>
+            <TaskBox done />
+          </span>
+          <AppButton v-else as="RouterLink" variant="seal" shape="sm"
+            :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }"
+            :aria-label="t('profileQuizTakeFor', { list: listName(entry.list_id) })">
+            {{ t('profileQuizTakeShort') }}
+          </AppButton>
+        </li>
+      </ul>
 
       <h3 class="label quizzes__week">{{ t('profilePastWeek') }}</h3>
 
@@ -85,7 +96,19 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
 <style scoped>
 .quizzes { display: flex; flex-direction: column; gap: var(--s-4); }
 
-.quizzes__today { color: var(--c-ink); font-size: var(--t-lead); }
+.slots { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  min-height: 3rem;
+  padding: var(--s-2) 0;
+}
+.slot + .slot { border-top: var(--bw-hair) solid var(--c-rule); }
+.slot__list { color: var(--c-ink); font-weight: 600; }
+.slot__done { display: flex; align-items: center; gap: var(--s-3); color: var(--c-ink); }
+.slot__score { font-size: var(--t-base); }
 
 .quizzes__state {
   display: flex;

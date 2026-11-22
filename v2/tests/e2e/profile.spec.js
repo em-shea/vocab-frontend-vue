@@ -31,7 +31,7 @@ test.describe('profile', () => {
     await expect(page.getByText('June 2021')).toHaveCount(0)
     await expect(page.getByRole('main').getByText(EMAIL)).toBeVisible()
 
-    // The newest word from each list, linked to its quiz and review.
+    // The newest word from each list, inviting a quiz and a sentence (no review).
     await expect(page.getByRole('heading', { name: 'Today\'s words' })).toBeVisible()
     const cards = page.getByRole('article')
     await expect(cards).toHaveCount(2)
@@ -40,11 +40,17 @@ test.describe('profile', () => {
     await expect(cards.nth(1)).toContainText('帮助')
     await expect(cards.nth(0).getByRole('link', { name: 'Quiz' }))
       .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
-    await expect(cards.nth(0).getByRole('link', { name: 'Review' }))
-      .toHaveAttribute('href', `/review?list_id=${HSK1}&date_range=30`)
+    await expect(cards.nth(0).getByRole('link', { name: 'Sentences' })).toHaveAttribute('href', '/sentences')
+    await expect(cards.nth(0).getByRole('link', { name: 'Review' })).toHaveCount(0)
+    // Yesterday's quiz doesn't count for today's word.
+    await expect(cards.nth(0).getByText('done', { exact: true })).toHaveCount(0)
+    await expect(page.getByRole('heading', { name: /Quizzes/ })).toContainText('0/2')
 
     // Not yet done today, so the way to today's quiz; then the week, newest first.
-    await expect(page.getByRole('link', { name: 'Take today\'s quiz' })).toHaveAttribute('href', `/quiz?list_id=${HSK1}`)
+    // One quiz slot per list, each a button until that list's quiz is done.
+    await expect(page.getByRole('link', { name: 'Take the HSK Level 1 quiz' }))
+      .toHaveAttribute('href', `/quiz?list_id=${HSK1}&date_range=14&ques=10`)
+    await expect(page.getByRole('link', { name: 'Take the HSK Level 2 quiz' })).toBeVisible()
     const rows = page.getByRole('table').locator('tbody tr')
     await expect(rows).toHaveCount(2)
     await expect(rows.nth(0)).toContainText('HSK Level 1')
@@ -62,13 +68,19 @@ test.describe('profile', () => {
     expect(backend.unexpected).toEqual([])
   })
 
-  test('today\'s quiz, once done, shows its score', async ({ page }) => {
+  test('a quiz taken today ticks off its word and counts towards the total', async ({ page }) => {
     await signedIn(page)
-    await mockBackend(page, { userActivity: userActivity({ quizToday: true }) })
+    await mockBackend(page, { userActivity: userActivity(), quizzes: [profileQuiz('q-today', daysAgo(0), 8, 10)] })
     await page.goto('/profile')
-    await expect(page.getByText('Today\'s quiz is done: 8 of 10 right.')).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Take today\'s quiz' })).toHaveCount(0)
-    await expect(page.getByText('No quizzes in the past week.')).toBeVisible()
+    const card = page.getByRole('article').first()
+    await expect(card.getByText('done', { exact: true })).toHaveCount(1)
+    await expect(card.locator('.taskbox--done')).toHaveCount(1)
+    await expect(page.getByRole('heading', { name: /Quizzes/ })).toContainText('1/1')
+    // The slot swaps its button for the score and a tick.
+    const slot = page.locator('.slot').first()
+    await expect(slot).toContainText('8 of 10')
+    await expect(slot.locator('.taskbox--done')).toHaveCount(1)
+    await expect(page.getByRole('link', { name: /^Take the .* quiz$/ })).toHaveCount(0)
   })
 
   test('with no name set, the email stands in and a name can be chosen', async ({ page }) => {
@@ -126,7 +138,7 @@ test.describe('profile', () => {
 
     await signedIn(page)
     await page.goto('/review')
-    await page.getByRole('link', { name: EMAIL }).click()
+    await page.getByRole('link', { name: 'Profile', exact: true }).click()
     await expect(page).toHaveURL(/\/profile$/)
   })
 
@@ -243,11 +255,27 @@ test.describe('daily sentences on the profile', () => {
     const { signedIn: signIn, mockBackend: mock, sentencesSwitchedOn, ACTIVITY } = await import('./support/backend')
     await signIn(page)
     await sentencesSwitchedOn(page)
+    // A list sends one word a day; keep only the word that has a sentence.
+    const day = ACTIVITY['2026-11-20']
+    await mock(page, { activity: { ...ACTIVITY, '2026-11-20': { ...day, review_words: day.review_words.filter((e) => e.sentence) } } })
+    await page.goto('/profile')
+    const box = page.locator('section', { has: page.getByRole('heading', { name: /Sentences/ }) })
+    await expect(box).toContainText('请爱护你的书。')
+    await expect(box).toContainText('1/1')
+    await expect(page.getByRole('article').first().getByText('done', { exact: true })).toHaveCount(1)
+    await expect(box.getByRole('link', { name: /^Write a sentence/ })).toHaveCount(0)
+    await expect(box.getByRole('link', { name: 'Edit your sentence for 爱护' })).toHaveAttribute('href', '/sentences')
+  })
+
+  test('switched on, a word without a sentence invites one', async ({ page }) => {
+    const { signedIn: signIn, mockBackend: mock, sentencesSwitchedOn, ACTIVITY } = await import('./support/backend')
+    await signIn(page)
+    await sentencesSwitchedOn(page)
     await mock(page, { activity: ACTIVITY })
     await page.goto('/profile')
-    const box = page.locator('section', { has: page.getByRole('heading', { name: 'Sentences' }) })
-    await expect(box).toContainText('请爱护你的书。')
-    await expect(box.getByRole('link', { name: 'Write a sentence' })).toHaveAttribute('href', '/sentences')
+    const box = page.locator('section', { has: page.getByRole('heading', { name: /Sentences/ }) })
+    await expect(box).toContainText('0/1')
+    await expect(box.getByRole('link', { name: 'Write a sentence for 朋友' })).toHaveAttribute('href', '/sentences')
     await expect(box.getByRole('link', { name: 'Your sentences' })).toHaveAttribute('href', '/sentences')
   })
 })

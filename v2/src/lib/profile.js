@@ -116,3 +116,28 @@ export function quizHistory (quizzes = []) {
 /** "80%", rounded; 0% for a quiz with no questions. */
 export const scorePercent = ({ correct_answers: correct = 0, question_quantity: total = 0 } = {}) =>
   `${total ? Math.round((correct / total) * 100) : 0}%`
+
+const wordId = (entry) => entry?.word?.word_id ?? entry?.word?.simplified
+
+/**
+ * Each of today's words comes with two things to do: a quiz on its list and a
+ * sentence with the word. A quiz counts if one was saved for that list on or
+ * after the day the word was sent; a sentence counts if one is filed with the
+ * word on that day (either character-set copy).
+ */
+export function wordProgress (words = [], quizzes = [], activity = {}) {
+  return words.map((entry) => ({
+    entry,
+    // The newest quiz for the word's list since it was sent (truthy), or null.
+    quiz: [...(quizzes ?? [])]
+      .filter((q) => q?.list_id === entry.list_id && String(q.date_created) >= String(entry.date_sent))
+      .sort((a, b) => String(b.date_created).localeCompare(String(a.date_created)))[0] ?? null,
+    // The sentence itself (truthy), or null.
+    sentence: (activity?.[entry.date_sent]?.review_words ?? []).find((e) =>
+      e?.list_id === entry.list_id && wordId(e) === wordId(entry) && e.sentence?.sentence)?.sentence ?? null
+  }))
+}
+
+/** How many of today's words have the given action done: { done, total }. */
+export const progressCount = (progress = [], key) =>
+  ({ done: progress.filter((p) => p[key]).length, total: progress.length })

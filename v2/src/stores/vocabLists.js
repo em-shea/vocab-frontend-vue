@@ -18,6 +18,9 @@ const HSK_NAMES = {
   '1ebcad41-197a-6700-95a3-acde48001122': { level: 6, name: 'HSK Level 6' }
 }
 
+// The request in progress, shared by everyone who asks while it runs.
+let inflight = null
+
 export const useVocabListsStore = defineStore('vocabLists', {
   state: () => ({
     lists: [],
@@ -33,8 +36,16 @@ export const useVocabListsStore = defineStore('vocabLists', {
   },
 
   actions: {
-    async load () {
-      if (this.lists.length || this.loading) return
+    // Several parts of a page can ask at once (the home page's level picker
+    // and its subscribe forms). Every caller waits on the same request, so
+    // none carries on before the lists have arrived.
+    load () {
+      if (this.lists.length) return Promise.resolve()
+      if (!inflight) inflight = this.fetchLists().finally(() => { inflight = null })
+      return inflight
+    },
+
+    async fetchLists () {
       this.loading = true
       this.error = null
       try {

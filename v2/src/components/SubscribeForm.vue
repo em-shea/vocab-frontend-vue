@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AppButton from './AppButton.vue'
@@ -14,7 +14,14 @@ import { signUp } from '../api/signup'
 const props = defineProps({
   variant: { type: String, default: 'light' }, // light | band
   // Keeps label/field ids unique when two forms of the same variant share a page.
-  idPrefix: { type: String, default: '' }
+  idPrefix: { type: String, default: '' },
+  // Starting address, e.g. the one sign-in could not find an account for.
+  initialEmail: { type: String, default: '' },
+  // One column at every width, for narrow panels such as the sign-in page.
+  stacked: { type: Boolean, default: false },
+  // Leave out the email field when the page already shows the address
+  // (sign-in), so it is not asked for twice.
+  hideEmail: { type: Boolean, default: false }
 })
 const uid = computed(() => props.idPrefix || props.variant)
 
@@ -24,7 +31,7 @@ const prefs = usePreferencesStore()
 const auth = useAuthStore()
 const router = useRouter()
 
-const email = ref('')
+const email = ref(props.initialEmail)
 const listId = ref('')
 const status = ref('idle') // idle | sending | exists | error
 
@@ -35,6 +42,10 @@ watch(
   (all) => { if (!listId.value && all.length) listId.value = all[0].list_id },
   { immediate: true, deep: true }
 )
+
+// Load the lists here too: on the home page another section loads them, but
+// the form also appears on its own (sign-in, when no account is found).
+onMounted(() => { lists.load() })
 
 const busy = computed(() => status.value === 'sending')
 const chosen = computed(() => lists.byId(listId.value))
@@ -66,7 +77,7 @@ async function submit () {
 </script>
 
 <template>
-  <form class="sub" :class="`sub--${variant}`" @submit.prevent="submit">
+  <form class="sub" :class="[`sub--${variant}`, { 'sub--stacked': stacked }]" @submit.prevent="submit">
     <div class="sub__field">
       <label class="label" :for="`level-${uid}`">{{ t('chooseLevel') }}</label>
       <select :id="`level-${uid}`" v-model="listId" class="sub__select" :disabled="busy">
@@ -76,7 +87,7 @@ async function submit () {
       </select>
     </div>
 
-    <div class="sub__field">
+    <div v-if="!hideEmail" class="sub__field">
       <label class="label" :for="`email-${uid}`">{{ t('email') }}</label>
       <input
         :id="`email-${uid}`"
@@ -146,6 +157,8 @@ async function submit () {
 }
 
 @media (min-width: 720px) {
-  .sub { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto; }
+  .sub:not(.sub--stacked) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto; }
 }
+.sub--stacked { justify-items: start; }
+.sub--stacked .sub__field { align-self: stretch; }
 </style>

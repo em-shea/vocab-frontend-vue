@@ -25,7 +25,7 @@ test('a subscriber signs in with the emailed link', async ({ page }) => {
 
   // From the home page, sign-in leads to the profile, as it always has.
   await expect(page).toHaveURL((url) => url.pathname === '/profile')
-  await expect(page.getByRole('link', { name: EMAIL })).toHaveAttribute('href', '/profile')
+  await expect(page.getByRole('link', { name: 'Profile', exact: true })).toHaveAttribute('href', '/profile')
 
   // The API authorizer wants the raw token. "Bearer …" is rejected with a 401,
   // which would sign everyone out of everything, so pin it here.
@@ -48,7 +48,7 @@ test('signing in brings you back to the page you were on', async ({ page }) => {
   // The emailed link carries no return address; this browser remembers it.
   await page.goto('/verification?code=good-code')
   await expect(page).toHaveURL((url) => url.pathname === '/review' && url.searchParams.get('list_id') === '1ebcad3f-5dfd-6bfe-bda4-acde48001122')
-  await expect(page.getByRole('navigation').getByRole('link', { name: EMAIL })).toBeVisible()
+  await expect(page.getByRole('navigation').getByRole('link', { name: 'Profile', exact: true })).toBeVisible()
 })
 
 test('signed-out visitors sent to sign in from a signed-in page come back to it', async ({ page }) => {
@@ -74,9 +74,9 @@ test('the sign-in survives a reload', async ({ page }) => {
   await mockBackend(page)
   await signedIn(page)
   await page.goto('/')
-  await expect(page.getByRole('link', { name: EMAIL })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Profile', exact: true })).toBeVisible()
   await page.reload()
-  await expect(page.getByRole('link', { name: EMAIL })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Profile', exact: true })).toBeVisible()
 })
 
 test('an address that is not an email is caught before anything is sent', async ({ page }) => {
@@ -90,14 +90,23 @@ test('an address that is not an email is caught before anything is sent', async 
   expect(backend.cognito).toEqual([])
 })
 
-test('an address with no account is told to subscribe first', async ({ page }) => {
-  await mockBackend(page, { knownUser: false })
-  await page.goto('/signin')
-  await page.getByLabel('Email address').fill('stranger@example.com')
+test('an address with no account is offered a new one, with the address filled in', async ({ page }) => {
+  const backend = await mockBackend(page, { knownUser: false })
+  await page.goto('/signin?next=%2Fquiz')
+  await page.locator('#signin-email').fill('stranger@example.com')
   await page.getByRole('button', { name: 'Send sign-in link' }).click()
 
   await expect(page.getByRole('alert')).toContainText('could not find an account')
+  await expect(page.getByText('Choose a level to create one.')).toBeVisible()
   await expect(page).toHaveURL(/\/signin/)
+  // The address is not asked for twice.
+  await expect(page.getByLabel('Email address')).toHaveCount(1)
+
+  await page.getByRole('button', { name: 'Subscribe' }).click()
+  await expect(page).toHaveURL(/\/subscribed/)
+  expect(backend.cognito).toContain('SignUp')
+  // The sign-in link the new account is sent still returns to where they started.
+  expect(await page.evaluate(() => localStorage.getItem('hhtt.afterSignIn'))).toBe('/quiz')
 })
 
 test('links from emails arrive with the address filled in', async ({ page }) => {
