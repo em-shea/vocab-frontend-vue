@@ -32,7 +32,7 @@ test('writing every character of a word saves it and marks it done', async ({ pa
   const backend = await mockBackend(page, { userActivity: userActivity() })
   await page.goto('/write')
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Practise writing')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Stroke order')
   await expect(page.getByRole('heading', { name: /爱护/ })).toBeVisible()
   await expect(page.getByRole('img', { name: 'Writing box for 爱' })).toBeVisible()
   await expect(page.getByRole('img', { name: 'Writing box for 护' })).toBeVisible()
@@ -70,5 +70,5 @@ test('stroke data that will not load says so', async ({ page }) => {
 test('signed out, it asks to sign in', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/write')
-  await expect(page.getByText("Sign in to practise writing today's words.")).toBeVisible()
+  await expect(page.getByText("Sign in to practise the stroke order of today's words.")).toBeVisible()
 })

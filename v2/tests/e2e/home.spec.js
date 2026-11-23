@@ -151,7 +151,7 @@ test('heroes: the full page, with three launching-soon notes', async ({ page }) 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Unite the 108')
   // Catalogue, upload and quests. Sentences and handwriting are live.
   await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(3)
-  await expect(page.getByRole('heading', { name: 'Practise writing characters' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Learn stroke order' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Choose from a catalogue' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Upload your own list' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Collect heroes' })).toBeVisible()

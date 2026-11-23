@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import PrintFrame from '../PrintFrame.vue'
+import StrokeMock from './StrokeMock.vue'
 import printStory from '../../assets/prints/hero-story.jpg'
 
 // Ways to practise: a heading, then one section per kind of practice, each with
@@ -62,7 +63,7 @@ const { t } = useI18n()
           </figure>
         </div>
       </section>
-    <!-- Handwriting practice, built 2026-11-23: in both versions now. -->
+    <!-- Stroke order practice (/write), built 2026-11-23: in both versions. -->
     <section class="split">
       <div class="split__text">
         <SectionHead as="h3">{{ t('writeHeadline') }}</SectionHead>
@@ -72,7 +73,7 @@ const { t } = useI18n()
         <figure class="mock mock--write" :aria-label="t('mockWriteLabel')">
           <div class="mock__body mock__body--write" aria-hidden="true">
             <div class="grid">
-              <span class="hanzi grid__char">好</span>
+              <StrokeMock />
             </div>
             <span class="mock__link">{{ t('mockShowStrokes') }}</span>
           </div>
@@ -253,7 +254,7 @@ const { t } = useI18n()
   position: relative;
   display: grid;
   place-items: center;
-  width: 9rem;
+  width: 10rem;
   aspect-ratio: 1;
   border: var(--bw-rule) solid var(--c-ink);
   background-color: var(--c-panel);
@@ -266,12 +267,6 @@ const { t } = useI18n()
 .grid::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.45; }
 .grid::before { background: linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--c-seal) calc(50% - 0.5px), var(--c-seal) calc(50% + 0.5px), transparent calc(50% + 0.5px)); }
 .grid::after { background: linear-gradient(to top right, transparent calc(50% - 0.5px), var(--c-seal) calc(50% - 0.5px), var(--c-seal) calc(50% + 0.5px), transparent calc(50% + 0.5px)); }
-.grid__char { position: relative; z-index: 1; font-size: 5.5rem; line-height: 1; color: var(--c-ink); animation: draw 7s ease-in-out infinite; }
-@keyframes draw {
-  0%, 10% { opacity: 0.12; }
-  45%, 90% { opacity: 1; }
-  100% { opacity: 0.12; }
-}
 
 /* Still pictures for people who ask for less motion: the final state of each. */
 @media (prefers-reduced-motion: reduce) {
@@ -281,8 +276,7 @@ const { t } = useI18n()
   .opt--wrong::after,
   .hit,
   .export,
-  .field__typed,
-  .grid__char { animation: none; }
+  .field__typed { animation: none; }
   .hit:not(.hit--latin) { background-size: 100% 2px; }
 }
 
