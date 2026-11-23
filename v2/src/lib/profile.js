@@ -132,6 +132,9 @@ export function wordProgress (words = [], quizzes = [], activity = {}) {
     quiz: [...(quizzes ?? [])]
       .filter((q) => q?.list_id === entry.list_id && String(q.date_created) >= String(entry.date_sent))
       .sort((a, b) => String(b.date_created).localeCompare(String(a.date_created)))[0] ?? null,
+    // Handwriting practice done for this word (the backend's "written" flag).
+    written: (activity?.[entry.date_sent]?.review_words ?? []).some((e) =>
+      e?.list_id === entry.list_id && wordId(e) === wordId(entry) && e.written === true),
     // The sentence itself (truthy), or null.
     sentence: (activity?.[entry.date_sent]?.review_words ?? []).find((e) =>
       e?.list_id === entry.list_id && wordId(e) === wordId(entry) && e.sentence?.sentence)?.sentence ?? null

@@ -143,14 +143,15 @@ test('launch: leads with the daily word, has no launching-soon notes, previews t
   await expect(page.getByRole('heading', { name: /catalogue/i })).toHaveCount(0)
 })
 
-test('heroes: the full page, with four launching-soon notes', async ({ page }) => {
+test('heroes: the full page, with three launching-soon notes', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/?home=heroes')
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Climb the mountain')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Unite the 108')
-  // Catalogue, upload, writing and quests. Sentences are live.
-  await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(4)
+  // Catalogue, upload and quests. Sentences and handwriting are live.
+  await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(3)
+  await expect(page.getByRole('heading', { name: 'Practise writing characters' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Choose from a catalogue' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Upload your own list' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Collect heroes' })).toBeVisible()

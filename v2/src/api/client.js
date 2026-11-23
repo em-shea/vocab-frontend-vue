@@ -44,7 +44,8 @@ export const api = {
   quizzes: (dateRange) => client.get('/quizzes', { params: { date_range: dateRange } }),
   saveQuiz: (payload) => client.post('/quizzes', payload),
   sentences: () => client.get('/sentences'),
-  saveSentence: (payload) => client.post('/sentences', payload)
+  saveSentence: (payload) => client.post('/sentences', payload),
+  saveWriting: (payload) => client.post('/writing', payload)
 }
 
 export default client

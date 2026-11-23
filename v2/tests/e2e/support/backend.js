@@ -4,6 +4,9 @@
 // here, and any other outside request is refused and recorded so a test fails
 // if the app starts calling something new.
 
+import { readFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
+
 export const EMAIL = 'learner@example.com'
 export const HSK1 = '1ebcad3f-5dfd-6bfe-bda4-acde48001122'
 export const HSK2 = '1ebcad3f-adc0-6f42-b8b1-acde48001122'
@@ -189,6 +192,7 @@ export async function mockBackend (page, options = {}) {
     activityFails: options.activityFails ?? false,
     sentences: options.sentences ?? SENTENCES,
     sentencesFails: options.sentencesFails ?? false,
+    saveWritingFails: options.saveWritingFails ?? false,
     saveSentenceFails: options.saveSentenceFails ?? false,
     cognito: [],   // X-Amz-Target action names, in order
     api: [],       // { method, path, headers, body }
@@ -302,13 +306,32 @@ export async function mockBackend (page, options = {}) {
       if (state.saveSentenceFails) return json({ success: false, message: 'Failed to save sentence.', data: null }, 502)
       return json({ success: true, message: 'Successfully saved sentence.', data: null })
     }
+    if (method === 'POST' && path === '/writing') {
+      if (state.saveWritingFails) return json({ success: false, message: 'Failed to save writing practice.', data: null }, 502)
+      return json({ success: true, message: 'Successfully saved writing practice.', data: { date: '2026-11-20' } })
+    }
     return json({ message: `No stand-in for ${method} ${path}` }, 404)
+  })
+
+  // Stroke data for handwriting practice, served from the installed
+  // hanzi-writer-data package instead of jsDelivr.
+  state.strokes = []
+  await page.route(/^https:\/\/cdn\.jsdelivr\.net\/npm\/hanzi-writer-data@[^/]+\/(.+)\.json$/, async (route) => {
+    const char = decodeURIComponent(route.request().url().match(/\/([^/]+)\.json$/)[1])
+    state.strokes.push(char)
+    if (options.strokesFail) return route.fulfill({ status: 404, body: 'not found' })
+    try {
+      const file = fileURLToPath(new URL(`../../../node_modules/hanzi-writer-data/${char}.json`, import.meta.url))
+      return route.fulfill({ status: 200, contentType: 'application/json', headers: cors, body: await readFile(file, 'utf8') })
+    } catch {
+      return route.fulfill({ status: 404, headers: cors, body: 'not found' })
+    }
   })
 
   // Anything else leaving localhost is a surprise. Refuse it and remember it.
   await page.route(
     (url) => !['localhost', '127.0.0.1'].includes(url.hostname) &&
-      !/cognito-idp\..*amazonaws\.com$|haohaotiantian\.com$/.test(url.hostname),
+      !/cognito-idp\..*amazonaws\.com$|haohaotiantian\.com$|^cdn\.jsdelivr\.net$/.test(url.hostname),
     (route) => {
       state.unexpected.push(route.request().url())
       return route.abort()

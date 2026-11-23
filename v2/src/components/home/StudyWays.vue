@@ -3,15 +3,14 @@ import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
 import PrintFrame from '../PrintFrame.vue'
 import printStory from '../../assets/prints/hero-story.jpg'
-import SoonNote from './SoonNote.vue'
 
 // Ways to practise: a heading, then one section per kind of practice, each with
 // a small illustration of the screen beside its text, like the daily email. The
 // mocks are decorative and fixed: the study words are literal so the examples
 // are always correct, and nothing in them is interactive. Both versions list
 // quizzes and example sentences.
-// The heroes version adds sentence writing and handwriting, both unbuilt. The
-// launch version adds the review screen. Sides alternate from one to the next.
+// Both versions also have sentences and handwriting practice; the launch
+// version adds the review screen. Sides alternate from one to the next.
 defineProps({ heroes: { type: Boolean, default: false } })
 const { t } = useI18n()
 </script>
@@ -63,26 +62,24 @@ const { t } = useI18n()
           </figure>
         </div>
       </section>
-    <template v-if="heroes">
-  <section class="split">
-        <div class="split__text">
-          <SectionHead as="h3">{{ t('writeHeadline') }}</SectionHead>
-          <SoonNote />
-          <p>{{ t('writeBody') }}</p>
-        </div>
-        <div class="stage">
-          <figure class="mock mock--write" :aria-label="t('mockWriteLabel')">
-            <div class="mock__body mock__body--write" aria-hidden="true">
-              <div class="grid">
-                <span class="hanzi grid__char">好</span>
-              </div>
-              <span class="upload"><span class="upload__icon"></span>{{ t('mockUploadPhoto') }}</span>
+    <!-- Handwriting practice, built 2026-11-23: in both versions now. -->
+    <section class="split">
+      <div class="split__text">
+        <SectionHead as="h3">{{ t('writeHeadline') }}</SectionHead>
+        <p>{{ t('writeBody') }}</p>
+      </div>
+      <div class="stage">
+        <figure class="mock mock--write" :aria-label="t('mockWriteLabel')">
+          <div class="mock__body mock__body--write" aria-hidden="true">
+            <div class="grid">
+              <span class="hanzi grid__char">好</span>
             </div>
-          </figure>
-        </div>
-      </section>
-    </template>
-    <template v-else>
+            <span class="mock__link">{{ t('mockShowStrokes') }}</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+    <template v-if="!heroes">
   <section class="split">
         <div class="split__text">
           <SectionHead as="h3" :title="t('studyReviewHeadline')" />
@@ -249,8 +246,9 @@ const { t } = useI18n()
   100% { width: 0; }
 }
 
-/* Practice grid (田字格) with a character and a photo upload. */
+/* Practice grid (田字格) with a character and a stroke-order link. */
 .mock__body--write { align-items: center; gap: var(--s-4); }
+.mock__link { font-size: var(--t-base); color: var(--c-ink); text-decoration: underline; text-underline-offset: 0.2em; }
 .grid {
   position: relative;
   display: grid;
@@ -274,9 +272,6 @@ const { t } = useI18n()
   45%, 90% { opacity: 1; }
   100% { opacity: 0.12; }
 }
-.upload { display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-1) var(--s-3); border: var(--bw-rule) solid var(--c-ink); background-color: var(--c-raised); font-family: var(--f-ui); font-size: var(--t-base); font-weight: var(--w-semi); color: var(--c-ink); }
-.upload__icon { position: relative; width: 1rem; height: 0.75rem; border: var(--bw-rule) solid var(--c-ink); }
-.upload__icon::after { content: ''; position: absolute; inset: 1px; margin: auto; width: 0.3rem; height: 0.3rem; border-radius: var(--r-circle); background-color: var(--c-seal); }
 
 /* Still pictures for people who ask for less motion: the final state of each. */
 @media (prefers-reduced-motion: reduce) {

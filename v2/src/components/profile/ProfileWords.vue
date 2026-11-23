@@ -4,7 +4,7 @@ import SectionHead from '../SectionHead.vue'
 import WordCard from '../WordCard.vue'
 import TaskBox from '../TaskBox.vue'
 import AppButton from '../AppButton.vue'
-import { SENTENCES_ENABLED } from '../../featureFlags'
+import { SENTENCES_ENABLED, WRITING_ENABLED } from '../../featureFlags'
 
 // The newest word from each list the learner takes, with the way to quiz on
 // or review that list. The links keep the old screen's settings: a 14-day,
@@ -33,7 +33,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
     </p>
 
     <ul v-else class="words__grid">
-      <li v-for="{ entry, quiz, sentence } in progress" :key="entry.list_id">
+      <li v-for="{ entry, quiz, sentence, written } in progress" :key="entry.list_id">
         <WordCard :word="entry.word" :level="listName(entry.list_id)" :character-set="setFor(entry.list_id)">
           <!-- Each task: its name on the left in plain text; on the right a
                button until it is done, then a ticked box (Emily, 2026-11-22). -->
@@ -51,6 +51,14 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
             <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'sentences' }"
               :aria-label="t('profileSentenceWriteFor', { word: entry.word.simplified })">
               {{ t('profileSentenceWriteShort') }}
+            </AppButton>
+          </div>
+          <div v-if="WRITING_ENABLED" class="words__links">
+            <span>{{ t('profileWriting') }}</span>
+            <TaskBox v-if="written" done />
+            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'write' }"
+              :aria-label="t('profileWritingStartFor', { word: entry.word.simplified })">
+              {{ t('profileWritingStart') }}
             </AppButton>
           </div>
         </WordCard>
