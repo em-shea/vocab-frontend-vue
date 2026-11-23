@@ -23,6 +23,8 @@ export default {
   "profileWritingStart": "Practise",
   "profileWritingStartFor": "Practise the stroke order of {word}",
   "footerStrokes": "Stroke order data: Make Me a Hanzi, from fonts by Arphic Technology,",
+  "profileStrokesPast": "Past practice",
+  "profileStrokesPastEmpty": "No stroke order practice in the past 10 days.",
   "navSentences": "Sentences",
   "navReview": "Review",
   "navSignIn": "Sign in",

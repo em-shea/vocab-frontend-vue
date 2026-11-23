@@ -12,7 +12,8 @@ import ProfileActions from '../components/profile/ProfileActions.vue'
 import ProfileWords from '../components/profile/ProfileWords.vue'
 import ProfileQuizzes from '../components/profile/ProfileQuizzes.vue'
 import ProfileSentences from '../components/profile/ProfileSentences.vue'
-import { SENTENCES_ENABLED } from '../featureFlags'
+import ProfileStrokes from '../components/profile/ProfileStrokes.vue'
+import { SENTENCES_ENABLED, WRITING_ENABLED } from '../featureFlags'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { useAuthStore } from '../stores/auth'
@@ -95,6 +96,8 @@ const words = computed(() => latestWords(user.value?.activity, subscriptions.val
 const progress = computed(() => wordProgress(words.value, quizzes.value, user.value?.activity))
 const quizCount = computed(() => progressCount(progress.value, 'quiz'))
 const sentenceCount = computed(() => progressCount(progress.value, 'sentence'))
+const strokeCount = computed(() => progressCount(progress.value, 'written'))
+const strokesOn = WRITING_ENABLED
 
 // When someone's lists are in both character sets, each list name says which
 // it is in: "HSK Level 1 简", "HSK Level 3 繁", or "简 繁" for a list taken in
@@ -150,6 +153,7 @@ function rawListName (id) {
             @retry="loadQuizzes"
           />
           <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" :activity="user?.activity" />
+          <ProfileStrokes v-if="strokesOn" :progress="progress" :count="strokeCount" :activity="user?.activity" />
         </div>
       </template>
     </div>

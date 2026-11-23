@@ -22,6 +22,8 @@ export default {
   "profileWritingStart": "去练习",
   "profileWritingStartFor": "练习 {word} 的笔顺",
   "footerStrokes": "笔顺数据：Make Me a Hanzi，源自文鼎科技（Arphic）字体，",
+  "profileStrokesPast": "以前的练习",
+  "profileStrokesPastEmpty": "过去10天没有练习过笔顺。",
   "navSentences": "造句",
   "navReview": "复习",
   "navSignIn": "登录",
