@@ -85,7 +85,7 @@ export default {
   "heroNicknameGloss": "the Flowery Monk",
   "closingSubscribeHeadline": "Subscribe to receive today's word",
   "footerAi": "This website uses AI. Please report any mistakes to",
-  "footerFonts": "Fonts: Archivo, Instrument Sans, LXGW WenKai, Noto Sans SC and Ma Shan Zheng, all under the SIL Open Font License.",
+  "footerIcons": "Hero rank icons: \"Cloud ring\" and \"Peaks\" by Lorc,",
   "footerPrints": "Woodblock prints: Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin, c. 1827–1830. Public domain.",
   "closeHeadlineA": "Complete quests",
   "closeHeadlineB": "Unite all 108",
