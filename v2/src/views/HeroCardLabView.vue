@@ -60,7 +60,7 @@ const stress = {
   pinyin: 'Gōngsūn Shèng',
   nameEn: 'Gongsun Sheng',
   nickname: '神行太保',
-  nicknameEn: 'Divine Traveller',
+  nicknameEn: 'Divine Traveler',
   story: undefined,
   printCredit: undefined
 }

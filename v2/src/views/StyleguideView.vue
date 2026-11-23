@@ -39,7 +39,7 @@ const inks = [
 
 const texts = [
   ['--c-body', 'body', 'running text'],
-  ['--c-muted', 'muted', 'most used text colour'],
+  ['--c-muted', 'muted', 'most used text color'],
   ['--c-muted-warm', 'muted-warm', 'on warm surfaces'],
   ['--c-pinyin', 'pinyin', 'pronunciation']
 ]
@@ -107,9 +107,9 @@ const pressed = ref(0)
       </header>
 
       <section class="stack">
-        <SectionHead label="Colour" title="Palette" hanzi="色" />
+        <SectionHead label="Color" title="Palette" hanzi="色" />
         <p class="note">
-          Reconciled against the design file. The brief listed ten colours; the
+          Reconciled against the design file. The brief listed ten colors; the
           design uses these — four reds and four darks, each with a distinct job.
         </p>
         <div v-for="[groupName, items] in groups" :key="groupName" class="group">

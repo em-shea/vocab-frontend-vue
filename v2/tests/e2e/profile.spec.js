@@ -110,7 +110,7 @@ test.describe('profile', () => {
     const box = page.locator('section', { has: page.getByRole('heading', { name: /^Stroke order/ }) })
     await expect(box).toContainText('1/1')
     await expect(box.locator('.strokes__list .taskbox--done')).toHaveCount(1)
-    await expect(box.getByRole('link', { name: /^Practise the stroke order/ })).toHaveCount(0)
+    await expect(box.getByRole('link', { name: /^Practice the stroke order/ })).toHaveCount(0)
   })
 
   test('with no name set, a plain heading stands in (not the email) and a name can be chosen', async ({ page }) => {

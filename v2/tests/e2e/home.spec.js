@@ -87,7 +87,7 @@ for (const version of VERSIONS) {
     await mockBackend(page)
     await page.goto(version.path)
 
-    await expect(page.getByRole('heading', { level: 2, name: 'Practise and track your progress' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 2, name: 'Practice and track your progress' })).toBeVisible()
     await expect(page.getByText(/ways to study/i)).toHaveCount(0)
     await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes' })).toBeVisible()
     // Practice sentences replaced example sentences in both versions (2026-11-21).
@@ -136,11 +136,11 @@ test('launch: leads with the daily word, has no launching-soon notes, previews t
   await expect(page.getByText('Climb the mountain')).toHaveCount(0)
   await expect(page.getByText('替天行道')).toHaveCount(0)
   await expect(page.getByText('Launching soon')).toHaveCount(0)
-  await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: practise daily to unlock the 108 heroes of the Water Margin' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: practice daily to unlock the 108 heroes of the Water Margin' })).toBeVisible()
   // Study is only what exists: quizzes, example sentences and review. No links for now.
   await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes' })).toBeVisible()
   await expect(page.getByRole('heading', { level: 3, name: 'Review past words' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: /catalogue/i })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: /catalog/i })).toHaveCount(0)
 })
 
 test('heroes: the full page, with three launching-soon notes', async ({ page }) => {
@@ -152,7 +152,7 @@ test('heroes: the full page, with three launching-soon notes', async ({ page }) 
   // Catalogue, upload and quests. Sentences and handwriting are live.
   await expect(page.getByText('Launching soon', { exact: true })).toHaveCount(3)
   await expect(page.getByRole('heading', { name: 'Learn stroke order' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Choose from a catalogue' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Choose from a catalog' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Upload your own list' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Collect heroes' })).toBeVisible()
   await expect(page.getByText('花和尚')).toBeVisible()

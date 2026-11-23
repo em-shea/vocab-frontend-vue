@@ -70,5 +70,5 @@ test('stroke data that will not load says so', async ({ page }) => {
 test('signed out, it asks to sign in', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/write')
-  await expect(page.getByText("Sign in to practise the stroke order of today's words.")).toBeVisible()
+  await expect(page.getByText("Sign in to practice the stroke order of today's words.")).toBeVisible()
 })
