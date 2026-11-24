@@ -210,13 +210,16 @@ function rawListName (id) {
 }
 .profile__head { grid-area: head; display: flex; flex-direction: column; gap: var(--s-8); min-width: 0; }
 .profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
-.profile__lists { grid-area: lists; min-width: 0; }
+.profile__lists { grid-area: lists; min-width: 0; align-self: start; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
   .profile {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    grid-template-areas: 'head head' 'words side' 'lists lists';
+    /* Your lists sits under today's words, beside the taller side column, so
+       there's no gap under the words (Emily, 2026-11-24). */
+    grid-template-areas: 'head head' 'words side' 'lists side';
+    grid-template-rows: auto auto 1fr;
     column-gap: var(--s-8);
     row-gap: var(--s-8);
   }
