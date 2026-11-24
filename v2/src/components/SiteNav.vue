@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { signInRoute } from '../lib/signInReturn'
-import { SENTENCES_ENABLED } from '../featureFlags'
+import { SENTENCES_ENABLED, WRITING_ENABLED } from '../featureFlags'
 import LanguageMenu from './LanguageMenu.vue'
 import { useAuthStore } from '../stores/auth'
 
@@ -30,6 +30,7 @@ const route = useRoute()
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
       <RouterLink v-if="SENTENCES_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
+      <RouterLink v-if="WRITING_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'write' }">{{ t('navWriting') }}</RouterLink>
       <RouterLink v-if="!auth.signedIn" class="nav__link nav__link--strong" :to="signInRoute(route.fullPath)">
         {{ t('navSignIn') }}
       </RouterLink>

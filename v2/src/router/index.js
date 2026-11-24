@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { SENTENCES_ENABLED } from '../featureFlags'
+import { SENTENCES_ENABLED, WRITING_ENABLED } from '../featureFlags'
 
 // Routes are ported from the Vue 2 app one at a time in Phase 4. What is still
 // outstanding is listed in ./legacy.js, and a test holds this file to it.
@@ -92,6 +92,14 @@ export const routes = [
     name: 'sentences',
     ...(SENTENCES_ENABLED
       ? { component: () => import('../views/SentencesView.vue') }
+      : { redirect: (to) => ({ path: '/profile', query: to.query }) })
+  },
+  {
+    // Handwriting practice, behind WRITING_ENABLED like sentences.
+    path: '/write',
+    name: 'write',
+    ...(WRITING_ENABLED
+      ? { component: () => import('../views/WriteView.vue') }
       : { redirect: (to) => ({ path: '/profile', query: to.query }) })
   }
 ]

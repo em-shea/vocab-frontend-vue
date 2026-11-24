@@ -99,6 +99,20 @@ test.describe('profile', () => {
     await expect(cards.nth(0).locator('.hanzi').first()).toHaveText('爱护')
   })
 
+  test('the stroke order box counts today\'s words practised and lists earlier ones', async ({ page }) => {
+    await signedIn(page)
+    const ua = userActivity()
+    const days = Object.keys(ua.activity).sort()
+    ua.activity[days.at(-1)].review_words[0].written = true
+    if (days.length > 1) ua.activity[days.at(-2)].review_words.forEach((e) => { e.written = true })
+    await mockBackend(page, { userActivity: ua })
+    await page.goto('/profile')
+    const box = page.locator('section', { has: page.getByRole('heading', { name: /^Stroke order/ }) })
+    await expect(box).toContainText('1/1')
+    await expect(box.locator('.strokes__list .taskbox--done')).toHaveCount(1)
+    await expect(box.getByRole('link', { name: /^Practice the stroke order/ })).toHaveCount(0)
+  })
+
   test('with no name set, a plain heading stands in (not the email) and a name can be chosen', async ({ page }) => {
     await signedIn(page)
     await mockBackend(page, { userActivity: userActivity({ alias: 'Not set', aliasPinyin: 'Not set' }) })

@@ -51,6 +51,16 @@ const pwa = VitePWA({
         urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:jpg|jpeg|png|webp|gif)$/.test(url.pathname),
         handler: 'CacheFirst',
         options: { cacheName: 'images', expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 90 } }
+      },
+      {
+        // Stroke data for handwriting practice (pinned version, never changes).
+        urlPattern: ({ url }) => url.origin === 'https://cdn.jsdelivr.net' && url.pathname.startsWith('/npm/hanzi-writer-data@'),
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'strokes',
+          expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 365 },
+          cacheableResponse: { statuses: [0, 200] }
+        }
       }
     ]
   },

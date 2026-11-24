@@ -60,7 +60,7 @@ en: Unite the 108
 cn: 集齐一百单八将
 
 key: questBody
-en: One Chinese word arrives by email each day, with a short quiz after it. Keep practising and the 108 outlaws of Liangshan join you one by one.
+en: One Chinese word arrives by email each day, with a short quiz after it. Keep practicing and the 108 outlaws of Liangshan join you one by one.
 cn: 每天一封邮件，送来一个中文词，还有一个小测验。坚持练习，梁山好汉就会一位接一位入伙。
 
 key: launchHeadline
@@ -102,7 +102,7 @@ en: Launching soon
 cn: 即将推出
 
 key: catalogueHeadline
-en: Choose from a catalogue
+en: Choose from a catalog
 cn: 从目录中选词表
 
 key: catalogueBody
@@ -166,7 +166,7 @@ cn: 前边；在前方；上文
 ## 4. Study
 
 key: studyHeadline
-en: Practise and track your progress
+en: Practice and track your progress
 cn: 练习并查看学习进度
 
 key: quizHeadline
@@ -202,12 +202,12 @@ en: Write a sentence of your own with each word.
 cn: 用每个词写一个自己的句子。
 
 key: writeHeadline
-en: Practise writing characters
-cn: 练习写汉字
+en: Learn stroke order
+cn: 学习笔顺
 
 key: writeBody
-en: Write on paper or on a tablet or phone, then upload a photo of your handwriting.
-cn: 在纸上，或用平板、手机书写，再上传手写照片。
+en: Write each character of your daily words stroke by stroke with a finger or mouse. Watch the order first, and get a hint when you need one.
+cn: 用手指或鼠标，按笔顺一笔一笔写出每天词语里的汉字。可以先看笔顺演示，需要时还有提示。
 
 ## 5. Collect heroes
 
@@ -216,7 +216,7 @@ en: Collect heroes
 cn: 收集好汉
 
 key: collectBody
-en: New heroes join you every week you keep practising.
+en: New heroes join you every week you keep practicing.
 cn: 只要坚持练习，每周都有新的好汉入伙。
 
 key: storyBody
@@ -254,8 +254,8 @@ en: Finish the quests and the whole band gathers on Mount Liang.
 cn: 完成任务，一百单八将就在梁山聚齐。
 
 key: previewHeadline
-en: Coming soon: collect the 108 heroes of Liangshan
-cn: 即将推出：集齐梁山一百单八将
+en: Coming soon: practice daily to unlock the 108 heroes of the Water Margin
+cn: 即将推出：每天练习，解锁《水浒传》一百单八将
 
 key: closingSubscribeHeadline
 en: Subscribe to receive today's word
@@ -308,7 +308,7 @@ en: How it works
 cn: 怎么玩？
 
 key: faq1a
-en: Practise listening, reading and writing in one day and a hero joins you on the mountain.
+en: Practice listening, reading and writing in one day and a hero joins you on the mountain.
 cn: 一天里练听、读、写三样，就有一位好汉上山入伙。
 
 key: faq2zhq
@@ -349,6 +349,90 @@ cn: HSK 一到六级，上山的进度相同。词会变，山不变。
 
 ## Other
 
+key: navWriting
+en: Stroke order
+cn: 笔顺
+
+key: writeTitle
+en: Stroke order
+cn: 笔顺练习
+
+key: writeSignIn
+en: Sign in to practice the stroke order of today's words.
+cn: 登录后即可练习今天词语的笔顺。
+
+key: writeCharLabel
+en: Writing box for {char}
+cn: {char} 的书写格
+
+key: writeLoadError
+en: Couldn't load the strokes for {char}. Check your connection and reload.
+cn: 无法加载「{char}」的笔画数据。请检查网络后刷新页面。
+
+key: writeShowMe
+en: Show stroke order
+cn: 看笔顺
+
+key: writeAgain
+en: Write it again
+cn: 再写一遍
+
+key: writeCharDone
+en: {char} written.
+cn: 「{char}」已写完。
+
+key: writeWordDone
+en: Done
+cn: 已完成
+
+key: writeSaveFailed
+en: Couldn't save your practice.
+cn: 练习记录保存失败。
+
+key: profileWriting
+en: Stroke order
+cn: 笔顺
+
+key: profileWritingStart
+en: Practice
+cn: 去练习
+
+key: profileWritingStartFor
+en: Practice the stroke order of {word}
+cn: 练习 {word} 的笔顺
+
+key: footerStrokes
+en: Stroke order data: Make Me a Hanzi, from fonts by Arphic Technology,
+cn: 笔顺数据：Make Me a Hanzi，源自文鼎科技（Arphic）字体，
+
+key: profileStrokesPast
+en: Past practice
+cn: 以前的练习
+
+key: profileStrokesPastEmpty
+en: No stroke order practice in the past 10 days.
+cn: 过去10天没有练习过笔顺。
+
+key: navSentences
+en: Sentences
+cn: 造句
+
+key: hskLevelName
+en: HSK Level {n}
+cn: HSK {n}级
+
+key: readHeadline
+en: Choose simplified or traditional characters
+cn: 简体或繁体，随你选
+
+key: readBody
+en: Switch between 简 and 繁 in the menu at the top of the page. Your daily emails use the set you subscribe with. Choose 中文 for immersion mode, with the whole site in Chinese, word definitions included.
+cn: 在页面顶部的菜单中切换「简」和「繁」。每日邮件采用你订阅时选择的简体或繁体。选择「中文」即可进入沉浸模式，整个网站都用中文显示，包括词语释义。
+
+key: levelSamples
+en: Sample words
+cn: 示例词汇
+
 key: mockQuizLabel
 en: Example of a quiz question
 cn: 测验题示例
@@ -366,8 +450,8 @@ en: Example of writing a sentence
 cn: 造句示例
 
 key: mockWriteLabel
-en: Example of a character practice grid
-cn: 汉字练习格示例
+en: Example of stroke order practice for 好
+cn: 「好」字笔顺练习示例
 
 key: mockOptionB
 en: to compare; to contrast
@@ -425,6 +509,18 @@ key: mockUploadPhoto
 en: Upload photo
 cn: 上传照片
 
+key: mockShowStrokes
+en: Show stroke order
+cn: 看笔顺
+
+key: footerAi
+en: This website uses AI. Please report any mistakes to
+cn: 本网站使用了人工智能。如发现错误，请发邮件至
+
+key: footerIcons
+en: Hero rank icons: "Cloud ring" and "Peaks" by Lorc,
+cn: 好汉等级图标：Lorc 的「Cloud ring」和「Peaks」，
+
 key: signInTitle
 en: Sign in
 cn: 登录
@@ -446,8 +542,8 @@ en: Please enter a valid email address.
 cn: 请输入有效的邮箱地址。
 
 key: signInUnknown
-en: We could not find an account for that address. Subscribe on the home page first.
-cn: 找不到该邮箱对应的账号，请先在首页订阅。
+en: We could not find an account for that address. Choose a level to create one.
+cn: 找不到该邮箱对应的账号。选择等级即可创建账号。
 
 key: signInError
 en: Something went wrong sending the link. Please try again.
@@ -781,13 +877,17 @@ key: profileRetry
 en: Try again
 cn: 重试
 
-key: profileSince
-en: Studying since
-cn: 开始学习于
-
 key: profileSetName
 en: Choose a profile name
 cn: 设置昵称
+
+key: profileUntitled
+en: Your profile
+cn: 我的主页
+
+key: profileSinceLine
+en: Studying since {date}
+cn: {date}开始学习
 
 key: profileSettings
 en: Profile settings
@@ -821,13 +921,45 @@ key: profileQuizzesTitle
 en: Quizzes
 cn: 测验
 
-key: profileQuizDone
-en: Today's quiz is done: {correct} of {total} right.
-cn: 今天的测验已完成：答对 {correct} / {total} 题。
+key: profileQuizTakeShort
+en: Take quiz
+cn: 做测验
 
-key: profileQuizTake
-en: Take today's quiz
-cn: 做今天的测验
+key: profileQuizTakeFor
+en: Take the {list} quiz
+cn: 做 {list} 测验
+
+key: profileSentenceEdit
+en: Edit your sentence for {word}
+cn: 修改 {word} 的句子
+
+key: profileSentenceWriteFor
+en: Write a sentence for {word}
+cn: 用 {word} 写一个句子
+
+key: profileDone
+en: done
+cn: 已完成
+
+key: profileAvatarPlaceholder
+en: Profile picture (coming soon)
+cn: 头像（即将推出）
+
+key: profileSentence
+en: Sentence
+cn: 造句
+
+key: profileSentenceWriteShort
+en: Write
+cn: 写句子
+
+key: profileNotDone
+en: not done yet
+cn: 未完成
+
+key: profileDoneCount
+en: {done} of {total} done
+cn: 已完成 {done} / {total}
 
 key: profileHistoryCaption
 en: Quizzes in the past week
@@ -1092,3 +1224,47 @@ cn: 你还没有写过句子。
 key: sentencesMore
 en: Show more
 cn: 显示更多
+
+key: sentencesExamples
+en: Example sentences
+cn: 查看例句
+
+key: sentencesNewTab
+en: (opens in a new tab)
+cn: （在新标签页中打开）
+
+key: profilePastWeek
+en: Past week
+cn: 过去一周
+
+key: profileAccount
+en: Account
+cn: 账户
+
+key: profileSentencesTitle
+en: Sentences
+cn: 造句
+
+key: profileSentencesWrite
+en: Write a sentence
+cn: 写句子
+
+key: profileSentencesAll
+en: Your sentences
+cn: 我的句子
+
+key: profileSentencesPast
+en: Past sentences
+cn: 以前的句子
+
+key: profileSentencesPastEmpty
+en: No sentences in the past 10 days.
+cn: 过去10天没有写过句子。
+
+key: profileSentencesNone
+en: No words today yet.
+cn: 今天还没有新词。
+
+key: offlineNotice
+en: You're offline. Your words will load when you're back online.
+cn: 你目前处于离线状态。恢复网络后即可加载词语。

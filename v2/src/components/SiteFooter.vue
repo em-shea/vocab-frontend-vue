@@ -21,6 +21,10 @@ const { t } = useI18n()
       <a href="https://game-icons.net" rel="noopener">game-icons.net</a>,
       <a href="https://creativecommons.org/licenses/by/3.0/" rel="noopener">CC BY 3.0</a>
     </p>
+    <p class="site-footer__credit">
+      {{ t('footerStrokes') }}
+      <a href="https://github.com/chanind/hanzi-writer-data/blob/master/ARPHICPL.TXT" rel="noopener">Arphic Public License</a>
+    </p>
   </footer>
 </template>
 
