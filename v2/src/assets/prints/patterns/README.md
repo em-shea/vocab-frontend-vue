@@ -8,11 +8,14 @@ beside its mirror image, so it repeats sideways without a seam.
 |---|---|---|
 | brocade.jpg | hero-quest.jpg | 240, 55, 330, 105 |
 | waves.jpg | hero-quest.jpg | 150, 45, 235, 95 |
-| tiger.jpg | hero-story.jpg | 330, 345, 450, 395 |
 | peony.jpg | heroes-board.jpg | 395, 350, 490, 410 |
-| blossom.jpg | heroes-board.jpg | 30, 140, 110, 200 |
-| water.jpg | heroes-board.jpg | 360, 600, 490, 660 |
-| rocks.jpg | heroes-board.jpg | 220, 520, 360, 580 |
+| damask.jpg | hero-quest.jpg | 380, 170, 490, 230 |
+| roundels.jpg | hero-quest.jpg | 55, 375, 130, 420 |
+| clouds.jpg | hero-quest.jpg | 330, 0, 440, 45 |
+| swirl.jpg | hero-quest.jpg | 150, 0, 230, 40 |
+
+Tried and dropped (Emily, 2026-11-24: hard to tell apart, or looked
+anatomical): tiger, blossom, water, rocks, armor, pine, grass, bamboo.
 
 To make another: crop with Pillow, paste the crop and `ImageOps.mirror(crop)`
 side by side, save as JPEG (quality 90).

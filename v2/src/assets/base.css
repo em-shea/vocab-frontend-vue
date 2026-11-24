@@ -151,10 +151,10 @@ html {
   background: var(--trim) left center / auto 100% repeat-x;
   border-bottom: var(--bw-rule) solid var(--c-ink);
 }
+.print-trim--peony { --trim: url('./prints/patterns/peony.jpg'); }
 .print-trim--brocade { --trim: url('./prints/patterns/brocade.jpg'); }
 .print-trim--waves { --trim: url('./prints/patterns/waves.jpg'); }
-.print-trim--tiger { --trim: url('./prints/patterns/tiger.jpg'); }
-.print-trim--peony { --trim: url('./prints/patterns/peony.jpg'); }
-.print-trim--blossom { --trim: url('./prints/patterns/blossom.jpg'); }
-.print-trim--water { --trim: url('./prints/patterns/water.jpg'); }
-.print-trim--rocks { --trim: url('./prints/patterns/rocks.jpg'); }
+.print-trim--damask { --trim: url('./prints/patterns/damask.jpg'); }
+.print-trim--roundels { --trim: url('./prints/patterns/roundels.jpg'); }
+.print-trim--clouds { --trim: url('./prints/patterns/clouds.jpg'); }
+.print-trim--swirl { --trim: url('./prints/patterns/swirl.jpg'); }

@@ -19,7 +19,7 @@ const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }
 </script>
 
 <template>
-  <section class="streak print-trim print-trim--peony" aria-labelledby="streak-title">
+  <section class="streak" aria-labelledby="streak-title">
     <div class="streak__count">
       <h2 id="streak-title" class="streak__title">
         <!-- English "4 day streak"; Chinese reads 连续 4 天. -->
@@ -47,24 +47,25 @@ const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }
       <p class="streak__pips" :aria-label="t('streakSpareOf', { n: streak.buffer ?? 0, max: streak.buffer_max ?? 3 })">
         <span v-for="(full, i) in spare" :key="i" class="streak__pip" :class="{ 'streak__pip--full': full }" aria-hidden="true" />
       </p>
-      <p class="streak__best">{{ t('streakBest', { n: streak.best ?? 0 }, streak.best ?? 0) }}</p>
+      <p class="streak__best">
+        {{ t('streakBest', { n: streak.best ?? 0 }, streak.best ?? 0) }}
+        <!-- One explanation for streaks and buffer days (Emily, 2026-11-24). -->
+        <span class="tip">
+          <button type="button" class="tip__button" aria-describedby="streak-how" :aria-expanded="open"
+            :aria-label="t('streakHow')" @click="open = !open" @blur="open = false">?</button>
+          <span id="streak-how" role="tooltip" class="tip__text" :class="{ 'tip__text--open': open }">
+            {{ t('streakRule', { max: streak.buffer_max ?? 3 }) }}
+          </span>
+        </span>
+      </p>
     </div>
 
-    <!-- One explanation for streaks and buffer days (Emily, 2026-11-24). -->
-    <p class="streak__how">
-      <button type="button" class="streak__how-button" aria-describedby="streak-how" :aria-expanded="open"
-        @click="open = !open" @blur="open = false">
-        <span class="tip__button" aria-hidden="true">?</span>{{ t('streakHow') }}
-      </button>
-      <span id="streak-how" role="tooltip" class="tip__text" :class="{ 'tip__text--open': open }">
-        {{ t('streakRule', { max: streak.buffer_max ?? 3 }) }}
-      </span>
-    </p>
   </section>
 </template>
 
 <style scoped>
-/* A peony band across the top; the days marked like stamps. */
+/* No print band: this card stands apart from the activity boxes. The days are
+   marked like stamps. */
 .streak {
   position: relative;
   display: grid;
@@ -109,19 +110,14 @@ const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }
 .streak__pips { display: flex; gap: var(--s-2); margin: 0; }
 .streak__pip { width: 1.25rem; height: 1.25rem; border: var(--bw-rule) solid var(--c-ink); background-color: transparent; }
 .streak__pip--full { background-color: var(--c-ink); }
-.streak__best { margin: 0; font-size: var(--t-sm); }
+.streak__best { display: flex; align-items: center; gap: var(--s-2); margin: 0; font-size: var(--t-sm); }
+.tip { display: inline-flex; }
 
-.streak__how { grid-column: 1 / -1; margin: 0; }
-.streak__how-button {
-  display: inline-flex; align-items: center; gap: var(--s-2); padding: 0;
-  font: inherit; font-size: var(--t-sm); color: var(--c-body); background: none; border: 0; cursor: help;
-}
-.streak__how-button:hover, .streak__how-button[aria-expanded="true"] { color: var(--c-ink); }
 .tip__button {
   flex: none;
   display: grid; place-items: center; width: 1.25rem; height: 1.25rem; padding: 0;
   font: inherit; font-size: 0.75rem; font-weight: 700; line-height: 1; color: var(--c-ink);
-  background: none; border: var(--bw-hair) solid currentColor; border-radius: 50%;
+  background: none; border: var(--bw-hair) solid currentColor; border-radius: 50%; cursor: help;
 }
 .tip__text {
   position: absolute; z-index: 5; left: var(--s-4); right: var(--s-4); top: calc(100% - var(--s-4));
@@ -129,7 +125,7 @@ const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }
   color: var(--c-ground); background-color: var(--c-ink); box-shadow: var(--shadow-hard);
   visibility: hidden; opacity: 0; transition: opacity 120ms;
 }
-.streak__how-button:hover + .tip__text, .streak__how-button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
+.tip:hover .tip__text, .tip__button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
 
 @media (min-width: 720px) {
   .streak { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-8); }
