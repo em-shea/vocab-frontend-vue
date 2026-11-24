@@ -55,9 +55,9 @@
    * names are kept because components choose between them by job, and they
    * may be pulled apart again.
    * ------------------------------------------------------------------- */
-  --c-seal: #C8321E;          /* seal red: brush marks, printed emphasis */
-  --c-red: #C8321E;           /* bright red text, used on light surfaces */
-  --c-red-solid: #C8321E;     /* solid red fill, takes --c-on-red text */
+  --c-seal: #C93F1F;          /* seal red: brush marks, printed emphasis */
+  --c-red: #C93F1F;           /* bright red text, used on light surfaces */
+  --c-red-solid: #C93F1F;     /* solid red fill, takes --c-on-red text */
   --c-vermilion: #F04E23;     /* hottest accent, sparingly */
 
   --c-button: #1B2140;  /* secondary action fill, takes --c-on-button text */

@@ -68,7 +68,7 @@ onMounted(() => {
     radicalColor: ink,
     outlineColor: css('--c-rule', '#D8CDB8'),
     drawingColor: ink,
-    highlightColor: css('--c-red', '#C8321E'),
+    highlightColor: css('--c-red', '#C93F1F'),
     drawingWidth: Math.max(4, Math.round(props.size / 40)),
     strokeAnimationSpeed: 1.2,
     delayBetweenStrokes: 250,

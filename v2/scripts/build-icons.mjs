@@ -11,7 +11,7 @@ const out = here('../public/icons')
 const font = 'data:font/woff2;base64,' + readFileSync(here('../src/assets/fonts/MaShanZheng-400.woff2')).toString('base64')
 const html = (size, inset) => `<!doctype html><html><head><style>
 @font-face { font-family: Brush; src: url('${font}') format('woff2'); }
-html,body{margin:0;width:${size}px;height:${size}px;background:#C8321E}
+html,body{margin:0;width:${size}px;height:${size}px;background:#C93F1F}
 div{width:100%;height:100%;display:grid;place-items:center;font-family:Brush;color:#fff;
 font-size:${Math.round(size * (1 - 2 * inset) * 0.86)}px;line-height:1}
 span{transform:translateY(${Math.round(size * 0.02)}px)}

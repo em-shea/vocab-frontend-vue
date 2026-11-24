@@ -453,7 +453,7 @@ test('the rank seal is round and vermilion for Heavenly Spirits, square and navy
   for (const id of ['A-front', 'B-front', 'C-front', 'A-front-imm', 'B-front-imm', 'C-front-imm', 'A-locked', 'B-locked', 'C-locked', 'B-stress']) {
     const st = await style(id)
     expect(st.radius, id).toBe('50%')
-    expect(st.bg, id).toBe('rgb(200, 50, 30)')
+    expect(st.bg, id).toBe('rgb(201, 63, 31)')
     expect(Math.abs(st.w - st.h), id).toBeLessThan(0.5)
     expect(st.text, id).toMatch(/^(5|6)$/)
   }
@@ -766,7 +766,7 @@ for (const L of LAYOUTS) {
     const id = await w.locator('.hl__tip').getAttribute('id')
     expect(id).toBeTruthy()
     await expect(btn).toHaveAttribute('aria-describedby', id)
-    expect(await ul()).toBe('underline solid rgb(200, 50, 30)')
+    expect(await ul()).toBe('underline solid rgb(201, 63, 31)')
     expect(await layoutOf(c)).toEqual(before)
     expect(await tipInside(c, `[data-fact="weapon"] .hl__w:nth-child(2) .hl__tip`)).toBe(true)
     // Left-aligned with its word, just above it.
