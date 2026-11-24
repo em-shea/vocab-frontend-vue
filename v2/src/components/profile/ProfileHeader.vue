@@ -83,9 +83,11 @@ const meta = computed(() => [
   z-index: -1;
   background: linear-gradient(90deg, rgb(27 33 64 / 0.94) 0%, rgb(27 33 64 / 0.82) 50%, rgb(27 33 64 / 0.55) 100%);
 }
-/* On a phone the links run across the whole card, so the wash is even. */
+/* On a phone the links run across the whole card, so the wash is even, and the
+   print is zoomed in on the hero rather than showing the whole sheet. */
 @media (max-width: 719px) {
   .head::before { background: rgb(27 33 64 / 0.86); }
+  .head__print { transform: scale(2); transform-origin: 30% 22%; }
 }
 .head__id { display: flex; align-items: center; gap: var(--s-6); min-width: 0; }
 .head__who { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); min-width: 0; }

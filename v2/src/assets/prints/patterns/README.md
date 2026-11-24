@@ -1,4 +1,7 @@
-# Pattern bands
+# Pattern bands (not in use)
+
+Replaced on 2026-11-24 by `.print-strip` (a print under an orange-red wash).
+Kept in case they're wanted elsewhere; nothing imports them now.
 
 Cut from the bundled woodblock prints (Utagawa Kuniyoshi, public domain) for
 the `.print-trim` bands in `src/assets/base.css`. Each file is a small crop

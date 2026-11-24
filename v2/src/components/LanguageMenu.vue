@@ -199,8 +199,9 @@ onBeforeUnmount(() => {
   opacity: 0.75;
 }
 
-/* On narrow screens the menu would otherwise run off the right edge. */
+/* The globe sits at the right of the bar, so the menu opens leftward from it,
+   and on a phone it never grows wider than the screen. */
 @media (max-width: 480px) {
-  .menu { right: auto; left: 0; }
+  .menu { min-width: 0; width: min(20rem, calc(100vw - 2 * var(--s-4))); }
 }
 </style>

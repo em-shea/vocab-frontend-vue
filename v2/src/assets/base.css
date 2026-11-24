@@ -138,23 +138,21 @@ html {
   body { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); }
 }
 
-/* A band of woodblock-print pattern across the top of a box (Emily, 2026-11-24).
-   The prints are small, so each band is a short crop placed beside its mirror
-   image to make a seamless tile, repeated sideways and shown smaller than the
-   source so it stays sharp (src/assets/prints/patterns/README.md). */
-.print-trim { position: relative; padding-top: calc(var(--s-6) + var(--trim-h, 1.25rem)) !important; }
-.print-trim::before {
+/* A header strip across the top of an activity box: a woodblock print under
+   an orange-red wash, like the navy name card (Emily, 2026-11-24). Each box
+   shows a different print. (The earlier tiled pattern bands are kept in
+   prints/patterns/ but no longer used.) */
+.print-strip { position: relative; padding-top: calc(var(--s-6) + var(--strip-h, 2.25rem)) !important; }
+.print-strip::before {
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
-  height: var(--trim-h, 1.25rem);
-  background: var(--trim) left center / auto 100% repeat-x;
+  height: var(--strip-h, 2.25rem);
+  background:
+    linear-gradient(rgb(201 63 31 / 0.7), rgb(201 63 31 / 0.7)),
+    var(--strip-img) var(--strip-at, center) / cover no-repeat;
   border-bottom: var(--bw-rule) solid var(--c-ink);
 }
-.print-trim--peony { --trim: url('./prints/patterns/peony.jpg'); }
-.print-trim--brocade { --trim: url('./prints/patterns/brocade.jpg'); }
-.print-trim--waves { --trim: url('./prints/patterns/waves.jpg'); }
-.print-trim--damask { --trim: url('./prints/patterns/damask.jpg'); }
-.print-trim--roundels { --trim: url('./prints/patterns/roundels.jpg'); }
-.print-trim--clouds { --trim: url('./prints/patterns/clouds.jpg'); }
-.print-trim--swirl { --trim: url('./prints/patterns/swirl.jpg'); }
+.print-strip--quest { --strip-img: url('./prints/hero-quest.jpg'); --strip-at: 50% 18%; }
+.print-strip--story { --strip-img: url('./prints/hero-story.jpg'); --strip-at: 50% 45%; }
+.print-strip--collect { --strip-img: url('./prints/hero-collect.jpg'); --strip-at: 50% 30%; }

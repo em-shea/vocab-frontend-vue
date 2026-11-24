@@ -42,6 +42,9 @@ defineProps({
 }
 
 .shell__main { display: flex; flex-direction: column; gap: var(--s-6); width: 100%; margin: 0 auto; }
+/* At least a screen tall, so the footer starts below the fold and doesn't
+   sit high on the page while the content is still loading (Emily, 2026-11-24). */
+.shell__main { flex: 1; min-height: 100vh; min-height: 100dvh; }
 .shell__main--narrow { max-width: 34rem; }
 .shell__main--wide { max-width: none; }
 .shell__footer { margin-top: var(--s-16); }
