@@ -1,7 +1,7 @@
 <script setup>
 // The daily streak (Emily, 2026-11-24): basic rules until heroes launch, worked
 // out by the backend (GET /progress, streak_service). One activity a day keeps
-// it; extra activities bank spare days (up to buffer_max) that cover a missed day.
+// it; extra activities bank buffer days (up to buffer_max) that cover a missed day.
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -16,14 +16,10 @@ const fullDate = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN
 
 const days = computed(() => props.streak.recent ?? [])
 const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }, (_, i) => i < (props.streak.buffer ?? 0)))
-const status = computed(() => {
-  if (props.streak.today_done) return t('streakDoneToday')
-  return props.streak.current ? t('streakKeepGoing') : t('streakStart')
-})
 </script>
 
 <template>
-  <section class="streak" aria-labelledby="streak-title">
+  <section class="streak print-trim print-trim--peony" aria-labelledby="streak-title">
     <div class="streak__count">
       <h2 id="streak-title" class="streak__title">
         <!-- English "4 day streak"; Chinese reads 连续 4 天. -->
@@ -31,7 +27,6 @@ const status = computed(() => {
           <template #n><span class="streak__n">{{ streak.current }}</span></template>
         </i18n-t>
       </h2>
-      <p class="streak__status">{{ status }}</p>
     </div>
 
     <ol class="streak__week" :aria-label="t('streakWeek')">
@@ -48,25 +43,28 @@ const status = computed(() => {
     <div class="streak__side">
       <p class="streak__spare">
         <span class="streak__label">{{ t('streakSpare') }}</span>
-        <span class="tip">
-          <button type="button" class="tip__button" aria-describedby="streak-how" :aria-expanded="open"
-            :aria-label="t('streakHow')" @click="open = !open" @blur="open = false">?</button>
-          <span id="streak-how" role="tooltip" class="tip__text" :class="{ 'tip__text--open': open }">
-            {{ t('streakRule', { max: streak.buffer_max ?? 3 }) }}
-          </span>
-        </span>
       </p>
       <p class="streak__pips" :aria-label="t('streakSpareOf', { n: streak.buffer ?? 0, max: streak.buffer_max ?? 3 })">
         <span v-for="(full, i) in spare" :key="i" class="streak__pip" :class="{ 'streak__pip--full': full }" aria-hidden="true" />
       </p>
       <p class="streak__best">{{ t('streakBest', { n: streak.best ?? 0 }, streak.best ?? 0) }}</p>
     </div>
+
+    <!-- One explanation for streaks and buffer days (Emily, 2026-11-24). -->
+    <p class="streak__how">
+      <button type="button" class="streak__how-button" aria-describedby="streak-how" :aria-expanded="open"
+        @click="open = !open" @blur="open = false">
+        <span class="tip__button" aria-hidden="true">?</span>{{ t('streakHow') }}
+      </button>
+      <span id="streak-how" role="tooltip" class="tip__text" :class="{ 'tip__text--open': open }">
+        {{ t('streakRule', { max: streak.buffer_max ?? 3 }) }}
+      </span>
+    </p>
   </section>
 </template>
 
 <style scoped>
-/* Ochre ground, unlike the white activity boxes: the print color, with the
-   days marked like stamps. */
+/* A peony band across the top; the days marked like stamps. */
 .streak {
   position: relative;
   display: grid;
@@ -74,7 +72,7 @@ const status = computed(() => {
   gap: var(--s-6);
   padding: var(--s-6);
   color: var(--c-ink);
-  background-color: var(--c-gold);
+  background-color: var(--c-panel);
   border: var(--bw-heavy) solid var(--c-ink);
   box-shadow: var(--shadow-hard);
 }
@@ -83,7 +81,6 @@ const status = computed(() => {
 .streak__unit { display: inline-flex; align-items: baseline; gap: 0.3em; white-space: nowrap; }
 .streak__n { font-size: var(--t-3xl); line-height: 1; font-family: var(--f-display); }
 .streak__unit { font-size: var(--t-md); }
-.streak__status { margin: 0; font-size: var(--t-base); }
 
 .streak__week { display: flex; gap: var(--s-2); margin: 0; padding: 0; list-style: none; align-self: center; }
 .streak__day { display: flex; flex-direction: column; align-items: center; gap: var(--s-1); flex: 1 1 0; max-width: 2.75rem; }
@@ -98,13 +95,13 @@ const status = computed(() => {
 }
 .streak__mark svg { width: 70%; height: 70%; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: square; }
 .streak__mark--done { background-color: var(--c-seal); color: var(--c-on-red); }
-.streak__mark--saved { background-color: var(--c-ink); color: var(--c-gold); }
+.streak__mark--saved { background-color: var(--c-ink); color: var(--c-panel); }
 .streak__mark--saved svg { fill: currentColor; stroke: none; }
 .streak__mark--missed { background-color: transparent; border-style: dotted; opacity: 0.55; }
 .streak__mark--open { background-color: transparent; border-style: dashed; }
 .streak__weekday { font-size: var(--t-sm); }
 
-/* On a phone the spare days and best sit on one line to keep the card short. */
+/* On a phone the buffer days and best sit on one line to keep the card short. */
 .streak__side { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-4); }
 .streak__best { margin-left: auto !important; }
 .streak__spare { display: flex; align-items: center; gap: var(--s-2); margin: 0; }
@@ -114,19 +111,25 @@ const status = computed(() => {
 .streak__pip--full { background-color: var(--c-ink); }
 .streak__best { margin: 0; font-size: var(--t-sm); }
 
-.tip { display: inline-flex; }
+.streak__how { grid-column: 1 / -1; margin: 0; }
+.streak__how-button {
+  display: inline-flex; align-items: center; gap: var(--s-2); padding: 0;
+  font: inherit; font-size: var(--t-sm); color: var(--c-body); background: none; border: 0; cursor: help;
+}
+.streak__how-button:hover, .streak__how-button[aria-expanded="true"] { color: var(--c-ink); }
 .tip__button {
+  flex: none;
   display: grid; place-items: center; width: 1.25rem; height: 1.25rem; padding: 0;
   font: inherit; font-size: 0.75rem; font-weight: 700; line-height: 1; color: var(--c-ink);
-  background: none; border: var(--bw-hair) solid var(--c-ink); border-radius: 50%; cursor: help;
+  background: none; border: var(--bw-hair) solid currentColor; border-radius: 50%;
 }
 .tip__text {
-  position: absolute; z-index: 5; left: var(--s-4); right: var(--s-4); bottom: calc(100% - var(--s-4));
+  position: absolute; z-index: 5; left: var(--s-4); right: var(--s-4); top: calc(100% - var(--s-4));
   padding: var(--s-3) var(--s-4); font-size: var(--t-sm); line-height: var(--lh-snug);
   color: var(--c-ground); background-color: var(--c-ink); box-shadow: var(--shadow-hard);
   visibility: hidden; opacity: 0; transition: opacity 120ms;
 }
-.tip:hover .tip__text, .tip__button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
+.streak__how-button:hover + .tip__text, .streak__how-button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
 
 @media (min-width: 720px) {
   .streak { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-8); }
