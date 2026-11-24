@@ -47,6 +47,7 @@ export default {
   "creditsIconsBody": "Lorc 的「Cloud ring」和「Peaks」，来自 game-icons.net，采用知识共享署名 3.0 许可协议（CC BY 3.0）。",
   "creditsFontsHeading": "字体",
   "creditsFontsBody": "Archivo、Instrument Sans、霞鹜文楷、Noto Sans SC（思源黑体）、马善政毛笔楷书，均采用 SIL 开源字体许可协议。",
+  "navTabs": "主要栏目",
   "navSentences": "造句",
   "navReview": "复习",
   "navSignIn": "登录",

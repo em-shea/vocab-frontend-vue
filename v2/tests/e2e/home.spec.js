@@ -177,3 +177,20 @@ test('the header stays at the top; on a phone the logo joins the bar on scroll',
   expect(bar.y).toBeLessThan(40)
   await expect(page.getByRole('link', { name: 'Quiz', exact: true })).toBeInViewport()
 })
+
+test('phones get a tab bar along the bottom; wide screens do not', async ({ page }) => {
+  await mockBackend(page)
+  await page.setViewportSize({ width: 390, height: 800 })
+  await page.goto('/quiz')
+  const tabs = page.getByRole('navigation', { name: 'Main sections' })
+  await expect(tabs).toBeVisible()
+  await expect(tabs.getByRole('link')).toHaveText(['Home', 'Quiz', 'Sentences', 'Stroke order'])
+  await expect(tabs.getByRole('link', { name: 'Quiz' })).toHaveAttribute('aria-current', 'page')
+  const box = await tabs.boundingBox()
+  expect(box.y + box.height).toBeCloseTo(800, 0)
+  await tabs.getByRole('link', { name: 'Sentences' }).click()
+  await expect(page).toHaveURL(/\/sentences/)
+
+  await page.setViewportSize({ width: 1120, height: 800 })
+  await expect(tabs).toBeHidden()
+})

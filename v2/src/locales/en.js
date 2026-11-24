@@ -48,6 +48,7 @@ export default {
   "creditsIconsBody": "\"Cloud ring\" and \"Peaks\" by Lorc, from game-icons.net, licensed under Creative Commons Attribution 3.0.",
   "creditsFontsHeading": "Fonts",
   "creditsFontsBody": "Archivo, Instrument Sans, LXGW WenKai, Noto Sans SC and Ma Shan Zheng, all under the SIL Open Font License.",
+  "navTabs": "Main sections",
   "navSentences": "Sentences",
   "navReview": "Review",
   "navSignIn": "Sign in",

@@ -131,3 +131,9 @@ html {
 @media (max-width: 719px) {
   input, select, textarea { font-size: max(16px, 1em); }
 }
+
+/* Phones: room at the foot of every page for the tab bar (TabBar.vue). */
+:root { --tabbar-h: 3.5rem; }
+@media (max-width: 719px) {
+  body { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); }
+}

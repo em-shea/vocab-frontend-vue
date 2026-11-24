@@ -64,11 +64,11 @@ onBeforeUnmount(() => { resize?.disconnect(); watchBrand?.disconnect() })
     <nav class="nav__links" :aria-label="t('navHome')">
       <!-- The title is the way to the home page. Signed in, "Home" is the
            profile, the reader's own starting point (Emily, 2026-11-22). -->
-      <RouterLink v-if="auth.signedIn" class="nav__link" active-class="nav__link--current" :to="{ name: 'profile' }">{{ t('navHome') }}</RouterLink>
-      <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
+      <RouterLink v-if="auth.signedIn" class="nav__link nav__link--tabbed" active-class="nav__link--current" :to="{ name: 'profile' }">{{ t('navHome') }}</RouterLink>
+      <RouterLink class="nav__link nav__link--tabbed" active-class="nav__link--current" :to="{ name: 'quiz' }">{{ t('navQuiz') }}</RouterLink>
       <RouterLink class="nav__link" active-class="nav__link--current" :to="{ name: 'review' }">{{ t('navReview') }}</RouterLink>
-      <RouterLink v-if="SENTENCES_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
-      <RouterLink v-if="WRITING_ENABLED" class="nav__link" active-class="nav__link--current" :to="{ name: 'write' }">{{ t('navWriting') }}</RouterLink>
+      <RouterLink v-if="SENTENCES_ENABLED" class="nav__link nav__link--tabbed" active-class="nav__link--current" :to="{ name: 'sentences' }">{{ t('navSentences') }}</RouterLink>
+      <RouterLink v-if="WRITING_ENABLED" class="nav__link nav__link--tabbed" active-class="nav__link--current" :to="{ name: 'write' }">{{ t('navWriting') }}</RouterLink>
       <RouterLink v-if="!auth.signedIn" class="nav__link nav__link--strong" :to="signInRoute(route.fullPath)">
         {{ t('navSignIn') }}
       </RouterLink>
@@ -168,6 +168,9 @@ onBeforeUnmount(() => { resize?.disconnect(); watchBrand?.disconnect() })
   }
   .nav__links::-webkit-scrollbar { display: none; }
   .nav__prefs { flex: none; }
+  /* These are in the tab bar along the bottom on a phone. */
+  .nav__link--tabbed { display: none; }
+  .nav__links { justify-content: flex-end; mask-image: none; }
 
   /* The small 好: no room taken until the logo row has gone, then it slides in. */
   .nav__mini {
