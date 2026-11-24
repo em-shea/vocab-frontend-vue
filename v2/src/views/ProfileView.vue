@@ -14,6 +14,8 @@ import ProfileQuizzes from '../components/profile/ProfileQuizzes.vue'
 import ProfileSentences from '../components/profile/ProfileSentences.vue'
 import ProfileStrokes from '../components/profile/ProfileStrokes.vue'
 import ProfileLists from '../components/profile/ProfileLists.vue'
+import InstallPrompt from '../components/profile/InstallPrompt.vue'
+import { hasFinishedTask } from '../lib/install'
 import { progressRows, proficientRule } from '../lib/progress'
 import { SENTENCES_ENABLED, WRITING_ENABLED } from '../featureFlags'
 import { api } from '../api/client'
@@ -118,6 +120,8 @@ const quizCount = computed(() => progressCount(progress.value, 'quiz'))
 const sentenceCount = computed(() => progressCount(progress.value, 'sentence'))
 const strokeCount = computed(() => progressCount(progress.value, 'written'))
 const strokesOn = WRITING_ENABLED
+// Ask to install only once something has been finished (Emily, 2026-11-24).
+const finishedSomething = computed(() => hasFinishedTask(quizzes.value, user.value?.activity))
 
 // When someone's lists are in both character sets, each list name says which
 // it is in: "HSK Level 1 简", "HSK Level 3 繁", or "简 繁" for a list taken in
@@ -159,9 +163,13 @@ function rawListName (id) {
       </div>
 
       <template v-else>
-        <ProfileHeader class="profile__head" :user="user">
-          <ProfileActions @sign-out="signOut" />
-        </ProfileHeader>
+        <!-- The install prompt sits under the name card when it shows. -->
+        <div class="profile__head">
+          <ProfileHeader :user="user">
+            <ProfileActions @sign-out="signOut" />
+          </ProfileHeader>
+          <InstallPrompt :ready="finishedSomething" />
+        </div>
         <div class="profile__words">
           <ProfileWords :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" :set-for="setFor" />
         </div>
@@ -196,7 +204,7 @@ function rawListName (id) {
   max-width: 64rem;
   margin-inline: auto;
 }
-.profile__head { grid-area: head; }
+.profile__head { grid-area: head; display: flex; flex-direction: column; gap: var(--s-8); min-width: 0; }
 .profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 .profile__lists { grid-area: lists; min-width: 0; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
