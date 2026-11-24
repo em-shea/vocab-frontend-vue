@@ -177,22 +177,26 @@ onBeforeUnmount(() => { resize?.disconnect(); watchBrand?.disconnect() })
     place-items: center;
     flex: none;
     width: 0;
-    height: 30px;
+    height: 34px;
     margin-right: calc(-1 * var(--s-3));
     overflow: hidden;
     background-color: var(--c-seal);
     color: var(--c-on-red);
     border-radius: var(--r-sm);
-    font-size: var(--t-base);
+    font-size: var(--t-lg);
     text-decoration: none;
     opacity: 0;
     transform: translateY(-12px) scale(0.6);
     transition: width 200ms ease, margin 200ms ease, opacity 200ms ease, transform 250ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
   }
-  .nav--compact .nav__mini { width: 30px; margin-right: 0; opacity: 1; transform: none; }
+  .nav--compact .nav__mini { width: 34px; margin-right: 0; opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nav__mini { transition: none; }
 }
+
+/* The global .brush color is ink; the logo's 好 is light on red, as in the
+   full-size mark. */
+.nav__mini .brush { color: var(--c-on-red); }
 </style>
