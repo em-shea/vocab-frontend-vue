@@ -117,3 +117,17 @@ button:focus-visible,
   white-space: nowrap;
   border: 0;
 }
+
+/* App feel on phones (Emily, 2026-11-23). Pinch zoom stays available (low
+   vision readers need it, and iOS ignores attempts to turn it off), but the
+   accidental zooms go: no double-tap zoom, no grey flash on tap, and form
+   fields at 16px or more so iOS doesn't zoom in when one is focused. */
+html {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+@media (max-width: 719px) {
+  input, select, textarea { font-size: max(16px, 1em); }
+}

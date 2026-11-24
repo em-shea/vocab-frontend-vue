@@ -101,6 +101,12 @@ export const routes = [
     ...(WRITING_ENABLED
       ? { component: () => import('../views/WriteView.vue') }
       : { redirect: (to) => ({ path: '/profile', query: to.query }) })
+  },
+  {
+    // Everything the site uses that someone else made (linked from the footer).
+    path: '/credits',
+    name: 'credits',
+    component: () => import('../views/CreditsView.vue')
   }
 ]
 
