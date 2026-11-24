@@ -113,6 +113,32 @@ test.describe('profile', () => {
     await expect(box.getByRole('link', { name: /^Practice the stroke order/ })).toHaveCount(0)
   })
 
+  test('your lists shows the share of each list seen and proficient', async ({ page }) => {
+    await signedIn(page)
+    await mockBackend(page, { userActivity: userActivity() })
+    await page.goto('/profile')
+    const section = page.locator('section', { has: page.getByRole('heading', { name: 'Your lists' }) })
+    await expect(section.getByRole('heading', { name: 'HSK Level 1' })).toBeVisible()
+    await expect(section).toContainText('32% · 48 of 150 words')
+    await expect(section).toContainText('4% · 6 of 150 words')
+    await expect(section.getByRole('progressbar', { name: 'Seen' })).toHaveAttribute('aria-valuenow', '32')
+    // How proficient is worked out: a tooltip on the Proficient label.
+    const tip = section.getByRole('tooltip').first()
+    await expect(tip).toBeHidden()
+    await section.getByRole('button', { name: 'How is proficient worked out?' }).first().click()
+    await expect(tip).toBeVisible()
+    await expect(tip).toContainText('at least 2 times with at least 80% right')
+    await expect(tip).toContainText('Words last sent before Nov 23, 2026 count on quizzes alone.')
+  })
+
+  test('your lists failing to load can be retried without breaking the page', async ({ page }) => {
+    await signedIn(page)
+    await mockBackend(page, { userActivity: userActivity(), progressFails: true })
+    await page.goto('/profile')
+    await expect(page.getByText("Couldn't load your progress.")).toBeVisible()
+    await expect(page.getByRole('article').first()).toBeVisible()
+  })
+
   test('with no name set, a plain heading stands in (not the email) and a name can be chosen', async ({ page }) => {
     await signedIn(page)
     await mockBackend(page, { userActivity: userActivity({ alias: 'Not set', aliasPinyin: 'Not set' }) })

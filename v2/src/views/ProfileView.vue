@@ -13,6 +13,8 @@ import ProfileWords from '../components/profile/ProfileWords.vue'
 import ProfileQuizzes from '../components/profile/ProfileQuizzes.vue'
 import ProfileSentences from '../components/profile/ProfileSentences.vue'
 import ProfileStrokes from '../components/profile/ProfileStrokes.vue'
+import ProfileLists from '../components/profile/ProfileLists.vue'
+import { progressRows, proficientRule } from '../lib/progress'
 import { SENTENCES_ENABLED, WRITING_ENABLED } from '../featureFlags'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
@@ -55,6 +57,23 @@ async function load () {
   }
 }
 
+// "Your lists": seen and proficient per list (GET /progress). Loaded on its
+// own so a slow or failed answer never holds up the rest of the page.
+const progressBody = ref(null)
+const progressStatus = ref('loading')
+async function loadProgress () {
+  progressStatus.value = 'loading'
+  try {
+    const { data } = await api.progress()
+    progressBody.value = data?.data ?? data
+    progressStatus.value = 'ready'
+  } catch {
+    progressStatus.value = 'error'
+  }
+}
+const progressList = computed(() => progressRows(progressBody.value, subscriptions.value))
+const rule = computed(() => proficientRule(progressBody.value))
+
 async function loadQuizzes () {
   quizStatus.value = 'loading'
   try {
@@ -76,6 +95,7 @@ onMounted(async () => {
     return
   }
   lists.load()
+  loadProgress()
   await Promise.all([load(), loadQuizzes()])
 })
 
@@ -142,7 +162,9 @@ function rawListName (id) {
         <ProfileHeader class="profile__head" :user="user">
           <ProfileActions @sign-out="signOut" />
         </ProfileHeader>
-        <ProfileWords class="profile__words" :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" :set-for="setFor" />
+        <div class="profile__words">
+          <ProfileWords :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" :set-for="setFor" />
+        </div>
         <div class="profile__side">
           <ProfileQuizzes
             :count="quizCount"
@@ -155,6 +177,8 @@ function rawListName (id) {
           <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" :activity="user?.activity" />
           <ProfileStrokes v-if="strokesOn" :progress="progress" :count="strokeCount" :activity="user?.activity" />
         </div>
+        <!-- Your lists at the foot of the page, after the activities (Emily, 2026-11-23). -->
+        <ProfileLists class="profile__lists" :rows="progressList" :rule="rule" :status="progressStatus" :list-name="listName" @retry="loadProgress" />
       </template>
     </div>
   </PageShell>
@@ -166,20 +190,21 @@ function rawListName (id) {
 .profile {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'head' 'words' 'side';
+  grid-template-areas: 'head' 'words' 'side' 'lists';
   gap: var(--s-12);
   width: 100%;
   max-width: 64rem;
   margin-inline: auto;
 }
 .profile__head { grid-area: head; }
-.profile__words { grid-area: words; }
+.profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
+.profile__lists { grid-area: lists; min-width: 0; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
   .profile {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    grid-template-areas: 'head head' 'words side';
+    grid-template-areas: 'head head' 'words side' 'lists lists';
     column-gap: var(--s-8);
     row-gap: var(--s-8);
   }

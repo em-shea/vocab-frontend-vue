@@ -193,6 +193,7 @@ export async function mockBackend (page, options = {}) {
     sentences: options.sentences ?? SENTENCES,
     sentencesFails: options.sentencesFails ?? false,
     saveWritingFails: options.saveWritingFails ?? false,
+    progressFails: options.progressFails ?? false,
     saveSentenceFails: options.saveSentenceFails ?? false,
     cognito: [],   // X-Amz-Target action names, in order
     api: [],       // { method, path, headers, body }
@@ -305,6 +306,13 @@ export async function mockBackend (page, options = {}) {
     if (method === 'POST' && path === '/sentences') {
       if (state.saveSentenceFails) return json({ success: false, message: 'Failed to save sentence.', data: null }, 502)
       return json({ success: true, message: 'Successfully saved sentence.', data: null })
+    }
+    if (method === 'GET' && path === '/progress') {
+      if (state.progressFails) return json({ success: false, message: 'Failed to retrieve progress.', data: null }, 502)
+      return json({ success: true, message: 'Successfully retrieved progress.', data: options.progress ?? {
+        lists: [{ list_id: HSK1, total: 150, seen: 48, proficient: 6 }],
+        proficient_rule: { min_quiz_answers: 2, min_quiz_accuracy: 0.8, sentence: true, stroke_order: true, quizzes_only_before: '2026-11-23' }
+      } })
     }
     if (method === 'POST' && path === '/writing') {
       if (state.saveWritingFails) return json({ success: false, message: 'Failed to save writing practice.', data: null }, 502)

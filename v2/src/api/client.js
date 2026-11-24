@@ -45,7 +45,8 @@ export const api = {
   saveQuiz: (payload) => client.post('/quizzes', payload),
   sentences: () => client.get('/sentences'),
   saveSentence: (payload) => client.post('/sentences', payload),
-  saveWriting: (payload) => client.post('/writing', payload)
+  saveWriting: (payload) => client.post('/writing', payload),
+  progress: () => client.get('/progress')
 }
 
 export default client
