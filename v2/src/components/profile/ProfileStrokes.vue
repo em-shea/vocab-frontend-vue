@@ -42,7 +42,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
       <span id="profile-strokes">{{ t('profileWriting') }}</span><DoneCount :count="count" />
     </SectionHead>
 
-    <div class="strokes__box">
+    <div class="strokes__box print-trim print-trim--tiger">
       <p v-if="!progress.length" class="strokes__empty">{{ t('profileSentencesNone') }}</p>
 
       <ul v-else class="strokes__list">

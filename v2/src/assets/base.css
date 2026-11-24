@@ -137,3 +137,18 @@ html {
 @media (max-width: 719px) {
   body { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* A band cut from a woodblock print's fabric or fur across the top of a box
+   (Emily's idea 7, 2026-11-24): brocade, armor or tiger. */
+.print-trim { position: relative; padding-top: calc(var(--s-6) + var(--trim-h, 0.875rem)) !important; }
+.print-trim::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--trim-h, 0.875rem);
+  background: var(--trim) center / cover no-repeat;
+  border-bottom: var(--bw-rule) solid var(--c-ink);
+}
+.print-trim--brocade { --trim: url('./prints/patterns/brocade.jpg'); }
+.print-trim--armor { --trim: url('./prints/patterns/armor.jpg'); }
+.print-trim--tiger { --trim: url('./prints/patterns/tiger.jpg'); }

@@ -45,7 +45,7 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
       <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span><DoneCount :count="count" />
     </SectionHead>
 
-    <div class="quizzes__box">
+    <div class="quizzes__box print-trim print-trim--brocade">
       <ul v-if="progress.length" class="slots">
         <li v-for="{ entry, quiz } in progress" :key="entry.list_id" class="slot">
           <span class="slot__list">{{ listName(entry.list_id) }}</span>

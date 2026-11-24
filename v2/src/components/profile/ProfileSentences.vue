@@ -46,7 +46,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
       <span id="profile-sentences">{{ t('profileSentencesTitle') }}</span><DoneCount :count="count" />
     </SectionHead>
 
-    <div class="sentences__box">
+    <div class="sentences__box print-trim print-trim--armor">
       <p v-if="!rows.length" class="sentences__empty">{{ t('profileSentencesNone') }}</p>
 
       <ul v-else class="sentences__list">
