@@ -39,6 +39,7 @@ export const api = {
   user: () => client.get('/user'),
   userActivity: () => client.get('/user_activity'),
   updateUser: (payload) => client.post('/update_user', payload),
+  setPush: (action, subscription) => client.post('/push', { action, subscription }),
   updateLastLogin: (payload) => client.post('/update_login', payload),
   updateSubscriptions: (subscriptions) => client.post('/subscriptions', { subscriptions }),
   quizzes: (dateRange) => client.get('/quizzes', { params: { date_range: dateRange } }),

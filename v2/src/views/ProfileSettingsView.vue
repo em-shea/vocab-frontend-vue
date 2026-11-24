@@ -11,6 +11,7 @@ import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { useAuthStore } from '../stores/auth'
 import { nameOptions, namePayload, profileName, NOT_SET } from '../lib/profile'
+import { pushState, isSubscribed, subscribe, unsubscribe } from '../lib/push'
 
 // Profile settings: the learner's email, and the name the profile shows.
 // Like the old screen, a new name is saved as soon as it is chosen
@@ -53,7 +54,34 @@ onMounted(async () => {
     return
   }
   await load()
+  if (push.value === 'ok') pushOn.value = await isSubscribed().catch(() => false)
 })
+
+// Daily word notifications, per device (each phone or browser opts in).
+const push = ref(pushState())
+const pushOn = ref(false)
+const pushBusy = ref(false)
+const pushError = ref('')
+
+async function togglePush (event) {
+  const want = event.target.checked
+  pushBusy.value = true
+  pushError.value = ''
+  try {
+    if (want) {
+      pushOn.value = await subscribe()
+      if (!pushOn.value) push.value = pushState()
+    } else {
+      await unsubscribe()
+      pushOn.value = false
+    }
+  } catch {
+    pushError.value = 'pushFailed'
+  } finally {
+    event.target.checked = pushOn.value
+    pushBusy.value = false
+  }
+}
 
 // Only the latest save may report: choosing twice quickly must not let the
 // first answer claim the second was saved.
@@ -123,6 +151,18 @@ async function saveName () {
           <AppButton type="submit" variant="quiet" shape="sm">{{ t('profileSaveRetry') }}</AppButton>
         </div>
       </form>
+
+      <div v-if="status === 'ready' && push !== 'off'" class="settings__field settings__push">
+        <h2 class="label">{{ t('pushHeading') }}</h2>
+        <label v-if="push === 'ok'" class="settings__switch">
+          <input type="checkbox" role="switch" :checked="pushOn" :disabled="pushBusy" @change="togglePush">
+          <span>{{ t('pushToggle') }}</span>
+        </label>
+        <p v-if="push === 'install'" class="settings__hint">{{ t('pushInstall') }}</p>
+        <p v-else-if="push === 'blocked'" class="settings__hint">{{ t('pushBlocked') }}</p>
+        <p v-else class="settings__hint">{{ t('pushNote') }}</p>
+        <p v-if="pushError" class="settings__save settings__save--bad" role="alert">{{ t(pushError) }}</p>
+      </div>
     </AppPanel>
   </PageShell>
 </template>
@@ -158,4 +198,40 @@ async function saveName () {
 
 .settings__save { min-height: 1.4em; font-size: var(--t-base); font-weight: var(--w-semi); color: var(--c-seal); }
 .settings__save--bad { color: var(--c-red); font-weight: var(--w-body); }
+
+.settings__push { padding-top: var(--s-6); border-top: var(--bw-rule) solid var(--c-rule); }
+.settings__push h2 { margin: 0; }
+.settings__hint { margin: 0; font-size: var(--t-base); color: var(--c-body); }
+
+.settings__switch { display: flex; align-items: center; gap: var(--s-3); color: var(--c-ink); cursor: pointer; }
+.settings__switch input {
+  appearance: none;
+  flex: none;
+  width: 2.75rem;
+  height: 1.5rem;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--c-muted);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.settings__switch input::after {
+  content: '';
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--c-raised);
+  transition: transform 0.15s;
+}
+.settings__switch input:checked { background: var(--c-seal); }
+.settings__switch input:checked::after { transform: translateX(1.25rem); }
+.settings__switch input:focus-visible { outline: 2px solid var(--c-ink); outline-offset: 2px; }
+.settings__switch input:disabled { opacity: 0.6; }
+@media (prefers-reduced-motion: reduce) {
+  .settings__switch input, .settings__switch input::after { transition: none; }
+}
 </style>
