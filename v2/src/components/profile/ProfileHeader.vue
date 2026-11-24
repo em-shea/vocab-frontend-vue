@@ -1,5 +1,6 @@
 <script setup>
 import AvatarSlot from './AvatarSlot.vue'
+import headerPrint from '../../assets/prints/heroes-board.jpg'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { profileName } from '../../lib/profile'
@@ -30,6 +31,8 @@ const meta = computed(() => [
 
 <template>
   <section class="head">
+    <!-- A print behind the card, under a navy wash (Emily's idea 1, 2026-11-24). -->
+    <img class="head__print" :src="headerPrint" alt="" aria-hidden="true" />
     <div class="head__id">
     <AvatarSlot />
     <div class="head__who">
@@ -59,6 +62,30 @@ const meta = computed(() => [
   padding: var(--s-8);
   color: var(--c-ground);
   background-color: var(--c-ink);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.head__print {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+/* Darker where the name sits, letting more of the print through on the right. */
+.head::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgb(27 33 64 / 0.94) 0%, rgb(27 33 64 / 0.82) 50%, rgb(27 33 64 / 0.55) 100%);
+}
+/* On a phone the links run across the whole card, so the wash is even. */
+@media (max-width: 719px) {
+  .head::before { background: rgb(27 33 64 / 0.86); }
 }
 .head__id { display: flex; align-items: center; gap: var(--s-6); min-width: 0; }
 .head__who { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); min-width: 0; }

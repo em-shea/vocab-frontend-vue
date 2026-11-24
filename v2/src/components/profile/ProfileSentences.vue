@@ -46,7 +46,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
       <span id="profile-sentences">{{ t('profileSentencesTitle') }}</span><DoneCount :count="count" />
     </SectionHead>
 
-    <div class="sentences__box">
+    <div class="sentences__box print-trim print-trim--waves">
       <p v-if="!rows.length" class="sentences__empty">{{ t('profileSentencesNone') }}</p>
 
       <ul v-else class="sentences__list">
@@ -94,8 +94,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
   gap: var(--s-4);
   padding: var(--s-6);
   background-color: var(--c-panel);
-  border: var(--bw-heavy) solid var(--c-ink);
-  box-shadow: var(--shadow-hard);
+  border: var(--bw-rule) solid var(--c-ink);
 }
 
 .sentences__empty { color: var(--c-body); }

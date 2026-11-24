@@ -15,6 +15,7 @@ import ProfileSentences from '../components/profile/ProfileSentences.vue'
 import ProfileStrokes from '../components/profile/ProfileStrokes.vue'
 import ProfileLists from '../components/profile/ProfileLists.vue'
 import InstallPrompt from '../components/profile/InstallPrompt.vue'
+import StreakCard from '../components/profile/StreakCard.vue'
 import { hasFinishedTask } from '../lib/install'
 import { progressRows, proficientRule } from '../lib/progress'
 import { SENTENCES_ENABLED, WRITING_ENABLED } from '../featureFlags'
@@ -120,6 +121,7 @@ const quizCount = computed(() => progressCount(progress.value, 'quiz'))
 const sentenceCount = computed(() => progressCount(progress.value, 'sentence'))
 const strokeCount = computed(() => progressCount(progress.value, 'written'))
 const strokesOn = WRITING_ENABLED
+
 // Ask to install only once something has been finished (Emily, 2026-11-24).
 const finishedSomething = computed(() => hasFinishedTask(quizzes.value, user.value?.activity))
 
@@ -163,11 +165,13 @@ function rawListName (id) {
       </div>
 
       <template v-else>
-        <!-- The install prompt sits under the name card when it shows. -->
+        <!-- Name card, streak, then the install prompt when it shows. -->
         <div class="profile__head">
           <ProfileHeader :user="user">
             <ProfileActions @sign-out="signOut" />
           </ProfileHeader>
+          <!-- The streak right under the name card (Emily, 2026-11-24). -->
+          <StreakCard v-if="progressBody?.streak" :streak="progressBody.streak" />
           <InstallPrompt :ready="finishedSomething" />
         </div>
         <div class="profile__words">
@@ -206,13 +210,19 @@ function rawListName (id) {
 }
 .profile__head { grid-area: head; display: flex; flex-direction: column; gap: var(--s-8); min-width: 0; }
 .profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
-.profile__lists { grid-area: lists; min-width: 0; }
+.profile__lists { grid-area: lists; min-width: 0; align-self: start; }
+/* Profile cards: a dark thin border and no shadow; only the streak card keeps
+   the heavy border and shadow, so it stands out (Emily, 2026-11-24). */
+.profile__words :deep(.word) { border: var(--bw-rule) solid var(--c-ink); border-radius: 0; box-shadow: none; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
   .profile {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    grid-template-areas: 'head head' 'words side' 'lists lists';
+    /* Your lists sits under today's words, beside the taller side column, so
+       there's no gap under the words (Emily, 2026-11-24). */
+    grid-template-areas: 'head head' 'words side' 'lists side';
+    grid-template-rows: auto auto 1fr;
     column-gap: var(--s-8);
     row-gap: var(--s-8);
   }

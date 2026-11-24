@@ -311,7 +311,8 @@ export async function mockBackend (page, options = {}) {
       if (state.progressFails) return json({ success: false, message: 'Failed to retrieve progress.', data: null }, 502)
       return json({ success: true, message: 'Successfully retrieved progress.', data: options.progress ?? {
         lists: [{ list_id: HSK1, total: 150, seen: 48, proficient: 6 }],
-        proficient_rule: { min_quiz_answers: 2, min_quiz_accuracy: 0.8, sentence: true, stroke_order: true, quizzes_only_before: '2026-11-23' }
+        proficient_rule: { min_quiz_answers: 2, min_quiz_accuracy: 0.8, sentence: true, stroke_order: true, quizzes_only_before: '2026-11-23' },
+        streak: streakFixture()
       } })
     }
     if (method === 'POST' && path === '/writing') {
@@ -381,3 +382,15 @@ export function watchForErrors (page) {
 /** True when the page scrolls sideways, the defect responsive layouts ship with. */
 export const overflowsSideways = (page) =>
   page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+
+// A streak as GET /progress returns it (streak_service.get_streak): five days,
+// one of them covered by a spare day, today not done yet.
+export function streakFixture (statuses = ['missed', 'done', 'done', 'saved', 'done', 'done', 'open'], extra = {}) {
+  const today = new Date()
+  const iso = (back) => new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - back)).toISOString().slice(0, 10)
+  return {
+    current: 4, best: 12, buffer: 2, buffer_max: 3, today: iso(0), today_done: statuses[6] === 'done',
+    recent: statuses.map((status, i) => ({ date: iso(6 - i), actions: status === 'done' ? 1 : 0, status })),
+    ...extra
+  }
+}

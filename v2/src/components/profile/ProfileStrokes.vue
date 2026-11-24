@@ -42,7 +42,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
       <span id="profile-strokes">{{ t('profileWriting') }}</span><DoneCount :count="count" />
     </SectionHead>
 
-    <div class="strokes__box">
+    <div class="strokes__box print-trim print-trim--peony">
       <p v-if="!progress.length" class="strokes__empty">{{ t('profileSentencesNone') }}</p>
 
       <ul v-else class="strokes__list">
@@ -80,8 +80,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
   gap: var(--s-4);
   padding: var(--s-6);
   background-color: var(--c-panel);
-  border: var(--bw-heavy) solid var(--c-ink);
-  box-shadow: var(--shadow-hard);
+  border: var(--bw-rule) solid var(--c-ink);
 }
 .strokes__empty { color: var(--c-body); }
 .strokes__list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
