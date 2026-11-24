@@ -21,7 +21,9 @@ import { nameOptions, namePayload, profileName, NOT_SET } from '../lib/profile'
 // emoji avatar has gone with emoji from the site; the stored value is left
 // untouched, because only the name fields are sent.
 
-const { t } = useI18n()
+// The name's pinyin shows here only, and not in 中文 (immersion) mode.
+const { t, locale } = useI18n()
+const optionLabel = (option) => locale.value === 'cn' ? option.character : `${option.character} ${option.pinyin}`
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
@@ -107,7 +109,7 @@ async function saveName () {
           >
             <option :value="NOT_SET">{{ t('profileNameNone') }}</option>
             <option v-for="option in options" :key="option.character" :value="option.character">
-              {{ option.character }} {{ option.pinyin }}
+              {{ optionLabel(option) }}
             </option>
           </select>
         </div>

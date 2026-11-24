@@ -25,7 +25,9 @@ test.describe('profile', () => {
     const heading = page.getByRole('heading', { level: 1 })
     await expect(heading).toContainText('小')
     await expect(heading).toContainText('安')
-    await expect(heading.locator('rt')).toHaveText(['xiǎo', 'ān'])
+    // No pinyin on the profile; it is on the settings page (Emily, 2026-11-23).
+    await expect(heading.locator('rt')).toHaveCount(0)
+    await expect(page.getByText('xiǎo')).toHaveCount(0)
     await expect(page.locator('.head__seal')).toHaveCount(0)
     // When they started; the email is only on the settings page (Emily, 2026-11-22).
     await expect(page.getByText('Studying since June 2021')).toBeVisible()
@@ -180,6 +182,13 @@ test.describe('profile', () => {
 })
 
 test.describe('profile settings', () => {
+  test('names show their pinyin here, except in 中文 mode', async ({ page }) => {
+    await signedIn(page)
+    await mockBackend(page, { user: { ...USER, user_alias: '小安', user_alias_pinyin: 'xiǎo ān', 'Language preference': undefined } })
+    await page.goto('/profile-settings')
+    await expect(page.getByLabel('Profile name').locator('option', { hasText: '小安' })).toHaveText(/小安 xiǎo ān/)
+  })
+
   test('choosing a name saves it at once, in the shape the API stores', async ({ page }) => {
     await signedIn(page)
     const backend = await mockBackend(page, { user: { ...USER, user_alias: '小安', user_alias_pinyin: 'xiǎo ān' } })

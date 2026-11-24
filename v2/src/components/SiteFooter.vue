@@ -14,7 +14,13 @@ const { t } = useI18n()
       <a href="mailto:nihao@haohaotiantian.com">nihao@haohaotiantian.com</a>
     </p>
     <p class="site-footer__credit">{{ t('footerPrints') }}</p>
-    <p class="site-footer__credit">{{ t('footerFonts') }}</p>
+    <!-- The fonts are SIL OFL, which asks for no credit on the page; the tier
+         icons are CC BY 3.0, which does (Emily, 2026-11-23). -->
+    <p class="site-footer__credit">
+      {{ t('footerIcons') }}
+      <a href="https://game-icons.net" rel="noopener">game-icons.net</a>,
+      <a href="https://creativecommons.org/licenses/by/3.0/" rel="noopener">CC BY 3.0</a>
+    </p>
   </footer>
 </template>
 

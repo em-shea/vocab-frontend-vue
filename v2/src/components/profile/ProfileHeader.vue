@@ -2,14 +2,12 @@
 import AvatarSlot from './AvatarSlot.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { profileName, rubyPairs } from '../../lib/profile'
+import { profileName } from '../../lib/profile'
 
-// Who is signed in: their chosen name (or their email until they pick one),
-// the email and when they started underneath, on a navy card so it stands out
-// (Emily, 2026-11-22). The account links sit in the card's slot.
-//
-// No profile picture for now (Emily, 2026-11-20): the old emoji avatar and its
-// picker are gone. Something hero-related may take its place once heroes launch.
+// Who is signed in: a picture slot (hero heads later), their chosen name in
+// characters only, and when they started, on a navy card (Emily, 2026-11-22/23).
+// The email and the name's pinyin are on the settings page. The account links
+// sit in the card's slot.
 
 const props = defineProps({
   user: { type: Object, required: true }
@@ -17,7 +15,6 @@ const props = defineProps({
 const { t, locale } = useI18n()
 
 const name = computed(() => profileName(props.user))
-const ruby = computed(() => (name.value ? rubyPairs(name.value.name, name.value.pinyin) : null))
 
 // When they started. The email is only on the settings page (Emily, 2026-11-22).
 const since = computed(() => {
@@ -36,12 +33,9 @@ const meta = computed(() => [
     <div class="head__id">
     <AvatarSlot />
     <div class="head__who">
+    <!-- Characters only: the pinyin is on the settings page (Emily, 2026-11-23). -->
     <h1 v-if="name" class="head__title" lang="zh">
-      <ruby v-if="ruby" class="hanzi"><template v-for="pair in ruby" :key="pair.char">{{ pair.char }}<rt class="pinyin"><span>{{ pair.pinyin }}</span></rt></template></ruby>
-      <template v-else>
-        <span class="hanzi">{{ name.name }}</span>
-        <span v-if="name.pinyin" class="pinyin head__pinyin">{{ name.pinyin }}</span>
-      </template>
+      <span class="hanzi">{{ name.name }}</span>
     </h1>
     <h1 v-else class="head__title">{{ t('profileUntitled') }}</h1>
 
@@ -70,13 +64,7 @@ const meta = computed(() => [
 .head__who { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); min-width: 0; }
 
 .head__title { font-size: var(--t-2xl); line-height: var(--lh-tight); color: var(--c-ground); }
-.head__title ruby { ruby-position: over; }
 .head__title .hanzi { color: var(--c-ground); }
-/* Chrome justifies a short annotation across its base and pulls ā apart into
-   a and a floating macron. An inline block is never justified internally. */
-.head__title rt > span { display: inline-block; }
-.head__title rt { font-size: var(--t-base); font-weight: var(--w-medium); color: var(--c-ground); }
-.head__pinyin { margin-left: var(--s-3); font-size: var(--t-body); }
 
 .head__meta { display: flex; flex-direction: column; gap: var(--s-1); font-size: var(--t-base); overflow-wrap: anywhere; opacity: 0.85; }
 .head__set-name, .head :deep(a), .head :deep(button) { color: var(--c-ground); }
