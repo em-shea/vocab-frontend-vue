@@ -88,7 +88,7 @@ const cutoff = (rule) => {
   gap: var(--s-3);
   padding: var(--s-4) var(--s-6);
   background-color: var(--c-panel);
-  border: var(--bw-hair) solid var(--c-rule);
+  border: var(--bw-rule) solid var(--c-ink);
 }
 .list__name { font-size: var(--t-lead); color: var(--c-ink); }
 .meter { position: relative; display: flex; flex-direction: column; gap: var(--s-1); }

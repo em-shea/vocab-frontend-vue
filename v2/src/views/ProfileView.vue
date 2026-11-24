@@ -211,6 +211,9 @@ function rawListName (id) {
 .profile__head { grid-area: head; display: flex; flex-direction: column; gap: var(--s-8); min-width: 0; }
 .profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 .profile__lists { grid-area: lists; min-width: 0; align-self: start; }
+/* Profile cards: a dark thin border and no shadow; only the streak card keeps
+   the heavy border and shadow, so it stands out (Emily, 2026-11-24). */
+.profile__words :deep(.word) { border: var(--bw-rule) solid var(--c-ink); border-radius: 0; box-shadow: none; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
