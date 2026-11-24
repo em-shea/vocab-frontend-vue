@@ -134,7 +134,5 @@ const cutoff = (rule) => {
   transition: opacity 120ms;
 }
 .tip:hover .tip__text, .tip__button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
-@media (min-width: 860px) {
-  .lists__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
+/* One list per row at full column width (Emily, 2026-11-24). */
 </style>
