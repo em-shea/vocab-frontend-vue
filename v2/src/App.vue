@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { usePreferencesStore } from './stores/preferences'
 import { useAuthStore } from './stores/auth'
 import OfflineNotice from './components/OfflineNotice.vue'
+import TabBar from './components/TabBar.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,4 +42,5 @@ watch(
 <template>
   <OfflineNotice />
   <RouterView />
+  <TabBar />
 </template>

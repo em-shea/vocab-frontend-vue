@@ -49,7 +49,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
         <li v-for="{ entry, written } in progress" :key="entry.list_id">
           <span class="hanzi strokes__word" :lang="prefs.isTraditional ? 'zh-Hant' : 'zh-Hans'">{{ characters(entry.word) }}</span>
           <TaskBox v-if="written" done />
-          <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'write' }"
+          <AppButton v-else as="RouterLink" variant="primary" shape="sm" :to="{ name: 'write' }"
             :aria-label="t('profileWritingStartFor', { word: characters(entry.word) })">
             {{ t('profileWritingStart') }}
           </AppButton>

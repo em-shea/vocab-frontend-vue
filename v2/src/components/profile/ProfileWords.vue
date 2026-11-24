@@ -40,7 +40,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
           <div class="words__links words__links--first">
             <span>{{ t('profileQuiz') }}</span>
             <TaskBox v-if="quiz" done />
-            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="quizRoute(entry)"
+            <AppButton v-else as="RouterLink" variant="primary" shape="sm" :to="quizRoute(entry)"
               :aria-label="t('profileQuizTakeFor', { list: listName(entry.list_id) })">
               {{ t('profileQuizTakeShort') }}
             </AppButton>
@@ -48,7 +48,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
           <div v-if="SENTENCES_ENABLED" class="words__links">
             <span>{{ t('profileSentence') }}</span>
             <TaskBox v-if="sentence" done />
-            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'sentences' }"
+            <AppButton v-else as="RouterLink" variant="primary" shape="sm" :to="{ name: 'sentences' }"
               :aria-label="t('profileSentenceWriteFor', { word: entry.word.simplified })">
               {{ t('profileSentenceWriteShort') }}
             </AppButton>
@@ -56,7 +56,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
           <div v-if="WRITING_ENABLED" class="words__links">
             <span>{{ t('profileWriting') }}</span>
             <TaskBox v-if="written" done />
-            <AppButton v-else as="RouterLink" variant="seal" shape="sm" :to="{ name: 'write' }"
+            <AppButton v-else as="RouterLink" variant="primary" shape="sm" :to="{ name: 'write' }"
               :aria-label="t('profileWritingStartFor', { word: entry.word.simplified })">
               {{ t('profileWritingStart') }}
             </AppButton>

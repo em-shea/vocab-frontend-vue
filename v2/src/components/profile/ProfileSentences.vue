@@ -59,7 +59,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
             :aria-label="t('profileSentenceEdit', { word: characters(entry.word) })">
             <PencilIcon />
           </RouterLink>
-          <AppButton v-else as="RouterLink" variant="seal" shape="sm" class="sentences__write"
+          <AppButton v-else as="RouterLink" variant="primary" shape="sm" class="sentences__write"
             :to="{ name: 'sentences' }"
             :aria-label="t('profileSentenceWriteFor', { word: characters(entry.word) })">
             {{ t('profileSentencesWrite') }}

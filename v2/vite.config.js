@@ -40,6 +40,8 @@ const pwa = VitePWA({
   workbox: {
     globPatterns: ['**/*.{html,js,css}', 'icons/*.png'],
     navigateFallback: '/index.html',
+    // Daily word notifications (public/push-sw.js).
+    importScripts: ['/push-sw.js'],
     cleanupOutdatedCaches: true,
     runtimeCaching: [
       {

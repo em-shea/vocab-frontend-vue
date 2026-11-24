@@ -5,6 +5,9 @@ import App from './App.vue'
 import router from './router'
 import i18n from './locales'
 import './assets/base.css'
+import { listenForInstall } from './lib/install'
+
+listenForInstall()
 
 const app = createApp(App)
   .use(createPinia())

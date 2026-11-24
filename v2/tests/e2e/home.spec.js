@@ -69,7 +69,7 @@ for (const version of VERSIONS) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
   })
 
-  test(`${version.name}: the prints have no captions, and the footer credits them once`, async ({ page }) => {
+  test(`${version.name}: the prints have no captions; the footer links to the credits page`, async ({ page }) => {
     await mockBackend(page)
     await page.goto(version.path)
 
@@ -78,9 +78,14 @@ for (const version of VERSIONS) {
 
     const footer = page.locator('footer.site-footer')
     await expect(footer).toHaveCount(1)
-    await expect(footer).toContainText('Utagawa Kuniyoshi')
-    await expect(footer).toContainText('One Hundred and Eight Heroes of the Popular Water Margin')
-    await expect(footer).toContainText('Public domain')
+    await expect(footer).toContainText('nihao@haohaotiantian.com')
+    await footer.getByRole('link', { name: 'Credits' }).click()
+    await expect(page).toHaveURL(/\/credits$/)
+    await expect(page.getByRole('heading', { name: 'Woodblock prints' })).toBeVisible()
+    await expect(page.getByRole('main')).toContainText('Utagawa Kuniyoshi, One Hundred and Eight Heroes of the Popular Water Margin')
+    for (const name of ['CC-CEDICT', 'Arphic Public License', 'game-icons.net', 'SIL Open Font License']) {
+      await expect(page.getByRole('link', { name })).toBeVisible()
+    }
   })
 
   test(`${version.name}: practice has its own heading and a section for each kind`, async ({ page }) => {
@@ -156,4 +161,36 @@ test('heroes: the full page, with three launching-soon notes', async ({ page }) 
   await expect(page.getByRole('heading', { name: 'Upload your own list' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Collect heroes' })).toBeVisible()
   await expect(page.getByText('花和尚')).toBeVisible()
+})
+
+test('the header stays at the top; on a phone the logo joins the bar on scroll', async ({ page }) => {
+  await mockBackend(page)
+  await page.setViewportSize({ width: 390, height: 800 })
+  await page.goto('/')
+  const mini = page.locator('.nav__mini')
+  await expect(mini).toHaveAttribute('aria-hidden', 'true')
+  await page.mouse.wheel(0, 1500)
+  await expect(mini).toHaveAttribute('aria-hidden', 'false')
+  await expect(mini).toBeVisible()
+  const bar = await page.locator('.nav__bar').boundingBox()
+  expect(bar.y).toBeGreaterThanOrEqual(0)
+  expect(bar.y).toBeLessThan(40)
+  await expect(page.getByRole('link', { name: 'Quiz', exact: true })).toBeInViewport()
+})
+
+test('phones get a tab bar along the bottom; wide screens do not', async ({ page }) => {
+  await mockBackend(page)
+  await page.setViewportSize({ width: 390, height: 800 })
+  await page.goto('/quiz')
+  const tabs = page.getByRole('navigation', { name: 'Main sections' })
+  await expect(tabs).toBeVisible()
+  await expect(tabs.getByRole('link')).toHaveText(['Home', 'Quiz', 'Sentences', 'Stroke order'])
+  await expect(tabs.getByRole('link', { name: 'Quiz' })).toHaveAttribute('aria-current', 'page')
+  const box = await tabs.boundingBox()
+  expect(box.y + box.height).toBeCloseTo(800, 0)
+  await tabs.getByRole('link', { name: 'Sentences' }).click()
+  await expect(page).toHaveURL(/\/sentences/)
+
+  await page.setViewportSize({ width: 1120, height: 800 })
+  await expect(tabs).toBeHidden()
 })

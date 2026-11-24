@@ -2,8 +2,7 @@
 import { useI18n } from 'vue-i18n'
 
 // The foot of every page: quiet, small text under a hairline. It says the site
-// uses AI and where to report mistakes, and credits the woodblock prints (once,
-// so the prints carry no captions) and the fonts.
+// uses AI and where to report mistakes, and links to the credits page.
 const { t } = useI18n()
 </script>
 
@@ -13,18 +12,9 @@ const { t } = useI18n()
       {{ t('footerAi') }}
       <a href="mailto:nihao@haohaotiantian.com">nihao@haohaotiantian.com</a>
     </p>
-    <p class="site-footer__credit">{{ t('footerPrints') }}</p>
-    <!-- The fonts are SIL OFL, which asks for no credit on the page; the tier
-         icons are CC BY 3.0, which does (Emily, 2026-11-23). -->
-    <p class="site-footer__credit">
-      {{ t('footerIcons') }}
-      <a href="https://game-icons.net" rel="noopener">game-icons.net</a>,
-      <a href="https://creativecommons.org/licenses/by/3.0/" rel="noopener">CC BY 3.0</a>
-    </p>
-    <p class="site-footer__credit">
-      {{ t('footerStrokes') }}
-      <a href="https://github.com/chanind/hanzi-writer-data/blob/master/ARPHICPL.TXT" rel="noopener">Arphic Public License</a>
-    </p>
+    <!-- Credits for prints, icons, stroke data, word lists and fonts live on
+         their own page (Emily, 2026-11-23). -->
+    <p class="site-footer__credit"><RouterLink :to="{ name: 'credits' }">{{ t('footerCredits') }}</RouterLink></p>
   </footer>
 </template>
 
