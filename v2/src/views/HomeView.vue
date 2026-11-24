@@ -65,6 +65,10 @@ const heroes = computed(() => {
   padding: 0 var(--s-4);
 }
 
+/* Sections sit far apart, but the first one sits closer under the nav, as on
+   other pages (Emily, 2026-11-24). */
+.page__inner > :deep(.quest) { margin-top: calc(var(--s-12) - var(--s-24)); }
+
 @media (min-width: 720px) {
   .page__inner { padding: 0 var(--s-14); }
 }

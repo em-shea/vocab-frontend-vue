@@ -53,7 +53,7 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
             <span class="slot__score">{{ score(quiz) }}</span>
             <TaskBox done />
           </span>
-          <AppButton v-else as="RouterLink" variant="seal" shape="sm"
+          <AppButton v-else as="RouterLink" variant="primary" shape="sm"
             :to="{ name: 'quiz', query: { list_id: entry.list_id, date_range: '14', ques: '10' } }"
             :aria-label="t('profileQuizTakeFor', { list: listName(entry.list_id) })">
             {{ t('profileQuizTakeShort') }}

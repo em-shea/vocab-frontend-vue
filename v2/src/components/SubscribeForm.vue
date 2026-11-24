@@ -104,6 +104,7 @@ async function submit () {
     </div>
 
     <AppButton
+      class="sub__button"
       :variant="variant === 'band' ? 'primary' : 'seal'"
       type="submit"
       as="button"
@@ -158,8 +159,12 @@ async function submit () {
   box-shadow: var(--shadow-hard-on-dark);
 }
 
+/* Stacked under the fields, the button gets more room above it (Emily, 2026-11-24). */
+.sub__button { margin-top: var(--s-4); }
+
 @media (min-width: 720px) {
   .sub:not(.sub--stacked) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto; }
+  .sub:not(.sub--stacked) .sub__button { margin-top: 0; }
 }
 .sub--stacked { justify-items: start; }
 .sub--stacked .sub__field { align-self: stretch; }

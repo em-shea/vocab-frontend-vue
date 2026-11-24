@@ -159,7 +159,7 @@ function rawListName (id) {
       <div v-else-if="status === 'error'" class="profile__state" role="alert">
         <h1 class="profile__title">{{ t('profileTitle') }}</h1>
         <p>{{ t('profileError') }}</p>
-        <AppButton variant="seal" @click="load">{{ t('profileRetry') }}</AppButton>
+        <AppButton variant="primary" @click="load">{{ t('profileRetry') }}</AppButton>
       </div>
 
       <template v-else>
