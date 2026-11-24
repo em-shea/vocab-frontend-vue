@@ -27,6 +27,7 @@ export function proficientRule (body) {
   const r = body?.proficient_rule ?? {}
   return {
     minQuizAnswers: Number(r.min_quiz_answers ?? 2),
-    accuracyPct: Math.round(Number(r.min_quiz_accuracy ?? 0.8) * 100)
+    accuracyPct: Math.round(Number(r.min_quiz_accuracy ?? 0.8) * 100),
+    quizzesOnlyBefore: typeof r.quizzes_only_before === 'string' ? r.quizzes_only_before : ''
   }
 }

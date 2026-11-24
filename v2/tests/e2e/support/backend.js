@@ -311,7 +311,7 @@ export async function mockBackend (page, options = {}) {
       if (state.progressFails) return json({ success: false, message: 'Failed to retrieve progress.', data: null }, 502)
       return json({ success: true, message: 'Successfully retrieved progress.', data: options.progress ?? {
         lists: [{ list_id: HSK1, total: 150, seen: 48, proficient: 6 }],
-        proficient_rule: { min_quiz_answers: 2, min_quiz_accuracy: 0.8, sentence: true, stroke_order: true }
+        proficient_rule: { min_quiz_answers: 2, min_quiz_accuracy: 0.8, sentence: true, stroke_order: true, quizzes_only_before: '2026-11-23' }
       } })
     }
     if (method === 'POST' && path === '/writing') {

@@ -122,8 +122,13 @@ test.describe('profile', () => {
     await expect(section).toContainText('32% · 48 of 150 words')
     await expect(section).toContainText('4% · 6 of 150 words')
     await expect(section.getByRole('progressbar', { name: 'Seen' })).toHaveAttribute('aria-valuenow', '32')
-    await section.getByText('How is this measured?').click()
-    await expect(section).toContainText('at least 2 times with at least 80% right')
+    // How proficient is worked out: a tooltip on the Proficient label.
+    const tip = section.getByRole('tooltip').first()
+    await expect(tip).toBeHidden()
+    await section.getByRole('button', { name: 'How is proficient worked out?' }).first().click()
+    await expect(tip).toBeVisible()
+    await expect(tip).toContainText('at least 2 times with at least 80% right')
+    await expect(tip).toContainText('Words last sent before Nov 23, 2026 count on quizzes alone.')
   })
 
   test('your lists failing to load can be retried without breaking the page', async ({ page }) => {

@@ -21,7 +21,8 @@ describe('progressRows', () => {
 
 describe('proficientRule', () => {
   it('reads the rule, or falls back to the same defaults', () => {
-    expect(proficientRule({ proficient_rule: { min_quiz_answers: 3, min_quiz_accuracy: 0.9 } })).toEqual({ minQuizAnswers: 3, accuracyPct: 90 })
-    expect(proficientRule({})).toEqual({ minQuizAnswers: 2, accuracyPct: 80 })
+    expect(proficientRule({ proficient_rule: { min_quiz_answers: 3, min_quiz_accuracy: 0.9, quizzes_only_before: '2026-11-23' } }))
+      .toEqual({ minQuizAnswers: 3, accuracyPct: 90, quizzesOnlyBefore: '2026-11-23' })
+    expect(proficientRule({})).toEqual({ minQuizAnswers: 2, accuracyPct: 80, quizzesOnlyBefore: '' })
   })
 })

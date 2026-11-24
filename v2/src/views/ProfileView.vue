@@ -164,7 +164,6 @@ function rawListName (id) {
         </ProfileHeader>
         <div class="profile__words">
           <ProfileWords :progress="progress" :has-lists="subscriptions.length > 0" :list-name="listName" :set-for="setFor" />
-          <ProfileLists :rows="progressList" :rule="rule" :status="progressStatus" :list-name="listName" @retry="loadProgress" />
         </div>
         <div class="profile__side">
           <ProfileQuizzes
@@ -178,6 +177,8 @@ function rawListName (id) {
           <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" :activity="user?.activity" />
           <ProfileStrokes v-if="strokesOn" :progress="progress" :count="strokeCount" :activity="user?.activity" />
         </div>
+        <!-- Your lists at the foot of the page, after the activities (Emily, 2026-11-23). -->
+        <ProfileLists class="profile__lists" :rows="progressList" :rule="rule" :status="progressStatus" :list-name="listName" @retry="loadProgress" />
       </template>
     </div>
   </PageShell>
@@ -189,7 +190,7 @@ function rawListName (id) {
 .profile {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'head' 'words' 'side';
+  grid-template-areas: 'head' 'words' 'side' 'lists';
   gap: var(--s-12);
   width: 100%;
   max-width: 64rem;
@@ -197,12 +198,13 @@ function rawListName (id) {
 }
 .profile__head { grid-area: head; }
 .profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
+.profile__lists { grid-area: lists; min-width: 0; }
 .profile__side { grid-area: side; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 
 @media (min-width: 860px) {
   .profile {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    grid-template-areas: 'head head' 'words side';
+    grid-template-areas: 'head head' 'words side' 'lists lists';
     column-gap: var(--s-8);
     row-gap: var(--s-8);
   }
