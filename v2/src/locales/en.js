@@ -396,6 +396,6 @@ export default {
   "badge_streak_7": "7-day streak",
   "badge_streak_30": "30-day streak",
   "badge_streak_100": "100-day streak",
-  "homeLeaderboardHeadline": "This week's leaderboard.",
+  "homeLeaderboardHeadline": "This week's leaderboard",
   "homeLeaderboardMore": "See the full leaderboard"
 }

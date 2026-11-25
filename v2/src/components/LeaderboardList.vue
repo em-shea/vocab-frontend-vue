@@ -47,18 +47,10 @@ const { t } = useI18n()
 }
 .board__row:nth-child(-n + 3) .board__rank { color: var(--c-seal); }
 .board__rank { font-family: var(--f-display); font-weight: var(--w-heavy); font-size: var(--t-md); text-align: center; }
-.board__who {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--s-1) var(--s-2);
-  min-width: 0;
-}
-.board__who > :first-child { grid-row: span 2; align-self: start; }
-.board__who > a { justify-self: start; }
+.board__who { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); min-width: 0; }
 .board__who a { overflow-wrap: anywhere; }
 .board__hanzi { font-family: var(--f-hanzi); font-size: var(--t-lead); }
-.board__badges { grid-column: 2; display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.board__badges { display: inline-flex; gap: var(--s-1); }
 .board__num { font-size: var(--t-base); color: var(--c-ink); white-space: nowrap; }
 .board__streak { color: var(--c-muted); }
 @media (max-width: 30rem) {
