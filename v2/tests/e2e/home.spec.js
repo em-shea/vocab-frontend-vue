@@ -164,19 +164,22 @@ test('heroes: the full page, with three launching-soon notes', async ({ page }) 
   await expect(page.getByText('花和尚')).toBeVisible()
 })
 
-test('the header stays at the top; on a phone the logo joins the bar on scroll', async ({ page }) => {
+test('the header stays at the top; on a phone the logo, Sign in and globe share one row', async ({ page }) => {
   await mockBackend(page)
   await page.setViewportSize({ width: 390, height: 800 })
   await page.goto('/')
-  const mini = page.locator('.nav__mini')
-  await expect(mini).toHaveAttribute('aria-hidden', 'true')
+  const brand = page.getByRole('link', { name: /Haohaotiantian/ }).first()
+  const globe = page.getByRole('button', { name: 'Reading settings' })
+  const signIn = page.getByRole('link', { name: 'Sign in' })
+  const top = async (el) => (await el.boundingBox()).y
+  // Same row: vertical centers within a few pixels.
+  const mid = async (el) => { const b = await el.boundingBox(); return b.y + b.height / 2 }
+  expect(Math.abs(await mid(brand) - await mid(globe))).toBeLessThan(6)
+  expect(Math.abs(await mid(brand) - await mid(signIn))).toBeLessThan(6)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
   await page.mouse.wheel(0, 1500)
-  await expect(mini).toHaveAttribute('aria-hidden', 'false')
-  await expect(mini).toBeVisible()
-  const bar = await page.locator('.nav__bar').boundingBox()
-  expect(bar.y).toBeGreaterThanOrEqual(0)
-  expect(bar.y).toBeLessThan(40)
-  await expect(page.getByRole('link', { name: 'Quiz', exact: true })).toBeInViewport()
+  await expect.poll(() => top(brand)).toBeLessThan(40)
+  await expect(globe).toBeInViewport()
 })
 
 test('phones get a tab bar along the bottom; wide screens do not', async ({ page }) => {
