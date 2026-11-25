@@ -408,5 +408,6 @@ export default {
   "leaderboardColActsShort": "Tasks",
   "leaderboardColStreakShort": "Streak",
   "leaderboardHow": "How the leaderboard is ranked",
-  "leaderboardRule": "Ranked by days practiced this week (Monday to Sunday, UTC), then by tasks done this week. A task is a quiz, a sentence or a stroke order practice. Days in streak is shown for interest and doesn't change the order."
+  "leaderboardRule": "Ranked by days practiced this week (Monday to Sunday, UTC), then by tasks done this week. A task is a quiz, a sentence or a stroke order practice. Days in streak is shown for interest and doesn't change the order.",
+  "leaderboardColWeek": "This week"
 }

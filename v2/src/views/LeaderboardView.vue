@@ -6,6 +6,7 @@ import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
 import LeaderboardList from '../components/LeaderboardList.vue'
+import RankingTip from '../components/RankingTip.vue'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
 
@@ -53,7 +54,12 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
 
       <LeaderboardList v-else :entries="board.entries" />
 
-      <RouterLink v-if="status !== 'loading' && !signedIn" class="board__join" :to="{ name: 'home' }">
+      <div v-if="status === 'ready' && board.entries.length" class="board__foot">
+        <RouterLink v-if="!signedIn" :to="{ name: 'home' }">{{ t('leaderboardSubscribe') }}</RouterLink>
+        <span v-else>{{ t('leaderboardHow') }}</span>
+        <RankingTip />
+      </div>
+      <RouterLink v-else-if="status !== 'loading' && !signedIn" class="board__join" :to="{ name: 'home' }">
         {{ t('leaderboardSubscribe') }}
       </RouterLink>
     </AppPanel>
@@ -67,4 +73,5 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
 .board__state { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); margin: 0; color: var(--c-body); }
 
 .board__join { align-self: flex-start; }
+.board__foot { position: relative; display: flex; align-items: center; gap: var(--s-2); color: var(--c-muted); font-size: var(--t-base); }
 </style>

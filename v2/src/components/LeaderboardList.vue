@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import BadgeSeal from './BadgeSeal.vue'
@@ -34,18 +34,13 @@ const pinned = computed(() => {
   const i = props.entries.findIndex((e) => e.handle === myHandle.value)
   return i >= props.limit ? props.entries[i] : null
 })
-const tipOpen = ref(false)
 const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 </script>
 
 <template>
   <ol class="board__list">
     <li class="board__row board__row--head">
-      <span class="board__h-name tip">
-        <button type="button" class="tip__button" :aria-expanded="tipOpen" aria-describedby="board-how"
-          :aria-label="t('leaderboardHow')" @click="tipOpen = !tipOpen" @blur="tipOpen = false">?</button>
-        <span id="board-how" role="tooltip" class="tip__text" :class="{ 'tip__text--open': tipOpen }">{{ t('leaderboardRule') }}</span>
-      </span>
+      <span class="board__h-week" aria-hidden="true">{{ t('leaderboardColWeek') }}</span>
       <span class="board__h-days" aria-hidden="true"><span class="board__long">{{ t('leaderboardColDays') }}</span><span class="board__short">{{ t('leaderboardColDaysShort') }}</span></span>
       <span class="board__h-acts" aria-hidden="true"><span class="board__long">{{ t('leaderboardColActs') }}</span><span class="board__short">{{ t('leaderboardColActsShort') }}</span></span>
       <span class="board__h-streak" aria-hidden="true"><span class="board__long">{{ t('leaderboardColStreak') }}</span><span class="board__short">{{ t('leaderboardColStreakShort') }}</span></span>
@@ -77,22 +72,7 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 </template>
 
 <style scoped>
-.board__list { position: relative; list-style: none; margin: 0; padding: 0; }
-.board__h-name { grid-area: name; align-self: end; }
-.tip { display: inline-flex; }
-.tip__button {
-  display: grid; place-items: center; width: 1.25rem; height: 1.25rem; padding: 0;
-  font: inherit; font-size: 0.75rem; font-weight: 700; line-height: 1; letter-spacing: 0; color: var(--c-ink);
-  background: none; border: var(--bw-hair) solid currentColor; border-radius: 50%; cursor: help;
-}
-.tip__text {
-  position: absolute; z-index: 5; left: 0; right: 0; top: 100%;
-  padding: var(--s-3) var(--s-4); font-family: var(--f-ui); font-size: var(--t-sm); font-weight: var(--w-body);
-  letter-spacing: 0; text-transform: none; line-height: var(--lh-snug);
-  color: var(--c-ground); background-color: var(--c-ink); box-shadow: var(--shadow-hard);
-  visibility: hidden; opacity: 0; transition: opacity 120ms;
-}
-.tip:hover .tip__text, .tip__button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
+.board__list { container-type: inline-size; list-style: none; margin: 0; padding: 0; }
 .board__row--head { position: relative; }
 .board__row {
   --badge: 1.5rem;
@@ -116,7 +96,8 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
   line-height: 1.2;
 }
 .board__h-days { grid-area: days; } .board__h-acts { grid-area: acts; } .board__h-streak { grid-area: streak; }
-.board__h-days, .board__h-acts, .board__h-streak { text-align: right; }
+.board__h-days, .board__h-acts, .board__h-streak { text-align: right; align-self: end; }
+.board__h-week { display: none; }
 .board__h-streak { opacity: 0.7; }
 .board__rank { grid-area: rank; font-family: var(--f-display); font-weight: var(--w-heavy); font-size: var(--t-md); text-align: center; }
 .board__avatar { grid-area: avatar; }
@@ -178,13 +159,30 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 
 .board__short { display: none; }
 /* Phones: no badges; short headers. */
-@media (max-width: 40rem) {
+/* Sized by the list's own width, so the narrow /leaderboard panel gets it too. */
+@container (max-width: 36rem) {
   .board__row {
-    grid-template-columns: 1.25rem 2rem minmax(0, 1fr) 2.25rem 2.5rem 2.75rem;
+    grid-template-columns: 1.25rem 2rem minmax(0, 1fr) 2.25rem 2.5rem 3rem;
     grid-template-areas: "rank avatar name days acts streak";
     column-gap: var(--s-2);
   }
-  .board__row--head { font-size: 0.625rem; letter-spacing: 0.03em; }
+  .board__row--head {
+    grid-template-areas:
+      "rank avatar name week week streak"
+      "rank avatar name days acts streak";
+    row-gap: var(--s-1);
+    font-size: 0.625rem;
+    letter-spacing: 0.03em;
+  }
+  .board__h-week {
+    display: block;
+    grid-area: week;
+    text-align: center;
+    padding-bottom: 2px;
+    border-bottom: var(--bw-hair) solid var(--c-muted);
+  }
+  .board__h-streak .board__short { display: none; }
+  .board__h-streak .board__long { display: inline; }
   .board__badges { display: none; }
   .board__long { display: none; }
   .board__short { display: inline; }

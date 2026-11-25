@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import SectionHead from '../SectionHead.vue'
 import LeaderboardList from '../LeaderboardList.vue'
+import RankingTip from '../RankingTip.vue'
 import { api } from '../../api/client'
 
 // Top of this week's leaderboard on the home page (Emily, 2026-11-25), above
@@ -27,7 +28,10 @@ onMounted(async () => {
     <SectionHead :title="t('homeLeaderboardHeadline')" />
     <div class="home-board__card">
       <LeaderboardList :entries="entries" :limit="TOP" />
-      <RouterLink class="home-board__more" :to="{ name: 'leaderboard' }">{{ t('homeLeaderboardMore') }}</RouterLink>
+      <div class="home-board__foot">
+        <RouterLink :to="{ name: 'leaderboard' }">{{ t('homeLeaderboardMore') }}</RouterLink>
+        <RankingTip />
+      </div>
     </div>
   </section>
 </template>
@@ -44,5 +48,6 @@ onMounted(async () => {
   box-shadow: var(--shadow-hard);
 }
 .home-board__card :deep(.board__list) { border-top: 0; }
-.home-board__more { align-self: flex-start; }
+.home-board__card { position: relative; }
+.home-board__foot { position: relative; display: flex; align-items: center; gap: var(--s-2); }
 </style>

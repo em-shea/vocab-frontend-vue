@@ -407,5 +407,6 @@ export default {
   "leaderboardColActsShort": "任务",
   "leaderboardColStreakShort": "连续",
   "leaderboardHow": "排行榜如何排名",
-  "leaderboardRule": "按本周练习天数排名（周一到周日，UTC），天数相同时按本周完成的任务数排名。任务指一次测验、一个句子或一次笔顺练习。连续天数仅供参考，不影响排名。"
+  "leaderboardRule": "按本周练习天数排名（周一到周日，UTC），天数相同时按本周完成的任务数排名。任务指一次测验、一个句子或一次笔顺练习。连续天数仅供参考，不影响排名。",
+  "leaderboardColWeek": "本周"
 }
