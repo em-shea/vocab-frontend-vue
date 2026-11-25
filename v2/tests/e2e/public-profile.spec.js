@@ -12,7 +12,7 @@ test('leaderboard lists public profiles in rank order, never emails', async ({ p
   const rows = page.getByRole('listitem').filter({ has: page.locator('.board__rank') })
   await expect(rows).toHaveCount(3)
   await expect(rows.nth(0)).toContainText('林冲')
-  await expect(rows.nth(0)).toContainText('41-day streak')
+  await expect(rows.nth(0).locator('.board__streak')).toContainText('41')
   await expect(rows.nth(2)).toContainText('Anonymous')
   await expect(page.locator('.board__list')).not.toContainText('@')
   // Signed out: the call to action is subscribing, not settings.

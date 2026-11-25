@@ -399,5 +399,13 @@ export default {
   "homeLeaderboardMore": "查看完整排行榜",
   "leaderboardYou": "我",
   "leaderboardDaysWeek": "本周 {n} 天",
-  "leaderboardNotOn": "你还没有加入排行榜。"
+  "leaderboardNotOn": "你还没有加入排行榜。",
+  "leaderboardColDays": "本周天数",
+  "leaderboardColActs": "本周任务",
+  "leaderboardColStreak": "连续天数",
+  "leaderboardColDaysShort": "天数",
+  "leaderboardColActsShort": "任务",
+  "leaderboardColStreakShort": "连续",
+  "leaderboardHow": "排行榜如何排名",
+  "leaderboardRule": "按本周练习天数排名（周一到周日，UTC），天数相同时按本周完成的任务数排名。任务指一次测验、一个句子或一次笔顺练习。连续天数仅供参考，不影响排名。"
 }

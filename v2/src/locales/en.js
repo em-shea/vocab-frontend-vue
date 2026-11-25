@@ -400,5 +400,13 @@ export default {
   "homeLeaderboardMore": "See the full leaderboard",
   "leaderboardYou": "You",
   "leaderboardDaysWeek": "{n} days this week | {n} day this week | {n} days this week",
-  "leaderboardNotOn": "You're not on the leaderboard."
+  "leaderboardNotOn": "You're not on the leaderboard.",
+  "leaderboardColDays": "Days this week",
+  "leaderboardColActs": "Tasks this week",
+  "leaderboardColStreak": "Days in streak",
+  "leaderboardColDaysShort": "Days",
+  "leaderboardColActsShort": "Tasks",
+  "leaderboardColStreakShort": "Streak",
+  "leaderboardHow": "How the leaderboard is ranked",
+  "leaderboardRule": "Ranked by days practiced this week (Monday to Sunday, UTC), then by tasks done this week. A task is a quiz, a sentence or a stroke order practice. Days in streak is shown for interest and doesn't change the order."
 }

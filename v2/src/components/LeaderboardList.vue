@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import BadgeSeal from './BadgeSeal.vue'
@@ -10,9 +10,9 @@ import { useAuthStore } from '../stores/auth'
 // Rows of the weekly leaderboard (vocab GET /leaderboard entries), used by
 // /leaderboard and the home page (top few). Emily, 2026-11-25:
 // - Columns line up: rank, avatar, name (fixed width), badges, metrics.
-// - Up to 5 badges, rarest first; on a phone only as many as fit.
-// - Metrics say why the order is what it is: days practiced this week (what
-//   the board ranks by), then the current streak.
+// - Up to 5 badges, rarest first; none on phones.
+// - Columns: days this week (ranks), tasks this week (breaks ties), days in
+//   streak (faded: for interest only). A ? in the header explains the order.
 // - Gold, silver and bronze on the top three's rank and avatar frame.
 // - The signed-in learner's row is marked "You"; when a limit cuts it off it is
 //   pinned under the list after a gap. Signed in but not public: a row inviting
@@ -34,11 +34,22 @@ const pinned = computed(() => {
   const i = props.entries.findIndex((e) => e.handle === myHandle.value)
   return i >= props.limit ? props.entries[i] : null
 })
+const tipOpen = ref(false)
 const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 </script>
 
 <template>
   <ol class="board__list">
+    <li class="board__row board__row--head">
+      <span class="board__h-name tip">
+        <button type="button" class="tip__button" :aria-expanded="tipOpen" aria-describedby="board-how"
+          :aria-label="t('leaderboardHow')" @click="tipOpen = !tipOpen" @blur="tipOpen = false">?</button>
+        <span id="board-how" role="tooltip" class="tip__text" :class="{ 'tip__text--open': tipOpen }">{{ t('leaderboardRule') }}</span>
+      </span>
+      <span class="board__h-days" aria-hidden="true"><span class="board__long">{{ t('leaderboardColDays') }}</span><span class="board__short">{{ t('leaderboardColDaysShort') }}</span></span>
+      <span class="board__h-acts" aria-hidden="true"><span class="board__long">{{ t('leaderboardColActs') }}</span><span class="board__short">{{ t('leaderboardColActsShort') }}</span></span>
+      <span class="board__h-streak" aria-hidden="true"><span class="board__long">{{ t('leaderboardColStreak') }}</span><span class="board__short">{{ t('leaderboardColStreakShort') }}</span></span>
+    </li>
     <template v-for="entry in (pinned ? [...shown, null, pinned] : shown)" :key="entry?.handle ?? 'gap'">
       <li v-if="!entry" class="board__gap" aria-hidden="true">⋯</li>
       <li v-else class="board__row" :class="[medal(entry.rank) && `board__row--${medal(entry.rank)}`, { 'board__row--me': entry.handle === myHandle }]">
@@ -53,10 +64,9 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
         <span class="board__badges">
           <BadgeSeal v-for="id in rarestBadges(entry.badges, MAX_BADGES)" :id="id" :key="id" small />
         </span>
-        <span class="board__metrics">
-          <strong>{{ t('leaderboardDaysWeek', entry.week.active_days) }}</strong>
-          <span>{{ t('leaderboardStreak', { n: entry.streak.current }) }}</span>
-        </span>
+        <span class="board__n board__days"><span class="sr-only">{{ t('leaderboardColDays') }}: </span>{{ entry.week.active_days }}</span>
+        <span class="board__n board__acts"><span class="sr-only">{{ t('leaderboardColActs') }}: </span>{{ entry.week.actions }}</span>
+        <span class="board__n board__streak"><span class="sr-only">{{ t('leaderboardColStreak') }}: </span>{{ entry.streak.current }}</span>
       </li>
     </template>
     <li v-if="canJoin" class="board__join-row">
@@ -67,17 +77,47 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 </template>
 
 <style scoped>
-.board__list { list-style: none; margin: 0; padding: 0; border-top: var(--bw-rule) solid var(--c-ink); }
+.board__list { position: relative; list-style: none; margin: 0; padding: 0; }
+.board__h-name { grid-area: name; align-self: end; }
+.tip { display: inline-flex; }
+.tip__button {
+  display: grid; place-items: center; width: 1.25rem; height: 1.25rem; padding: 0;
+  font: inherit; font-size: 0.75rem; font-weight: 700; line-height: 1; letter-spacing: 0; color: var(--c-ink);
+  background: none; border: var(--bw-hair) solid currentColor; border-radius: 50%; cursor: help;
+}
+.tip__text {
+  position: absolute; z-index: 5; left: 0; right: 0; top: 100%;
+  padding: var(--s-3) var(--s-4); font-family: var(--f-ui); font-size: var(--t-sm); font-weight: var(--w-body);
+  letter-spacing: 0; text-transform: none; line-height: var(--lh-snug);
+  color: var(--c-ground); background-color: var(--c-ink); box-shadow: var(--shadow-hard);
+  visibility: hidden; opacity: 0; transition: opacity 120ms;
+}
+.tip:hover .tip__text, .tip__button:focus-visible + .tip__text, .tip__text--open { visibility: visible; opacity: 1; }
+.board__row--head { position: relative; }
 .board__row {
   --badge: 1.5rem;
   display: grid;
-  grid-template-columns: 2rem 2rem 10rem minmax(0, 1fr) auto;
-  grid-template-areas: "rank avatar name badges metrics";
+  grid-template-columns: 2rem 2rem 10rem minmax(0, 1fr) 4.5rem 4.5rem 4.5rem;
+  grid-template-areas: "rank avatar name badges days acts streak";
   align-items: center;
   column-gap: var(--s-3);
   padding: var(--s-3) 0;
   border-bottom: var(--bw-hair) solid var(--c-rule);
 }
+.board__row--head {
+  padding: 0 0 var(--s-2);
+  border-bottom: var(--bw-rule) solid var(--c-ink);
+  font-family: var(--f-label);
+  font-size: var(--t-xs, 0.75rem);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  line-height: 1.2;
+}
+.board__h-days { grid-area: days; } .board__h-acts { grid-area: acts; } .board__h-streak { grid-area: streak; }
+.board__h-days, .board__h-acts, .board__h-streak { text-align: right; }
+.board__h-streak { opacity: 0.7; }
 .board__rank { grid-area: rank; font-family: var(--f-display); font-weight: var(--w-heavy); font-size: var(--t-md); text-align: center; }
 .board__avatar { grid-area: avatar; }
 .board__name { grid-area: name; display: flex; align-items: center; gap: var(--s-2); min-width: 0; }
@@ -93,9 +133,8 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
   overflow: hidden;
   min-width: 0;
 }
-.board__metrics { grid-area: metrics; display: flex; flex-direction: column; align-items: flex-end; text-align: right; white-space: nowrap; line-height: var(--lh-snug); }
-.board__metrics strong { font-size: var(--t-base); color: var(--c-ink); }
-.board__metrics span { font-size: var(--t-sm); color: var(--c-muted); }
+.board__n { text-align: right; font-family: var(--f-display); font-weight: var(--w-heavy); font-size: var(--t-base); color: var(--c-ink); font-variant-numeric: tabular-nums; }
+.board__days { grid-area: days; } .board__acts { grid-area: acts; color: var(--c-muted); font-weight: var(--w-semi); } .board__streak { grid-area: streak; color: var(--c-muted); font-weight: var(--w-body); opacity: 0.7; }
 
 /* Gold, silver, bronze for the top three: rank number and avatar frame. */
 .board__row--gold { --medal: #C9962E; }
@@ -137,19 +176,19 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
   border-top: 0;
 }
 
-/* Phones: badges beside the name, as many as fit; metrics on a line below. */
+.board__short { display: none; }
+/* Phones: no badges; short headers. */
 @media (max-width: 40rem) {
   .board__row {
-    grid-template-columns: 1.5rem 2rem 7rem minmax(0, 1fr);
-    grid-template-areas:
-      "rank avatar name badges"
-      "rank avatar metrics metrics";
+    grid-template-columns: 1.25rem 2rem minmax(0, 1fr) 2.25rem 2.5rem 2.75rem;
+    grid-template-areas: "rank avatar name days acts streak";
     column-gap: var(--s-2);
-    row-gap: 2px;
   }
-  .board__metrics { flex-direction: row; gap: var(--s-1); align-items: baseline; text-align: left; }
-  .board__metrics strong { font-size: var(--t-sm); }
-  .board__metrics span::before { content: '· '; }
+  .board__row--head { font-size: 0.625rem; letter-spacing: 0.03em; }
+  .board__badges { display: none; }
+  .board__long { display: none; }
+  .board__short { display: inline; }
+  .board__rank { font-size: var(--t-base); }
   .board__name a { font-size: var(--t-base); }
 }
 </style>
