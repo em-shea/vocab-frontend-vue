@@ -25,12 +25,24 @@ onMounted(async () => {
 <template>
   <section v-if="entries.length" class="home-board">
     <SectionHead :title="t('homeLeaderboardHeadline')" />
-    <LeaderboardList :entries="entries" :limit="TOP" />
-    <RouterLink class="home-board__more" :to="{ name: 'leaderboard' }">{{ t('homeLeaderboardMore') }}</RouterLink>
+    <div class="home-board__card">
+      <LeaderboardList :entries="entries" :limit="TOP" />
+      <RouterLink class="home-board__more" :to="{ name: 'leaderboard' }">{{ t('homeLeaderboardMore') }}</RouterLink>
+    </div>
   </section>
 </template>
 
 <style scoped>
 .home-board { display: flex; flex-direction: column; gap: var(--s-6); }
+.home-board__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-6) var(--s-6);
+  background-color: var(--c-panel);
+  border: var(--bw-rule) solid var(--c-ink);
+  box-shadow: var(--shadow-hard);
+}
+.home-board__card :deep(.board__list) { border-top: 0; }
 .home-board__more { align-self: flex-start; }
 </style>
