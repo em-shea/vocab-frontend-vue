@@ -199,6 +199,13 @@ onBeforeUnmount(() => {
   opacity: 0.75;
 }
 
+/* On a phone the globe shares the logo's row, so it shows just the icon; the
+   menu itself says what's chosen. */
+@media (max-width: 719px) {
+  .globe { padding: var(--s-2); }
+  .globe__summary { display: none; }
+}
+
 /* The globe sits at the right of the bar, so the menu opens leftward from it,
    and on a phone it never grows wider than the screen. */
 @media (max-width: 480px) {

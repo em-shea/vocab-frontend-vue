@@ -142,9 +142,10 @@ test('launch: leads with the daily word, has no launching-soon notes, previews t
   await expect(page.getByText('替天行道')).toHaveCount(0)
   await expect(page.getByText('Launching soon')).toHaveCount(0)
   await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: practice daily to unlock the 108 heroes of the Water Margin' })).toBeVisible()
-  // Study is only what exists: quizzes, example sentences and review. No links for now.
+  // Study is only what exists: quizzes, sentences and stroke order. No links for now.
+  // Review is not on the home page (Emily, 2026-11-24).
   await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes' })).toBeVisible()
-  await expect(page.getByRole('heading', { level: 3, name: 'Review past words' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Review past words' })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: /catalog/i })).toHaveCount(0)
 })
 
@@ -163,19 +164,22 @@ test('heroes: the full page, with three launching-soon notes', async ({ page }) 
   await expect(page.getByText('花和尚')).toBeVisible()
 })
 
-test('the header stays at the top; on a phone the logo joins the bar on scroll', async ({ page }) => {
+test('the header stays at the top; on a phone the logo, Sign in and globe share one row', async ({ page }) => {
   await mockBackend(page)
   await page.setViewportSize({ width: 390, height: 800 })
   await page.goto('/')
-  const mini = page.locator('.nav__mini')
-  await expect(mini).toHaveAttribute('aria-hidden', 'true')
+  const brand = page.getByRole('link', { name: /Haohaotiantian/ }).first()
+  const globe = page.getByRole('button', { name: 'Reading settings' })
+  const signIn = page.getByRole('link', { name: 'Sign in' })
+  const top = async (el) => (await el.boundingBox()).y
+  // Same row: vertical centers within a few pixels.
+  const mid = async (el) => { const b = await el.boundingBox(); return b.y + b.height / 2 }
+  expect(Math.abs(await mid(brand) - await mid(globe))).toBeLessThan(6)
+  expect(Math.abs(await mid(brand) - await mid(signIn))).toBeLessThan(6)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
   await page.mouse.wheel(0, 1500)
-  await expect(mini).toHaveAttribute('aria-hidden', 'false')
-  await expect(mini).toBeVisible()
-  const bar = await page.locator('.nav__bar').boundingBox()
-  expect(bar.y).toBeGreaterThanOrEqual(0)
-  expect(bar.y).toBeLessThan(40)
-  await expect(page.getByRole('link', { name: 'Quiz', exact: true })).toBeInViewport()
+  await expect.poll(() => top(brand)).toBeLessThan(40)
+  await expect(globe).toBeInViewport()
 })
 
 test('phones get a tab bar along the bottom; wide screens do not', async ({ page }) => {

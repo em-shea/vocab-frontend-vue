@@ -58,18 +58,17 @@ const heroes = computed(() => {
 .page__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--s-24);
+  /* Space above each section heading: 48px on a phone, 64px wider (was 96px;
+     Emily, 2026-11-24). The first section sits 48px under the nav either way. */
+  gap: var(--s-12);
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 var(--s-4);
 }
 
-/* Sections sit far apart, but the first one sits closer under the nav, as on
-   other pages (Emily, 2026-11-24). */
-.page__inner > :deep(.quest) { margin-top: calc(var(--s-12) - var(--s-24)); }
-
 @media (min-width: 720px) {
-  .page__inner { padding: 0 var(--s-14); }
+  .page__inner { padding: 0 var(--s-14); gap: var(--s-16); }
+  .page__inner > :deep(.quest) { margin-top: calc(var(--s-12) - var(--s-16)); }
 }
 </style>

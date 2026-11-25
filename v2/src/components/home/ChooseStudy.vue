@@ -40,11 +40,18 @@ onMounted(async () => {
         </select>
       </div>
 
-      <div v-if="lists.loading" class="samples samples--empty">
-        <p class="muted">Loading sample words…</p>
+      <!-- Placeholder cards the size of the real ones while the words load, so the
+           section doesn't change height when they arrive (Emily, 2026-11-24). -->
+      <div v-if="lists.loading" class="samples" role="status" :aria-label="t('levelSamplesLoading')">
+        <div v-for="n in 3" :key="n" class="sample-ghost" aria-hidden="true">
+          <span class="sample-ghost__bar sample-ghost__bar--label" />
+          <span class="sample-ghost__bar sample-ghost__bar--hanzi" />
+          <span class="sample-ghost__bar sample-ghost__bar--pinyin" />
+          <span class="sample-ghost__bar sample-ghost__bar--def" />
+        </div>
       </div>
       <div v-else-if="lists.error" class="samples samples--empty">
-        <p class="muted">Sample words are unavailable right now.</p>
+        <p class="muted">{{ t('levelSamplesError') }}</p>
       </div>
       <!-- One row that scrolls sideways, so the samples don't take up the page. -->
       <div v-else class="samples" tabindex="0" role="region" :aria-label="t('levelSamples')">
@@ -105,7 +112,27 @@ onMounted(async () => {
 }
 .samples > * { scroll-snap-align: start; }
 .samples:focus-visible { outline: 2px solid var(--c-red); outline-offset: 4px; }
-.samples--empty { display: block; }
+.samples--empty { display: flex; align-items: center; min-height: calc(var(--sample-h) + var(--s-3)); }
+
+/* Same size as a compact word card (measured 172px), with soft bars where its
+   label, characters, pinyin and meaning go. */
+.samples { --sample-h: 10.75rem; }
+.sample-ghost {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  height: var(--sample-h);
+  padding: var(--s-4);
+  background-color: var(--c-panel);
+  border: var(--bw-hair) solid var(--c-rule);
+}
+.sample-ghost__bar { display: block; height: 0.75rem; background-color: var(--c-sunk); animation: ghost 1.4s ease-in-out infinite; }
+.sample-ghost__bar--label { width: 40%; }
+.sample-ghost__bar--hanzi { width: 55%; height: 2.25rem; }
+.sample-ghost__bar--pinyin { width: 35%; }
+.sample-ghost__bar--def { width: 75%; }
+@keyframes ghost { 50% { opacity: 0.5; } }
+@media (prefers-reduced-motion: reduce) { .sample-ghost__bar { animation: none; } }
 
 @media (min-width: 720px) {
   .ways { grid-template-columns: repeat(2, minmax(0, 1fr)); }
