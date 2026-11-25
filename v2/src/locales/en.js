@@ -372,7 +372,7 @@ export default {
   "publicLoading": "Loading profile…",
   "publicMissing": "This profile isn't public",
   "publicError": "Couldn't load this profile",
-  "publicUnnamed": "Unnamed learner",
+  "publicUnnamed": "Anonymous",
   "publicJoined": "Joined {date}",
   "publicStreak": "Streak",
   "publicBest": "Best",

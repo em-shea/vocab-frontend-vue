@@ -371,7 +371,7 @@ export default {
   "publicLoading": "正在加载……",
   "publicMissing": "这个主页没有公开",
   "publicError": "无法加载这个主页",
-  "publicUnnamed": "无名学员",
+  "publicUnnamed": "匿名",
   "publicJoined": "{date}加入",
   "publicStreak": "连续天数",
   "publicBest": "最长",
