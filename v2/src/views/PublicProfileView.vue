@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
 import BadgeSeal from '../components/BadgeSeal.vue'
+import SpriteAvatar from '../components/SpriteAvatar.vue'
 import { api } from '../api/client'
 import { knownBadges, publicName } from '../lib/badges'
 
@@ -46,12 +47,15 @@ const joined = (month) => {
         <RouterLink :to="{ name: 'leaderboard' }">{{ t('leaderboardTitle') }}</RouterLink>
       </template>
       <template v-else>
+        <div class="public__top">
+        <SpriteAvatar size="lg" :src="profile.avatar ?? null" />
         <div class="public__head">
           <p v-if="profile.name_pinyin && locale !== 'cn'" class="public__pinyin" lang="zh-Latn-pinyin">{{ profile.name_pinyin }}</p>
           <h1 class="public__name" :class="{ 'public__name--hanzi': publicName(profile) }">
             {{ publicName(profile) ?? t('publicUnnamed') }}
           </h1>
           <p v-if="profile.joined" class="public__joined">{{ t('publicJoined', { date: joined(profile.joined) }) }}</p>
+        </div>
         </div>
 
         <dl class="public__stats">
@@ -75,6 +79,7 @@ const joined = (month) => {
 </template>
 
 <style scoped>
+.public__top { display: flex; align-items: center; gap: var(--s-4); min-width: 0; }
 .public__head { display: flex; flex-direction: column; gap: var(--s-1); }
 .public__pinyin { margin: 0; color: var(--c-pinyin); font-size: var(--t-base); }
 .public__name { font-size: var(--t-xl); line-height: var(--lh-tight); }
@@ -95,6 +100,7 @@ const joined = (month) => {
 .public__stats dt { font-size: var(--t-sm); color: var(--c-muted); }
 .public__stats dd { margin: 0; font-family: var(--f-display); font-size: var(--t-md); font-weight: var(--w-heavy); color: var(--c-ink); }
 
+@media (max-width: 30rem) { .public__stats dd { font-size: var(--t-lead); } }
 .public__badges { display: flex; flex-direction: column; gap: var(--s-3); }
 .public__badges h2 { margin: 0; }
 .public__badge-row { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-2); }

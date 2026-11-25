@@ -6,6 +6,7 @@ import PageShell from '../components/PageShell.vue'
 import AppPanel from '../components/AppPanel.vue'
 import AppButton from '../components/AppButton.vue'
 import BadgeSeal from '../components/BadgeSeal.vue'
+import SpriteAvatar from '../components/SpriteAvatar.vue'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { knownBadges, publicName } from '../lib/badges'
@@ -56,6 +57,7 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
         <li v-for="entry in board.entries" :key="entry.handle" class="board__row">
           <span class="board__rank">{{ entry.rank }}</span>
           <span class="board__who">
+            <SpriteAvatar size="sm" decorative :src="entry.avatar ?? null" />
             <RouterLink :to="{ name: 'public-profile', params: { handle: entry.handle } }" :class="{ 'board__hanzi': publicName(entry) }">
               {{ publicName(entry) ?? t('publicUnnamed') }}
             </RouterLink>
