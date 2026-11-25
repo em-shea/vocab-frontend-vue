@@ -396,5 +396,6 @@ export default {
   "badge_streak_30": "连续 30 天",
   "badge_streak_100": "连续 100 天",
   "homeLeaderboardHeadline": "本周排行榜",
-  "homeLeaderboardMore": "查看完整排行榜"
+  "homeLeaderboardMore": "查看完整排行榜",
+  "leaderboardYou": "我"
 }
