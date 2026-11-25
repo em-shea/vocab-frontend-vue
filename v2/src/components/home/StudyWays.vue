@@ -10,8 +10,9 @@ import printStory from '../../assets/prints/hero-story.jpg'
 // mocks are decorative and fixed: the study words are literal so the examples
 // are always correct, and nothing in them is interactive. Both versions list
 // quizzes and example sentences.
-// Both versions also have sentences and handwriting practice; the launch
-// version adds the review screen. Sides alternate from one to the next.
+// Both versions also have sentences and stroke order practice. Review was
+// dropped from the home page (Emily, 2026-11-24). Sides alternate from one to
+// the next.
 defineProps({ heroes: { type: Boolean, default: false } })
 const { t } = useI18n()
 </script>
@@ -80,42 +81,6 @@ const { t } = useI18n()
         </figure>
       </div>
     </section>
-    <template v-if="!heroes">
-  <section class="split">
-        <div class="split__text">
-          <SectionHead as="h3" :title="t('studyReviewHeadline')" />
-          <p>{{ t('studyReviewBody') }}</p>
-        </div>
-        <div class="stage">
-          <figure class="mock mock--review" :aria-label="t('mockReviewLabel')">
-            <div class="mock__bar mock__bar--split" aria-hidden="true">
-              <span class="mock__title">{{ t('mockReviewTitle') }}</span>
-              <span class="export">{{ t('mockExport') }}</span>
-            </div>
-            <ul class="words" aria-hidden="true">
-              <li class="word">
-                <span class="hanzi word__zh">爱护</span>
-                <span class="pinyin">ài hù</span>
-                <span class="word__en">{{ t('mockMeaningAihu') }}</span>
-                <span class="word__date">{{ t('mockDateA') }}</span>
-              </li>
-              <li class="word">
-                <span class="hanzi word__zh">学习</span>
-                <span class="pinyin">xué xí</span>
-                <span class="word__en">{{ t('mockMeaningXuexi') }}</span>
-                <span class="word__date">{{ t('mockDateB') }}</span>
-              </li>
-              <li class="word">
-                <span class="hanzi word__zh">朋友</span>
-                <span class="pinyin">péng you</span>
-                <span class="word__en">{{ t('mockMeaningPengyou') }}</span>
-                <span class="word__date">{{ t('mockDateC') }}</span>
-              </li>
-            </ul>
-          </figure>
-        </div>
-      </section>
-    </template>
   </div>
 </template>
 
@@ -154,7 +119,7 @@ const { t } = useI18n()
 /* Quiz options. A wrong guess first (red, a shake, a cross), then the right
  * answer (ink, a tick). The right answer's resting style is the chosen one, so
  * reduced motion shows only the right answer picked. */
-.opts { list-style: none; margin: var(--s-2) 0 0; padding: 0; display: grid; gap: var(--s-2); }
+.opts { --opt-shadow: 4px 4px 0 rgba(27, 33, 64, 0.18); list-style: none; margin: var(--s-2) 0 0; padding: 0; display: grid; gap: var(--s-2); }
 .opt { position: relative; padding: var(--s-2) var(--s-3); padding-right: var(--s-8); border: var(--bw-rule) solid var(--c-ink); background-color: var(--c-panel); color: var(--c-ink); font-size: var(--t-base); line-height: var(--lh-snug); }
 .opt::after { position: absolute; right: var(--s-3); top: 50%; transform: translateY(-50%); font-weight: var(--w-bold); opacity: 0; }
 .opt--wrong { animation: miss 9s ease-in-out infinite; }
@@ -162,7 +127,8 @@ const { t } = useI18n()
 .opt--right {
   background-color: var(--c-ink);
   color: var(--c-on-button);
-  box-shadow: var(--shadow-hard-soft);
+  /* Smaller than the panel shadow, so it doesn't touch the option below. */
+  box-shadow: var(--opt-shadow);
   animation: pick 9s ease-in-out infinite;
 }
 .opt--right::after { content: '✓'; opacity: 1; animation: pick-mark 9s ease-in-out infinite; }
@@ -182,7 +148,7 @@ const { t } = useI18n()
 }
 @keyframes pick {
   0%, 48% { background-color: var(--c-panel); color: var(--c-ink); box-shadow: none; }
-  53%, 92% { background-color: var(--c-ink); color: var(--c-on-button); box-shadow: var(--shadow-hard-soft); }
+  53%, 92% { background-color: var(--c-ink); color: var(--c-on-button); box-shadow: var(--opt-shadow); }
   100% { background-color: var(--c-panel); color: var(--c-ink); box-shadow: none; }
 }
 @keyframes pick-mark {
@@ -205,29 +171,6 @@ const { t } = useI18n()
   0%, 15% { background-size: 0 2px; }
   35%, 90% { background-size: 100% 2px; }
   100% { background-size: 0 2px; }
-}
-
-/* Review list. */
-.words { list-style: none; margin: 0; padding: 0; }
-.word { display: grid; grid-template-columns: 4rem 5rem minmax(0, 1fr) auto; align-items: baseline; gap: var(--s-2); padding: var(--s-3) var(--s-4); border-top: var(--bw-hair) solid var(--c-rule); }
-.word:first-child { border-top: 0; }
-.word__zh { font-size: var(--t-md); font-weight: var(--w-bold); }
-.word__en { color: var(--c-body); font-size: var(--t-base); }
-.word__date { color: var(--c-muted); font-size: var(--t-sm); white-space: nowrap; }
-.export {
-  padding: var(--s-1) var(--s-3);
-  background-color: var(--c-raised);
-  color: var(--c-ink);
-  border: var(--bw-rule) solid var(--c-ink);
-  box-shadow: var(--shadow-hard);
-  font-family: var(--f-ui);
-  font-size: var(--t-base);
-  font-weight: var(--w-semi);
-  animation: press 6s ease-in-out infinite;
-}
-@keyframes press {
-  0%, 62%, 78%, 100% { transform: none; box-shadow: var(--shadow-hard); }
-  68%, 72% { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--c-ink); }
 }
 
 /* Sentence box: the learner types, one character at a time. */

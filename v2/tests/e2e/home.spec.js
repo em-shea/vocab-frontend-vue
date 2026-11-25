@@ -142,9 +142,10 @@ test('launch: leads with the daily word, has no launching-soon notes, previews t
   await expect(page.getByText('替天行道')).toHaveCount(0)
   await expect(page.getByText('Launching soon')).toHaveCount(0)
   await expect(page.getByRole('heading', { level: 2, name: 'Coming soon: practice daily to unlock the 108 heroes of the Water Margin' })).toBeVisible()
-  // Study is only what exists: quizzes, example sentences and review. No links for now.
+  // Study is only what exists: quizzes, sentences and stroke order. No links for now.
+  // Review is not on the home page (Emily, 2026-11-24).
   await expect(page.getByRole('heading', { level: 3, name: 'Take quizzes' })).toBeVisible()
-  await expect(page.getByRole('heading', { level: 3, name: 'Review past words' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Review past words' })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: /catalog/i })).toHaveCount(0)
 })
 

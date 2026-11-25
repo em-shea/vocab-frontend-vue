@@ -17,17 +17,16 @@ const { t } = useI18n()
 
 <template>
   <section class="stack">
+    <!-- Like the profile name card: the print fills the whole band, faint under
+         a navy wash (Emily, 2026-11-24). -->
     <AppPanel band class="oath">
+      <img class="oath__print" :src="printSingle" alt="" aria-hidden="true" />
       <h2 v-if="heroes" class="oath__headline">
         {{ t('closeHeadlineA') }}<br />{{ t('closeHeadlineB') }}
       </h2>
       <h2 v-else class="oath__headline">{{ t('previewHeadline') }}</h2>
       <SoonNote v-if="heroes" band />
       <p v-if="heroes" class="oath__body">{{ t('closeBody') }}</p>
-      <!-- One print, not the double spread (Emily, 2026-11-22). -->
-      <figure class="oath__board">
-        <img :src="printSingle" alt="An outlaw of the Water Margin, woodblock print" />
-      </figure>
     </AppPanel>
     <div class="signup">
       <SectionHead :title="t('closingSubscribeHeadline')" />
@@ -38,38 +37,43 @@ const { t } = useI18n()
 
 <style scoped>
 .stack { display: flex; flex-direction: column; gap: var(--s-12); }
-.oath { gap: var(--s-6); }
-.signup { display: flex; flex-direction: column; gap: var(--s-6); }
+.oath {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  gap: var(--s-6);
+  min-height: 16rem;
+  justify-content: center;
+}
+.oath__print {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 22%;
+}
+/* Darker where the headline sits, more of the print on the right. */
+.oath::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgb(27 33 64 / 0.94) 0%, rgb(27 33 64 / 0.82) 50%, rgb(27 33 64 / 0.55) 100%);
+}
+.oath > :not(.oath__print) { max-width: 36rem; }
 .oath__headline { font-size: var(--t-2xl); color: var(--c-on-dark); }
 .oath__body { color: var(--c-on-dark); opacity: 0.85; }
-.oath__board {
-  position: relative;
-  margin: 0;
-  /* Same square ink frame as the prints, lightened for the dark band. The
-     print fills it, cropped like the top-of-page print (Emily, 2026-11-22):
-     a 3:2 crop on a phone, as tall as the band on a wide screen. */
-  border: var(--bw-frame) solid var(--c-on-dark);
-  border-radius: 0;
-  overflow: hidden;
-}
-.oath__board img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  object-position: 60% 18%;
-  filter: sepia(0.2) saturate(0.9);
+.signup { display: flex; flex-direction: column; gap: var(--s-6); }
+
+/* On a phone the text runs across the band, so the wash is even and the print
+   is zoomed in on the hero. */
+@media (max-width: 719px) {
+  .oath::before { background: rgb(27 33 64 / 0.86); }
+  .oath__print { transform: scale(1.6); transform-origin: 60% 25%; }
 }
 @media (min-width: 720px) {
-  .oath {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    align-items: stretch;
-    column-gap: var(--s-12);
-  }
-  .oath > :not(.oath__board) { grid-column: 1; }
-  .oath__headline:only-of-type { grid-row: 1 / span 3; align-self: center; }
-  .oath__board { grid-column: 2; grid-row: 1 / span 3; min-height: 18rem; }
-  .oath__board img { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; }
+  .oath { min-height: 20rem; }
 }
 </style>
