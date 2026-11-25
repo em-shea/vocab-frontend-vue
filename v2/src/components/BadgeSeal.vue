@@ -1,8 +1,8 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { BADGE_GLYPHS } from '../lib/badges'
+import { BADGE_ART } from '../lib/badges'
 
-// One badge: a square seal with a single character, its name beneath.
+// One badge: a square crop of a woodblock print, its name beneath.
 defineProps({
   id: { type: String, required: true },
   small: { type: Boolean, default: false }
@@ -12,7 +12,7 @@ const { t } = useI18n()
 
 <template>
   <figure class="badge" :class="{ 'badge--small': small }">
-    <span class="badge__seal" aria-hidden="true">{{ BADGE_GLYPHS[id] }}</span>
+    <img class="badge__seal" :src="BADGE_ART[id]" alt="" width="48" height="48">
     <figcaption :class="{ 'sr-only': small }">{{ t(`badge_${id}`) }}</figcaption>
   </figure>
 </template>
@@ -31,15 +31,10 @@ const { t } = useI18n()
   color: var(--c-body);
 }
 .badge__seal {
-  display: grid;
-  place-items: center;
+  display: block;
   width: 3rem;
   height: 3rem;
-  font-family: var(--f-brush);
-  font-size: 1.75rem;
-  line-height: 1;
-  color: var(--c-on-red);
-  background: var(--c-seal);
+  object-fit: cover;
   border: 2px solid var(--c-ink);
   box-shadow: var(--shadow-hard);
 }
