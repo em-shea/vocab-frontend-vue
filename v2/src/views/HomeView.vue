@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import SiteNav from '../components/SiteNav.vue'
 import ScrollRods from '../components/ScrollRods.vue'
 import HomeHero from '../components/home/HomeHero.vue'
+import HomeLeaderboard from '../components/home/HomeLeaderboard.vue'
 import ChooseStudy from '../components/home/ChooseStudy.vue'
 import DailyEmail from '../components/home/DailyEmail.vue'
 import ReadYourWay from '../components/home/ReadYourWay.vue'
@@ -39,6 +40,7 @@ const heroes = computed(() => {
       <SiteNav />
 
       <HomeHero :heroes="heroes" />
+      <HomeLeaderboard />
       <ChooseStudy :heroes="heroes" />
       <DailyEmail />
       <ReadYourWay />

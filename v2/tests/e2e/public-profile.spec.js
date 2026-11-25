@@ -28,7 +28,7 @@ test('a name leads to that public profile with its badges', async ({ page }) => 
   await expect(page.getByRole('heading', { name: '林冲' })).toBeVisible()
   await expect(page.getByText('Joined February 2021')).toBeVisible()
   const badges = page.getByRole('region', { name: 'Badges' })
-  await expect(badges.getByRole('figure')).toHaveCount(6)
+  await expect(badges.locator('.badge')).toHaveCount(6)
   await expect(badges).toContainText('Founding Tester')
   await expect(badges).toContainText('30-day streak')
   expect(backend.api.find((c) => c.path === '/public_profile').headers.authorization).toBeUndefined()

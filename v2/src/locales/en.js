@@ -395,5 +395,7 @@ export default {
   "badge_first_stroke_order": "First stroke order",
   "badge_streak_7": "7-day streak",
   "badge_streak_30": "30-day streak",
-  "badge_streak_100": "100-day streak"
+  "badge_streak_100": "100-day streak",
+  "homeLeaderboardHeadline": "This week's leaderboard.",
+  "homeLeaderboardMore": "See the full leaderboard"
 }

@@ -11,10 +11,10 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <figure class="badge" :class="{ 'badge--small': small }">
+  <span class="badge" :class="{ 'badge--small': small }">
     <img class="badge__seal" :src="BADGE_ART[id]" alt="" width="48" height="48">
-    <figcaption :class="{ 'sr-only': small }">{{ t(`badge_${id}`) }}</figcaption>
-  </figure>
+    <span class="badge__name" :class="{ 'sr-only': small }">{{ t(`badge_${id}`) }}</span>
+  </span>
 </template>
 
 <style scoped>
