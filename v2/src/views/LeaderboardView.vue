@@ -38,10 +38,10 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
 </script>
 
 <template>
-  <PageShell>
+  <PageShell width="wide">
     <AppPanel>
       <div class="board__head">
-        <h1 class="board__title">{{ t('leaderboardTitle') }}</h1>
+        <h1 class="board__title">{{ t('leaderboardWeekly') }}</h1>
         <p v-if="board" class="board__week">{{ t('leaderboardWeek', { date: weekOf(board.week_start) }) }}</p>
       </div>
 

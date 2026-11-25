@@ -7,7 +7,7 @@ import { mockBackend, signedIn, USER, LEADERBOARD } from './support/backend'
 test('leaderboard lists public profiles in rank order, never emails', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/leaderboard')
-  await expect(page.getByRole('heading', { name: 'Leaderboard' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Weekly leaderboard' })).toBeVisible()
   await expect(page.getByText('Week of November 23')).toBeVisible()
   const rows = page.getByRole('listitem').filter({ has: page.locator('.board__rank') })
   await expect(rows).toHaveCount(3)

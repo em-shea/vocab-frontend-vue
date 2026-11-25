@@ -396,7 +396,7 @@ export default {
   "badge_streak_7": "7-day streak",
   "badge_streak_30": "30-day streak",
   "badge_streak_100": "100-day streak",
-  "homeLeaderboardHeadline": "This week's leaderboard",
+  "homeLeaderboardHeadline": "Weekly leaderboard",
   "homeLeaderboardMore": "See the full leaderboard",
   "leaderboardYou": "You",
   "leaderboardDaysWeek": "{n} days this week | {n} day this week | {n} days this week",
@@ -408,6 +408,7 @@ export default {
   "leaderboardColActsShort": "Tasks",
   "leaderboardColStreakShort": "Streak",
   "leaderboardHow": "How the leaderboard is ranked",
-  "leaderboardRule": "Ranked by days practiced this week (Monday to Sunday, UTC), then by tasks done this week. A task is a quiz, a sentence or a stroke order practice. Days in streak is shown for interest and doesn't change the order.",
-  "leaderboardColWeek": "This week"
+  "leaderboardRule": "Ranked by days practiced this week (Monday to Sunday, UTC), then by tasks done this week. A task is a quiz, a sentence or a stroke order practice. Days in streak does not impact the weekly leaderboard.",
+  "leaderboardColWeek": "This week",
+  "leaderboardWeekly": "Weekly leaderboard"
 }

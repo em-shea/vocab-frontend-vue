@@ -395,7 +395,7 @@ export default {
   "badge_streak_7": "连续 7 天",
   "badge_streak_30": "连续 30 天",
   "badge_streak_100": "连续 100 天",
-  "homeLeaderboardHeadline": "本周排行榜",
+  "homeLeaderboardHeadline": "每周排行榜",
   "homeLeaderboardMore": "查看完整排行榜",
   "leaderboardYou": "我",
   "leaderboardDaysWeek": "本周 {n} 天",
@@ -407,6 +407,7 @@ export default {
   "leaderboardColActsShort": "任务",
   "leaderboardColStreakShort": "连续",
   "leaderboardHow": "排行榜如何排名",
-  "leaderboardRule": "按本周练习天数排名（周一到周日，UTC），天数相同时按本周完成的任务数排名。任务指一次测验、一个句子或一次笔顺练习。连续天数仅供参考，不影响排名。",
-  "leaderboardColWeek": "本周"
+  "leaderboardRule": "按本周练习天数排名（周一到周日，UTC），天数相同时按本周完成的任务数排名。任务指一次测验、一个句子或一次笔顺练习。连续天数不影响每周排行榜。",
+  "leaderboardColWeek": "本周",
+  "leaderboardWeekly": "每周排行榜"
 }
