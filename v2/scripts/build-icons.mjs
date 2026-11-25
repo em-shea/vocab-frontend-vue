@@ -19,8 +19,9 @@ span{transform:translateY(${Math.round(size * 0.02)}px)}
 const icons = [
   ['icon-192.png', 192, 0.08],
   ['icon-512.png', 512, 0.08],
-  // Maskable icons get cropped to a circle or squircle: keep the mark in the middle 80%.
-  ['icon-maskable-512.png', 512, 0.2],
+  // Maskable icons get cropped to a circle (Android) or squircle (macOS, which also
+  // shrinks it): the mark is as big as fits, its strokes inside the middle 80% circle.
+  ['icon-maskable-512.png', 512, 0.1],
   ['apple-touch-icon.png', 180, 0.1],
   ['favicon-32.png', 32, 0.02]
 ]
