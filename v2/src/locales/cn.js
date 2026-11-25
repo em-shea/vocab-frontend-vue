@@ -397,5 +397,7 @@ export default {
   "badge_streak_100": "连续 100 天",
   "homeLeaderboardHeadline": "本周排行榜",
   "homeLeaderboardMore": "查看完整排行榜",
-  "leaderboardYou": "我"
+  "leaderboardYou": "我",
+  "leaderboardDaysWeek": "本周 {n} 天",
+  "leaderboardNotOn": "你还没有加入排行榜。"
 }

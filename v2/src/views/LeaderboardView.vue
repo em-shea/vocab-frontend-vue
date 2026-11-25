@@ -53,8 +53,8 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
 
       <LeaderboardList v-else :entries="board.entries" />
 
-      <RouterLink v-if="status !== 'loading'" class="board__join" :to="signedIn ? { name: 'profile-settings', hash: '#public' } : { name: 'home' }">
-        {{ t(signedIn ? 'leaderboardJoin' : 'leaderboardSubscribe') }}
+      <RouterLink v-if="status !== 'loading' && !signedIn" class="board__join" :to="{ name: 'home' }">
+        {{ t('leaderboardSubscribe') }}
       </RouterLink>
     </AppPanel>
   </PageShell>

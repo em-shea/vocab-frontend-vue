@@ -398,5 +398,7 @@ export default {
   "badge_streak_100": "100-day streak",
   "homeLeaderboardHeadline": "This week's leaderboard",
   "homeLeaderboardMore": "See the full leaderboard",
-  "leaderboardYou": "You"
+  "leaderboardYou": "You",
+  "leaderboardDaysWeek": "{n} days this week | {n} day this week | {n} days this week",
+  "leaderboardNotOn": "You're not on the leaderboard."
 }

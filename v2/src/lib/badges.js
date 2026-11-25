@@ -20,6 +20,20 @@ export const BADGE_ART = {
   streak_100: streak100
 }
 
+// Rarest first, for showing a few badges in little room (leaderboard rows).
+export const BADGE_RARITY = [
+  'streak_100',
+  'streak_30',
+  'founding_tester',
+  'streak_7',
+  'first_stroke_order',
+  'first_sentence',
+  'first_quiz'
+]
+
+export const rarestBadges = (ids = [], max = 5) =>
+  BADGE_RARITY.filter((id) => ids.includes(id) && id in BADGE_ART).slice(0, max)
+
 export const knownBadges = (ids = []) => ids.filter((id) => id in BADGE_ART)
 
 /** The name a public profile shows, or null for "unnamed". */
