@@ -83,6 +83,26 @@ async function togglePush (event) {
   }
 }
 
+// Public profile and leaderboard entry (vocab POST /public_profile). Off
+// until the learner switches it on; shows the profile name, never the email.
+const publicBusy = ref(false)
+const publicError = ref(false)
+
+async function togglePublic (event) {
+  const want = event.target.checked
+  publicBusy.value = true
+  publicError.value = false
+  try {
+    const { data } = await api.setPublicProfile(want)
+    user.value = { ...user.value, public_profile: data.data.public, public_handle: data.data.handle }
+  } catch {
+    publicError.value = true
+  } finally {
+    event.target.checked = Boolean(user.value?.public_profile)
+    publicBusy.value = false
+  }
+}
+
 // Only the latest save may report: choosing twice quickly must not let the
 // first answer claim the second was saved.
 let latest = 0
@@ -163,6 +183,20 @@ async function saveName () {
         <p v-else class="settings__hint">{{ t('pushNote') }}</p>
         <p v-if="pushError" class="settings__save settings__save--bad" role="alert">{{ t(pushError) }}</p>
       </div>
+
+      <div v-if="status === 'ready'" id="public" class="settings__field settings__push">
+        <h2 class="label">{{ t('publicHeading') }}</h2>
+        <label class="settings__switch">
+          <input type="checkbox" role="switch" :checked="Boolean(user.public_profile)" :disabled="publicBusy" @change="togglePublic">
+          <span>{{ t('publicToggle') }}</span>
+        </label>
+        <p class="settings__hint">{{ t('publicNote') }}</p>
+        <p v-if="user.public_profile && user.public_handle" class="settings__links">
+          <RouterLink :to="{ name: 'public-profile', params: { handle: user.public_handle } }">{{ t('publicSee') }}</RouterLink>
+          <RouterLink :to="{ name: 'leaderboard' }">{{ t('leaderboardTitle') }}</RouterLink>
+        </p>
+        <p v-if="publicError" class="settings__save settings__save--bad" role="alert">{{ t('publicFailed') }}</p>
+      </div>
     </AppPanel>
   </PageShell>
 </template>
@@ -201,6 +235,7 @@ async function saveName () {
 
 .settings__push { padding-top: var(--s-6); border-top: var(--bw-rule) solid var(--c-rule); }
 .settings__push h2 { margin: 0; }
+.settings__links { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin: 0; font-size: var(--t-base); }
 .settings__hint { margin: 0; font-size: var(--t-base); color: var(--c-body); }
 
 .settings__switch { display: flex; align-items: center; gap: var(--s-3); color: var(--c-ink); cursor: pointer; }
