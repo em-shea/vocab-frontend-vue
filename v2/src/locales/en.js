@@ -68,6 +68,8 @@ export default {
   "dailyHeadline": "Get a Chinese vocabulary word every day",
   "readHeadline": "Choose simplified or traditional characters",
   "readBody": "Switch between 简 and 繁 in the menu at the top of the page. Your daily words use the set you subscribe with. Choose 中文 for immersion mode, with the whole site in Chinese, word definitions included.",
+  "levelSamplesLoading": "Loading sample words…",
+  "levelSamplesError": "Sample words are unavailable right now.",
   "levelSamples": "Sample words",
   "dailyBody": "It arrives by email or as a notification, with the characters, pinyin and meaning.",
   "emailLabel": "Example of the daily email",

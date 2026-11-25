@@ -120,8 +120,9 @@ const { t } = useI18n()
 </template>
 
 <style scoped>
-.ways { display: flex; flex-direction: column; gap: var(--s-16); }
-@media (min-width: 720px) { .ways { gap: var(--s-24); } }
+/* Less space above each practice heading (Emily, 2026-11-24; was 64/96px). */
+.ways { display: flex; flex-direction: column; gap: var(--s-12); }
+@media (min-width: 720px) { .ways { gap: var(--s-16); } }
 
 .split { display: grid; gap: var(--s-8); align-items: start; }
 .split__text { display: flex; flex-direction: column; gap: var(--s-4); min-width: 0; }

@@ -67,6 +67,8 @@ export default {
   "dailyHeadline": "每天收到一个中文词",
   "readHeadline": "简体或繁体，随你选",
   "readBody": "在页面顶部的菜单中切换「简」和「繁」。每日词语采用你订阅时选择的简体或繁体。选择「中文」即可进入沉浸模式，整个网站都用中文显示，包括词语释义。",
+  "levelSamplesLoading": "正在加载示例词语…",
+  "levelSamplesError": "示例词语暂时无法显示。",
   "levelSamples": "示例词汇",
   "dailyBody": "通过邮件或通知送达，附汉字、拼音和释义。",
   "emailLabel": "每日邮件示例",
