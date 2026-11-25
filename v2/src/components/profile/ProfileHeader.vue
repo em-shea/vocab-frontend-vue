@@ -34,7 +34,7 @@ const meta = computed(() => [
     <!-- A print behind the card, under a navy wash (Emily's idea 1, 2026-11-24). -->
     <img class="head__print" :src="headerPrint" alt="" aria-hidden="true" />
     <div class="head__id">
-    <SpriteAvatar />
+    <SpriteAvatar on-dark />
     <div class="head__who">
     <!-- Characters only: the pinyin is on the settings page (Emily, 2026-11-23). -->
     <h1 v-if="name" class="head__title" lang="zh">
