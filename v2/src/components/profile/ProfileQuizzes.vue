@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SectionHead from '../SectionHead.vue'
 import AppButton from '../AppButton.vue'
 import { scorePercent } from '../../lib/profile'
 import DoneCount from './DoneCount.vue'
@@ -41,11 +40,10 @@ const nameOf = (quiz) => props.listName(quiz.list_id)
 
 <template>
   <section class="quizzes" aria-labelledby="profile-quizzes">
-    <SectionHead>
-      <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span><DoneCount :count="count" />
-    </SectionHead>
-
-    <div class="quizzes__box print-trim print-trim--brocade">
+    <div class="quizzes__box">
+      <h2 class="activity-head activity-head--quest">
+        <span id="profile-quizzes">{{ t('profileQuizzesTitle') }}</span><DoneCount :count="count" />
+      </h2>
       <ul v-if="progress.length" class="slots">
         <li v-for="{ entry, quiz } in progress" :key="entry.list_id" class="slot">
           <span class="slot__list">{{ listName(entry.list_id) }}</span>

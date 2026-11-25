@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SectionHead from '../SectionHead.vue'
 import DoneCount from './DoneCount.vue'
 import PencilIcon from '../PencilIcon.vue'
 import AppButton from '../AppButton.vue'
@@ -42,11 +41,10 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
 
 <template>
   <section class="sentences" aria-labelledby="profile-sentences">
-    <SectionHead>
-      <span id="profile-sentences">{{ t('profileSentencesTitle') }}</span><DoneCount :count="count" />
-    </SectionHead>
-
-    <div class="sentences__box print-trim print-trim--waves">
+    <div class="sentences__box">
+      <h2 class="activity-head activity-head--story">
+        <span id="profile-sentences">{{ t('profileSentencesTitle') }}</span><DoneCount :count="count" />
+      </h2>
       <p v-if="!rows.length" class="sentences__empty">{{ t('profileSentencesNone') }}</p>
 
       <ul v-else class="sentences__list">
