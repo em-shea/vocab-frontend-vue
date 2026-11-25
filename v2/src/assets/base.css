@@ -138,21 +138,28 @@ html {
   body { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); }
 }
 
-/* A header strip across the top of an activity box: a woodblock print under
-   an orange-red wash, like the navy name card (Emily, 2026-11-24). Each box
-   shows a different print. (The earlier tiled pattern bands are kept in
-   prints/patterns/ but no longer used.) */
-.print-strip { position: relative; padding-top: calc(var(--s-6) + var(--strip-h, 2.25rem)) !important; }
-.print-strip::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: var(--strip-h, 2.25rem);
+/* The title strip of an activity box (Quizzes, Sentences, Stroke order): the
+   box's heading on a woodblock print under a muted orange-red wash, like the
+   navy name card (Emily, 2026-11-24). Each box shows a different print. It
+   sits flush with the box edges; the box keeps its own padding below it. */
+.activity-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-1) var(--s-3);
+  margin: calc(-1 * var(--s-6)) calc(-1 * var(--s-6)) var(--s-2);
+  padding: var(--s-3) var(--s-6);
+  font-family: var(--f-display);
+  font-size: var(--t-xl);
+  line-height: var(--lh-tight, 1.15);
+  color: var(--c-on-red);
   background:
-    linear-gradient(rgb(201 63 31 / 0.7), rgb(201 63 31 / 0.7)),
+    linear-gradient(rgb(150 62 40 / 0.82), rgb(150 62 40 / 0.82)),
     var(--strip-img) var(--strip-at, center) / cover no-repeat;
   border-bottom: var(--bw-rule) solid var(--c-ink);
 }
-.print-strip--quest { --strip-img: url('./prints/hero-quest.jpg'); --strip-at: 50% 18%; }
-.print-strip--story { --strip-img: url('./prints/hero-story.jpg'); --strip-at: 50% 45%; }
-.print-strip--collect { --strip-img: url('./prints/hero-collect.jpg'); --strip-at: 50% 30%; }
+/* Beats the count's own scoped muted color. */
+.activity-head .done-count { margin-left: 0; color: inherit !important; opacity: 0.85; }
+.activity-head--quest { --strip-img: url('./prints/hero-quest.jpg'); --strip-at: 50% 18%; }
+.activity-head--story { --strip-img: url('./prints/hero-story.jpg'); --strip-at: 50% 45%; }
+.activity-head--collect { --strip-img: url('./prints/hero-collect.jpg'); --strip-at: 50% 30%; }

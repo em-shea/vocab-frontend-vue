@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SectionHead from '../SectionHead.vue'
 import DoneCount from './DoneCount.vue'
 import AppButton from '../AppButton.vue'
 import TaskBox from '../TaskBox.vue'
@@ -38,11 +37,10 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
 
 <template>
   <section class="strokes" aria-labelledby="profile-strokes">
-    <SectionHead>
-      <span id="profile-strokes">{{ t('profileWriting') }}</span><DoneCount :count="count" />
-    </SectionHead>
-
-    <div class="strokes__box print-strip print-strip--collect">
+    <div class="strokes__box">
+      <h2 class="activity-head activity-head--collect">
+        <span id="profile-strokes">{{ t('profileWriting') }}</span><DoneCount :count="count" />
+      </h2>
       <p v-if="!progress.length" class="strokes__empty">{{ t('profileSentencesNone') }}</p>
 
       <ul v-else class="strokes__list">
