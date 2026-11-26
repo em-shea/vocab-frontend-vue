@@ -21,8 +21,14 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     channel: process.env.PW_CHANNEL || undefined
   },
+  // Journeys run once, at desktop size. The phone size runs only the specs that
+  // check layout (Emily, 2026-11-25: halve the suite for faster iteration).
   projects: [
-    { name: 'phone', use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } } },
+    {
+      name: 'phone',
+      testMatch: /(every-screen|home|hero-card|public-profile)\.spec\.js$/,
+      use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } }
+    },
     { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1120, height: 900 } } }
   ],
   webServer: {
