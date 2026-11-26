@@ -27,9 +27,10 @@ test('a name leads to that public profile with its badges', async ({ page }) => 
   await expect(page.getByRole('heading', { name: '林冲' })).toBeVisible()
   await expect(page.getByText('Joined February 2021')).toBeVisible()
   const badges = page.getByRole('region', { name: 'Badges' })
-  await expect(badges.locator('.badge')).toHaveCount(6)
-  await expect(badges).toContainText('Founding Tester')
-  await expect(badges).toContainText('30-day streak')
+  await expect(badges.locator('.badge')).toHaveCount(4)
+  await expect(badges).toContainText('New learner')
+  await badges.getByText('First stroke order').hover()
+  await expect(page.getByRole('tooltip', { name: 'Finished a first stroke order practice.' })).toBeVisible()
   expect(backend.api.find((c) => c.path === '/public_profile').headers.authorization).toBeUndefined()
 })
 

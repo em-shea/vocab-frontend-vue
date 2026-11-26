@@ -7,13 +7,13 @@ on the leaderboard). The prints are only about 480px wide, so these are soft.
 
 | File | Shows | Print | Crop (left, top, right, bottom) |
 |---|---|---|---|
-| founding_tester.jpg | eye of Wu Song | hero-story.jpg | 335, 185, 385, 235 |
-| first_quiz.jpg | brocade curtain | hero-quest.jpg | 245, 55, 310, 120 |
-| first_sentence.jpg | roundel robe | hero-quest.jpg | 95, 370, 160, 435 |
-| first_stroke_order.jpg | blue crest | hero-quest.jpg | 140, 55, 205, 120 |
-| streak_7.jpg | peony bud | heroes-board.jpg | 40, 40, 100, 100 |
-| streak_30.jpg | peony in bloom | heroes-board.jpg | 395, 345, 465, 415 |
-| streak_100.jpg | tiger's eye | hero-story.jpg | 275, 395, 330, 450 |
+| new_user.jpg | roundel robe | hero-quest.jpg | 95, 370, 160, 435 |
+| first_quiz.jpg | blue crest | hero-quest.jpg | 140, 55, 205, 120 |
+| first_sentence.jpg | peony in bloom | heroes-board.jpg | 395, 345, 465, 415 |
+| first_stroke_order.jpg | eye of Wu Song | hero-story.jpg | 335, 185, 385, 235 |
+
+Pared down to four badges (Emily, 2026-11-25). Other crops tried are listed in
+the git history of this file.
 
 To make another: crop a square with Pillow, resize to 96 × 96 (LANCZOS), save as
 JPEG (quality 88), and add it to `BADGE_ART` in `src/lib/badges.js`.

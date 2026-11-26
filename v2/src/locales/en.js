@@ -389,13 +389,9 @@ export default {
   "leaderboardStreak": "{n}-day streak",
   "leaderboardJoin": "Join the leaderboard",
   "leaderboardSubscribe": "Get a word a day and join in",
-  "badge_founding_tester": "Founding Tester",
   "badge_first_quiz": "First quiz",
   "badge_first_sentence": "First sentence",
   "badge_first_stroke_order": "First stroke order",
-  "badge_streak_7": "7-day streak",
-  "badge_streak_30": "30-day streak",
-  "badge_streak_100": "100-day streak",
   "homeLeaderboardHeadline": "Weekly leaderboard",
   "homeLeaderboardMore": "See the full leaderboard",
   "leaderboardYou": "You",
@@ -415,5 +411,10 @@ export default {
   "leaderboardThisWeek": "This week",
   "leaderboardColWeekLast": "Last week",
   "leaderboardColDaysLast": "Days last week",
-  "leaderboardColActsLast": "Tasks last week"
+  "leaderboardColActsLast": "Tasks last week",
+  "badge_new_user": "New learner",
+  "badgeWhy_new_user": "Joined Haohaotiantian.",
+  "badgeWhy_first_quiz": "Took a first quiz.",
+  "badgeWhy_first_sentence": "Wrote a first sentence.",
+  "badgeWhy_first_stroke_order": "Finished a first stroke order practice."
 }

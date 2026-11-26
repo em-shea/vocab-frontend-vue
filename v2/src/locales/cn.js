@@ -388,13 +388,9 @@ export default {
   "leaderboardStreak": "连续 {n} 天",
   "leaderboardJoin": "加入排行榜",
   "leaderboardSubscribe": "每天学一个词，一起来",
-  "badge_founding_tester": "首批测试者",
   "badge_first_quiz": "第一次测验",
   "badge_first_sentence": "第一个句子",
   "badge_first_stroke_order": "第一次笔顺练习",
-  "badge_streak_7": "连续 7 天",
-  "badge_streak_30": "连续 30 天",
-  "badge_streak_100": "连续 100 天",
   "homeLeaderboardHeadline": "每周排行榜",
   "homeLeaderboardMore": "查看完整排行榜",
   "leaderboardYou": "我",
@@ -414,5 +410,10 @@ export default {
   "leaderboardThisWeek": "本周",
   "leaderboardColWeekLast": "上周",
   "leaderboardColDaysLast": "上周天数",
-  "leaderboardColActsLast": "上周任务"
+  "leaderboardColActsLast": "上周任务",
+  "badge_new_user": "新学员",
+  "badgeWhy_new_user": "加入了好好天天。",
+  "badgeWhy_first_quiz": "完成了第一次测验。",
+  "badgeWhy_first_sentence": "写了第一个句子。",
+  "badgeWhy_first_stroke_order": "完成了第一次笔顺练习。"
 }

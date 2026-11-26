@@ -129,21 +129,21 @@ export const LEADERBOARD = {
   last_week_start: '2026-11-16',
   last_week: [
     { handle: 'ab3cd4ef', name: '小安', name_pinyin: 'xiǎo ān', joined: '2024-09', rank: 1,
-      streak: { current: 5, best: 12 }, week: { active_days: 6, actions: 11 }, badges: ['founding_tester', 'first_quiz', 'streak_7'] },
+      streak: { current: 5, best: 12 }, week: { active_days: 6, actions: 11 }, badges: ['new_user', 'first_quiz'] },
     { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 2,
-      streak: { current: 41, best: 41 }, week: { active_days: 6, actions: 8 }, badges: ['founding_tester', 'streak_30'] },
+      streak: { current: 41, best: 41 }, week: { active_days: 6, actions: 8 }, badges: ['new_user', 'first_sentence'] },
     { handle: 'zz9yy8xx', name: null, name_pinyin: null, joined: '2026-11', rank: 3,
-      streak: { current: 1, best: 1 }, week: { active_days: 2, actions: 2 }, badges: ['first_quiz'] }
+      streak: { current: 1, best: 1 }, week: { active_days: 2, actions: 2 }, badges: ['new_user'] }
   ],
   entries: [
     { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 1,
       streak: { current: 41, best: 41 }, week: { active_days: 3, actions: 9 },
-      badges: ['founding_tester', 'first_quiz', 'first_sentence', 'first_stroke_order', 'streak_7', 'streak_30'] },
+      badges: ['new_user', 'first_quiz', 'first_sentence', 'first_stroke_order'] },
     { handle: 'ab3cd4ef', name: '小安', name_pinyin: 'xiǎo ān', joined: '2024-09', rank: 2,
       streak: { current: 5, best: 12 }, week: { active_days: 3, actions: 4 },
-      badges: ['founding_tester', 'first_quiz', 'streak_7'] },
+      badges: ['new_user', 'first_quiz'] },
     { handle: 'zz9yy8xx', name: null, name_pinyin: null, joined: '2026-11', rank: 3,
-      streak: { current: 1, best: 1 }, week: { active_days: 1, actions: 1 }, badges: ['first_quiz'] }
+      streak: { current: 1, best: 1 }, week: { active_days: 1, actions: 1 }, badges: ['new_user'] }
   ]
 }
 

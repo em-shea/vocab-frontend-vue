@@ -109,14 +109,12 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 .board__name { grid-area: name; display: flex; align-items: center; gap: var(--s-2); min-width: 0; }
 .board__name a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .board__hanzi { font-family: var(--f-hanzi); font-size: var(--t-lead); }
-/* One row of badges; any that don't fit wrap out of sight (phones). */
+/* One row of badges (hidden on phones). Not clipped, so tooltips show. */
 .board__badges {
   grid-area: badges;
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-1);
-  height: calc(var(--badge) + 3px);
-  overflow: hidden;
   min-width: 0;
 }
 .board__n { text-align: right; font-family: var(--f-display); font-weight: var(--w-heavy); font-size: var(--t-base); color: var(--c-ink); font-variant-numeric: tabular-nums; }
