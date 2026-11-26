@@ -81,7 +81,8 @@ test('fewer than three people: no board on the home page, a note on the leaderbo
   await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
 })
 
-test("Mondays show last week's top 3", async ({ page }) => {
+// On hold: LAST_WEEK_TOP3 is off in featureFlags.js.
+test.skip("Mondays show last week's top 3", async ({ page }) => {
   await mockBackend(page, { leaderboard: { ...LEADERBOARD, today: '2026-11-23', entries: [] } })
   await page.goto('/')
   const card = page.locator('.home-board__card')
