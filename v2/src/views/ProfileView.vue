@@ -171,7 +171,10 @@ function rawListName (id) {
             <ProfileActions @sign-out="signOut" />
           </ProfileHeader>
           <!-- The streak right under the name card (Emily, 2026-11-24). -->
-          <StreakCard v-if="progressBody?.streak" :streak="progressBody.streak" />
+          <div v-if="progressBody?.streak" class="profile__streak">
+            <StreakCard :streak="progressBody.streak" />
+            <RouterLink class="profile__board" :to="{ name: 'leaderboard' }">{{ t('leaderboardTitle') }}</RouterLink>
+          </div>
           <InstallPrompt :ready="finishedSomething" />
         </div>
         <div class="profile__words">
@@ -209,6 +212,8 @@ function rawListName (id) {
   margin-inline: auto;
 }
 .profile__head { grid-area: head; display: flex; flex-direction: column; gap: var(--s-8); min-width: 0; }
+.profile__streak { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; }
+.profile__board { align-self: flex-end; font-size: var(--t-base); }
 .profile__words { grid-area: words; display: flex; flex-direction: column; gap: var(--s-12); min-width: 0; }
 .profile__lists { grid-area: lists; min-width: 0; align-self: start; }
 /* Profile cards: a dark thin border and no shadow; only the streak card keeps

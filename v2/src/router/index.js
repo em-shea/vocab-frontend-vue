@@ -107,6 +107,18 @@ export const routes = [
     path: '/credits',
     name: 'credits',
     component: () => import('../views/CreditsView.vue')
+  },
+  {
+    // Opt-in public profile (switched on in profile settings). No sign-in.
+    path: '/u/:handle',
+    name: 'public-profile',
+    component: () => import('../views/PublicProfileView.vue')
+  },
+  {
+    // This week's ranking of public profiles. No sign-in.
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: () => import('../views/LeaderboardView.vue')
   }
 ]
 

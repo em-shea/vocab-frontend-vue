@@ -24,3 +24,7 @@ export const SENTENCES_ENABLED = true
 //   false  /write leads to the profile.
 //   true   practise writing each character of today's words, stroke by stroke.
 export const WRITING_ENABLED = true
+
+// Last week's top 3 on the leaderboard on Mondays. Built 2026-11-25; on hold
+// (Emily, 2026-11-25). The API already returns last_week.
+export const LAST_WEEK_TOP3 = false

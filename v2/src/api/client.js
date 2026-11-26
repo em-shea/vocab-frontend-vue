@@ -34,6 +34,8 @@ export const api = {
     client.get('/review', { auth: false, params: { list_id: listId, date_range: dateRange } }),
   signUp: (payload) => client.post('/set_subs', payload, { auth: false }),
   unsubscribe: (payload) => client.post('/unsub', payload, { auth: false }),
+  publicProfile: (handle) => client.get('/public_profile', { auth: false, params: { handle } }),
+  leaderboard: () => client.get('/leaderboard', { auth: false }),
 
   // --- signed in ---
   user: () => client.get('/user'),
@@ -47,7 +49,8 @@ export const api = {
   sentences: () => client.get('/sentences'),
   saveSentence: (payload) => client.post('/sentences', payload),
   saveWriting: (payload) => client.post('/writing', payload),
-  progress: () => client.get('/progress')
+  progress: () => client.get('/progress'),
+  setPublicProfile: (isPublic) => client.post('/public_profile', { public: isPublic })
 }
 
 export default client

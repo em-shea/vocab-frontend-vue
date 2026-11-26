@@ -122,6 +122,31 @@ export const USER = {
 // --- Profile (/profile, /profile-settings) ---------------------------------
 
 // Dates as the backend keys them: UTC, counted back from today.
+// GET /leaderboard as public_profile_service.get_leaderboard returns it.
+export const LEADERBOARD = {
+  week_start: '2026-11-23',
+  today: '2026-11-25',
+  last_week_start: '2026-11-16',
+  last_week: [
+    { handle: 'ab3cd4ef', name: '小安', name_pinyin: 'xiǎo ān', joined: '2024-09', rank: 1,
+      streak: { current: 5, best: 12 }, week: { active_days: 6, actions: 11 }, badges: ['new_user', 'first_quiz'] },
+    { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 2,
+      streak: { current: 41, best: 41 }, week: { active_days: 6, actions: 8 }, badges: ['new_user', 'first_sentence'] },
+    { handle: 'zz9yy8xx', name: null, name_pinyin: null, joined: '2026-11', rank: 3,
+      streak: { current: 1, best: 1 }, week: { active_days: 2, actions: 2 }, badges: ['new_user'] }
+  ],
+  entries: [
+    { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 1,
+      streak: { current: 41, best: 41 }, week: { active_days: 3, actions: 9 },
+      badges: ['founding_tester', 'new_user', 'first_quiz', 'first_sentence', 'first_stroke_order'] },
+    { handle: 'ab3cd4ef', name: '小安', name_pinyin: 'xiǎo ān', joined: '2024-09', rank: 2,
+      streak: { current: 5, best: 12 }, week: { active_days: 3, actions: 4 },
+      badges: ['new_user', 'first_quiz'] },
+    { handle: 'zz9yy8xx', name: null, name_pinyin: null, joined: '2026-11', rank: 3,
+      streak: { current: 1, best: 1 }, week: { active_days: 1, actions: 1 }, badges: ['new_user'] }
+  ]
+}
+
 export const daysAgo = (n) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10)
 
 // What GET /user_activity returns: the user record, subscriptions, and ten
@@ -318,6 +343,22 @@ export async function mockBackend (page, options = {}) {
     if (method === 'POST' && path === '/writing') {
       if (state.saveWritingFails) return json({ success: false, message: 'Failed to save writing practice.', data: null }, 502)
       return json({ success: true, message: 'Successfully saved writing practice.', data: { date: '2026-11-20' } })
+    }
+    // Public profiles and leaderboard (vocab public_profile_service).
+    if (method === 'GET' && path === '/leaderboard') {
+      if (options.leaderboardFails) return json({ success: false, message: 'Failed to retrieve leaderboard.', data: null }, 502)
+      return json({ success: true, message: 'Successfully retrieved leaderboard.', data: options.leaderboard ?? LEADERBOARD })
+    }
+    if (method === 'GET' && path === '/public_profile') {
+      const handle = new URL(request.url()).searchParams.get('handle')
+      const entry = (options.leaderboard ?? LEADERBOARD).entries.find((e) => e.handle === handle)
+      if (!entry) return json({ success: false, message: 'Profile not found.', data: null }, 404)
+      const { rank, ...profile } = entry
+      return json({ success: true, message: 'Successfully retrieved profile.', data: profile })
+    }
+    if (method === 'POST' && path === '/public_profile') {
+      const isPublic = request.postDataJSON()?.public
+      return json({ success: true, message: 'Public profile updated.', data: { public: isPublic, handle: 'k7mq2xpa' } })
     }
     return json({ message: `No stand-in for ${method} ${path}` }, 404)
   })
