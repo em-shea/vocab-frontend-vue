@@ -416,5 +416,7 @@ export default {
   "badgeWhy_new_user": "Joined Haohaotiantian.",
   "badgeWhy_first_quiz": "Took a first quiz.",
   "badgeWhy_first_sentence": "Wrote a first sentence.",
-  "badgeWhy_first_stroke_order": "Finished a first stroke order practice."
+  "badgeWhy_first_stroke_order": "Finished a first stroke order practice.",
+  "badge_founding_tester": "Founding Tester",
+  "badgeWhy_founding_tester": "Helped test the new Haohaotiantian before launch."
 }

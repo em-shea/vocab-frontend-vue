@@ -415,5 +415,7 @@ export default {
   "badgeWhy_new_user": "加入了好好天天。",
   "badgeWhy_first_quiz": "完成了第一次测验。",
   "badgeWhy_first_sentence": "写了第一个句子。",
-  "badgeWhy_first_stroke_order": "完成了第一次笔顺练习。"
+  "badgeWhy_first_stroke_order": "完成了第一次笔顺练习。",
+  "badge_founding_tester": "首批测试者",
+  "badgeWhy_founding_tester": "在新版好好天天上线前参与了测试。"
 }

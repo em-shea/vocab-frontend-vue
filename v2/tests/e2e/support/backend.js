@@ -138,7 +138,7 @@ export const LEADERBOARD = {
   entries: [
     { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 1,
       streak: { current: 41, best: 41 }, week: { active_days: 3, actions: 9 },
-      badges: ['new_user', 'first_quiz', 'first_sentence', 'first_stroke_order'] },
+      badges: ['founding_tester', 'new_user', 'first_quiz', 'first_sentence', 'first_stroke_order'] },
     { handle: 'ab3cd4ef', name: '小安', name_pinyin: 'xiǎo ān', joined: '2024-09', rank: 2,
       streak: { current: 5, best: 12 }, week: { active_days: 3, actions: 4 },
       badges: ['new_user', 'first_quiz'] },

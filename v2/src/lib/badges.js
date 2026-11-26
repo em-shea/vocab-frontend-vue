@@ -2,13 +2,15 @@
 // the order the backend returns them. Each face is a small square crop of a
 // woodblock print (src/assets/prints/badges/README.md), a placeholder until
 // PixelLab badge art exists. Labels live in the locales as badge_<id>.
+import foundingTester from '../assets/prints/badges/founding_tester.jpg'
 import newUser from '../assets/prints/badges/new_user.jpg'
 import firstQuiz from '../assets/prints/badges/first_quiz.jpg'
 import firstSentence from '../assets/prints/badges/first_sentence.jpg'
 import firstStrokeOrder from '../assets/prints/badges/first_stroke_order.jpg'
 
-// Four badges (Emily, 2026-11-25). Why each was earned shows on hover/focus.
+// Five badges (Emily, 2026-11-25). Why each was earned shows on hover/focus.
 export const BADGE_ART = {
+  founding_tester: foundingTester,
   new_user: newUser,
   first_quiz: firstQuiz,
   first_sentence: firstSentence,
@@ -17,6 +19,7 @@ export const BADGE_ART = {
 
 // Rarest first, for showing a few badges in little room (leaderboard rows).
 export const BADGE_RARITY = [
+  'founding_tester',
   'first_stroke_order',
   'first_sentence',
   'first_quiz',
