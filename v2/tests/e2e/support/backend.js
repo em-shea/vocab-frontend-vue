@@ -126,6 +126,15 @@ export const USER = {
 export const LEADERBOARD = {
   week_start: '2026-11-23',
   today: '2026-11-25',
+  last_week_start: '2026-11-16',
+  last_week: [
+    { handle: 'ab3cd4ef', name: '小安', name_pinyin: 'xiǎo ān', joined: '2024-09', rank: 1,
+      streak: { current: 5, best: 12 }, week: { active_days: 6, actions: 11 }, badges: ['founding_tester', 'first_quiz', 'streak_7'] },
+    { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 2,
+      streak: { current: 41, best: 41 }, week: { active_days: 6, actions: 8 }, badges: ['founding_tester', 'streak_30'] },
+    { handle: 'zz9yy8xx', name: null, name_pinyin: null, joined: '2026-11', rank: 3,
+      streak: { current: 1, best: 1 }, week: { active_days: 2, actions: 2 }, badges: ['first_quiz'] }
+  ],
   entries: [
     { handle: 'k7mq2xpa', name: '林冲', name_pinyin: 'Lín Chōng', joined: '2021-02', rank: 1,
       streak: { current: 41, best: 41 }, week: { active_days: 3, actions: 9 },

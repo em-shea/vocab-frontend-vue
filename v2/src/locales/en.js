@@ -384,7 +384,7 @@ export default {
   "leaderboardWeek": "Week of {date}",
   "leaderboardLoading": "Loading leaderboard…",
   "leaderboardError": "Couldn't load the leaderboard.",
-  "leaderboardEmpty": "No one is on the leaderboard yet this week.",
+  "leaderboardEmpty": "The weekly leaderboard starts once three people are on it this week.",
   "leaderboardDaysThisWeek": "days practiced this week",
   "leaderboardStreak": "{n}-day streak",
   "leaderboardJoin": "Join the leaderboard",
@@ -410,5 +410,10 @@ export default {
   "leaderboardHow": "How the leaderboard is ranked",
   "leaderboardRule": "Ranked by days practiced this week (Monday to Sunday, UTC), then by tasks done this week. A task is a quiz, a sentence or a stroke order practice. Days in streak does not impact the weekly leaderboard.",
   "leaderboardColWeek": "This week",
-  "leaderboardWeekly": "Weekly leaderboard"
+  "leaderboardWeekly": "Weekly leaderboard",
+  "leaderboardLastTop": "Last week's top 3",
+  "leaderboardThisWeek": "This week",
+  "leaderboardColWeekLast": "Last week",
+  "leaderboardColDaysLast": "Days last week",
+  "leaderboardColActsLast": "Tasks last week"
 }

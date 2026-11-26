@@ -383,7 +383,7 @@ export default {
   "leaderboardWeek": "{date}这一周",
   "leaderboardLoading": "正在加载排行榜……",
   "leaderboardError": "无法加载排行榜。",
-  "leaderboardEmpty": "本周排行榜上还没有人。",
+  "leaderboardEmpty": "本周有三个人上榜后，每周排行榜就会出现。",
   "leaderboardDaysThisWeek": "本周练习天数",
   "leaderboardStreak": "连续 {n} 天",
   "leaderboardJoin": "加入排行榜",
@@ -409,5 +409,10 @@ export default {
   "leaderboardHow": "排行榜如何排名",
   "leaderboardRule": "按本周练习天数排名（周一到周日，UTC），天数相同时按本周完成的任务数排名。任务指一次测验、一个句子或一次笔顺练习。连续天数不影响每周排行榜。",
   "leaderboardColWeek": "本周",
-  "leaderboardWeekly": "每周排行榜"
+  "leaderboardWeekly": "每周排行榜",
+  "leaderboardLastTop": "上周前三名",
+  "leaderboardThisWeek": "本周",
+  "leaderboardColWeekLast": "上周",
+  "leaderboardColDaysLast": "上周天数",
+  "leaderboardColActsLast": "上周任务"
 }

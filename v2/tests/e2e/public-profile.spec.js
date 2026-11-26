@@ -48,7 +48,7 @@ test('leaderboard failure offers a retry', async ({ page }) => {
 test('empty leaderboard', async ({ page }) => {
   await mockBackend(page, { leaderboard: { ...LEADERBOARD, entries: [] } })
   await page.goto('/leaderboard')
-  await expect(page.getByText('No one is on the leaderboard yet this week.')).toBeVisible()
+  await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
 })
 
 test('settings switch makes the profile public and links to it', async ({ page }) => {
@@ -70,4 +70,24 @@ test('profile links to the leaderboard under the streak', async ({ page }) => {
   await page.goto('/profile')
   await page.getByRole('link', { name: 'Leaderboard' }).click()
   await expect(page).toHaveURL(/\/leaderboard$/)
+})
+
+test('fewer than three people: no board on the home page, a note on the leaderboard page', async ({ page }) => {
+  await mockBackend(page, { leaderboard: { ...LEADERBOARD, entries: LEADERBOARD.entries.slice(0, 2) } })
+  await page.goto('/')
+  await expect(page.getByRole('heading', { name: 'Pick your HSK level' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Weekly leaderboard' })).toHaveCount(0)
+  await page.goto('/leaderboard')
+  await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
+})
+
+test("Mondays show last week's top 3", async ({ page }) => {
+  await mockBackend(page, { leaderboard: { ...LEADERBOARD, today: '2026-11-23', entries: [] } })
+  await page.goto('/')
+  const card = page.locator('.home-board__card')
+  await expect(card.getByRole('heading', { name: "Last week's top 3" })).toBeVisible()
+  await expect(card.locator('.board__row:not(.board__row--head)').first()).toContainText('小安')
+  await page.goto('/leaderboard')
+  await expect(page.getByRole('heading', { name: "Last week's top 3" })).toBeVisible()
+  await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
 })

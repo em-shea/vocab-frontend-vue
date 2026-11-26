@@ -21,16 +21,21 @@ const MAX_BADGES = 5
 
 const props = defineProps({
   entries: { type: Array, required: true },
-  limit: { type: Number, default: null }
+  limit: { type: Number, default: null },
+  // 'last' labels the columns for last week (Monday's top 3) and drops the
+  // pinned and join rows, which are about this week.
+  period: { type: String, default: 'this' }
 })
 const { t } = useI18n()
 const auth = useAuthStore()
 const myHandle = computed(() => (auth.user?.public_profile && auth.user?.public_handle) || null)
-const canJoin = computed(() => Boolean(auth.signedIn && auth.user && !auth.user.public_profile))
+const last = computed(() => props.period === 'last')
+const col = (key) => (last.value ? `${key}Last` : key)
+const canJoin = computed(() => !last.value && Boolean(auth.signedIn && auth.user && !auth.user.public_profile))
 
 const shown = computed(() => (props.limit ? props.entries.slice(0, props.limit) : props.entries))
 const pinned = computed(() => {
-  if (!myHandle.value || !props.limit) return null
+  if (last.value || !myHandle.value || !props.limit) return null
   const i = props.entries.findIndex((e) => e.handle === myHandle.value)
   return i >= props.limit ? props.entries[i] : null
 })
@@ -40,9 +45,9 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
 <template>
   <ol class="board__list">
     <li class="board__row board__row--head">
-      <span class="board__h-week" aria-hidden="true">{{ t('leaderboardColWeek') }}</span>
-      <span class="board__h-days" aria-hidden="true"><span class="board__long">{{ t('leaderboardColDays') }}</span><span class="board__short">{{ t('leaderboardColDaysShort') }}</span></span>
-      <span class="board__h-acts" aria-hidden="true"><span class="board__long">{{ t('leaderboardColActs') }}</span><span class="board__short">{{ t('leaderboardColActsShort') }}</span></span>
+      <span class="board__h-week" aria-hidden="true">{{ t(col('leaderboardColWeek')) }}</span>
+      <span class="board__h-days" aria-hidden="true"><span class="board__long">{{ t(col('leaderboardColDays')) }}</span><span class="board__short">{{ t('leaderboardColDaysShort') }}</span></span>
+      <span class="board__h-acts" aria-hidden="true"><span class="board__long">{{ t(col('leaderboardColActs')) }}</span><span class="board__short">{{ t('leaderboardColActsShort') }}</span></span>
       <span class="board__h-streak" aria-hidden="true"><span class="board__long">{{ t('leaderboardColStreak') }}</span><span class="board__short">{{ t('leaderboardColStreakShort') }}</span></span>
     </li>
     <template v-for="entry in (pinned ? [...shown, null, pinned] : shown)" :key="entry?.handle ?? 'gap'">
@@ -59,8 +64,8 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
         <span class="board__badges">
           <BadgeSeal v-for="id in rarestBadges(entry.badges, MAX_BADGES)" :id="id" :key="id" small />
         </span>
-        <span class="board__n board__days"><span class="sr-only">{{ t('leaderboardColDays') }}: </span>{{ entry.week.active_days }}</span>
-        <span class="board__n board__acts"><span class="sr-only">{{ t('leaderboardColActs') }}: </span>{{ entry.week.actions }}</span>
+        <span class="board__n board__days"><span class="sr-only">{{ t(col('leaderboardColDays')) }}: </span>{{ entry.week.active_days }}</span>
+        <span class="board__n board__acts"><span class="sr-only">{{ t(col('leaderboardColActs')) }}: </span>{{ entry.week.actions }}</span>
         <span class="board__n board__streak"><span class="sr-only">{{ t('leaderboardColStreak') }}: </span>{{ entry.streak.current }}</span>
       </li>
     </template>

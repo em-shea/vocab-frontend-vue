@@ -8,6 +8,7 @@ import AppButton from '../components/AppButton.vue'
 import LeaderboardList from '../components/LeaderboardList.vue'
 import RankingTip from '../components/RankingTip.vue'
 import { api } from '../api/client'
+import { showThisWeek, showLastWeek } from '../lib/leaderboard'
 import { getSession } from '../api/session'
 
 // This week's leaderboard (vocab GET /leaderboard): public profiles only,
@@ -50,11 +51,17 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
         <p>{{ t('leaderboardError') }}</p>
         <AppButton variant="seal" @click="load">{{ t('profileRetry') }}</AppButton>
       </div>
-      <p v-else-if="!board.entries.length" class="board__state">{{ t('leaderboardEmpty') }}</p>
+      <template v-else>
+        <template v-if="showLastWeek(board)">
+          <h2 class="board__sub">{{ t('leaderboardLastTop') }}</h2>
+          <LeaderboardList :entries="board.last_week" period="last" />
+          <h2 class="board__sub">{{ t('leaderboardThisWeek') }}</h2>
+        </template>
+        <LeaderboardList v-if="showThisWeek(board)" :entries="board.entries" />
+        <p v-else class="board__state">{{ t('leaderboardEmpty') }}</p>
+      </template>
 
-      <LeaderboardList v-else :entries="board.entries" />
-
-      <div v-if="status === 'ready' && board.entries.length" class="board__foot">
+      <div v-if="status === 'ready' && (showThisWeek(board) || showLastWeek(board))" class="board__foot">
         <RouterLink v-if="!signedIn" :to="{ name: 'home' }">{{ t('leaderboardSubscribe') }}</RouterLink>
         <span v-else>{{ t('leaderboardHow') }}</span>
         <RankingTip />
@@ -73,5 +80,6 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
 .board__state { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); margin: 0; color: var(--c-body); }
 
 .board__join { align-self: flex-start; }
+.board__sub { margin: var(--s-2) 0 0; font-size: var(--t-lead); }
 .board__foot { position: relative; display: flex; align-items: center; gap: var(--s-2); color: var(--c-muted); font-size: var(--t-base); }
 </style>
