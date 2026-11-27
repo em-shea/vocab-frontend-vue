@@ -38,6 +38,7 @@ const SCREENS = [
   { name: 'subscribed', path: '/subscribed' },
   { name: 'credits', path: '/credits' },
   { name: 'leaderboard', path: '/leaderboard' },
+  { name: 'early testers', path: '/testers' },
   { name: 'public profile', path: '/u/k7mq2xpa' },
   { name: 'handwriting practice', path: '/write', before: async (page) => (await import('./support/backend')).signedIn(page) }
 ]
@@ -57,7 +58,7 @@ for (const screen of SCREENS) {
       // vue-i18n renders the key itself when a translation is missing. Keys are
       // camelCase with no spaces; real copy in either language is not.
       const text = await page.locator('body').innerText()
-      expect(text.match(/\b(signIn|verify|review|quiz|profile|lists|unsub|subscribed|sentences|write|credits|public|leaderboard|badge|nav|quest|story|faq)[A-Z]\w+\b/g) ?? []).toEqual([])
+      expect(text.match(/\b(signIn|verify|review|quiz|profile|lists|unsub|subscribed|sentences|write|credits|public|leaderboard|badge|testers|nav|quest|story|faq)[A-Z]\w+\b/g) ?? []).toEqual([])
 
       expect(await overflowsSideways(page), 'page scrolls sideways').toBe(false)
       expect(problems).toEqual([])

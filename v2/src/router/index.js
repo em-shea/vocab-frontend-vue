@@ -115,6 +115,12 @@ export const routes = [
     component: () => import('../views/PublicProfileView.vue')
   },
   {
+    // Join the early testers (vocab POST /testers). Open to read signed out.
+    path: '/testers',
+    name: 'testers',
+    component: () => import('../views/TestersView.vue')
+  },
+  {
     // This week's ranking of public profiles. No sign-in.
     path: '/leaderboard',
     name: 'leaderboard',

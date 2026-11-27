@@ -356,6 +356,10 @@ export async function mockBackend (page, options = {}) {
       const { rank, ...profile } = entry
       return json({ success: true, message: 'Successfully retrieved profile.', data: profile })
     }
+    if (method === 'POST' && path === '/testers') {
+      if (options.testersFails) return json({ success: false, message: 'Failed to join.', data: null }, 502)
+      return json({ success: true, message: 'Joined the early testers.', data: { tester: true, since: '2026-11-27T00:00:00', closes: '2026-12-31' } })
+    }
     if (method === 'POST' && path === '/public_profile') {
       const isPublic = request.postDataJSON()?.public
       return json({ success: true, message: 'Public profile updated.', data: { public: isPublic, handle: 'k7mq2xpa' } })
