@@ -43,6 +43,11 @@ export const routes = [
     component: () => import('../views/ProfileView.vue')
   },
   {
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('../views/FeedbackView.vue')
+  },
+  {
     path: '/profile-settings',
     name: 'profile-settings',
     component: () => import('../views/ProfileSettingsView.vue')

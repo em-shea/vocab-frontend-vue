@@ -360,6 +360,11 @@ export async function mockBackend (page, options = {}) {
       const isPublic = request.postDataJSON()?.public
       return json({ success: true, message: 'Public profile updated.', data: { public: isPublic, handle: 'k7mq2xpa' } })
     }
+    // Feedback (vocab submit_feedback): emailed to nihao@, nothing stored.
+    if (method === 'POST' && path === '/feedback') {
+      if (options.feedbackFails) return json({ success: false, message: 'Failed to send feedback.', data: null }, 502)
+      return json({ success: true, message: 'Feedback sent.', data: null })
+    }
     return json({ message: `No stand-in for ${method} ${path}` }, 404)
   })
 
