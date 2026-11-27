@@ -126,7 +126,6 @@ export default {
   "heroNickname": "花和尚",
   "heroNicknameGloss": "绰号",
   "closingSubscribeHeadline": "订阅，接收今日一词",
-  "footerAi": "本网站使用了人工智能。如发现错误，请发邮件至",
   "closeHeadlineA": "完成任务",
   "closeHeadlineB": "一百单八将聚义梁山",
   "closeBody": "完成任务，一百单八将就在梁山聚齐。",
