@@ -36,7 +36,7 @@ export default {
   "profileListsHowOlder": " Words last sent before {date} count on quizzes alone.",
   "footerFeedback": "Got feedback?",
   "feedbackTitle": "Got feedback?",
-  "feedbackIntro": "Tell us what's working, what's confusing, or what you'd like to see next. We'll reply by email.",
+  "feedbackIntro": "Help us keep improving Haohaotiantian.",
   "feedbackLabel": "Your feedback",
   "feedbackSend": "Send",
   "feedbackSending": "Sending…",

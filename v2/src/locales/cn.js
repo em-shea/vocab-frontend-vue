@@ -35,7 +35,7 @@ export default {
   "profileListsHowOlder": "{date}之前最后一次收到的词语只看测验成绩。",
   "footerFeedback": "有反馈吗？",
   "feedbackTitle": "有反馈吗？",
-  "feedbackIntro": "告诉我们哪些好用、哪些让你困惑，或者你希望接下来有什么新功能。我们会通过邮件回复你。",
+  "feedbackIntro": "帮助我们不断改进好好天天。",
   "feedbackLabel": "你的反馈",
   "feedbackSend": "发送",
   "feedbackSending": "发送中…",

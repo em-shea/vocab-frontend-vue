@@ -51,9 +51,9 @@ async function send () {
 
       <form v-else class="feedback__form" @submit.prevent="send">
         <p class="feedback__intro">{{ t('feedbackIntro') }}</p>
-        <label class="label" for="feedback-message">{{ t('feedbackLabel') }}</label>
         <textarea
           id="feedback-message"
+          :aria-label="t('feedbackLabel')"
           v-model="message"
           class="feedback__text"
           rows="7"
