@@ -72,6 +72,21 @@ test.describe('profile', () => {
     expect(backend.unexpected).toEqual([])
   })
 
+  test('the daily notification link, /profile#today, opens at today\'s words', async ({ page }) => {
+    // A phone, so the name card and streak push today's words below the fold.
+    await page.setViewportSize({ width: 390, height: 600 })
+    await signedIn(page)
+    await mockBackend(page, { userActivity: userActivity(), quizzes: [] })
+    await page.goto('/profile#today')
+
+    await expect(page.getByRole('heading', { name: /^Today's words?$/ })).toBeVisible()
+    // Scrolled so the section sits just under the sticky nav, not at the page top.
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+    const top = await page.locator('#today').evaluate((el) => el.getBoundingClientRect().top)
+    expect(top).toBeGreaterThanOrEqual(0)
+    expect(top).toBeLessThan(150)
+  })
+
   test('a quiz taken today ticks off its word and counts towards the total', async ({ page }) => {
     await signedIn(page)
     await mockBackend(page, { userActivity: userActivity(), quizzes: [profileQuiz('q-today', daysAgo(0), 8, 10)] })

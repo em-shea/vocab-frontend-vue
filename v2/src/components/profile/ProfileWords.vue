@@ -22,7 +22,8 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
 </script>
 
 <template>
-  <section class="words" aria-labelledby="profile-words">
+  <!-- id="today": the daily notification opens /profile#today, here. -->
+  <section id="today" class="words" aria-labelledby="profile-words">
     <SectionHead>
       <span id="profile-words">{{ t('profileWordsTitle', Math.max(progress.length, 1)) }}</span>
     </SectionHead>
@@ -68,7 +69,11 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
 </template>
 
 <style scoped>
-.words { display: flex; flex-direction: column; gap: var(--s-4); }
+.words {
+  display: flex; flex-direction: column; gap: var(--s-4);
+  /* Clear of the sticky site nav when scrolled to. */
+  scroll-margin-top: var(--s-24);
+}
 
 .words__empty { color: var(--c-body); }
 

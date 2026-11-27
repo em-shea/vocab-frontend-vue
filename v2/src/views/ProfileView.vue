@@ -1,6 +1,6 @@
 <script setup>
 import { useListLabel } from '../lib/listLabel'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { signInRoute } from '../lib/signInReturn'
 import { useI18n } from 'vue-i18n'
@@ -100,7 +100,17 @@ onMounted(async () => {
   lists.load()
   loadProgress()
   await Promise.all([load(), loadQuizzes()])
+  scrollToHash()
 })
+
+// The router scrolls to a #hash on arrival, before the page has loaded, so
+// there is nothing to scroll to yet. Once it has, go there: the daily
+// notification opens /profile#today, today's words (Emily, 2026-11-27).
+async function scrollToHash () {
+  if (!route.hash || status.value !== 'ready') return
+  await nextTick()
+  document.querySelector(route.hash)?.scrollIntoView({ block: 'start' })
+}
 
 function signOut () {
   auth.signOut()
