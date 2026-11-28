@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 import SiteNav from '../components/SiteNav.vue'
-import ScrollRods from '../components/ScrollRods.vue'
 import HomeHero from '../components/home/HomeHero.vue'
 import HomeLeaderboard from '../components/home/HomeLeaderboard.vue'
 import ChooseStudy from '../components/home/ChooseStudy.vue'
@@ -34,7 +33,6 @@ const heroes = computed(() => {
 
 <template>
   <div class="page">
-    <ScrollRods position="top" />
 
     <div class="page__inner">
       <SiteNav />
@@ -50,12 +48,11 @@ const heroes = computed(() => {
       <SiteFooter />
     </div>
 
-    <ScrollRods position="bottom" />
   </div>
 </template>
 
 <style scoped>
-.page { display: flex; flex-direction: column; gap: var(--s-6); min-height: 100vh; padding: var(--s-4) 0; }
+.page { display: flex; flex-direction: column; gap: var(--s-6); min-height: 100vh; padding: 0 0 var(--s-6); }
 
 .page__inner {
   display: flex;
