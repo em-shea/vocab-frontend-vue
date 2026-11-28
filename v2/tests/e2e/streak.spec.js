@@ -13,7 +13,9 @@ test('shows the streak, the last 7 days and spare days', async ({ page }) => {
   await expect(card).toBeVisible()
   const days = card.getByRole('list', { name: 'The last 7 days' }).getByRole('listitem')
   await expect(days).toHaveCount(7)
-  await expect(days.nth(3)).toContainText('covered by a buffer day')
+  // A day covered by a buffer day reads as practiced, with the same check.
+  await expect(days.nth(3)).toContainText('practiced')
+  await expect(card.locator('.streak__mark--saved')).toHaveCount(0)
   await expect(days.nth(6)).toContainText('not done yet')
   await expect(card.getByLabel('2 of 3 buffer days saved')).toBeVisible()
   await expect(card.getByText('Best: 12 days')).toBeVisible()

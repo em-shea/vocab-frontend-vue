@@ -9,7 +9,7 @@ import AppButton from '../components/AppButton.vue'
 import LeaderboardList from '../components/LeaderboardList.vue'
 import RankingTip from '../components/RankingTip.vue'
 import { api } from '../api/client'
-import { showThisWeek, showLastWeek } from '../lib/leaderboard'
+import { showThisWeek as atLeast, showLastWeek as lastAtLeast, MIN_ON_PAGE } from '../lib/leaderboard'
 import { getSession } from '../api/session'
 
 // This week's leaderboard (vocab GET /leaderboard): public profiles only,
@@ -17,6 +17,8 @@ import { getSession } from '../api/session'
 const { t, locale } = useI18n()
 
 const board = ref(null)
+const showThisWeek = (b) => atLeast(b, MIN_ON_PAGE)
+const showLastWeek = (b) => lastAtLeast(b, MIN_ON_PAGE)
 const status = ref('loading') // loading | ready | error
 const signedIn = ref(false)
 

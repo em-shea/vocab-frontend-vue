@@ -14,7 +14,9 @@ const weekday = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN'
 const fullDate = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'UTC' })
   .format(new Date(`${iso}T00:00:00Z`))
 
-const days = computed(() => props.streak.recent ?? [])
+// A day covered by a buffer day looks the same as a practiced day (Emily,
+// 2026-11-27): a check, with no separate mark.
+const days = computed(() => (props.streak.recent ?? []).map((d) => (d.status === 'saved' ? { ...d, status: 'done' } : d)))
 const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }, (_, i) => i < (props.streak.buffer ?? 0)))
 </script>
 
@@ -96,8 +98,6 @@ const spare = computed(() => Array.from({ length: props.streak.buffer_max ?? 3 }
 }
 .streak__mark svg { width: 70%; height: 70%; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: square; }
 .streak__mark--done { background-color: var(--c-seal); color: var(--c-on-red); }
-.streak__mark--saved { background-color: var(--c-ink); color: var(--c-panel); }
-.streak__mark--saved svg { fill: currentColor; stroke: none; }
 .streak__mark--missed { background-color: transparent; border-style: dotted; opacity: 0.55; }
 .streak__mark--open { background-color: transparent; border-style: dashed; }
 .streak__weekday { font-size: var(--t-sm); }
