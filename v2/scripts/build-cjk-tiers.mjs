@@ -14,7 +14,7 @@
  * actually on the page, and HSK level is already a frequency ordering: a
  * subscriber to HSK 1 only ever sees HSK 1 words.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -83,6 +83,16 @@ try {
   if (err.code !== 'ENOENT') throw err
 }
 
+// Example sentences (src/data/examples/*.json, both sets): mostly HSK
+// characters already; the few others get their own chunk.
+const EXAMPLES = join(HERE, '..', 'src', 'data', 'examples')
+try {
+  const text = readdirSync(EXAMPLES).filter((f) => f.endsWith('.json'))
+    .map((f) => Object.values(JSON.parse(readFileSync(join(EXAMPLES, f), 'utf8'))).flat().map((row) => row[0]).join('')).join('')
+  addTier('examples', [...text].filter(isHan))
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err
+}
 
 const total = tiers.reduce((n, t) => n + [...t.chars].length, 0)
 writeFileSync(OUT, JSON.stringify({ generated: new Date().toISOString().slice(0, 10), tiers }, null, 2))

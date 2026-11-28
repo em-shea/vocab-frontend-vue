@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import SectionHead from '../SectionHead.vue'
+import ExampleSentences from '../ExampleSentences.vue'
 import WordCard from '../WordCard.vue'
 import TaskBox from '../TaskBox.vue'
 import AppButton from '../AppButton.vue'
@@ -36,6 +37,7 @@ const quizRoute = (entry) => ({ name: 'quiz', query: { list_id: entry.list_id, d
     <ul v-else class="words__grid">
       <li v-for="{ entry, quiz, sentence, written } in progress" :key="entry.list_id">
         <WordCard :word="entry.word" :level="listName(entry.list_id)" :character-set="setFor(entry.list_id)">
+          <ExampleSentences class="words__examples" :word="entry.word" :character-set="setFor(entry.list_id)" />
           <!-- Each task: its name on the left in plain text; on the right a
                button until it is done, then a ticked box (Emily, 2026-11-22). -->
           <div class="words__links words__links--first">

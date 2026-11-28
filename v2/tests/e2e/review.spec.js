@@ -66,11 +66,14 @@ test('the old /history address still lands here, parameters intact', async ({ pa
   await expect(page.getByRole('article')).toContainText('帮助')
 })
 
-test('each word links to example sentences', async ({ page }) => {
+test('each word opens its own example sentences in place', async ({ page }) => {
   await mockBackend(page)
   await page.goto('/review')
-  const link = page.getByRole('article').first().getByRole('link', { name: 'Example sentences' })
-  await expect(link).toHaveAttribute('href', /yellowbridge\.com.*word=%E7%88%B1%E6%8A%A4/)
+  const card = page.getByRole('article').first()
+  await card.getByRole('button', { name: 'Example sentences' }).click()
+  await expect(card.locator('.examples__item')).toHaveCount(3)
+  await expect(card.locator('.examples__zh').first()).toContainText('爱护')
+  await expect(card.getByRole('link', { name: 'Example sentences' })).toHaveCount(0)
 })
 
 test('export downloads the words on screen as a file Excel can read', async ({ page }) => {
