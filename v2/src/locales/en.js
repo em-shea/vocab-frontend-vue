@@ -218,6 +218,8 @@ export default {
   "heroCardClose": "Close",
   "quizTitle": "{list} quiz",
   "quizChange": "Change quiz",
+  "quizSummary": "Words from the past {days} days · {n} questions",
+  "quizProfile": "Your profile",
   "quizList": "Vocab list",
   "quizRange": "Words sent in",
   "quizRangeDays": "Past {days} days",

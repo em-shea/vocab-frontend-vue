@@ -159,6 +159,8 @@ const reviewLink = computed(() => ({ name: 'review', query: { list_id: listId.va
     <div class="quiz">
       <div class="quiz__intro">
         <h1 class="quiz__title">{{ listName ? t('quizTitle', { list: listName }) : t('navQuiz') }}</h1>
+        <!-- The current settings under the heading (Emily, 2026-11-28). -->
+        <p class="quiz__summary">{{ t('quizSummary', { days: range, n: length }) }}</p>
         <AppButton
           v-if="!settingsOpen"
           class="quiz__change"
@@ -231,6 +233,7 @@ const reviewLink = computed(() => ({ name: 'review', query: { list_id: listId.va
 
 .quiz__intro { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); }
 .quiz__title { font-size: var(--t-xl); }
+.quiz__summary { margin: 0; color: var(--c-muted); font-size: var(--t-base); }
 .quiz__change { margin-top: var(--s-2); }
 
 .quiz__state {
