@@ -3,6 +3,8 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HanziWriter from 'hanzi-writer'
 import { strokeDataUrl } from '../../lib/writing'
+import { useRoute } from 'vue-router'
+import { repointClips } from '../../lib/hanziClips'
 
 // One character to write in a 田字格 grid with Hanzi Writer: the reader draws
 // each stroke with a finger or mouse; a wrong stroke is not accepted, and after
@@ -18,6 +20,10 @@ const { t } = useI18n()
 
 const target = ref(null)
 const state = ref('loading') // loading | writing | watching | done | error
+
+// Keep stroke clips working when the page address changes (lib/hanziClips.js).
+const route = useRoute()
+watch(() => route.fullPath, () => repointClips(target.value), { flush: 'post' })
 let writer = null
 
 const css = (name, fallback) =>

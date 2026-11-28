@@ -1,5 +1,7 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import { repointClips } from '../lib/hanziClips'
 import HanziWriter from 'hanzi-writer'
 import hao from '../data/strokes/hao.json'
 
@@ -13,6 +15,10 @@ defineProps({ label: { type: String, required: true } })
 const SIZE = 80
 const target = ref(null)
 let writer = null
+
+// Keep stroke clips working when the page address changes (lib/hanziClips.js).
+const route = useRoute()
+watch(() => route.fullPath, () => repointClips(target.value), { flush: 'post' })
 
 onMounted(() => {
   const css = (name, fallback) => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback
