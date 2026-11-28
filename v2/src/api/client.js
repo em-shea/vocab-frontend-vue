@@ -50,7 +50,8 @@ export const api = {
   saveSentence: (payload) => client.post('/sentences', payload),
   saveWriting: (payload) => client.post('/writing', payload),
   progress: () => client.get('/progress'),
-  setPublicProfile: (isPublic) => client.post('/public_profile', { public: isPublic })
+  setPublicProfile: (isPublic) => client.post('/public_profile', { public: isPublic }),
+  sendFeedback: (message, page) => client.post('/feedback', { message, page })
 }
 
 export default client
