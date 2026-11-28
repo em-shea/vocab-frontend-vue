@@ -1,9 +1,9 @@
 <script setup>
-import ScrollRods from './ScrollRods.vue'
 import SiteNav from './SiteNav.vue'
 import SiteFooter from './SiteFooter.vue'
 
-// The frame every ported screen sits in: scroll rods top and bottom, the nav,
+// The frame every ported screen sits in: the nav (no scroll rods since
+// 2026-11-27),
 // then the screen's own content. Home predates this and lays out its own page
 // because its sections need the widest gap; the smaller screens share this one
 // so they cannot drift apart.
@@ -15,7 +15,6 @@ defineProps({
 
 <template>
   <div class="shell">
-    <ScrollRods position="top" />
     <div class="shell__inner">
       <SiteNav />
       <main class="shell__main" :class="`shell__main--${width}`">
@@ -23,12 +22,11 @@ defineProps({
       </main>
       <SiteFooter class="shell__footer" />
     </div>
-    <ScrollRods position="bottom" />
   </div>
 </template>
 
 <style scoped>
-.shell { display: flex; flex-direction: column; gap: var(--s-6); min-height: 100vh; padding: var(--s-4) 0; }
+.shell { display: flex; flex-direction: column; gap: var(--s-6); min-height: 100vh; padding: 0 0 var(--s-6); }
 
 .shell__inner {
   display: flex;
