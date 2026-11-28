@@ -217,6 +217,8 @@ export default {
   "heroCardClose": "关闭",
   "quizTitle": "{list} 测验",
   "quizChange": "更改测验",
+  "quizSummary": "最近{days}天的词 · {n}道题",
+  "quizProfile": "我的主页",
   "quizList": "词表",
   "quizRange": "发送时间",
   "quizRangeDays": "过去 {days} 天",

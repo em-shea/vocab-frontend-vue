@@ -31,11 +31,13 @@ const route = useRoute()
       <RouterLink v-else :to="signInRoute(route.fullPath)">{{ t('quizSignIn') }}</RouterLink>
     </p>
 
+    <!-- Another quiz and the profile side by side, review below (Emily, 2026-11-28). -->
     <div class="results__actions">
       <AppButton variant="primary" @click="emit('again')">{{ t('quizAgain') }}</AppButton>
+      <AppButton as="RouterLink" variant="quiet" :to="{ name: 'profile' }">{{ t('quizProfile') }}</AppButton>
       <AppButton v-if="save === 'failed'" variant="quiet" @click="emit('retry-save')">{{ t('quizSaveRetry') }}</AppButton>
-      <RouterLink class="results__review" :to="reviewLink">{{ t('quizReviewWords') }}</RouterLink>
     </div>
+    <RouterLink class="results__review" :to="reviewLink">{{ t('quizReviewWords') }}</RouterLink>
   </section>
 </template>
 
@@ -52,6 +54,13 @@ const route = useRoute()
 .results__title { font-size: var(--t-xl); outline: none; }
 .results__score { font-size: var(--t-lead); color: var(--c-ink); }
 .results__save { color: var(--c-body); }
-.results__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
+.results__actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: var(--s-3);
+  max-width: 24rem;
+}
+.results__actions > * { justify-content: center; padding-inline: var(--s-3); }
+.results__review { align-self: flex-start; }
 .results__review { font-size: var(--t-base); }
 </style>

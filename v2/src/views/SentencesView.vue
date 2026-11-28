@@ -12,7 +12,8 @@ import SentenceList from '../components/sentences/SentenceList.vue'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { usePreferencesStore } from '../stores/preferences'
-import { isTraditionalFor } from '../lib/listSets'
+import { isTraditionalFor, withSetMarks } from '../lib/listSets'
+import { useListLabel } from '../lib/listLabel'
 import {
   recentDays, wordsBySentenceId, activityFrom, sentencesFrom, newestFirst, upsert,
   clean, newSentenceId, savePayload, todayKey
@@ -47,6 +48,10 @@ const ids = {}
 // Each word follows its list's character set (lib/listSets.js), and its
 // sentence is saved under that set.
 const traditionalFor = (entry) => isTraditionalFor(subscriptions.value, entry.list_id, prefs.isTraditional)
+
+const listLabel = useListLabel()
+const listNameFor = (entry) => withSetMarks(subscriptions.value, entry.list_id,
+  listLabel(subscriptions.value.find((s) => s.list_id === entry.list_id)?.list_name ?? entry.list_name ?? ''))
 
 const keyOf = (entry) => `${entry.date_sent}|${entry.list_id}|${entry.word.word_id ?? entry.word.simplified}`
 const heading = ref(null)
@@ -161,6 +166,7 @@ const dayLabel = (date) => {
             <SentenceWrite
               :entry="entry"
               :character-set="traditionalFor(entry) ? 'traditional' : 'simplified'"
+              :list-name="listNameFor(entry)"
               :saved="saved[keyOf(entry)].text"
               :status="saving[keyOf(entry)]"
               @save="(text) => save(entry, text)"

@@ -16,7 +16,9 @@ const props = defineProps({
   saved: { type: String, default: '' },
   status: { type: String, default: 'idle' }, // idle | saving | saved | failed | empty
   // The word's list's character set (lib/listSets.js); the globe menu when not given.
-  characterSet: { type: String, default: '' }
+  characterSet: { type: String, default: '' },
+  // Which list the word is from, shown at the top of the card (Emily, 2026-11-28).
+  listName: { type: String, default: '' }
 })
 const emit = defineEmits(['save', 'edit'])
 const { t } = useI18n()
@@ -50,6 +52,7 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
 
 <template>
   <article class="write">
+    <p v-if="listName" class="label write__list">{{ listName }}</p>
     <div class="write__word">
       <p class="hanzi write__characters" :lang="isTraditional ? 'zh-Hant' : 'zh-Hans'">{{ characters }}</p>
       <p class="pinyin write__pinyin">{{ word.pinyin }}</p>
@@ -103,6 +106,7 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
   border: var(--bw-heavy) solid var(--c-ink);
   box-shadow: var(--shadow-hard);
 }
+.write__list { margin: 0; }
 
 .write__word {
   display: flex;

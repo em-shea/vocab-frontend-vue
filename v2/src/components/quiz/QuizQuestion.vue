@@ -131,7 +131,8 @@ defineExpose({ focusPrompt: () => prompt.value?.focus() })
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--s-3);
-  margin: 0;
+  /* More room between the question and its answers (Emily, 2026-11-28). */
+  margin: var(--s-6) 0 0;
   padding: 0;
   list-style: none;
 }
