@@ -127,7 +127,6 @@ export default {
   "heroNickname": "花和尚",
   "heroNicknameGloss": "the Flowery Monk",
   "closingSubscribeHeadline": "Subscribe to receive today's word",
-  "footerAi": "This website uses AI. Please report any mistakes to",
   "closeHeadlineA": "Complete quests",
   "closeHeadlineB": "Unite all 108",
   "closeBody": "Finish the quests and the whole band gathers on Mount Liang.",

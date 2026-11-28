@@ -78,7 +78,7 @@ for (const version of VERSIONS) {
 
     const footer = page.locator('footer.site-footer')
     await expect(footer).toHaveCount(1)
-    await expect(footer).toContainText('nihao@haohaotiantian.com')
+    await expect(footer).not.toContainText('AI')
     await footer.getByRole('link', { name: 'Credits' }).click()
     await expect(page).toHaveURL(/\/credits$/)
     await expect(page.getByRole('heading', { name: 'Woodblock prints' })).toBeVisible()
