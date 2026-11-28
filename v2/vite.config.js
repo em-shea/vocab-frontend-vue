@@ -30,7 +30,8 @@ const pwa = VitePWA({
     scope: '/',
     display: 'standalone',
     background_color: '#FAF5EA',
-    theme_color: '#1B2140',
+    // Cream, so the phone's status and navigation bars match the page (Emily, 2026-11-27).
+    theme_color: '#FAF5EA',
     icons: [
       { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
       { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },

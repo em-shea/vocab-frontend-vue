@@ -7,7 +7,7 @@ test('has a manifest an app can be installed from', async ({ page, request }) =>
   await page.goto('/')
   const href = await page.locator('link[rel="manifest"]').getAttribute('href')
   const manifest = await (await request.get(href)).json()
-  expect(manifest).toMatchObject({ name: 'Haohaotiantian', display: 'standalone', start_url: '/', theme_color: '#1B2140' })
+  expect(manifest).toMatchObject({ name: 'Haohaotiantian', display: 'standalone', start_url: '/', theme_color: '#FAF5EA' })
   const sizes = manifest.icons.map((i) => i.sizes)
   expect(sizes).toEqual(expect.arrayContaining(['192x192', '512x512']))
   expect(manifest.icons.some((i) => i.purpose === 'maskable')).toBe(true)
