@@ -75,7 +75,7 @@ const current = (tab) => tab.match.includes(route.name)
     min-height: var(--tabbar-h);
     padding: var(--s-2) var(--s-1);
     font-family: var(--f-label);
-    font-size: 0.6875rem;
+    font-size: var(--t-xs);
     font-weight: var(--w-medium);
     color: var(--c-body);
     text-decoration: none;

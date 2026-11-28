@@ -14,7 +14,9 @@ const props = defineProps({
   entry: { type: Object, required: true },
   // The sentence already saved for this word today, if any.
   saved: { type: String, default: '' },
-  status: { type: String, default: 'idle' } // idle | saving | saved | failed | empty
+  status: { type: String, default: 'idle' }, // idle | saving | saved | failed | empty
+  // The word's list's character set (lib/listSets.js); the globe menu when not given.
+  characterSet: { type: String, default: '' }
 })
 const emit = defineEmits(['save', 'edit'])
 const { t } = useI18n()
@@ -26,8 +28,9 @@ const id = computed(() => `sentence-${props.entry.list_id}-${props.entry.word.wo
 const word = computed(() => props.entry.word)
 const definitionOf = useDefinition()
 // Traditional is not always recorded; fall back rather than render nothing.
+const isTraditional = computed(() => props.characterSet ? props.characterSet === 'traditional' : prefs.isTraditional)
 const characters = computed(() =>
-  (prefs.isTraditional ? word.value.traditional : word.value.simplified) || word.value.simplified
+  (isTraditional.value ? word.value.traditional : word.value.simplified) || word.value.simplified
 )
 
 // Ideas for a sentence, from the same sites the daily email links to.
@@ -48,7 +51,7 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
 <template>
   <article class="write">
     <div class="write__word">
-      <p class="hanzi write__characters" :lang="prefs.isTraditional ? 'zh-Hant' : 'zh-Hans'">{{ characters }}</p>
+      <p class="hanzi write__characters" :lang="isTraditional ? 'zh-Hant' : 'zh-Hans'">{{ characters }}</p>
       <p class="pinyin write__pinyin">{{ word.pinyin }}</p>
       <AudioButton :src="word.audio_file_key" :label="characters" />
     </div>

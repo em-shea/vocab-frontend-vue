@@ -36,7 +36,8 @@ function longDate (iso) {
   return Number.isNaN(date.getTime()) ? iso : dateFormat.value.format(date)
 }
 
-const wordText = (word) => (prefs.isTraditional ? word.traditional : word.simplified) || word.simplified
+// The word in the set its sentence was saved in; the globe menu for older ones.
+const wordText = (word, set) => ((set ? set === 'traditional' : prefs.isTraditional) ? word.traditional : word.simplified) || word.simplified
 </script>
 
 <template>
@@ -50,7 +51,7 @@ const wordText = (word) => (prefs.isTraditional ? word.traditional : word.simpli
           <time class="mono" :datetime="item.date_created">{{ longDate(item.date_created) }}</time>
           <template v-if="words[item.sentence_id]">
             <span aria-hidden="true">·</span>
-            <span class="hanzi">{{ wordText(words[item.sentence_id]) }}</span>
+            <span class="hanzi">{{ wordText(words[item.sentence_id], item.character_set) }}</span>
             <span class="pinyin">{{ words[item.sentence_id].pinyin }}</span>
           </template>
         </p>

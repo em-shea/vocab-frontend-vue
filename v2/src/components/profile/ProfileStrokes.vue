@@ -5,6 +5,7 @@ import DoneCount from './DoneCount.vue'
 import AppButton from '../AppButton.vue'
 import TaskBox from '../TaskBox.vue'
 import { usePreferencesStore } from '../../stores/preferences'
+import { isTraditionalFor, wordCharacters } from '../../lib/listSets'
 import { recentDays } from '../../lib/sentences'
 
 // Stroke order at a glance (Emily, 2026-11-23), laid out like the Quizzes and
@@ -18,7 +19,9 @@ import { recentDays } from '../../lib/sentences'
 const props = defineProps({
   progress: { type: Array, default: () => [] }, // lib/profile wordProgress
   count: { type: Object, default: () => ({ done: 0, total: 0 }) }, // { done, total } over today's words
-  activity: { type: Object, default: () => ({}) } // for past practice
+  activity: { type: Object, default: () => ({}) }, // for past practice
+  // Each word follows its list's character set (lib/listSets.js).
+  subscriptions: { type: Array, default: () => [] }
 })
 const { t, locale } = useI18n()
 const prefs = usePreferencesStore()
@@ -32,7 +35,8 @@ const shortDate = (date) => {
   return new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
     .format(new Date(Date.UTC(y, m - 1, d)))
 }
-const characters = (word) => (prefs.isTraditional ? word.traditional : word.simplified) || word.simplified
+const traditional = (entry) => isTraditionalFor(props.subscriptions, entry.list_id, prefs.isTraditional)
+const characters = (entry) => wordCharacters(entry.word, traditional(entry))
 </script>
 
 <template>
@@ -45,10 +49,10 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
 
       <ul v-else class="strokes__list">
         <li v-for="{ entry, written } in progress" :key="entry.list_id">
-          <span class="hanzi strokes__word" :lang="prefs.isTraditional ? 'zh-Hant' : 'zh-Hans'">{{ characters(entry.word) }}</span>
+          <span class="hanzi strokes__word" :lang="traditional(entry) ? 'zh-Hant' : 'zh-Hans'">{{ characters(entry) }}</span>
           <TaskBox v-if="written" done />
           <AppButton v-else as="RouterLink" variant="primary" shape="sm" :to="{ name: 'write' }"
-            :aria-label="t('profileWritingStartFor', { word: characters(entry.word) })">
+            :aria-label="t('profileWritingStartFor', { word: characters(entry) })">
             {{ t('profileWritingStart') }}
           </AppButton>
         </li>
@@ -61,7 +65,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
         <tbody>
           <tr v-for="row in past" :key="`${row.date}|${row.entry.list_id}|${row.entry.word.word_id ?? row.entry.word.simplified}`">
             <td class="mono past__date">{{ shortDate(row.date) }}</td>
-            <td class="hanzi past__word" lang="zh">{{ characters(row.entry.word) }}</td>
+            <td class="hanzi past__word" lang="zh">{{ characters(row.entry) }}</td>
             <td class="past__tick"><TaskBox done /></td>
           </tr>
         </tbody>

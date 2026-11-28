@@ -15,6 +15,17 @@ import { api } from '../api/client'
 
 const STORAGE_KEY = 'hhtt.preferences'
 
+// The page's lang follows the interface language (Emily, 2026-11-27): in 中文
+// mode it is zh-Hans or zh-Hant by character set. Screen readers read with the
+// right voice, browsers pick Chinese fonts, and tokens.css enlarges the small
+// type sizes under :lang(zh) so short Chinese labels stay readable.
+function applyDocumentLang (state) {
+  if (typeof document === 'undefined') return
+  document.documentElement.lang = state.language === 'cn'
+    ? (state.characterSet === 'traditional' ? 'zh-Hant' : 'zh-Hans')
+    : 'en'
+}
+
 function load () {
   try {
     return JSON.parse(window.localStorage.getItem(STORAGE_KEY)) ?? {}
@@ -44,6 +55,7 @@ export const usePreferencesStore = defineStore('preferences', {
   actions: {
     setCharacterSet (value, { sync = true } = {}) {
       this.characterSet = value === 'traditional' ? 'traditional' : 'simplified'
+      applyDocumentLang(this)
       this.persist()
       if (sync) this.syncToAccount()
     },
@@ -53,6 +65,7 @@ export const usePreferencesStore = defineStore('preferences', {
       // The store is the single source of truth; vue-i18n follows it rather than
       // holding a second copy that could drift.
       i18n.global.locale.value = this.language
+      applyDocumentLang(this)
       this.persist()
       if (sync) this.syncToAccount()
     },
@@ -64,6 +77,7 @@ export const usePreferencesStore = defineStore('preferences', {
     /** Applies the stored values on boot, before anything renders. */
     hydrate () {
       i18n.global.locale.value = this.language
+      applyDocumentLang(this)
     },
 
     /** Applies ?char= / ?lang= from a shared or emailed link. */

@@ -1,6 +1,7 @@
 <script setup>
 import LoadingState from '../components/LoadingState.vue'
 import { useListLabel } from '../lib/listLabel'
+import { setFor as listSetFor, withSetMarks } from '../lib/listSets'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { signInRoute } from '../lib/signInReturn'
@@ -139,22 +140,12 @@ const finishedSomething = computed(() => hasFinishedTask(quizzes.value, user.val
 // When someone's lists are in both character sets, each list name says which
 // it is in: "HSK Level 1 简", "HSK Level 3 繁", or "简 繁" for a list taken in
 // both (Emily, 2026-11-22). With only one set in use, names stay plain.
-const SET_MARK = { simplified: '简', traditional: '繁' }
-const setsOf = (id) => ['simplified', 'traditional']
-  .filter((set) => subscriptions.value.some((s) => s.list_id === id && s.character_set === set))
-const bothSets = computed(() =>
-  new Set(subscriptions.value.map((s) => s.character_set).filter((set) => SET_MARK[set])).size > 1)
-
+// Rules in lib/listSets.js.
 // A card follows its list's character set, not the globe menu (Emily,
 // 2026-11-22); a list taken in both sets follows the menu.
-const setFor = (id) => { const sets = setsOf(id); return sets.length === 1 ? sets[0] : '' }
+const setFor = (id) => listSetFor(subscriptions.value, id)
 
-function listName (id) {
-  const name = listLabel(rawListName(id))
-  if (!bothSets.value) return name
-  const marks = setsOf(id).map((set) => SET_MARK[set]).join(' ')
-  return marks ? `${name} ${marks}` : name
-}
+const listName = (id) => withSetMarks(subscriptions.value, id, listLabel(rawListName(id)))
 
 function rawListName (id) {
   return lists.byId(id)?.list_name ??
@@ -200,8 +191,8 @@ function rawListName (id) {
             :list-name="listName"
             @retry="loadQuizzes"
           />
-          <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" :activity="user?.activity" />
-          <ProfileStrokes v-if="strokesOn" :progress="progress" :count="strokeCount" :activity="user?.activity" />
+          <ProfileSentences v-if="sentencesOn" :progress="progress" :count="sentenceCount" :activity="user?.activity" :subscriptions="subscriptions" />
+          <ProfileStrokes v-if="strokesOn" :progress="progress" :count="strokeCount" :activity="user?.activity" :subscriptions="subscriptions" />
         </div>
         <!-- Your lists at the foot of the page, after the activities (Emily, 2026-11-23). -->
         <ProfileLists class="profile__lists" :rows="progressList" :rule="rule" :status="progressStatus" :list-name="listName" @retry="loadProgress" />
