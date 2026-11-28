@@ -49,7 +49,7 @@ test('leaderboard failure offers a retry', async ({ page }) => {
 test('empty leaderboard', async ({ page }) => {
   await mockBackend(page, { leaderboard: { ...LEADERBOARD, entries: [] } })
   await page.goto('/leaderboard')
-  await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
+  await expect(page.getByText('No one is on the leaderboard yet this week.')).toBeVisible()
 })
 
 test('settings switch makes the profile public and links to it', async ({ page }) => {
@@ -73,13 +73,14 @@ test('profile links to the leaderboard under the streak', async ({ page }) => {
   await expect(page).toHaveURL(/\/leaderboard$/)
 })
 
-test('fewer than three people: no board on the home page, a note on the leaderboard page', async ({ page }) => {
+test('fewer than three people: no board on the home page, the leaderboard page still ranks them', async ({ page }) => {
   await mockBackend(page, { leaderboard: { ...LEADERBOARD, entries: LEADERBOARD.entries.slice(0, 2) } })
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Pick your HSK level' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Weekly leaderboard' })).toHaveCount(0)
   await page.goto('/leaderboard')
-  await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
+  await expect(page.locator('.board__row:not(.board__row--head)')).toHaveCount(2)
+  await expect(page.getByText('No one is on the leaderboard yet this week.')).toHaveCount(0)
 })
 
 // On hold: LAST_WEEK_TOP3 is off in featureFlags.js.
@@ -91,5 +92,5 @@ test.skip("Mondays show last week's top 3", async ({ page }) => {
   await expect(card.locator('.board__row:not(.board__row--head)').first()).toContainText('小安')
   await page.goto('/leaderboard')
   await expect(page.getByRole('heading', { name: "Last week's top 3" })).toBeVisible()
-  await expect(page.getByText('The weekly leaderboard starts once three people are on it this week.')).toBeVisible()
+  await expect(page.getByText('No one is on the leaderboard yet this week.')).toBeVisible()
 })
