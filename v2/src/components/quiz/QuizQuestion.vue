@@ -182,7 +182,10 @@ defineExpose({ focusPrompt: () => prompt.value?.focus() })
 /* Instruction and result use the global .sr-only: read out but not shown,
    since the options and the ✓/✗ marks say the same thing on screen. */
 
-.question__after { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
+/* Next question centred and wide, so a thumb finds it quickly; Show answers
+   sits below it (Emily, 2026-11-27). */
+.question__after { display: flex; flex-direction: column; align-items: center; gap: var(--s-4); }
+.question__after > :first-child { width: 100%; max-width: 20rem; justify-content: center; }
 
 .question__toggle {
   padding: 0;
