@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -180,7 +181,7 @@ const reviewLink = computed(() => ({ name: 'review', query: { list_id: listId.va
         @cancel="settingsOpen = false"
       />
 
-      <p v-if="status === 'loading'" class="quiz__state" role="status">{{ t('quizLoading') }}</p>
+      <LoadingState v-if="status === 'loading'" :label="t('quizLoading')" />
 
       <div v-else-if="status === 'error'" class="quiz__state" role="alert">
         <p>{{ t('quizError') }}</p>

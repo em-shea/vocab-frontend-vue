@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { useListLabel } from '../lib/listLabel'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -147,7 +148,7 @@ function exportWords () {
       </AppButton>
     </form>
 
-    <p v-if="status === 'loading'" class="review__state" role="status">{{ t('reviewLoading') }}</p>
+    <LoadingState v-if="status === 'loading'" :label="t('reviewLoading')" />
 
     <div v-else-if="status === 'error'" class="review__state" role="alert">
       <p>{{ t('reviewError') }}</p>

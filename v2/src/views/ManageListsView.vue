@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -102,7 +103,7 @@ onMounted(load)
       <RouterLink v-if="backLink" class="lists__back" :to="backLink">{{ t('listsBack') }}</RouterLink>
       <h1 class="lists__title">{{ t('listsTitle') }}</h1>
 
-      <p v-if="status === 'loading'" role="status">{{ t('listsLoading') }}</p>
+      <LoadingState v-if="status === 'loading'" :label="t('listsLoading')" />
 
       <div v-else-if="status === 'signed-out'" class="lists__state">
         <p>{{ t('listsSignedOut') }}</p>

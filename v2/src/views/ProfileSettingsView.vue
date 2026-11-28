@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { signInRoute } from '../lib/signInReturn'
@@ -133,7 +134,7 @@ async function saveName () {
     <AppPanel>
       <h1 class="settings__title">{{ t('profileSettingsTitle') }}</h1>
 
-      <p v-if="status === 'loading'" class="settings__state" role="status">{{ t('profileLoading') }}</p>
+      <LoadingState v-if="status === 'loading'" :label="t('profileLoading')" />
 
       <div v-else-if="status === 'error'" class="settings__state" role="alert">
         <p>{{ t('profileError') }}</p>
