@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -125,7 +126,7 @@ const dayLabel = (date) => {
   <PageShell>
     <h1 ref="heading" class="sentences__title" tabindex="-1">{{ t('sentencesTitle') }}</h1>
 
-    <p v-if="status === 'loading'" class="sentences__state" role="status">{{ t('sentencesLoading') }}</p>
+    <LoadingState v-if="status === 'loading'" :label="t('sentencesLoading')" />
 
     <div v-else-if="status === 'signed-out'" class="sentences__state">
       <p>{{ t('sentencesSignIn') }}</p>

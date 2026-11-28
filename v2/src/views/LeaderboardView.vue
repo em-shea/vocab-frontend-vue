@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -46,7 +47,7 @@ const weekOf = (iso) => new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' 
         <p v-if="board" class="board__week">{{ t('leaderboardWeek', { date: weekOf(board.week_start) }) }}</p>
       </div>
 
-      <p v-if="status === 'loading'" role="status">{{ t('leaderboardLoading') }}</p>
+      <LoadingState v-if="status === 'loading'" :label="t('leaderboardLoading')" />
       <div v-else-if="status === 'error'" role="alert" class="board__state">
         <p>{{ t('leaderboardError') }}</p>
         <AppButton variant="seal" @click="load">{{ t('profileRetry') }}</AppButton>

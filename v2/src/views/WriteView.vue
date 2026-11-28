@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -93,7 +94,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', onResize))
   <PageShell>
     <h1 class="write__title">{{ t('writeTitle') }}</h1>
 
-    <p v-if="status === 'loading'" class="write__state" role="status">{{ t('sentencesLoading') }}</p>
+    <LoadingState v-if="status === 'loading'" :label="t('sentencesLoading')" />
 
     <div v-else-if="status === 'signed-out'" class="write__state">
       <p>{{ t('writeSignIn') }}</p>

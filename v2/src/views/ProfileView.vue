@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { useListLabel } from '../lib/listLabel'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -166,7 +167,7 @@ function rawListName (id) {
 <template>
   <PageShell width="wide">
     <div class="profile">
-      <p v-if="status === 'loading'" class="profile__state" role="status">{{ t('profileLoading') }}</p>
+      <LoadingState v-if="status === 'loading'" :label="t('profileLoading')" />
 
       <div v-else-if="status === 'error'" class="profile__state" role="alert">
         <h1 class="profile__title">{{ t('profileTitle') }}</h1>

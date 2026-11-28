@@ -1,4 +1,5 @@
 <script setup>
+import LoadingState from '../components/LoadingState.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -41,7 +42,7 @@ const joined = (month) => {
 <template>
   <PageShell>
     <AppPanel>
-      <p v-if="status === 'loading'" role="status">{{ t('publicLoading') }}</p>
+      <LoadingState v-if="status === 'loading'" :label="t('publicLoading')" />
       <template v-else-if="status === 'missing' || status === 'error'">
         <h1 class="public__name">{{ t(status === 'missing' ? 'publicMissing' : 'publicError') }}</h1>
         <RouterLink :to="{ name: 'leaderboard' }">{{ t('leaderboardTitle') }}</RouterLink>
