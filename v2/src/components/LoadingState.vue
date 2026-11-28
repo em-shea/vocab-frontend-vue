@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import HanziWriter from 'hanzi-writer'
 import hao from '../data/strokes/hao.json'
 
-// Shown while a page waits for the API: 好 written stroke by stroke in a
+// Shown while a page waits for the API: 好 written stroke by stroke in ink in a
 // 田字格 box, on a loop, above the loading line (Emily, 2026-11-27). Same
 // bundled stroke data as the home page's stroke order picture, so nothing is
 // fetched for it. Fades in after a moment so quick loads don't flash it. With
@@ -23,7 +23,7 @@ onMounted(() => {
     padding: 8,
     showOutline: true,
     showCharacter: still,
-    strokeColor: css('--c-seal', '#C93F1F'),
+    strokeColor: css('--c-ink', '#1B2140'),
     outlineColor: css('--c-rule', '#D9D2C2'),
     strokeAnimationSpeed: 1.6,
     delayBetweenStrokes: 80,
