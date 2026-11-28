@@ -4,7 +4,8 @@ import { useI18n } from 'vue-i18n'
 import AppButton from '../AppButton.vue'
 import AudioButton from '../AudioButton.vue'
 import { usePreferencesStore } from '../../stores/preferences'
-import { MAX_LENGTH, exampleLink } from '../../lib/sentences'
+import { MAX_LENGTH } from '../../lib/sentences'
+import ExampleSentences from '../ExampleSentences.vue'
 import { useDefinition } from '../../lib/cnDefinitions'
 
 // One of today's words, with a field for a sentence that uses it. The screen
@@ -36,7 +37,6 @@ const characters = computed(() =>
 )
 
 // Ideas for a sentence, from the same sites the daily email links to.
-const examples = computed(() => exampleLink(word.value, characters.value))
 
 function submit () {
   emit('save', draft.value)
@@ -59,9 +59,7 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
       <AudioButton :src="word.audio_file_key" :label="characters" />
     </div>
     <p v-if="word.definition" class="write__definition">{{ definitionOf(word) }}</p>
-    <a v-if="examples" class="write__examples" :href="examples" target="_blank" rel="noopener noreferrer">
-      {{ t('sentencesExamples') }}<span class="sr-only"> {{ t('sentencesNewTab') }}</span>
-    </a>
+    <ExampleSentences :word="word" :character-set="isTraditional ? 'traditional' : 'simplified'" />
 
     <form class="write__form" novalidate @submit.prevent="submit">
       <!-- Not shown (Emily, 2026-11-20): the word sits right above the field. -->
@@ -95,7 +93,6 @@ watch(() => props.status, (now) => { if (now === 'empty') field.value?.focus() }
 </template>
 
 <style scoped>
-.write__examples { align-self: flex-start; font-size: var(--t-base); }
 
 .write {
   display: flex;

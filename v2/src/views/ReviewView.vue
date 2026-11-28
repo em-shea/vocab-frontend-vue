@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 
 import PageShell from '../components/PageShell.vue'
 import AppButton from '../components/AppButton.vue'
+import ExampleSentences from '../components/ExampleSentences.vue'
 import WordCard from '../components/WordCard.vue'
 import { api } from '../api/client'
 import { useVocabListsStore } from '../stores/vocabLists'
@@ -91,14 +92,6 @@ function shortDate (iso) {
   return Number.isNaN(date.getTime()) ? iso : dateFormat.value.format(date)
 }
 
-// Simple sentences for the lower levels, a fuller dictionary for the upper
-// ones. Same two sites and the same HSK 3 cut-off the old screen used.
-function examplesUrl (word) {
-  const term = encodeURIComponent(word.simplified ?? '')
-  return Number(word.hsk_level) > 3
-    ? `https://fanyi.baidu.com/#zh/en/${term}`
-    : `https://www.yellowbridge.com/chinese/sentsearch.php?word=${term}`
-}
 
 function exportWords () {
   const rows = words.value.map((entry) => ({
@@ -167,9 +160,7 @@ function exportWords () {
             :level="entry.word.hsk_level ? t('reviewLevel', { level: entry.word.hsk_level }) : ''"
             compact
           >
-            <a class="review__examples" :href="examplesUrl(entry.word)" target="_blank" rel="noopener">
-              {{ t('reviewExamples') }}
-            </a>
+            <ExampleSentences :word="entry.word" :character-set="entry.character_set ?? ''" />
           </WordCard>
         </li>
       </ul>
@@ -229,7 +220,6 @@ function exportWords () {
 .review__grid > li { display: flex; }
 .review__grid > li > * { flex: 1; }
 
-.review__examples { font-size: var(--t-sm); margin-top: auto; }
 
 @media (min-width: 720px) {
   .review__controls { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }

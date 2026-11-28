@@ -40,6 +40,9 @@ const pwa = VitePWA({
   },
   workbox: {
     globPatterns: ['**/*.{html,js,css}', 'icons/*.png'],
+    // Example sentences (src/data/examples, about 1 MB gzipped in all) are
+    // cached as they are opened, not at install.
+    globIgnores: ['**/examples-*.js'],
     navigateFallback: '/index.html',
     // Daily word notifications (public/push-sw.js).
     importScripts: ['/push-sw.js'],
@@ -54,6 +57,11 @@ const pwa = VitePWA({
         urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:jpg|jpeg|png|webp|gif)$/.test(url.pathname),
         handler: 'CacheFirst',
         options: { cacheName: 'images', expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 90 } }
+      },
+      {
+        urlPattern: ({ url, sameOrigin }) => sameOrigin && /\/assets\/examples-[^/]+\.js$/.test(url.pathname),
+        handler: 'CacheFirst',
+        options: { cacheName: 'examples', expiration: { maxEntries: 32, maxAgeSeconds: 60 * 60 * 24 * 90 } }
       },
       {
         // Stroke data for handwriting practice (pinned version, never changes).
