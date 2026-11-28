@@ -174,7 +174,7 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
       "rank avatar name week week streak"
       "rank avatar name days acts streak";
     row-gap: var(--s-1);
-    font-size: 0.625rem;
+    font-size: var(--t-2xs);
     letter-spacing: 0.03em;
   }
   .board__h-week {
@@ -186,6 +186,8 @@ const medal = (rank) => ({ 1: 'gold', 2: 'silver', 3: 'bronze' })[rank] ?? null
   }
   .board__h-streak .board__short { display: none; }
   .board__h-streak .board__long { display: inline; }
+  /* 中文: 连续天数 on one line rather than breaking after 天. */
+  :lang(zh) .board__h-streak { white-space: nowrap; }
   .board__badges { display: none; }
   .board__long { display: none; }
   .board__short { display: inline; }

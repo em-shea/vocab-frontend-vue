@@ -123,8 +123,9 @@ test.describe('switched on', () => {
 
   test('editing today\'s existing sentence keeps its id', async ({ page }) => {
     await signedIn(page)
-    const backend = await mockBackend(page)
-    await accountPrefers(page, { character_set_preference: 'traditional' })
+    // The list is taken in traditional, so its words (and the save) are too.
+    const TRAD = [{ list_id: HSK1, list_name: 'HSK Level 1', character_set: 'traditional', status: 'subscribed' }]
+    const backend = await mockBackend(page, { userActivity: { ...USER, subscriptions: TRAD, activity: ACTIVITY } })
     await page.goto('/sentences')
 
     const field = page.getByLabel('A sentence with 愛護')

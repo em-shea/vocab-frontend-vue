@@ -15,6 +15,7 @@ import { usePreferencesStore } from '../stores/preferences'
 import { activityFrom, todaysWords } from '../lib/sentences'
 import { charactersOf, writingPayload } from '../lib/writing'
 import { useListLabel } from '../lib/listLabel'
+import { isTraditionalFor, withSetMarks } from '../lib/listSets'
 import { useDefinition } from '../lib/cnDefinitions'
 
 // Handwriting practice (Emily, 2026-11-23): write each character of today's
@@ -38,12 +39,11 @@ const keyOf = (entry) => `${entry.date_sent}|${entry.list_id}|${entry.word.word_
 
 // Like the profile's cards: a word follows its list's character set when the
 // list is taken in one set, otherwise the site setting.
-function traditionalFor (listId) {
-  const sets = new Set(subscriptions.value.filter((s) => s.list_id === listId).map((s) => s.character_set))
-  return sets.size === 1 ? sets.has('traditional') : prefs.isTraditional
-}
+// Rules in lib/listSets.js.
+const traditionalFor = (listId) => isTraditionalFor(subscriptions.value, listId, prefs.isTraditional)
 const charsOf = (entry) => charactersOf(entry.word, traditionalFor(entry.list_id))
-const listName = (id) => listLabel(subscriptions.value.find((s) => s.list_id === id)?.list_name ?? '')
+// 简 / 繁 after the name when the lists span both sets, as on the profile.
+const listName = (id) => withSetMarks(subscriptions.value, id, listLabel(subscriptions.value.find((s) => s.list_id === id)?.list_name ?? ''))
 
 // Box size: fits two side by side on a phone.
 const width = ref(typeof window === 'undefined' ? 1024 : window.innerWidth)

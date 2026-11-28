@@ -382,6 +382,22 @@ const shadeStyle = computed(() => ({ '--k': scale.value, '--fr': props.hero.feet
 
 <style scoped>
 /* Tier colour: one variable the frame, seal and tick all read. */
+/* The card is laid out to fixed proportions with its own reading modes, so it
+   keeps the standard type sizes in 中文 mode rather than the enlarged ones in
+   tokens.css (2026-11-27). */
+.card:lang(zh) {
+  --t-2xs: 0.625rem;
+  --t-xs: 0.6875rem;
+  --t-sm: 0.75rem;
+  --t-sm-plus: 0.78125rem;
+  --t-base-sm: 0.8125rem;
+  --t-base: 0.875rem;
+  --ls-tight: 0.06em;
+  --ls-label: 0.12em;
+  --ls-wide: 0.16em;
+  --ls-widest: 0.18em;
+}
+
 .card {
   --tier: var(--c-red-solid);
   --on-tier: var(--c-on-red);

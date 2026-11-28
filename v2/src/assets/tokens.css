@@ -199,3 +199,20 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* 中文 mode (Emily, 2026-11-27): Chinese at 10–12px is hard to read, and wide
+   label tracking pulls characters apart. Under :lang(zh) (set on <html> by the
+   preferences store) the small sizes have a 13px floor and tracking is tight.
+   Sizes from --t-base up are unchanged. */
+:root:lang(zh) {
+  --t-2xs: 0.8125rem;      /* 13px (en 10px) */
+  --t-xs: 0.8125rem;       /* 13px (en 11px) */
+  --t-sm: 0.875rem;        /* 14px (en 12px) */
+  --t-sm-plus: 0.875rem;   /* 14px (en 12.5px) */
+  --t-base-sm: 0.875rem;   /* 14px (en 13px) */
+  --t-base: 0.9375rem;     /* 15px (en 14px) */
+  --ls-tight: 0.02em;
+  --ls-label: 0.04em;
+  --ls-wide: 0.04em;
+  --ls-widest: 0.06em;
+}

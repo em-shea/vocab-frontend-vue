@@ -5,6 +5,7 @@ import DoneCount from './DoneCount.vue'
 import PencilIcon from '../PencilIcon.vue'
 import AppButton from '../AppButton.vue'
 import { usePreferencesStore } from '../../stores/preferences'
+import { isTraditionalFor, wordCharacters } from '../../lib/listSets'
 import { recentDays } from '../../lib/sentences'
 
 // Today's sentences at a glance: each of today's words with the sentence
@@ -18,7 +19,9 @@ const props = defineProps({
   // The same words as the word cards: lib/profile wordProgress.
   progress: { type: Array, default: () => [] },
   count: { type: Object, default: () => ({ done: 0, total: 0 }) }, // { done, total } over today's words
-  activity: { type: Object, default: () => ({}) } // for past sentences
+  activity: { type: Object, default: () => ({}) }, // for past sentences
+  // Each word follows its list's character set (lib/listSets.js).
+  subscriptions: { type: Array, default: () => [] }
 })
 const { t, locale } = useI18n()
 const prefs = usePreferencesStore()
@@ -36,7 +39,8 @@ const shortDate = (date) => {
   return new Intl.DateTimeFormat(locale.value === 'cn' ? 'zh-CN' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
     .format(new Date(Date.UTC(y, m - 1, d)))
 }
-const characters = (word) => (prefs.isTraditional ? word.traditional : word.simplified) || word.simplified
+const traditional = (entry) => isTraditionalFor(props.subscriptions, entry.list_id, prefs.isTraditional)
+const characters = (entry) => wordCharacters(entry.word, traditional(entry))
 </script>
 
 <template>
@@ -49,17 +53,17 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
 
       <ul v-else class="sentences__list">
         <li v-for="{ entry, sentence } in rows" :key="entry.list_id">
-          <span class="hanzi sentences__word" :lang="prefs.isTraditional ? 'zh-Hant' : 'zh-Hans'">{{ characters(entry.word) }}</span>
+          <span class="hanzi sentences__word" :lang="traditional(entry) ? 'zh-Hant' : 'zh-Hans'">{{ characters(entry) }}</span>
           <!-- The visitor's own sentence sits in a filled-in field, so it reads
                as something they wrote, not page text. -->
           <span v-if="sentence" class="hanzi sentences__text" lang="zh">{{ sentence.sentence }}</span>
           <RouterLink v-if="sentence" class="sentences__edit" :to="{ name: 'sentences' }"
-            :aria-label="t('profileSentenceEdit', { word: characters(entry.word) })">
+            :aria-label="t('profileSentenceEdit', { word: characters(entry) })">
             <PencilIcon />
           </RouterLink>
           <AppButton v-else as="RouterLink" variant="primary" shape="sm" class="sentences__write"
             :to="{ name: 'sentences' }"
-            :aria-label="t('profileSentenceWriteFor', { word: characters(entry.word) })">
+            :aria-label="t('profileSentenceWriteFor', { word: characters(entry) })">
             {{ t('profileSentencesWrite') }}
           </AppButton>
         </li>
@@ -72,7 +76,7 @@ const characters = (word) => (prefs.isTraditional ? word.traditional : word.simp
         <tbody>
           <tr v-for="row in past" :key="`${row.date}|${row.entry.list_id}|${row.entry.word.word_id ?? row.entry.word.simplified}`">
             <td class="mono past__date">{{ shortDate(row.date) }}</td>
-            <td class="hanzi past__word" lang="zh">{{ characters(row.entry.word) }}</td>
+            <td class="hanzi past__word" lang="zh">{{ characters(row.entry) }}</td>
             <td class="hanzi past__text" lang="zh">{{ row.entry.sentence.sentence }}</td>
           </tr>
         </tbody>

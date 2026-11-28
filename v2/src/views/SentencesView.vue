@@ -12,6 +12,7 @@ import SentenceList from '../components/sentences/SentenceList.vue'
 import { api } from '../api/client'
 import { getSession } from '../api/session'
 import { usePreferencesStore } from '../stores/preferences'
+import { isTraditionalFor } from '../lib/listSets'
 import {
   recentDays, wordsBySentenceId, activityFrom, sentencesFrom, newestFirst, upsert,
   clean, newSentenceId, savePayload, todayKey
@@ -34,6 +35,7 @@ const today = ref(null)
 const days = ref([])
 const sentences = ref([])
 const sentenceWords = ref({})
+const subscriptions = ref([])
 // Per word, keyed like the cards: the saved text and its id, and how the
 // last save went.
 const saved = reactive({})
@@ -41,6 +43,10 @@ const saving = reactive({})
 // The id each word's sentence is saved under. Chosen once, on the first try,
 // so a retry after a failed save cannot file the same sentence twice.
 const ids = {}
+
+// Each word follows its list's character set (lib/listSets.js), and its
+// sentence is saved under that set.
+const traditionalFor = (entry) => isTraditionalFor(subscriptions.value, entry.list_id, prefs.isTraditional)
 
 const keyOf = (entry) => `${entry.date_sent}|${entry.list_id}|${entry.word.word_id ?? entry.word.simplified}`
 const heading = ref(null)
@@ -56,6 +62,8 @@ async function load () {
   try {
     const [activityRes, sentencesRes] = await Promise.all([api.userActivity(), api.sentences()])
     const activity = activityFrom(activityRes.data)
+    const body = activityRes.data?.activity ? activityRes.data : (activityRes.data?.data ?? {})
+    subscriptions.value = body.subscriptions ?? []
     today.value = todayKey(activity)
     days.value = recentDays(activity)
     sentenceWords.value = wordsBySentenceId(activity)
@@ -92,7 +100,7 @@ async function save (entry, text) {
   const id = ids[key]
   saving[key] = 'saving'
   try {
-    const payload = savePayload({ entry, text, sentenceId: id, characterSet: prefs.characterSet })
+    const payload = savePayload({ entry, text, sentenceId: id, characterSet: traditionalFor(entry) ? 'traditional' : 'simplified' })
     await api.saveSentence(payload)
     saved[key] = { id, text: payload.sentence }
     // Filed under the word's own date (set_sentence takes it from the payload).
@@ -152,6 +160,7 @@ const dayLabel = (date) => {
           <li v-for="entry in day.words" :key="keyOf(entry)">
             <SentenceWrite
               :entry="entry"
+              :character-set="traditionalFor(entry) ? 'traditional' : 'simplified'"
               :saved="saved[keyOf(entry)].text"
               :status="saving[keyOf(entry)]"
               @save="(text) => save(entry, text)"
